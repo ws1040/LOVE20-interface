@@ -5,15 +5,19 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "generate:abi": "ts-node src/scripts/generateAbiTs.ts"
   },
   "dependencies": {
     "@rainbow-me/rainbowkit": "^2.1.7",
     "@tanstack/react-query": "^5.51.11",
+    "abitype": "^1.0.6",
+    "dotenv": "^16.4.5",
     "next": "^14.2.9",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.4.1",
+    "ts-node": "^10.9.2",
     "viem": "2.17.0",
     "wagmi": "^2.12.9"
   },
