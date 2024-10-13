@@ -1,7 +1,14 @@
 // src/scripts/generateAbiTs.ts
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config(); // 引入 dotenv 库以读取 .env 文件
+const dotenv = require('dotenv'); 
+
+// 根据 NODE_ENV 确定加载哪个 .env 文件
+const env = process.env.NODE_ENV || 'local';
+const envFile = `.env.${env}`;
+
+// 加载环境变量
+dotenv.config({ path: path.resolve(process.cwd(), envFile) });
 
 // 源目录
 const abiDirPath = process.env.NEXT_PUBLIC_FOUNDRY_ABI_PATH;
@@ -16,7 +23,7 @@ const filesToConvert = ['LOVE20Join', 'LOVE20Launch', 'LOVE20Mint', 'LOVE20Rando
 // 遍历文件名列表，进行转换
 filesToConvert.forEach((fileName) => {
   const abiJsonPath = path.resolve(abiDirPath, `${fileName}.sol/${fileName}.json`);
-  const abiTsPath = path.resolve(__dirname, '../abis', `${fileName}.ts`);
+  const abiTsPath = path.resolve(__dirname, 'abis', `${fileName}.ts`);
 
   // 检查 ABI JSON 文件是否存在
   if (!fs.existsSync(abiJsonPath)) {
