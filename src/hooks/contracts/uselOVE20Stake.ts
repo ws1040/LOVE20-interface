@@ -37,23 +37,23 @@ export const usePromisedWaitingRoundsMin = () => {
 
 /**
  * 获取账户的质押状态
- * @param account1 第一个账户地址
- * @param account2 第二个账户地址
+ * @param token 代币地址
+ * @param account 账户地址
  */
-export const useAccountStakeStatus = (account1: `0x${string}`, account2: `0x${string}`) => {
+export const useAccountStakeStatus = (token: `0x${string}`, account: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20StakeAbi,
     functionName: 'accountStakeStatus',
-    args: [account1, account2],
+    args: [token, account],
   });
 
   return {
-    slAmount: data?.slAmount as bigint | undefined,
-    stAmount: data?.stAmount as bigint | undefined,
-    promisedWaitingRounds: data?.promisedWaitingRounds as bigint | undefined,
-    requestedUnstakeRound: data?.requestedUnstakeRound as bigint | undefined,
-    govVotes: data?.govVotes as bigint | undefined,
+    slAmount: data?.[0] as bigint | undefined,
+    stAmount: data?.[1] as bigint | undefined,
+    promisedWaitingRounds: data?.[2] as bigint | undefined,
+    requestedUnstakeRound: data?.[3] as bigint | undefined,
+    govVotes: data?.[4] as bigint | undefined,
     isPending,
     error,
   };
@@ -197,8 +197,8 @@ export const useRoundRange = (round: bigint) => {
   });
 
   return {
-    start: data?.start as bigint | undefined,
-    end: data?.end as bigint | undefined,
+    start: data?.[0] as bigint | undefined,
+    end: data?.[1] as bigint | undefined,
     isPending,
     error,
   };
