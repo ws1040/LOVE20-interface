@@ -14,14 +14,14 @@ import { lOVE20TokenAbi } from '../../abis/LOVE20Token';
  * @param spender - Address of the spender
  */
 export const useAllowance = (token: `0x${string}`, owner: `0x${string}`, spender: `0x${string}`) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: token,
     abi: lOVE20TokenAbi,
     functionName: 'allowance',
     args: [owner, spender],
   });
 
-  return { allowance: data as bigint | undefined, isLoading, error };
+  return { allowance: data as bigint | undefined, isPending, error };
 };
 
 /**
@@ -29,154 +29,154 @@ export const useAllowance = (token: `0x${string}`, owner: `0x${string}`, spender
  * @param account - Address of the account
  */
 export const useBalanceOf = (token: `0x${string}`, account: `0x${string}`) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: token,
     abi: lOVE20TokenAbi,
     functionName: 'balanceOf',
     args: [account],
   });
 
-  return { balance: data as bigint | undefined, isLoading, error };
+  return { balance: data as bigint | undefined, isPending, error };
 };
 
 /**
  * useDecimals Hook
  */
 export const useDecimals = (token: `0x${string}`) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: token,
     abi: lOVE20TokenAbi,
     functionName: 'decimals',
     args: [],
   });
 
-  return { decimals: data as number | undefined, isLoading, error };
+  return { decimals: data as number | undefined, isPending, error };
 };
 
 /**
  * useInitialized Hook
  */
 export const useInitialized = (token: `0x${string}`) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: token,
     abi: lOVE20TokenAbi,
     functionName: 'initialized',
     args: [],
   });
 
-  return { initialized: data as boolean | undefined, isLoading, error };
+  return { initialized: data as boolean | undefined, isPending, error };
 };
 
 /**
  * useMaxSupply Hook
  */
 export const useMaxSupply = (token: `0x${string}`) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: token,
     abi: lOVE20TokenAbi,
     functionName: 'maxSupply',
     args: [],
   });
 
-  return { maxSupply: data as bigint | undefined, isLoading, error };
+  return { maxSupply: data as bigint | undefined, isPending, error };
 };
 
 /**
  * useMintableAddress Hook
  */
 export const useMintableAddress = (token: `0x${string}`) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: token,
     abi: lOVE20TokenAbi,
     functionName: 'mintableAddress',
     args: [],
   });
 
-  return { mintableAddress: data as `0x${string}` | undefined, isLoading, error };
+  return { mintableAddress: data as `0x${string}` | undefined, isPending, error };
 };
 
 /**
  * useName Hook
  */
 export const useName = (token: `0x${string}`) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: token,
     abi: lOVE20TokenAbi,
     functionName: 'name',
     args: [],
   });
 
-  return { name: data as string | undefined, isLoading, error };
+  return { name: data as string | undefined, isPending, error };
 };
 
 /**
  * useParentPool Hook
  */
 export const useParentPool = (token: `0x${string}`) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: token,
     abi: lOVE20TokenAbi,
     functionName: 'parentPool',
     args: [],
   });
 
-  return { parentPool: data as bigint | undefined, isLoading, error };
+  return { parentPool: data as bigint | undefined, isPending, error };
 };
 
 /**
  * useParentTokenAddress Hook
  */
 export const useParentTokenAddress = (token: `0x${string}`) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: token,
     abi: lOVE20TokenAbi,
     functionName: 'parentTokenAddress',
     args: [],
   });
 
-  return { parentTokenAddress: data as `0x${string}` | undefined, isLoading, error };
+  return { parentTokenAddress: data as `0x${string}` | undefined, isPending, error };
 };
 
 /**
  * useReentrant Hook
  */
 export const useReentrant = (token: `0x${string}`) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: token,
     abi: lOVE20TokenAbi,
     functionName: 'reentrant',
     args: [],
   });
 
-  return { reentrant: data as boolean | undefined, isLoading, error };
+  return { reentrant: data as boolean | undefined, isPending, error };
 };
 
 /**
  * useSymbol Hook
  */
 export const useSymbol = (token: `0x${string}`) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: token,
     abi: lOVE20TokenAbi,
     functionName: 'symbol',
     args: [],
   });
 
-  return { symbol: data as string | undefined, isLoading, error };
+  return { symbol: data as string | undefined, isPending, error };
 };
 
 /**
  * useTotalSupply Hook
  */
 export const useTotalSupply = (token: `0x${string}`) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: token,
     abi: lOVE20TokenAbi,
     functionName: 'totalSupply',
     args: [],
   });
 
-  return { totalSupply: data as bigint | undefined, isLoading, error };
+  return { totalSupply: data as bigint | undefined, isPending, error };
 };
 
 /* =======================
@@ -193,7 +193,7 @@ export function useApprove(token: `0x${string}`) {
       error: writeError,
     } = useWriteContract();
   
-    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
       hash: writeData,
     });
   
@@ -224,7 +224,7 @@ export function useApprove(token: `0x${string}`) {
       error: writeError,
     } = useWriteContract();
   
-    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
       hash: writeData,
     });
   
@@ -255,7 +255,7 @@ export function useApprove(token: `0x${string}`) {
       error: writeError,
     } = useWriteContract();
   
-    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
       hash: writeData,
     });
   
@@ -286,7 +286,7 @@ export function useApprove(token: `0x${string}`) {
       error: writeError,
     } = useWriteContract();
   
-    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
       hash: writeData,
     });
   
@@ -317,7 +317,7 @@ export function useApprove(token: `0x${string}`) {
       error: writeError,
     } = useWriteContract();
   
-    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
       hash: writeData,
     });
   
@@ -348,7 +348,7 @@ export function useApprove(token: `0x${string}`) {
       error: writeError,
     } = useWriteContract();
   
-    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
       hash: writeData,
     });
   
@@ -379,7 +379,7 @@ export function useApprove(token: `0x${string}`) {
       error: writeError,
     } = useWriteContract();
   
-    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
       hash: writeData,
     });
   

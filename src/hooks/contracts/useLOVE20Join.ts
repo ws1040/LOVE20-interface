@@ -1,5 +1,6 @@
 // hooks/useLove20Join.ts
 
+import { useEffect, useState } from 'react';
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { lOVE20JoinAbi } from '../../abis/LOVE20Join';
 
@@ -58,23 +59,23 @@ export const useCurrentRound = () => {
     functionName: 'currentRound',
   });
 
-  return { currentRound: data as bigint | undefined, isPending, error };
+  return { currentRound: data as bigint, isPending, error };
 };
 
 /**
- * Hook for joinedAccountsByActionId
+ * Hook for joinedAccountsByActionId tokenAddress => round => actionId => accounts
  */
 export const useJoinedAccountsByActionId = (
-  account: `0x${string}`,
-  param1: bigint,
-  param2: bigint,
-  param3: bigint
+  tokenAddress: `0x${string}`,
+  round: bigint,
+  actionId: bigint,
+  accountIndex: bigint
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20JoinAbi,
     functionName: 'joinedAccountsByActionId',
-    args: [account, param1, param2, param3],
+    args: [tokenAddress, round, actionId, accountIndex],
   });
 
   return { joinedAccount: data as `0x${string}` | undefined, isPending, error };
@@ -85,31 +86,58 @@ export const useJoinedAccountsByActionId = (
  */
 export const useJoinedAmount = (
   account: `0x${string}`,
-  param1: bigint
+  currentRound?: bigint
 ) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
-    functionName: 'joinedAmount',
-    args: [account, param1],
-  });
+  const [joinedAmount, setJoinedAmount] = useState<bigint | undefined>(undefined);
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
-  return { joinedAmount: data as bigint | undefined, isPending, error };
+  useEffect(() => {
+    // 如果 currentRound 为 undefined 或 BigInt(0)，不进行合约调用
+    if (!currentRound || currentRound === BigInt(0)) {
+      setJoinedAmount(undefined); // 清空数据
+      setIsPending(false);
+      setError(null);
+      return;
+    }
+
+    const fetchJoinedAmount = async () => {
+      setIsPending(true);
+      setError(null);
+      try {
+        const { data } = useReadContract({
+          address: CONTRACT_ADDRESS,
+          abi: lOVE20JoinAbi,
+          functionName: 'joinedAmount',
+          args: [account, currentRound],
+        });
+        setJoinedAmount(data);
+      } catch (err) {
+        setError(err as Error);
+      } finally {
+        setIsPending(false);
+      }
+    };
+
+    fetchJoinedAmount();
+  }, [account, currentRound]);
+
+  return { joinedAmount, isPending, error };
 };
 
 /**
- * Hook for joinedAmountByActionId
+ * Hook for joinedAmountByActionId tokenAddress => round => actionId => amount
  */
 export const useJoinedAmountByActionId = (
-  account: `0x${string}`,
-  param1: bigint,
-  param2: bigint
+  tokenAddress: `0x${string}`,
+  round: bigint,
+  actionId: bigint
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20JoinAbi,
     functionName: 'joinedAmountByActionId',
-    args: [account, param1, param2],
+    args: [tokenAddress, round, actionId],
   });
 
   return { joinedAmountByActionId: data as bigint | undefined, isPending, error };

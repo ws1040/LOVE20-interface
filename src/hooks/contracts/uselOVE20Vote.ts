@@ -1,5 +1,6 @@
 // hooks/contracts/useLOVE20Vote.ts
 
+import { useEffect, useState } from 'react';
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { lOVE20VoteAbi } from '../../abis/LOVE20Vote';
 
@@ -18,14 +19,14 @@ export const useCanBeVoted = (
   round: bigint,
   actionIds: bigint[]
 ) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'canBeVoted',
     args: [tokenAddress, round, actionIds],
   });
 
-  return { canBeVoted: data as boolean | undefined, isLoading, error };
+  return { canBeVoted: data as boolean | undefined, isPending, error };
 };
 
 /**
@@ -35,28 +36,28 @@ export const useCanVote = (
   tokenAddress: `0x${string}`,
   accountAddress: `0x${string}`
 ) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'canVote',
     args: [tokenAddress, accountAddress],
   });
 
-  return { canVote: data as boolean | undefined, isLoading, error };
+  return { canVote: data as boolean | undefined, isPending, error };
 };
 
 /**
  * Hook to get the current round.
  */
 export const useCurrentRound = () => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'currentRound',
     args: [],
   });
 
-  return { currentRound: data as bigint | undefined, isLoading, error };
+  return { currentRound: data as bigint | undefined, isPending, error };
 };
 
 /**
@@ -67,14 +68,14 @@ export const useIsActionIdVoted = (
   round: bigint,
   actionId: bigint
 ) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'isActionIdVoted',
     args: [tokenAddress, round, actionId],
   });
 
-  return { isActionIdVoted: data as boolean | undefined, isLoading, error };
+  return { isActionIdVoted: data as boolean | undefined, isPending, error };
 };
 
 /**
@@ -84,63 +85,63 @@ export const useMaxVotesNum = (
   tokenAddress: `0x${string}`,
   accountAddress: `0x${string}`
 ) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'maxVotesNum',
     args: [tokenAddress, accountAddress],
   });
 
-  return { maxVotesNum: data as bigint | undefined, isLoading, error };
+  return { maxVotesNum: data as bigint | undefined, isPending, error };
 };
 
 /**
  * Hook to get the origin blocks.
  */
 export const useOriginBlocks = () => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'originBlocks',
     args: [],
   });
 
-  return { originBlocks: data as bigint | undefined, isLoading, error };
+  return { originBlocks: data as bigint | undefined, isPending, error };
 };
 
 /**
  * Hook to get the round blocks.
  */
 export const useRoundBlocks = () => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'roundBlocks',
     args: [],
   });
 
-  return { roundBlocks: data as bigint | undefined, isLoading, error };
+  return { roundBlocks: data as bigint | undefined, isPending, error };
 };
 
 /**
  * Hook to get the round by block number.
  */
 export const useRoundByBlockNumber = (blockNumber: bigint) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'roundByBlockNumber',
     args: [blockNumber],
   });
 
-  return { round: data as bigint | undefined, isLoading, error };
+  return { round: data as bigint | undefined, isPending, error };
 };
 
 /**
  * Hook to get the round range.
  */
 export const useRoundRange = (round: bigint) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'roundRange',
@@ -150,7 +151,7 @@ export const useRoundRange = (round: bigint) => {
   return {
     start: data?.[0] as bigint | undefined,
     end: data?.[1] as bigint | undefined,
-    isLoading,
+    isPending,
     error,
   };
 };
@@ -159,28 +160,28 @@ export const useRoundRange = (round: bigint) => {
  * Hook to get the stake address.
  */
 export const useStakeAddress = () => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'stakeAddress',
     args: [],
   });
 
-  return { stakeAddress: data as `0x${string}` | undefined, isLoading, error };
+  return { stakeAddress: data as `0x${string}` | undefined, isPending, error };
 };
 
 /**
  * Hook to get the submit address.
  */
 export const useSubmitAddress = () => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'submitAddress',
     args: [],
   });
 
-  return { submitAddress: data as `0x${string}` | undefined, isLoading, error };
+  return { submitAddress: data as `0x${string}` | undefined, isPending, error };
 };
 
 /**
@@ -191,14 +192,14 @@ export const useVotedActionIds = (
   round: bigint,
   actionId: bigint
 ) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'votedActionIds',
     args: [account, round, actionId],
   });
 
-  return { votedActionIds: data as bigint | undefined, isLoading, error };
+  return { votedActionIds: data as bigint | undefined, isPending, error };
 };
 
 /**
@@ -210,14 +211,14 @@ export const useVotedActionIdsByAccount = (
   anotherAccount: `0x${string}`,
   actionId: bigint
 ) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'votedActionIdsByAccount',
     args: [account, round, anotherAccount, actionId],
   });
 
-  return { votedActionIdsByAccount: data as bigint | undefined, isLoading, error };
+  return { votedActionIdsByAccount: data as bigint | undefined, isPending, error };
 };
 
 /**
@@ -227,7 +228,7 @@ export const useVotesNum = (
   tokenAddress: `0x${string}`,
   round: bigint
 ) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'votesNum',
@@ -236,7 +237,7 @@ export const useVotesNum = (
 
   return {
     votes: data as bigint | undefined,
-    isLoading,
+    isPending,
     error,
   };
 };
@@ -249,7 +250,7 @@ export const useVotesNumByAccount = (
   round: bigint,
   accountAddress: `0x${string}`
 ) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'votesNumByAccount',
@@ -258,7 +259,7 @@ export const useVotesNumByAccount = (
 
   return {
     votesNumByAccount: data as bigint | undefined,
-    isLoading,
+    isPending,
     error,
   };
 };
@@ -272,14 +273,14 @@ export const useVotesNumByAccountByActionId = (
   accountAddress: `0x${string}`,
   actionId: bigint
 ) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'votesNumByAccountByActionId',
     args: [tokenAddress, round, accountAddress, actionId],
   });
 
-  return { votesNumByAccountByActionId: data as bigint | undefined, isLoading, error };
+  return { votesNumByAccountByActionId: data as bigint | undefined, isPending, error };
 };
 
 /**
@@ -290,14 +291,14 @@ export const useVotesNumByActionId = (
   round: bigint,
   actionId: bigint
 ) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'votesNumByActionId',
     args: [tokenAddress, round, actionId],
   });
 
-  return { votesNumByActionId: data as bigint | undefined, isLoading, error };
+  return { votesNumByActionId: data as bigint | undefined, isPending, error };
 };
 
 /**
@@ -305,19 +306,49 @@ export const useVotesNumByActionId = (
  */
 export const useVotesNums = (
   tokenAddress: `0x${string}`,
-  round: bigint
+  round?: bigint
 ) => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
-    functionName: 'votesNums',
-    args: [tokenAddress, round],
-  });
+  const [actionIds, setActionIds] = useState<bigint[] | undefined>(undefined);
+  const [votes, setVotes] = useState<bigint[] | undefined>(undefined);
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    // 如果 round 为 undefined 或 BigInt(0)，则跳过网络调用
+    if (!round || round === BigInt(0)) {
+      setActionIds(undefined);
+      setVotes(undefined);
+      setIsPending(false);
+      setError(null);
+      return;
+    }
+
+    const fetchVotesNums = async () => {
+      setIsPending(true);
+      setError(null);
+      try {
+        const {data} = useReadContract({
+          address: CONTRACT_ADDRESS,
+          abi: lOVE20VoteAbi,
+          functionName: 'votesNums',
+          args: [tokenAddress, round],
+        });
+        setActionIds(data?.[0] as bigint[]);
+        setVotes(data?.[1] as bigint[] | undefined);
+      } catch (err) {
+        setError(err as Error);
+      } finally {
+        setIsPending(false);
+      }
+    };
+
+    fetchVotesNums();
+  }, [tokenAddress, round]);
 
   return {
-    actionIds: data?.[0] as bigint[] | undefined,
-    votes: data?.[1] as bigint[] | undefined,
-    isLoading,
+    actionIds,
+    votes,
+    isPending,
     error,
   };
 };
@@ -330,7 +361,7 @@ export const useVotesNumsByAccount = (
   round: bigint,
   accountAddress: `0x${string}`
 ) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'votesNumsByAccount',
@@ -340,7 +371,7 @@ export const useVotesNumsByAccount = (
   return {
     actionIds: data?.[0] as bigint[] | undefined,
     votes: data?.[1] as bigint[] | undefined,
-    isLoading,
+    isPending,
     error,
   };
 };
@@ -354,14 +385,14 @@ export const useVotesNumsByAccountByActionIds = (
   accountAddress: `0x${string}`,
   actionIds: bigint[]
 ) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'votesNumsByAccountByActionIds',
     args: [tokenAddress, round, accountAddress, actionIds],
   });
 
-  return { votesNumsByAccountByActionIds: data as bigint[] | undefined, isLoading, error };
+  return { votesNumsByAccountByActionIds: data as bigint[] | undefined, isPending, error };
 };
 
 /**
@@ -372,14 +403,14 @@ export const useVotesNumsByActionIds = (
   round: bigint,
   actionIds: bigint[]
 ) => {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20VoteAbi,
     functionName: 'votesNumsByActionIds',
     args: [tokenAddress, round, actionIds],
   });
 
-  return { votesNumsByActionIds: data as bigint[] | undefined, isLoading, error };
+  return { votesNumsByActionIds: data as bigint[] | undefined, isPending, error };
 };
 
 // =======================
