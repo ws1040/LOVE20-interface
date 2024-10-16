@@ -6,7 +6,6 @@ import { WagmiProvider } from 'wagmi';
 
 import { TokenProvider } from '../contexts/TokenContext';
 import { config } from '../wagmi';
-import Header  from '../components/Header';
 import Footer  from '../components/Footer';
 
 import '../styles/globals.css';
@@ -15,6 +14,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 const client = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const { title } = pageProps; 
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={client}>
@@ -30,7 +30,6 @@ function MyApp({ Component, pageProps }: AppProps) {
                   }
                 }}
               />
-              <Header />
               <Component {...pageProps} />
               <Footer />
             </div>

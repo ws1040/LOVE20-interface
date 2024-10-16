@@ -1,20 +1,26 @@
 // src/components/Header.tsx
+
+import Head from 'next/head';
 import React from 'react';
-// import Head from 'next/head';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-interface HeaderProps {}
+interface HeaderProps {
+  title: string;
+}
 
-const Header: React.FC<HeaderProps> = () => {
+const Header: React.FC<HeaderProps> = ({ title }) => {
   return (
-    //   <Head>
-    //     <title>Life20 DApp</title>
-    //     <link href="/favicon.ico" rel="icon" />
-    //   </Head>
-    <header className="flex justify-between items-center p-4 bg-white shadow">
-      <h1 className="text-xl font-bold">LIFE20</h1>
-      <ConnectButton />
-    </header>
+    <>
+      <Head>
+        <title>{`${title} - LIFE20`}</title>
+        <meta name={`${title} - LIFE20`} content="A Web3 DApp for Life20 token management" />
+      </Head>
+      <header className="flex justify-between items-center p-4 bg-white">
+        <h1 className="text-large text-gray-500 font-bold">@{title}</h1>
+        <ConnectButton />
+      </header>
+    </>
+
   );
 };
 
