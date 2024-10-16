@@ -308,46 +308,20 @@ export const useVotesNums = (
   tokenAddress: `0x${string}`,
   round?: bigint
 ) => {
-  const [actionIds, setActionIds] = useState<bigint[] | undefined>(undefined);
-  const [votes, setVotes] = useState<bigint[] | undefined>(undefined);
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    // 如果 round 为 undefined 或 BigInt(0)，则跳过网络调用
-    if (!round || round === BigInt(0)) {
-      setActionIds(undefined);
-      setVotes(undefined);
-      setIsPending(false);
-      setError(null);
-      return;
-    }
-
-    const fetchVotesNums = async () => {
-      setIsPending(true);
-      setError(null);
-      try {
-        const {data} = useReadContract({
-          address: CONTRACT_ADDRESS,
-          abi: lOVE20VoteAbi,
-          functionName: 'votesNums',
-          args: [tokenAddress, round],
-        });
-        setActionIds(data?.[0] as bigint[]);
-        setVotes(data?.[1] as bigint[] | undefined);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setIsPending(false);
-      }
-    };
-
-    fetchVotesNums();
-  }, [tokenAddress, round]);
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: lOVE20VoteAbi,
+    functionName: 'votesNums',
+    args: [tokenAddress, round || BigInt(0)],
+    query: {
+      enabled: !!tokenAddress && round !== undefined && round !== BigInt(0), 
+    },
+  });
 
   return {
-    actionIds,
-    votes,
+    actionIds: data?.[0] as bigint[] | undefined,
+    votes: data?.[1] as bigint[] | undefined,
     isPending,
     error,
   };

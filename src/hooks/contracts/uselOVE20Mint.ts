@@ -331,6 +331,9 @@ export const useRewardAvailable = (
     abi: lOVE20MintAbi,
     functionName: 'rewardAvailable',
     args: [tokenAddress],
+    query: {
+      enabled: !!tokenAddress, 
+    },
   });
 
   return {

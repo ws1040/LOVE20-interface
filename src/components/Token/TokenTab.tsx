@@ -1,19 +1,19 @@
-import { useTotalSupply } from '../../hooks/contracts/useLOVE20Token';
 
 import React, { useContext, useState } from 'react';
 import { Tooltip } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
+import { useTotalSupply } from '../../hooks/contracts/useLOVE20Token';
+
 import TokenLabel from './TokenLabel';
 import { TokenContext } from '../../contexts/TokenContext';
+import { formatTokenAmount } from '../../utils/strings';
 
 export default function TokenTab() {
 
   const { token } = useContext(TokenContext) || {};
   const { totalSupply, isPending: isTotalSupplyPending, error: totalSupplyError } = useTotalSupply(token?.address as `0x${string}` || '');
   
-  console.log('totalSupply', totalSupply);//为啥不是 1e9 * 1e18 而是 1e7 * 1e18
-
   // 控制 Tooltip 的显隐 begin
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const handleTooltipToggle = () => {
@@ -28,17 +28,19 @@ export default function TokenTab() {
     return <div>Loading token information...</div>;
   }else{
     return (
-      <div className="p-6 bg-base-100">
+      <div className="p-6 bg-base-100 border-t border-gray-100 mb-4">
       
       <TokenLabel />
 
       <div className="flex items-center">
         <div className="mr-2">
-          <span className="text-sm">已铸币量: </span>
+          <span className="text-sm text-gray-500">已铸币量: </span>
           <span className="text-lg font-semibold text-orange-400">
-            {isTotalSupplyPending 
-              ? 'Loading...' 
-              : `${(Number(totalSupply) / 10 ** Number(process.env.NEXT_PUBLIC_DECIMALS)).toLocaleString()}`}
+            {
+              isTotalSupplyPending 
+                ? 'Loading...' 
+                : formatTokenAmount(totalSupply || 0n)  
+            }
           </span>
         </div>
         <Tooltip

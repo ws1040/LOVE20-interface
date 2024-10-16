@@ -174,6 +174,9 @@ export const useTotalSupply = (token: `0x${string}`) => {
     abi: lOVE20TokenAbi,
     functionName: 'totalSupply',
     args: [],
+    query: {
+      enabled: !!token, 
+    },
   });
 
   return { totalSupply: data as bigint | undefined, isPending, error };

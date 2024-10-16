@@ -3,6 +3,7 @@
 import React, { useContext } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Tooltip } from '@mui/material';
+import Link from 'next/link';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import toast from 'react-hot-toast';
 
@@ -35,6 +36,7 @@ const TokenLabel: React.FC = () => {
               </button>
           </Tooltip>
         </CopyToClipboard>
+        <Link href="/governance" className="text-blue-400 text-sm hover:underline ml-auto">参与治理&gt;&gt;</Link>
       </div>
   );
 };

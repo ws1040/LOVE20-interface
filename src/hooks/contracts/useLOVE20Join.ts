@@ -85,44 +85,25 @@ export const useJoinedAccountsByActionId = (
  * Hook for joinedAmount
  */
 export const useJoinedAmount = (
-  account: `0x${string}`,
+  tokenAddress: `0x${string}`,
   currentRound?: bigint
 ) => {
-  const [joinedAmount, setJoinedAmount] = useState<bigint | undefined>(undefined);
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    // 如果 currentRound 为 undefined 或 BigInt(0)，不进行合约调用
-    if (!currentRound || currentRound === BigInt(0)) {
-      setJoinedAmount(undefined); // 清空数据
-      setIsPending(false);
-      setError(null);
-      return;
-    }
+  const { data, isLoading, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: lOVE20JoinAbi,
+    functionName: 'joinedAmount',
+    args: [tokenAddress, currentRound || BigInt(0)],
+    query: {
+      enabled: !!tokenAddress && currentRound !== undefined && currentRound !== BigInt(0), 
+    },
+  });
 
-    const fetchJoinedAmount = async () => {
-      setIsPending(true);
-      setError(null);
-      try {
-        const { data } = useReadContract({
-          address: CONTRACT_ADDRESS,
-          abi: lOVE20JoinAbi,
-          functionName: 'joinedAmount',
-          args: [account, currentRound],
-        });
-        setJoinedAmount(data);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setIsPending(false);
-      }
-    };
-
-    fetchJoinedAmount();
-  }, [account, currentRound]);
-
-  return { joinedAmount, isPending, error };
+  return {
+    joinedAmount: data as bigint | undefined,
+    isPending: isLoading,
+    error,
+  };
 };
 
 /**
