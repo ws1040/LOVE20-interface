@@ -4,28 +4,8 @@ import { useVotesNums } from '../../hooks/contracts/useLOVE20Vote';
 import { useActionInfosByIds } from '../../hooks/contracts/useLOVE20Submit';
 
 import { TokenContext } from '../../contexts/TokenContext';
-
-interface ActionHead {
-  id: number;
-  author: string;
-  createAtBlock: number;
-}
-
-interface ActionBody {
-  maxStake: number;
-  maxRandomAccounts: number;
-  whiteList: string[];
-  action: string;
-  consensus: string;
-  verificationRule: string;
-  verificationInfoGuide: string;
-}
-
-interface ActionInfo {
-  head: ActionHead;
-  body: ActionBody;
-}
-
+import { ActionInfo } from '../../types/life20types';
+import Link from 'next/link';
 interface ActionRoundListProps {
   currentRound: bigint;
 }
@@ -58,15 +38,17 @@ const ActionRoundList: React.FC<ActionRoundListProps> = ({ currentRound }) => {
       <div className="space-y-4">
         {actionInfos?.map((action : ActionInfo, index: number) => (
           <div key={action.head.id} className="bg-white p-4 rounded-lg mb-4">
-            <div className="font-semibold mb-2">
-              <span className='text-gray-400 text-base mr-1'>{`No.${action.head.id}`}</span>
-              <span className='text-gray-800 text-lg'>{`${action.body.action}`}</span>
-            </div>
-            <p className="leading-tight">{action.body.consensus}</p>
-            <div className="flex justify-between mt-1">
-              <span className="text-sm">投票占比 {(Number(votes?.[index] || 0n) * 100 / Number(totalVotes)).toFixed(1)}%</span>
-              <span className="text-sm">已参与行动代币 -</span>
-            </div>
+            <Link href={`/action/${action.head.id}`} key={action.head.id}>
+              <div className="font-semibold mb-2">
+                <span className='text-gray-400 text-base mr-1'>{`No.${action.head.id}`}</span>
+                <span className='text-gray-800 text-lg'>{`${action.body.action}`}</span>
+              </div>
+              <p className="leading-tight">{action.body.consensus}</p>
+              <div className="flex justify-between mt-1">
+                <span className="text-sm">投票占比 {(Number(votes?.[index] || 0n) * 100 / Number(totalVotes)).toFixed(1)}%</span>
+                <span className="text-sm">已参与行动代币 -</span>
+              </div>
+            </Link>
           </div>
         ))}
       </div>

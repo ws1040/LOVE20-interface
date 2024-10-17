@@ -45,6 +45,9 @@ export const useSubmitMinPerThousand = () => {
       abi: lOVE20SubmitAbi,
       functionName: 'actionInfo',
       args: [tokenAddress, actionId],
+      query: {
+        enabled: !!tokenAddress && actionId !== undefined, 
+      },
     });
   
     return { actionInfo: data as any | undefined, isPending, error };
@@ -120,6 +123,9 @@ export const useSubmitMinPerThousand = () => {
       abi: lOVE20SubmitAbi,
       functionName: 'actionSubmits',
       args: [tokenAddress, round],
+      query: {
+        enabled: !!tokenAddress && !!round 
+      }
     });
   
     return { actionSubmits: data as any[] | undefined, isPending, error };

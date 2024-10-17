@@ -20,7 +20,6 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
         <ConnectButton />
       </header>
     </>
-
   );
 };
 

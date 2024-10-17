@@ -16,9 +16,6 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
     const { rewardAvailable, isPending: isPendingRewardAvailable, error: errorRewardAvailable } = useRewardAvailable(token?.address as `0x${string}` || '');
     const { joinedAmount, isPending: isPendingJoinedAmount, error: errorJoinedAmount } = useJoinedAmount(token?.address as `0x${string}` || '', currentRound || BigInt(0));
 
-    // console.log('rewardAvailable', rewardAvailable);
-    // console.log('joinedAmount', joinedAmount);
-
     return (
         <div className="flex flex-col items-center space-y-4 p-6 bg-base-100">
         

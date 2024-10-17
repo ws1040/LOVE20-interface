@@ -1,6 +1,5 @@
 // hooks/useLove20Join.ts
 
-import { useEffect, useState } from 'react';
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { lOVE20JoinAbi } from '../../abis/LOVE20Join';
 
@@ -86,16 +85,16 @@ export const useJoinedAccountsByActionId = (
  */
 export const useJoinedAmount = (
   tokenAddress: `0x${string}`,
-  currentRound?: bigint
+  round?: bigint
 ) => {
 
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20JoinAbi,
     functionName: 'joinedAmount',
-    args: [tokenAddress, currentRound || BigInt(0)],
+    args: [tokenAddress, round || BigInt(0)],
     query: {
-      enabled: !!tokenAddress && currentRound !== undefined && currentRound !== BigInt(0), 
+      enabled: !!tokenAddress && round !== undefined && round !== BigInt(0), 
     },
   });
 
@@ -119,6 +118,9 @@ export const useJoinedAmountByActionId = (
     abi: lOVE20JoinAbi,
     functionName: 'joinedAmountByActionId',
     args: [tokenAddress, round, actionId],
+    query: {
+      enabled: !!tokenAddress && !!round && actionId !== undefined, 
+    },
   });
 
   return { joinedAmountByActionId: data as bigint | undefined, isPending, error };
@@ -128,16 +130,19 @@ export const useJoinedAmountByActionId = (
  * Hook for joinedAmountByActionIdByAccount
  */
 export const useJoinedAmountByActionIdByAccount = (
-  account: `0x${string}`,
-  param1: bigint,
-  param2: bigint,
-  targetAccount: `0x${string}`
+  tokenAddress: `0x${string}`,
+  round: bigint,
+  actionId: bigint,
+  account: `0x${string}`
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20JoinAbi,
     functionName: 'joinedAmountByActionIdByAccount',
-    args: [account, param1, param2, targetAccount],
+    args: [tokenAddress, round, actionId, account],
+    query: {
+      enabled: !!tokenAddress && !!round && !!account && actionId !== undefined, 
+    },
   });
 
   return { joinedAmountByActionIdByAccount: data as bigint | undefined, isPending, error };
@@ -147,15 +152,18 @@ export const useJoinedAmountByActionIdByAccount = (
  * Hook for lastJoinedRoundByAccountByActionId
  */
 export const useLastJoinedRoundByAccountByActionId = (
-  account1: `0x${string}`,
-  account2: `0x${string}`,
-  param: bigint
+  tokenAddress: `0x${string}`,
+  account: `0x${string}`,
+  actionId: bigint
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20JoinAbi,
     functionName: 'lastJoinedRoundByAccountByActionId',
-    args: [account1, account2, param],
+    args: [tokenAddress, account, actionId],
+    query: {
+      enabled: !!tokenAddress && !!account, 
+    },
   });
 
   return { lastJoinedRound: data as bigint | undefined, isPending, error };
@@ -330,13 +338,17 @@ export const useVerificationInfo = (
   tokenAddress: `0x${string}`,
   round: bigint,
   actionId: bigint,
-  accountAddress: `0x${string}`
+  account: `0x${string}`,
+  isJoined: boolean
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: lOVE20JoinAbi,
     functionName: 'verificationInfo',
-    args: [tokenAddress, round, actionId, accountAddress],
+    args: [tokenAddress, round, actionId, account],
+    query: {
+      enabled: isJoined && !!tokenAddress && !!round && !!account && actionId !== undefined, 
+    },
   });
 
   return { verificationInfo: data as string | undefined, isPending, error };

@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import Header from '../../components/Header';
 
 import { useCurrentRound } from '../../hooks/contracts/useLOVE20Join';
@@ -14,10 +13,6 @@ const ActingPage = () => {
 
   return (
     <>
-      <Head>
-        <title>社区首页 - LIFE20</title>
-        <meta name="LIFE20社区" content="A Web3 DApp for Life20 token management" />
-      </Head>
       <Header title="社区首页" />
       <main className="flex-grow">
         <TokenTab />
