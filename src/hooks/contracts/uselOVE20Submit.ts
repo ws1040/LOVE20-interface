@@ -1,5 +1,5 @@
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { lOVE20SubmitAbi } from '../../abis/LOVE20Submit';
+import { LOVE20SubmitAbi } from '../../abis/LOVE20Submit';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_SUBMIT as `0x${string}`;
 
@@ -14,7 +14,7 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_SUBMIT as `0x$
 export const useSubmitMinPerThousand = () => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'SUBMIT_MIN_PER_THOUSAND',
       args: [],
     });
@@ -28,7 +28,7 @@ export const useSubmitMinPerThousand = () => {
   export const useActionIdsByAuthor = (tokenAddress: `0x${string}`, author: `0x${string}`) => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'actionIdsByAuthor',
       args: [tokenAddress, author],
     });
@@ -42,7 +42,7 @@ export const useSubmitMinPerThousand = () => {
   export const useActionInfo = (tokenAddress: `0x${string}`, actionId: bigint) => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'actionInfo',
       args: [tokenAddress, actionId],
       query: {
@@ -59,7 +59,7 @@ export const useSubmitMinPerThousand = () => {
   export const useActionInfos = (tokenAddress: `0x${string}`, index: bigint) => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'actionInfos',
       args: [tokenAddress, index],
     });
@@ -73,7 +73,7 @@ export const useSubmitMinPerThousand = () => {
   export const useActionInfosByIds = (tokenAddress: `0x${string}`, actionIds: bigint[]) => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'actionInfosByIds',
       args: [tokenAddress, actionIds],
     });
@@ -92,7 +92,7 @@ export const useSubmitMinPerThousand = () => {
   ) => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'actionInfosByPage',
       args: [tokenAddress, start, end, reverse],
     });
@@ -106,7 +106,7 @@ export const useSubmitMinPerThousand = () => {
   export const useActionNum = (tokenAddress: `0x${string}`) => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'actionNum',
       args: [tokenAddress],
     });
@@ -120,7 +120,7 @@ export const useSubmitMinPerThousand = () => {
   export const useActionSubmits = (tokenAddress: `0x${string}`, round: bigint) => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'actionSubmits',
       args: [tokenAddress, round],
       query: {
@@ -141,7 +141,7 @@ export const useSubmitMinPerThousand = () => {
   ) => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'authorActionIds',
       args: [address1, address2, index],
     });
@@ -155,7 +155,7 @@ export const useSubmitMinPerThousand = () => {
   export const useCanSubmit = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'canSubmit',
       args: [tokenAddress, accountAddress],
     });
@@ -169,7 +169,7 @@ export const useSubmitMinPerThousand = () => {
   export const useCurrentRound = () => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'currentRound',
       args: [],
     });
@@ -187,7 +187,7 @@ export const useSubmitMinPerThousand = () => {
   ) => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'isSubmitted',
       args: [tokenAddress, round, actionId],
     });
@@ -201,7 +201,7 @@ export const useSubmitMinPerThousand = () => {
   export const useOriginBlocks = () => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'originBlocks',
       args: [],
     });
@@ -215,7 +215,7 @@ export const useSubmitMinPerThousand = () => {
   export const useRoundBlocks = () => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'roundBlocks',
       args: [],
     });
@@ -229,7 +229,7 @@ export const useSubmitMinPerThousand = () => {
   export const useRoundByBlockNumber = (blockNumber: bigint) => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'roundByBlockNumber',
       args: [blockNumber],
     });
@@ -243,7 +243,7 @@ export const useSubmitMinPerThousand = () => {
   export const useRoundRange = (round: bigint) => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'roundRange',
       args: [round],
     });
@@ -257,7 +257,7 @@ export const useSubmitMinPerThousand = () => {
   export const useStakeAddress = () => {
     const { data, isPending, error } = useReadContract({
       address: CONTRACT_ADDRESS,
-      abi: lOVE20SubmitAbi,
+      abi: LOVE20SubmitAbi,
       functionName: 'stakeAddress',
       args: [],
     });
@@ -284,7 +284,7 @@ export const useSubmitMinPerThousand = () => {
       try {
         await writeContract({
           address: CONTRACT_ADDRESS,
-          abi: lOVE20SubmitAbi,
+          abi: LOVE20SubmitAbi,
           functionName: 'submit',
           args: [tokenAddress, actionId],
         });
@@ -326,7 +326,7 @@ export const useSubmitMinPerThousand = () => {
       try {
         const tx = await writeContract({
           address: CONTRACT_ADDRESS,
-          abi: lOVE20SubmitAbi,
+          abi: LOVE20SubmitAbi,
           functionName: 'submitNewAction',
           args: [tokenAddress, actionBody],
         });

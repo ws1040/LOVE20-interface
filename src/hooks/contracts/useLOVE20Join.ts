@@ -1,7 +1,7 @@
 // hooks/useLove20Join.ts
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { lOVE20JoinAbi } from '../../abis/LOVE20Join';
+import { LOVE20JoinAbi } from '../../abis/LOVE20Join';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN as `0x${string}`;
 
@@ -21,7 +21,7 @@ export const useCaculateRandomAccounts = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: '_caculateRandomAccounts',
     args: [randomSeed, num, tokenAddress, round, actionId],
   });
@@ -40,7 +40,7 @@ export const useCumulatedJoinedAmountsByActionId = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'cumulatedJoinedAmountsByActionId',
     args: [account, param1, param2, param3],
   });
@@ -54,7 +54,7 @@ export const useCumulatedJoinedAmountsByActionId = (
 export const useCurrentRound = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'currentRound',
   });
 
@@ -72,7 +72,7 @@ export const useJoinedAccountsByActionId = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'joinedAccountsByActionId',
     args: [tokenAddress, round, actionId, accountIndex],
   });
@@ -90,11 +90,11 @@ export const useJoinedAmount = (
 
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'joinedAmount',
     args: [tokenAddress, round || BigInt(0)],
     query: {
-      enabled: !!tokenAddress && round !== undefined && round !== BigInt(0), 
+      enabled: !!tokenAddress && !!round, 
     },
   });
 
@@ -115,7 +115,7 @@ export const useJoinedAmountByActionId = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'joinedAmountByActionId',
     args: [tokenAddress, round, actionId],
     query: {
@@ -137,7 +137,7 @@ export const useJoinedAmountByActionIdByAccount = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'joinedAmountByActionIdByAccount',
     args: [tokenAddress, round, actionId, account],
     query: {
@@ -158,7 +158,7 @@ export const useLastJoinedRoundByAccountByActionId = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'lastJoinedRoundByAccountByActionId',
     args: [tokenAddress, account, actionId],
     query: {
@@ -175,7 +175,7 @@ export const useLastJoinedRoundByAccountByActionId = (
 export const useOriginBlocks = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'originBlocks',
   });
 
@@ -194,7 +194,7 @@ export const useRandomAccounts = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'randomAccounts',
     args: [tokenAddress, round, actionId, randomSeed, num],
   });
@@ -208,7 +208,7 @@ export const useRandomAccounts = (
 export const useRoundBlocks = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'roundBlocks',
   });
 
@@ -221,7 +221,7 @@ export const useRoundBlocks = () => {
 export const useRoundByBlockNumber = (blockNumber: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'roundByBlockNumber',
     args: [blockNumber],
   });
@@ -235,7 +235,7 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
 export const useRoundRange = (round: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'roundRange',
     args: [round],
   });
@@ -258,7 +258,7 @@ export const useStakedActionIdsByAccount = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'stakedActionIdsByAccount',
     args: [account1, account2, param],
   });
@@ -275,7 +275,7 @@ export const useStakedAmountByAccount = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'stakedAmountByAccount',
     args: [tokenAddress, account],
   });
@@ -293,7 +293,7 @@ export const useStakedAmountByAccountByActionId = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'stakedAmountByAccountByActionId',
     args: [account1, account2, actionId],
   });
@@ -310,7 +310,7 @@ export const useStakedAmountByActionId = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'stakedAmountByActionId',
     args: [account, actionId],
   });
@@ -324,7 +324,7 @@ export const useStakedAmountByActionId = (
 export const useSubmitAddress = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'submitAddress',
   });
 
@@ -343,7 +343,7 @@ export const useVerificationInfo = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'verificationInfo',
     args: [tokenAddress, round, actionId, account],
     query: {
@@ -360,7 +360,7 @@ export const useVerificationInfo = (
 export const useVerificationInfoStrings = (index: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'verificationInfoStrings',
     args: [index],
   });
@@ -379,7 +379,7 @@ export const useVerificationInfos = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'verificationInfos',
     args: [account, param1, param2, anotherAccount],
   });
@@ -393,7 +393,7 @@ export const useVerificationInfos = (
 export const useVoteAddress = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20JoinAbi,
+    abi: LOVE20JoinAbi,
     functionName: 'voteAddress',
   });
 
@@ -425,7 +425,7 @@ export const useGenerateAndStoreRandomAccounts = () => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20JoinAbi,
+        abi: LOVE20JoinAbi,
         functionName: 'generateAndStoreRandomAccounts',
         args: [tokenAddress, round, actionId, randomSeed, num],
       });
@@ -462,7 +462,7 @@ export const useJoin = () => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20JoinAbi,
+        abi: LOVE20JoinAbi,
         functionName: 'join',
         args: [tokenAddress, actionId, additionalStakeAmount, verificationInfo_, rounds],
       });
@@ -498,7 +498,7 @@ export const useUpdateVerificationInfo = () => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20JoinAbi,
+        abi: LOVE20JoinAbi,
         functionName: 'updateVerificationInfo',
         args: [tokenAddress, actionId, aVerificationInfo, rounds],
       });
@@ -532,7 +532,7 @@ export const useWithdraw = () => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20JoinAbi,
+        abi: LOVE20JoinAbi,
         functionName: 'withdraw',
         args: [tokenAddress, actionId],
       });

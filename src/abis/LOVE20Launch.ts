@@ -1,7 +1,7 @@
 
 import { Abi } from 'abitype';
 
-export const lOVE20LaunchAbi = [
+export const LOVE20LaunchAbi = [
   {
     "type": "function",
     "name": "FIRST_PARENT_TOKEN_FUNDRAISING_GOAL",

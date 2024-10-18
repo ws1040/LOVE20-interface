@@ -5,12 +5,12 @@ import Link from 'next/link';
 import { useCurrentRound, useJoinedAmountByActionIdByAccount, useJoinedAmountByActionId, useVerificationInfo } from '../../hooks/contracts/useLOVE20Join';
 import { TokenContext } from '../../contexts/TokenContext';
 
-interface ActionPanelForJoinProps {
+interface ActionPanelForVoteProps {
   actionId: bigint;
   onRoundChange: (currentRound: bigint) => void;
 }
   
-const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRoundChange }) => {
+const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRoundChange }) => {
   const { address: account } = useAccount();  
   const { token } = useContext(TokenContext) || {};
   const { currentRound } = useCurrentRound();
@@ -71,5 +71,5 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
   );
 };
 
-export default ActionPanelForJoin;
+export default ActionPanelForVote;
 

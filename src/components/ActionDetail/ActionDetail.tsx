@@ -8,6 +8,7 @@ import { useActionSubmits } from '../../hooks/contracts/useLOVE20Submit';
 import { ActionSubmit } from '../../types/life20types';
 import { TokenContext } from '../../contexts/TokenContext';
 import AddressWithCopyButton from '../Common/AddressWithCopyButton';
+import Loading from '../Common/Loading';
 
 interface ActivityDetailProps {
   actionId: bigint;
@@ -90,7 +91,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId , round}) => {
       </div>
 
       {(isPendingActionInfo || isPendingActionSubmits) && (
-        <div className="text-center text-sm text-gray-500">加载中...</div>
+        <Loading /> 
       )}
 
       {(errorActionInfo || errorActionSubmits) && (

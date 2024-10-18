@@ -4,6 +4,7 @@ import { useJoinedAmount } from '../../hooks/contracts/useLOVE20Join';
 
 import { TokenContext } from '../../contexts/TokenContext';
 import { formatTokenAmount } from '../../utils/strings';
+import Loading from '../Common/Loading';
 
 interface ActDataPanelProps {
   currentRound: bigint;
@@ -29,7 +30,7 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
             <span className="text-2xl font-bold text-orange-400">
             {
                 isPendingRewardAvailable || rewardAvailable === undefined ? 
-                    'Loading...' : 
+                    <Loading /> : 
                     formatTokenAmount(rewardAvailable * 99n / 10000n)
             }
             </span>
@@ -37,7 +38,7 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
             <div className="flex flex-col items-center">
             <span className="text-sm text-gray-500">参与行动代币</span>
             <span className="text-2xl font-bold text-orange-400">
-                {isPendingJoinedAmount ? 'Loading...' : formatTokenAmount(joinedAmount || BigInt(0))}
+                {isPendingJoinedAmount ? <Loading /> : formatTokenAmount(joinedAmount || BigInt(0))}
             </span>
             </div>
         </div>

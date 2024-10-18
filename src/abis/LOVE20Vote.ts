@@ -1,7 +1,7 @@
 
 import { Abi } from 'abitype';
 
-export const lOVE20VoteAbi = [
+export const LOVE20VoteAbi = [
   {
     "type": "constructor",
     "inputs": [

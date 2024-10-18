@@ -6,7 +6,11 @@ import Link from 'next/link';
 import AddressWithCopyButton from '../Common/AddressWithCopyButton';
 import { TokenContext } from '../../contexts/TokenContext';
 
-const TokenLabel: React.FC = () => {
+interface TokenLabelProps {
+  showGovernanceLink?: boolean;
+}
+
+const TokenLabel: React.FC<TokenLabelProps> = ({ showGovernanceLink = false }) => {
 
   const tokenContext = useContext(TokenContext);
   if (!tokenContext || !tokenContext.token) {
@@ -24,7 +28,7 @@ const TokenLabel: React.FC = () => {
           </div>
         </div>
         
-        <Link href="/governance" className="text-blue-400 text-sm hover:underline ml-auto">参与治理&gt;&gt;</Link>
+        {showGovernanceLink && <Link href="/governance" className="text-blue-400 text-sm hover:underline ml-auto">参与治理&gt;&gt;</Link>}
       </div>
   );
 };

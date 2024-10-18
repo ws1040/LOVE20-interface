@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { lOVE20VoteAbi } from '../../abis/LOVE20Vote';
+import { LOVE20VoteAbi } from '../../abis/LOVE20Vote';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_VOTE as `0x${string}`;
 
@@ -21,7 +21,7 @@ export const useCanBeVoted = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'canBeVoted',
     args: [tokenAddress, round, actionIds],
   });
@@ -38,12 +38,12 @@ export const useCanVote = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'canVote',
     args: [tokenAddress, accountAddress],
   });
 
-  return { canVote: data as boolean | undefined, isPending, error };
+  return { canVote: data as boolean, isPending, error };
 };
 
 /**
@@ -52,12 +52,12 @@ export const useCanVote = (
 export const useCurrentRound = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'currentRound',
     args: [],
   });
 
-  return { currentRound: data as bigint | undefined, isPending, error };
+  return { currentRound: data as bigint, isPending, error };
 };
 
 /**
@@ -70,12 +70,12 @@ export const useIsActionIdVoted = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'isActionIdVoted',
     args: [tokenAddress, round, actionId],
   });
 
-  return { isActionIdVoted: data as boolean | undefined, isPending, error };
+  return { isActionIdVoted: data as boolean, isPending, error };
 };
 
 /**
@@ -87,7 +87,7 @@ export const useMaxVotesNum = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'maxVotesNum',
     args: [tokenAddress, accountAddress],
   });
@@ -101,7 +101,7 @@ export const useMaxVotesNum = (
 export const useOriginBlocks = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'originBlocks',
     args: [],
   });
@@ -115,7 +115,7 @@ export const useOriginBlocks = () => {
 export const useRoundBlocks = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'roundBlocks',
     args: [],
   });
@@ -129,7 +129,7 @@ export const useRoundBlocks = () => {
 export const useRoundByBlockNumber = (blockNumber: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'roundByBlockNumber',
     args: [blockNumber],
   });
@@ -143,7 +143,7 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
 export const useRoundRange = (round: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'roundRange',
     args: [round],
   });
@@ -162,7 +162,7 @@ export const useRoundRange = (round: bigint) => {
 export const useStakeAddress = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'stakeAddress',
     args: [],
   });
@@ -176,7 +176,7 @@ export const useStakeAddress = () => {
 export const useSubmitAddress = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'submitAddress',
     args: [],
   });
@@ -194,7 +194,7 @@ export const useVotedActionIds = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'votedActionIds',
     args: [account, round, actionId],
   });
@@ -213,7 +213,7 @@ export const useVotedActionIdsByAccount = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'votedActionIdsByAccount',
     args: [account, round, anotherAccount, actionId],
   });
@@ -230,7 +230,7 @@ export const useVotesNum = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'votesNum',
     args: [tokenAddress, round],
   });
@@ -252,13 +252,16 @@ export const useVotesNumByAccount = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'votesNumByAccount',
     args: [tokenAddress, round, accountAddress],
+    query: {
+      enabled: !!tokenAddress && !!accountAddress && !!round,
+    },
   });
 
   return {
-    votesNumByAccount: data as bigint | undefined,
+    votesNumByAccount: data as bigint,
     isPending,
     error,
   };
@@ -275,7 +278,7 @@ export const useVotesNumByAccountByActionId = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'votesNumByAccountByActionId',
     args: [tokenAddress, round, accountAddress, actionId],
   });
@@ -293,7 +296,7 @@ export const useVotesNumByActionId = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'votesNumByActionId',
     args: [tokenAddress, round, actionId],
   });
@@ -311,7 +314,7 @@ export const useVotesNums = (
 
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'votesNums',
     args: [tokenAddress, round || BigInt(0)],
     query: {
@@ -337,7 +340,7 @@ export const useVotesNumsByAccount = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'votesNumsByAccount',
     args: [tokenAddress, round, accountAddress],
   });
@@ -361,7 +364,7 @@ export const useVotesNumsByAccountByActionIds = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'votesNumsByAccountByActionIds',
     args: [tokenAddress, round, accountAddress, actionIds],
   });
@@ -379,7 +382,7 @@ export const useVotesNumsByActionIds = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20VoteAbi,
+    abi: LOVE20VoteAbi,
     functionName: 'votesNumsByActionIds',
     args: [tokenAddress, round, actionIds],
   });
@@ -410,7 +413,7 @@ export function useVote() {
     try {
       await writeContract?.({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20VoteAbi,
+        abi: LOVE20VoteAbi,
         functionName: 'vote',
         args: [tokenAddress, actionIds, votes],
       });

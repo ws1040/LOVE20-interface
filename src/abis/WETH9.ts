@@ -1,7 +1,7 @@
 
 import { Abi } from 'abitype';
 
-export const wETH9Abi = [
+export const WETH9Abi = [
   {
     "type": "fallback",
     "stateMutability": "payable"

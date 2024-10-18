@@ -1,7 +1,7 @@
 // hooks/useLove20Token.ts
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { lOVE20TokenAbi } from '../../abis/LOVE20Token';
+import { LOVE20TokenAbi } from '../../abis/LOVE20Token';
 
 
 /* =======================
@@ -16,7 +16,7 @@ import { lOVE20TokenAbi } from '../../abis/LOVE20Token';
 export const useAllowance = (token: `0x${string}`, owner: `0x${string}`, spender: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: token,
-    abi: lOVE20TokenAbi,
+    abi: LOVE20TokenAbi,
     functionName: 'allowance',
     args: [owner, spender],
   });
@@ -31,7 +31,7 @@ export const useAllowance = (token: `0x${string}`, owner: `0x${string}`, spender
 export const useBalanceOf = (token: `0x${string}`, account: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: token,
-    abi: lOVE20TokenAbi,
+    abi: LOVE20TokenAbi,
     functionName: 'balanceOf',
     args: [account],
   });
@@ -45,7 +45,7 @@ export const useBalanceOf = (token: `0x${string}`, account: `0x${string}`) => {
 export const useDecimals = (token: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: token,
-    abi: lOVE20TokenAbi,
+    abi: LOVE20TokenAbi,
     functionName: 'decimals',
     args: [],
   });
@@ -59,7 +59,7 @@ export const useDecimals = (token: `0x${string}`) => {
 export const useInitialized = (token: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: token,
-    abi: lOVE20TokenAbi,
+    abi: LOVE20TokenAbi,
     functionName: 'initialized',
     args: [],
   });
@@ -73,7 +73,7 @@ export const useInitialized = (token: `0x${string}`) => {
 export const useMaxSupply = (token: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: token,
-    abi: lOVE20TokenAbi,
+    abi: LOVE20TokenAbi,
     functionName: 'maxSupply',
     args: [],
   });
@@ -87,7 +87,7 @@ export const useMaxSupply = (token: `0x${string}`) => {
 export const useMintableAddress = (token: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: token,
-    abi: lOVE20TokenAbi,
+    abi: LOVE20TokenAbi,
     functionName: 'mintableAddress',
     args: [],
   });
@@ -101,7 +101,7 @@ export const useMintableAddress = (token: `0x${string}`) => {
 export const useName = (token: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: token,
-    abi: lOVE20TokenAbi,
+    abi: LOVE20TokenAbi,
     functionName: 'name',
     args: [],
   });
@@ -115,7 +115,7 @@ export const useName = (token: `0x${string}`) => {
 export const useParentPool = (token: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: token,
-    abi: lOVE20TokenAbi,
+    abi: LOVE20TokenAbi,
     functionName: 'parentPool',
     args: [],
   });
@@ -129,7 +129,7 @@ export const useParentPool = (token: `0x${string}`) => {
 export const useParentTokenAddress = (token: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: token,
-    abi: lOVE20TokenAbi,
+    abi: LOVE20TokenAbi,
     functionName: 'parentTokenAddress',
     args: [],
   });
@@ -143,7 +143,7 @@ export const useParentTokenAddress = (token: `0x${string}`) => {
 export const useReentrant = (token: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: token,
-    abi: lOVE20TokenAbi,
+    abi: LOVE20TokenAbi,
     functionName: 'reentrant',
     args: [],
   });
@@ -157,7 +157,7 @@ export const useReentrant = (token: `0x${string}`) => {
 export const useSymbol = (token: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: token,
-    abi: lOVE20TokenAbi,
+    abi: LOVE20TokenAbi,
     functionName: 'symbol',
     args: [],
   });
@@ -171,7 +171,7 @@ export const useSymbol = (token: `0x${string}`) => {
 export const useTotalSupply = (token: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: token,
-    abi: lOVE20TokenAbi,
+    abi: LOVE20TokenAbi,
     functionName: 'totalSupply',
     args: [],
     query: {
@@ -204,7 +204,7 @@ export function useApprove(token: `0x${string}`) {
       try {
         await writeContract({
           address: token,
-          abi: lOVE20TokenAbi,
+          abi: LOVE20TokenAbi,
           functionName: 'approve',
           args: [spender, value],
         });
@@ -235,7 +235,7 @@ export function useApprove(token: `0x${string}`) {
       try {
         await writeContract({
           address: token,
-          abi: lOVE20TokenAbi,
+          abi: LOVE20TokenAbi,
           functionName: 'burn',
           args: [amount],
         });
@@ -266,7 +266,7 @@ export function useApprove(token: `0x${string}`) {
       try {
         await writeContract({
           address: token,
-          abi: lOVE20TokenAbi,
+          abi: LOVE20TokenAbi,
           functionName: 'burnForParentToken',
           args: [amount],
         });
@@ -297,7 +297,7 @@ export function useApprove(token: `0x${string}`) {
       try {
         await writeContract({
           address: token,
-          abi: lOVE20TokenAbi,
+          abi: LOVE20TokenAbi,
           functionName: 'initialize',
           args: [mintableAddress, parentTokenAddress],
         });
@@ -328,7 +328,7 @@ export function useApprove(token: `0x${string}`) {
       try {
         await writeContract({
           address: token,
-          abi: lOVE20TokenAbi,
+          abi: LOVE20TokenAbi,
           functionName: 'mint',
           args: [to, amount],
         });
@@ -359,7 +359,7 @@ export function useApprove(token: `0x${string}`) {
       try {
         await writeContract({
           address: token,
-          abi: lOVE20TokenAbi,
+          abi: LOVE20TokenAbi,
           functionName: 'transfer',
           args: [to, value],
         });
@@ -390,7 +390,7 @@ export function useApprove(token: `0x${string}`) {
       try {
         await writeContract({
           address: token,
-          abi: lOVE20TokenAbi,
+          abi: LOVE20TokenAbi,
           functionName: 'transferFrom',
           args: [from, to, value],
         });

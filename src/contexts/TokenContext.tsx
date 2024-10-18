@@ -6,7 +6,11 @@ import React, { createContext, useState, useEffect, ReactNode } from 'react';
 export interface Token {
   name: string;
   symbol: string;
-  address: string;
+  address: `0x${string}`;
+  parentTokenAddress: `0x${string}`;
+  parentTokenSymbol: string;
+  slTokenAddress: `0x${string}`;
+  stTokenAddress: `0x${string}`;
 }
 
 // 定义 Context 的类型
@@ -36,7 +40,11 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
         setToken({ 
           name: process.env.NEXT_PUBLIC_FIRST_TOKEN_NAME || '', 
           symbol: process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || '', 
-          address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_TOKEN || '' 
+          address: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_TOKEN || '') as `0x${string}`,
+          parentTokenAddress: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN || '') as `0x${string}`,
+          parentTokenSymbol: process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL || '',
+          slTokenAddress: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_SL_TOKEN || '') as `0x${string}`,
+          stTokenAddress: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_ST_TOKEN || '') as `0x${string}`,
         });
       }
     } catch (error) {

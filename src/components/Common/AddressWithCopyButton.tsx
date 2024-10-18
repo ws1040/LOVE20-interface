@@ -1,4 +1,4 @@
-// components/AddressWithCopyButton.tsx
+// components/Common/AddressWithCopyButton.tsx
 import toast from 'react-hot-toast';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { ClipboardDocumentIcon } from '@heroicons/react/24/outline';

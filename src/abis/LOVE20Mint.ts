@@ -1,7 +1,7 @@
 
 import { Abi } from 'abitype';
 
-export const lOVE20MintAbi = [
+export const LOVE20MintAbi = [
   {
     "type": "constructor",
     "inputs": [

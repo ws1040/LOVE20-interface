@@ -6,20 +6,15 @@ import { useActionInfosByIds } from '../../hooks/contracts/useLOVE20Submit';
 import { TokenContext } from '../../contexts/TokenContext';
 import { ActionInfo } from '../../types/life20types';
 import Link from 'next/link';
-interface ActionRoundListProps {
+interface JoiningActionListProps {
   currentRound: bigint;
 }
-const ActionRoundList: React.FC<ActionRoundListProps> = ({ currentRound }) => {
+const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) => {
 
   const { token } = useContext(TokenContext) || {};
 
   const { actionIds, votes, isPending: isPendingVotesNums, error: errorVotesNums } = useVotesNums(token?.address as `0x${string}` || '', currentRound || BigInt(0));
   const { actionInfos, isPending: isPendingActionInfosByIds, error: errorActionInfosByIds } = useActionInfosByIds(token?.address as `0x${string}` || '', actionIds || []);
-
-  console.log('----------------------------------');
-  console.log('actionIds', actionIds);
-  console.log('votes', votes);
-  console.log('actionInfos', actionInfos);
 
   if (isPendingVotesNums || isPendingActionInfosByIds) {
     return <div>加载中...</div>;
@@ -38,7 +33,7 @@ const ActionRoundList: React.FC<ActionRoundListProps> = ({ currentRound }) => {
       <div className="space-y-4">
         {actionInfos?.map((action : ActionInfo, index: number) => (
           <div key={action.head.id} className="bg-white p-4 rounded-lg mb-4">
-            <Link href={`/action/${action.head.id}`} key={action.head.id}>
+            <Link href={`/action/${action.head.id}?type=join`} key={action.head.id}>
               <div className="font-semibold mb-2">
                 <span className='text-gray-400 text-base mr-1'>{`No.${action.head.id}`}</span>
                 <span className='text-gray-800 text-lg'>{`${action.body.action}`}</span>
@@ -56,4 +51,4 @@ const ActionRoundList: React.FC<ActionRoundListProps> = ({ currentRound }) => {
   );
 };
 
-export default ActionRoundList;
+export default JoiningActionList;

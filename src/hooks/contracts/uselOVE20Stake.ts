@@ -1,5 +1,5 @@
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { lOVE20StakeAbi } from '../../abis/LOVE20Stake';
+import { LOVE20StakeAbi } from '../../abis/LOVE20Stake';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`;
 
@@ -13,7 +13,7 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${
 export const usePromisedWaitingRoundsMax = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'PROMISED_WAITING_ROUNDS_MAX',
     args: [],
   });
@@ -27,7 +27,7 @@ export const usePromisedWaitingRoundsMax = () => {
 export const usePromisedWaitingRoundsMin = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'PROMISED_WAITING_ROUNDS_MIN',
     args: [],
   });
@@ -43,7 +43,7 @@ export const usePromisedWaitingRoundsMin = () => {
 export const useAccountStakeStatus = (token: `0x${string}`, account: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'accountStakeStatus',
     args: [token, account],
   });
@@ -67,7 +67,7 @@ export const useAccountStakeStatus = (token: `0x${string}`, account: `0x${string
 export const useCaculateGovVotes = (lpAmount: bigint, promisedWaitingRounds: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'caculateGovVotes',
     args: [lpAmount, promisedWaitingRounds],
   });
@@ -83,7 +83,7 @@ export const useCaculateGovVotes = (lpAmount: bigint, promisedWaitingRounds: big
 export const useCumulatedTokenAmount = (tokenAddress: `0x${string}`, round: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'cumulatedTokenAmount',
     args: [tokenAddress, round],
   });
@@ -104,7 +104,7 @@ export const useCumulatedTokenAmountByAccount = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'cumulatedTokenAmountByAccount',
     args: [tokenAddress, round, accountAddress],
   });
@@ -118,7 +118,7 @@ export const useCumulatedTokenAmountByAccount = (
 export const useCurrentRound = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'currentRound',
     args: [],
   });
@@ -127,15 +127,15 @@ export const useCurrentRound = () => {
 };
 
 /**
- * 获取账户的治理投票数
- * @param account 账户地址
+ * 获取token的总治理票数
+ * @param token 代币地址
  */
-export const useGovVotesNum = (account: `0x${string}`) => {
+export const useGovVotesNum = (token: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'govVotesNum',
-    args: [account],
+    args: [token],
   });
 
   return { govVotesNum: data as bigint | undefined, isPending, error };
@@ -147,7 +147,7 @@ export const useGovVotesNum = (account: `0x${string}`) => {
 export const useOriginBlocks = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'originBlocks',
     args: [],
   });
@@ -161,7 +161,7 @@ export const useOriginBlocks = () => {
 export const useRoundBlocks = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'roundBlocks',
     args: [],
   });
@@ -176,7 +176,7 @@ export const useRoundBlocks = () => {
 export const useRoundByBlockNumber = (blockNumber: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'roundByBlockNumber',
     args: [blockNumber],
   });
@@ -191,7 +191,7 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
 export const useRoundRange = (round: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'roundRange',
     args: [round],
   });
@@ -219,7 +219,7 @@ export const useStakeUpdateRoundsByPage = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'stakeUpdateRoundsByPage',
     args: [tokenAddress, start, end, reverse],
   });
@@ -234,7 +234,7 @@ export const useStakeUpdateRoundsByPage = (
 export const useStakedLiquidityAddress = (account: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'stakedLiquidityAddress',
     args: [account],
   });
@@ -249,7 +249,7 @@ export const useStakedLiquidityAddress = (account: `0x${string}`) => {
 export const useStakedTokenAddress = (account: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'stakedTokenAddress',
     args: [account],
   });
@@ -263,7 +263,7 @@ export const useStakedTokenAddress = (account: `0x${string}`) => {
 export const useUniswapV2Factory = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'uniswapV2Factory',
     args: [],
   });
@@ -279,12 +279,15 @@ export const useUniswapV2Factory = () => {
 export const useValidGovVotes = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20StakeAbi,
+    abi: LOVE20StakeAbi,
     functionName: 'validGovVotes',
     args: [tokenAddress, accountAddress],
+    query: {
+      enabled: !!tokenAddress && !!accountAddress,
+    },
   });
 
-  return { validGovVotes: data as bigint | undefined, isPending, error };
+  return { validGovVotes: data as bigint, isPending, error };
 };
 
 // =======================
@@ -310,7 +313,7 @@ export const useInitToken = () => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20StakeAbi,
+        abi: LOVE20StakeAbi,
         functionName: 'initToken',
         args: [tokenAddress],
       });
@@ -355,7 +358,7 @@ export const useStakeLiquidity = () => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20StakeAbi,
+        abi: LOVE20StakeAbi,
         functionName: 'stakeLiquidity',
         args: [tokenAddress, tokenAmountForLP, parentTokenAmountForLP, promisedWaitingRounds, to],
       });
@@ -405,7 +408,7 @@ export const useStakeToken = () => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20StakeAbi,
+        abi: LOVE20StakeAbi,
         functionName: 'stakeToken',
         args: [tokenAddress, tokenAmount, promisedWaitingRounds, to],
       });
@@ -447,7 +450,7 @@ export const useUnstake = () => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20StakeAbi,
+        abi: LOVE20StakeAbi,
         functionName: 'unstake',
         args: [tokenAddress],
       });
@@ -482,7 +485,7 @@ export const useWithdraw = () => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20StakeAbi,
+        abi: LOVE20StakeAbi,
         functionName: 'withdraw',
         args: [tokenAddress],
       });

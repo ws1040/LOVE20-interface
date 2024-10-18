@@ -7,6 +7,7 @@ import { useTotalSupply } from '../../hooks/contracts/useLOVE20Token';
 import TokenLabel from './TokenLabel';
 import { TokenContext } from '../../contexts/TokenContext';
 import { formatTokenAmount } from '../../utils/strings';
+import Loading from '../Common/Loading';
 
 export default function TokenTab() {
 
@@ -29,7 +30,7 @@ export default function TokenTab() {
     return (
       <div className="p-6 bg-base-100 border-t border-gray-100 mb-4">
       
-      <TokenLabel />
+      <TokenLabel showGovernanceLink={true} />
 
       <div className="flex items-center">
         <div className="mr-2">
@@ -37,7 +38,7 @@ export default function TokenTab() {
           <span className="text-lg font-semibold text-orange-400">
             {
               isTotalSupplyPending 
-                ? 'Loading...' 
+                ? <Loading /> 
                 : formatTokenAmount(totalSupply || 0n)  
             }
           </span>

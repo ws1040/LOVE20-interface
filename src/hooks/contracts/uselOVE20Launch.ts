@@ -1,7 +1,7 @@
-// hooks/useLove20Launch.ts
+// hooks/contracts/useLOVE20Launch.ts
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { lOVE20LaunchAbi } from '../../abis/LOVE20Launch';
+import { LOVE20LaunchAbi } from '../../abis/LOVE20Launch';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x${string}`;
 
@@ -15,7 +15,7 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x$
 export const useFirstParentTokenFundraisingGoal = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'FIRST_PARENT_TOKEN_FUNDRAISING_GOAL',
     args: [],
   });
@@ -29,7 +29,7 @@ export const useFirstParentTokenFundraisingGoal = () => {
 export const useLaunchAmount = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'LAUNCH_AMOUNT',
     args: [],
   });
@@ -43,7 +43,7 @@ export const useLaunchAmount = () => {
 export const useParentTokenFundraisingGoal = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'PARENT_TOKEN_FUNDRAISING_GOAL',
     args: [],
   });
@@ -57,7 +57,7 @@ export const useParentTokenFundraisingGoal = () => {
 export const useSecondHalfMinBlocks = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'SECOND_HALF_MIN_BLOCKS',
     args: [],
   });
@@ -71,7 +71,7 @@ export const useSecondHalfMinBlocks = () => {
 export const useTokenSymbolLength = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'TOKEN_SYMBOL_LENGTH',
     args: [],
   });
@@ -85,7 +85,7 @@ export const useTokenSymbolLength = () => {
 export const useTotalSupply = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'TOTAL_SUPPLY',
     args: [],
   });
@@ -99,7 +99,7 @@ export const useTotalSupply = () => {
 export const useLaunchedChildTokens = (parentAddress: `0x${string}`, index: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: '_launchedChildTokens',
     args: [parentAddress, index],
   });
@@ -113,7 +113,7 @@ export const useLaunchedChildTokens = (parentAddress: `0x${string}`, index: bigi
 export const useLaunchingChildTokens = (parentAddress: `0x${string}`, index: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: '_launchingChildTokens',
     args: [parentAddress, index],
   });
@@ -127,7 +127,7 @@ export const useLaunchingChildTokens = (parentAddress: `0x${string}`, index: big
 export const useAllocatingAmount = (tokenAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'allocatingAmount',
     args: [tokenAddress],
   });
@@ -144,7 +144,7 @@ export const useCanDeployToken = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'canDeployToken',
     args: [accountAddress, parentTokenAddress],
   });
@@ -158,7 +158,7 @@ export const useCanDeployToken = (
 export const useChildTokenNum = (parentTokenAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'childTokenNum',
     args: [parentTokenAddress],
   });
@@ -177,7 +177,7 @@ export const useChildTokensByPage = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'childTokensByPage',
     args: [parentTokenAddress, start, end, reverse],
   });
@@ -191,7 +191,7 @@ export const useChildTokensByPage = (
 export const useChildTokensByParent = (parentAddress: `0x${string}`, index: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'childTokensByParent',
     args: [parentAddress, index],
   });
@@ -205,7 +205,7 @@ export const useChildTokensByParent = (parentAddress: `0x${string}`, index: bigi
 export const useClaimed = (address1: `0x${string}`, address2: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'claimed',
     args: [address1, address2],
   });
@@ -219,7 +219,7 @@ export const useClaimed = (address1: `0x${string}`, address2: `0x${string}`) => 
 export const useContributed = (address1: `0x${string}`, address2: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'contributed',
     args: [address1, address2],
   });
@@ -233,7 +233,7 @@ export const useContributed = (address1: `0x${string}`, address2: `0x${string}`)
 export const useExtraRefunded = (address1: `0x${string}`, address2: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'extraRefunded',
     args: [address1, address2],
   });
@@ -247,7 +247,7 @@ export const useExtraRefunded = (address1: `0x${string}`, address2: `0x${string}
 export const useInitialized = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'initialized',
     args: [],
   });
@@ -261,7 +261,7 @@ export const useInitialized = () => {
 export const useLaunchInfos = (addresses: `0x${string}`[]) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'launchInfos',
     args: [addresses],
   });
@@ -275,7 +275,7 @@ export const useLaunchInfos = (addresses: `0x${string}`[]) => {
 export const useLaunchedChildTokenNum = (parentTokenAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'launchedChildTokenNum',
     args: [parentTokenAddress],
   });
@@ -294,7 +294,7 @@ export const useLaunchedChildTokensByPage = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'launchedChildTokensByPage',
     args: [parentTokenAddress, start, end, reverse],
   });
@@ -308,7 +308,7 @@ export const useLaunchedChildTokensByPage = (
 export const useLaunchedTokenNum = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'launchedTokenNum',
     args: [],
   });
@@ -322,7 +322,7 @@ export const useLaunchedTokenNum = () => {
 export const useLaunchedTokens = (index: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'launchedTokens',
     args: [index],
   });
@@ -340,7 +340,7 @@ export const useLaunchedTokensByPage = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'launchedTokensByPage',
     args: [start, end, reverse],
   });
@@ -354,7 +354,7 @@ export const useLaunchedTokensByPage = (
 export const useLaunches = (address: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'launches',
     args: [address],
   });
@@ -368,7 +368,7 @@ export const useLaunches = (address: `0x${string}`) => {
 export const useLaunchingChildTokenNum = (parentTokenAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'launchingChildTokenNum',
     args: [parentTokenAddress],
   });
@@ -387,7 +387,7 @@ export const useLaunchingChildTokensByPage = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'launchingChildTokensByPage',
     args: [parentTokenAddress, start, end, reverse],
   });
@@ -401,7 +401,7 @@ export const useLaunchingChildTokensByPage = (
 export const useLaunchingTokenNum = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'launchingTokenNum',
     args: [],
   });
@@ -415,7 +415,7 @@ export const useLaunchingTokenNum = () => {
 export const useLaunchingTokens = (index: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'launchingTokens',
     args: [index],
   });
@@ -433,7 +433,7 @@ export const useLaunchingTokensByPage = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'launchingTokensByPage',
     args: [start, end, reverse],
   });
@@ -447,7 +447,7 @@ export const useLaunchingTokensByPage = (
 export const useMintAddress = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'mintAddress',
     args: [],
   });
@@ -461,7 +461,7 @@ export const useMintAddress = () => {
 export const useParticipatedTokenNum = (walletAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'participatedTokenNum',
     args: [walletAddress],
   });
@@ -475,7 +475,7 @@ export const useParticipatedTokenNum = (walletAddress: `0x${string}`) => {
 export const useParticipatedTokensByAccount = (walletAddress: `0x${string}`, index: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'participatedTokensByAccount',
     args: [walletAddress, index],
   });
@@ -494,7 +494,7 @@ export const useParticipatedTokensByPage = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'participatedTokensByPage',
     args: [walletAddress, start, end, reverse],
   });
@@ -508,7 +508,7 @@ export const useParticipatedTokensByPage = (
 export const useStakeAddress = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'stakeAddress',
     args: [],
   });
@@ -522,7 +522,7 @@ export const useStakeAddress = () => {
 export const useSubmitAddress = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'submitAddress',
     args: [],
   });
@@ -536,7 +536,7 @@ export const useSubmitAddress = () => {
 export const useTokenAddressBySymbol = (symbol: string) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'tokenAddressBySymbol',
     args: [symbol],
   });
@@ -550,7 +550,7 @@ export const useTokenAddressBySymbol = (symbol: string) => {
 export const useTokenAddresses = (index: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'tokenAddresses',
     args: [index],
   });
@@ -564,7 +564,7 @@ export const useTokenAddresses = (index: bigint) => {
 export const useTokenNum = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'tokenNum',
     args: [],
   });
@@ -582,7 +582,7 @@ export const useTokensByPage = (
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20LaunchAbi,
+    abi: LOVE20LaunchAbi,
     functionName: 'tokensByPage',
     args: [start, end, reverse],
   });
@@ -609,7 +609,7 @@ export function useClaim() {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20LaunchAbi,
+        abi: LOVE20LaunchAbi,
         functionName: 'claim',
         args: [tokenAddress],
       });
@@ -640,7 +640,7 @@ export function useContribute() {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20LaunchAbi,
+        abi: LOVE20LaunchAbi,
         functionName: 'contribute',
         args: [tokenAddress, parentTokenAmount],
       });
@@ -671,7 +671,7 @@ export function useDeployToken() {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20LaunchAbi,
+        abi: LOVE20LaunchAbi,
         functionName: 'deployToken',
         args: [tokenSymbol, parentTokenAddress],
       });
@@ -712,7 +712,7 @@ export function useInitialize() {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20LaunchAbi,
+        abi: LOVE20LaunchAbi,
         functionName: 'initialize',
         args: [
           submitAddress_,

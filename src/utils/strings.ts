@@ -13,7 +13,7 @@ export const formatTokenAmount = (balance: bigint): string => {
 
   // 使用 Intl.NumberFormat 格式化数字，添加逗号
   const formattedWithCommas = new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: decimals, // 保留小数位
+    maximumFractionDigits: 2, // 保留小数位
   }).format(formatted);
 
   return formattedWithCommas;

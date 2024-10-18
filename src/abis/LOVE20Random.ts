@@ -1,7 +1,7 @@
 
 import { Abi } from 'abitype';
 
-export const lOVE20RandomAbi = [
+export const LOVE20RandomAbi = [
   {
     "type": "constructor",
     "inputs": [

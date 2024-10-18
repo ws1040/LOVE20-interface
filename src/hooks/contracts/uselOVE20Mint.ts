@@ -1,7 +1,7 @@
 // hooks/contracts/useLOVE20Mint.ts
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { lOVE20MintAbi } from '../../abis/LOVE20Mint';
+import { LOVE20MintAbi } from '../../abis/LOVE20Mint';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MINT as `0x${string}`;
 
@@ -15,7 +15,7 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MINT as `0x${s
 export const useMaxStakeVerifyRewardMultiplier = () => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'MAX_STAKE_VERIFY_REWARD_MULTIPLIER',
     args: [],
   });
@@ -33,7 +33,7 @@ export const useMaxStakeVerifyRewardMultiplier = () => {
 export const useRoundRewardActionPerThousand = () => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'ROUND_REWARD_ACTION_PER_THOUSAND',
     args: [],
   });
@@ -51,7 +51,7 @@ export const useRoundRewardActionPerThousand = () => {
 export const useRoundRewardGovPerThousand = () => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'ROUND_REWARD_GOV_PER_THOUSAND',
     args: [],
   });
@@ -72,7 +72,7 @@ export const useActionReward = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'actionReward',
     args: [tokenAddress, round],
   });
@@ -95,7 +95,7 @@ export const useActionRewardByActionIdByAccount = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'actionRewardByActionIdByAccount',
     args: [tokenAddress, round, actionId, accountAddress],
   });
@@ -118,7 +118,7 @@ export const useActionRewardMintedByAccount = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'actionRewardMintedByAccount',
     args: [accountAddress, round, actionId, targetAddress],
   });
@@ -142,7 +142,7 @@ export const useActionRewardRoundsByAccount = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'actionRewardRoundsByAccount',
     args: [tokenAddress, accountAddress, actionId, roundStart, roundEnd],
   });
@@ -164,7 +164,7 @@ export const useCalculateRoundActionReward = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'calculateRoundActionReward',
     args: [tokenAddress, round],
   });
@@ -184,7 +184,7 @@ export const useCalculateRoundGovReward = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'calculateRoundGovReward',
     args: [tokenAddress],
   });
@@ -202,7 +202,7 @@ export const useCalculateRoundGovReward = (
 export const useCurrentRound = () => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'currentRound',
     args: [],
   });
@@ -223,7 +223,7 @@ export const useGovReward = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'govReward',
     args: [tokenAddress, round],
   });
@@ -245,7 +245,7 @@ export const useGovRewardByAccount = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'govRewardByAccount',
     args: [tokenAddress, round, accountAddress],
   });
@@ -269,7 +269,7 @@ export const useGovRewardMintedByAccount = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'govRewardMintedByAccount',
     args: [accountAddress, round, targetAddress],
   });
@@ -290,7 +290,7 @@ export const useIsRewardPrepared = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'isRewardPrepared',
     args: [tokenAddress, round],
   });
@@ -308,7 +308,7 @@ export const useIsRewardPrepared = (
 export const useOriginBlocks = () => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'originBlocks',
     args: [],
   });
@@ -328,7 +328,7 @@ export const useRewardAvailable = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'rewardAvailable',
     args: [tokenAddress],
     query: {
@@ -351,7 +351,7 @@ export const useRewardBurned = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'rewardBurned',
     args: [accountAddress],
   });
@@ -371,7 +371,7 @@ export const useRewardMinted = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'rewardMinted',
     args: [accountAddress],
   });
@@ -391,7 +391,7 @@ export const useRewardReserved = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'rewardReserved',
     args: [accountAddress],
   });
@@ -409,7 +409,7 @@ export const useRewardReserved = (
 export const useRoundBlocks = () => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'roundBlocks',
     args: [],
   });
@@ -429,7 +429,7 @@ export const useRoundByBlockNumber = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'roundByBlockNumber',
     args: [blockNumber],
   });
@@ -449,7 +449,7 @@ export const useRoundRange = (
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'roundRange',
     args: [round],
   });
@@ -468,7 +468,7 @@ export const useRoundRange = (
 export const useStakeAddress = () => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'stakeAddress',
     args: [],
   });
@@ -486,7 +486,7 @@ export const useStakeAddress = () => {
 export const useVerifyAddress = () => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
-    abi: lOVE20MintAbi,
+    abi: LOVE20MintAbi,
     functionName: 'verifyAddress',
     args: [],
   });
@@ -521,7 +521,7 @@ export function useMintActionReward() {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20MintAbi,
+        abi: LOVE20MintAbi,
         functionName: 'mintActionReward',
         args: [tokenAddress, round, actionId],
       });
@@ -565,7 +565,7 @@ export function useMintGovReward() {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20MintAbi,
+        abi: LOVE20MintAbi,
         functionName: 'mintGovReward',
         args: [tokenAddress, round],
       });
@@ -609,7 +609,7 @@ export function usePrepareRewardIfNeeded() {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
-        abi: lOVE20MintAbi,
+        abi: LOVE20MintAbi,
         functionName: 'prepareRewardIfNeeded',
         args: [tokenAddress, round],
       });
