@@ -1,3 +1,5 @@
+'use client';
+
 import type { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
@@ -6,7 +8,7 @@ import { WagmiProvider } from 'wagmi';
 
 import { TokenProvider } from '../contexts/TokenContext';
 import { config } from '../wagmi';
-import Footer  from '../components/Footer';
+import Footer from '../components/Footer';
 
 import '../styles/globals.css';
 import '@rainbow-me/rainbowkit/styles.css';
@@ -14,20 +16,19 @@ import '@rainbow-me/rainbowkit/styles.css';
 const client = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const { title } = pageProps; 
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={client}>
         <TokenProvider>
           <RainbowKitProvider>
             <div className="min-h-screen bg-gray-100 flex flex-col">
-              <Toaster 
-                position="top-center" 
+              <Toaster
+                position="top-center"
                 toastOptions={{
                   style: {
                     background: '#000000',
                     color: '#FFFFFF',
-                  }
+                  },
                 }}
               />
               <Component {...pageProps} />

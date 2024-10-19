@@ -8,7 +8,6 @@ import MyVotingPanel from '../../components/My/MyVotingPanel';
 import MyVerifingPanel from '../../components/My/MyVerifingPanel';
 
 const ActingPage = () => {
-
   const { currentRound: currentVoteRound } = useCurrentRound();
 
   return (
@@ -16,7 +15,7 @@ const ActingPage = () => {
       <Header title="治理首页" />
       <main className="flex-grow">
         <GovernanceDataPanel />
-        <MyStakingPanel currentRound={currentVoteRound} />
+        <MyStakingPanel />
         <MyVotingPanel currentRound={currentVoteRound} />
         <MyVerifingPanel currentRound={currentVoteRound > 2 ? currentVoteRound - 2n : 0n} />
       </main>
