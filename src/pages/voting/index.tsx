@@ -19,7 +19,7 @@ const VotingPage = () => {
             <span className="text-red-500">{isPendingCurrentRound ? <Loading /> : Number(currentRound)}</span>
             轮）
           </h1>
-          <Link href="/gov/actions4submit" className="btn btn-primary w-1/2">
+          <Link href="/gov/actions4submit" className="btn w-1/2">
             推举其他行动
           </Link>
         </div>

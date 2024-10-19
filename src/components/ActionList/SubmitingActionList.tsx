@@ -25,7 +25,6 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
     isPending: isPendingActionSubmits,
     error: errorActionSubmits,
   } = useActionSubmits((token?.address as `0x${string}`) || '', currentRound);
-  console.log('actionSubmits', actionSubmits);
 
   if (isPendingActionInfosByPage || isPendingActionSubmits) {
     return <Loading />;

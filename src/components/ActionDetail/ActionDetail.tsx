@@ -31,7 +31,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
     actionSubmits,
     isPending: isPendingActionSubmits,
     error: errorActionSubmits,
-  } = useActionSubmits(token?.address as `0x${string}`, !showSubmitter ? round : 0n);
+  } = useActionSubmits(token?.address as `0x${string}`, showSubmitter ? round : 0n);
 
   // 找到当前动作的提交者
   const submitter =

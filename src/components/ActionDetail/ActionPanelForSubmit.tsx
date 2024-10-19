@@ -14,7 +14,7 @@ interface ActionPanelForJoinProps {
 const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, submitted, onRoundChange }) => {
   const { token } = useContext(TokenContext) || {};
 
-  // 当前轮次
+  // 获取当前轮次, 并设置状态给父组件
   const { currentRound, isPending: isPendingCurrentRound, error: errCurrentRound } = useCurrentRound();
   useEffect(() => {
     if (onRoundChange && typeof onRoundChange === 'function') {

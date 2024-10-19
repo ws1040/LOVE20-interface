@@ -3,8 +3,9 @@ import { useRouter } from 'next/router';
 import Header from '../../components/Header';
 
 import ActionDetail from '../../components/ActionDetail/ActionDetail';
-import ActionPanelForJoin from '../../components/ActionDetail/ActionPanelForJoin';
 import ActionPanelForSubmit from '../../components/ActionDetail/ActionPanelForSubmit';
+import ActionPanelForVoting from '../../components/ActionDetail/ActionPanelForVoting';
+import ActionPanelForJoin from '../../components/ActionDetail/ActionPanelForJoin';
 
 const ActionPage = () => {
   const router = useRouter();
@@ -28,6 +29,9 @@ const ActionPage = () => {
             submitted={submittedParam === 'true'}
             onRoundChange={handleRoundChange}
           />
+        )}
+        {typeParam === 'vote' && (
+          <ActionPanelForVoting actionId={BigInt(idParam || 0)} onRoundChange={handleRoundChange} />
         )}
         {(typeParam === 'join' || typeParam === undefined) && (
           <ActionPanelForJoin actionId={BigInt(idParam || 0)} onRoundChange={handleRoundChange} />

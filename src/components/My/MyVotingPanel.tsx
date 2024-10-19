@@ -16,10 +16,13 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress } = useAccount();
 
+  // 我的治理票&总有效票数
   const { validGovVotes, isPending: isPendingValidGovVotes } = useValidGovVotes(
     (token?.address as `0x${string}`) || '',
     (accountAddress as `0x${string}`) || '',
   );
+
+  // 我的投票数
   const { votesNumByAccount, isPending: isPendingVotesNumByAccount } = useVotesNumByAccount(
     (token?.address as `0x${string}`) || '',
     currentRound,

@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
-import { useAccount } from 'wagmi';
+import { BaseError, useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 
@@ -52,11 +52,8 @@ const VotingSubmitPage = () => {
   } = useActionInfosByIds(token?.address as `0x${string}`, actionIds);
 
   // 投票hook：
-  const { vote, isWriting, isConfirming, isConfirmed, writeError } = useVote();
-  console.log('isWriting', isWriting);
-  console.log('isConfirming', isConfirming);
-  console.log('isConfirmed', isConfirmed);
-  console.log('writeError', writeError);
+  const { vote, isWriting, isConfirming, isConfirmed, writeError: submitError } = useVote();
+
   // 百分比变化：
   const handlePercentageChange = (actionId: number, value: number) => {
     setPercentages((prev) => ({
@@ -65,21 +62,34 @@ const VotingSubmitPage = () => {
     }));
   };
 
-  // 提交投票：
+  // 提交投票：注意，百分比之和必须是100，否则toast报错“百分比之和必须为100”
   const handleSubmit = async () => {
+    // percentages 百分比之和必须为100
+    const totalPercentage = Object.values(percentages).reduce((sum, percentage) => sum + percentage, 0);
+    if (totalPercentage !== 100) {
+      toast.error('百分比之和必须为100');
+      return;
+    }
+    // 计算每个action的投票数
     const actionIds = idList.map((id) => BigInt(id));
     const votes = idList.map((id) => {
       const percentage = percentages[id] || 0;
       return BigInt(Math.floor((percentage * Number(validGovVotes)) / 100));
     });
+
+    // 提交投票
     try {
       await vote(token?.address as `0x${string}`, actionIds, votes);
-      toast.success('提交成功', {
-        duration: 2000, // 2秒
-      });
-      setTimeout(() => {
-        router.push('/governance');
-      }, 2000);
+      if (isConfirmed && !submitError) {
+        toast.success('提交成功', {
+          duration: 2000, // 2秒
+        });
+        setTimeout(() => {
+          router.push('/governance');
+        }, 2000);
+      } else {
+        throw new Error('投票未确认或存在错误');
+      }
     } catch (error) {
       console.error('投票提交失败:', error);
       toast.error('提交失败，请重试');
@@ -138,6 +148,9 @@ const VotingSubmitPage = () => {
             <button className="btn btn-primary w-1/2" onClick={handleSubmit} disabled={isWriting || isConfirming}>
               {isWriting || isConfirming ? '提交中...' : '提交投票'}
             </button>
+            {submitError ? (
+              <p className="text-red-500">Error: {(submitError as BaseError).shortMessage || submitError.message}</p>
+            ) : null}
           </div>
         </div>
       </main>

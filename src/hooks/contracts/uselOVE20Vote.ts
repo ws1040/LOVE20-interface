@@ -6,7 +6,6 @@ import { LOVE20VoteAbi } from '../../abis/LOVE20Vote';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_VOTE as `0x${string}`;
 
-
 // =======================
 // ===== Read Hooks ======
 // =======================
@@ -14,11 +13,7 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_VOTE as `0x${s
 /**
  * Hook to check if tokens can be voted.
  */
-export const useCanBeVoted = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  actionIds: bigint[]
-) => {
+export const useCanBeVoted = (tokenAddress: `0x${string}`, round: bigint, actionIds: bigint[]) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
@@ -32,10 +27,7 @@ export const useCanBeVoted = (
 /**
  * Hook to check if an account can vote.
  */
-export const useCanVote = (
-  tokenAddress: `0x${string}`,
-  accountAddress: `0x${string}`
-) => {
+export const useCanVote = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
@@ -63,11 +55,7 @@ export const useCurrentRound = () => {
 /**
  * Hook to check if an action ID has been voted.
  */
-export const useIsActionIdVoted = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  actionId: bigint
-) => {
+export const useIsActionIdVoted = (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
@@ -81,10 +69,7 @@ export const useIsActionIdVoted = (
 /**
  * Hook to get the maximum number of votes.
  */
-export const useMaxVotesNum = (
-  tokenAddress: `0x${string}`,
-  accountAddress: `0x${string}`
-) => {
+export const useMaxVotesNum = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
@@ -187,11 +172,7 @@ export const useSubmitAddress = () => {
 /**
  * Hook to get voted action IDs.
  */
-export const useVotedActionIds = (
-  account: `0x${string}`,
-  round: bigint,
-  actionId: bigint
-) => {
+export const useVotedActionIds = (account: `0x${string}`, round: bigint, actionId: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
@@ -209,7 +190,7 @@ export const useVotedActionIdsByAccount = (
   account: `0x${string}`,
   round: bigint,
   anotherAccount: `0x${string}`,
-  actionId: bigint
+  actionId: bigint,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -224,10 +205,7 @@ export const useVotedActionIdsByAccount = (
 /**
  * Hook to get the number of votes.
  */
-export const useVotesNum = (
-  tokenAddress: `0x${string}`,
-  round: bigint
-) => {
+export const useVotesNum = (tokenAddress: `0x${string}`, round: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
@@ -245,11 +223,7 @@ export const useVotesNum = (
 /**
  * Hook to get the number of votes by account.
  */
-export const useVotesNumByAccount = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  accountAddress: `0x${string}`
-) => {
+export const useVotesNumByAccount = (tokenAddress: `0x${string}`, round: bigint, accountAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
@@ -274,26 +248,25 @@ export const useVotesNumByAccountByActionId = (
   tokenAddress: `0x${string}`,
   round: bigint,
   accountAddress: `0x${string}`,
-  actionId: bigint
+  actionId: bigint,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
     functionName: 'votesNumByAccountByActionId',
     args: [tokenAddress, round, accountAddress, actionId],
+    query: {
+      enabled: !!tokenAddress && !!accountAddress && !!round && actionId !== undefined,
+    },
   });
 
-  return { votesNumByAccountByActionId: data as bigint | undefined, isPending, error };
+  return { votesNumByAccountByActionId: data as bigint, isPending, error };
 };
 
 /**
  * Hook to get the number of votes by action ID.
  */
-export const useVotesNumByActionId = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  actionId: bigint
-) => {
+export const useVotesNumByActionId = (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
@@ -307,18 +280,14 @@ export const useVotesNumByActionId = (
 /**
  * Hook to get the number of votes (multiple).
  */
-export const useVotesNums = (
-  tokenAddress: `0x${string}`,
-  round?: bigint
-) => {
-
+export const useVotesNums = (tokenAddress: `0x${string}`, round?: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
     functionName: 'votesNums',
     args: [tokenAddress, round || BigInt(0)],
     query: {
-      enabled: !!tokenAddress && round !== undefined && round !== BigInt(0), 
+      enabled: !!tokenAddress && round !== undefined && round !== BigInt(0),
     },
   });
 
@@ -333,11 +302,7 @@ export const useVotesNums = (
 /**
  * Hook to get the number of votes by account (multiple).
  */
-export const useVotesNumsByAccount = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  accountAddress: `0x${string}`
-) => {
+export const useVotesNumsByAccount = (tokenAddress: `0x${string}`, round: bigint, accountAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
@@ -360,7 +325,7 @@ export const useVotesNumsByAccountByActionIds = (
   tokenAddress: `0x${string}`,
   round: bigint,
   accountAddress: `0x${string}`,
-  actionIds: bigint[]
+  actionIds: bigint[],
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -375,11 +340,7 @@ export const useVotesNumsByAccountByActionIds = (
 /**
  * Hook to get the number of votes by multiple action IDs.
  */
-export const useVotesNumsByActionIds = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  actionIds: bigint[]
-) => {
+export const useVotesNumsByActionIds = (tokenAddress: `0x${string}`, round: bigint, actionIds: bigint[]) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
@@ -398,18 +359,9 @@ export const useVotesNumsByActionIds = (
  * Hook to perform a vote transaction.
  */
 export function useVote() {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
-  const vote = async (
-    tokenAddress: `0x${string}`,
-    actionIds: bigint[],
-    votes: bigint[]
-  ) => {
+  const vote = async (tokenAddress: `0x${string}`, actionIds: bigint[], votes: bigint[]) => {
     try {
       await writeContract?.({
         address: CONTRACT_ADDRESS,
@@ -422,10 +374,7 @@ export function useVote() {
     }
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-  } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 
