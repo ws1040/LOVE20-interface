@@ -51,7 +51,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
     joinedAmountByActionId > 0;
   const participationRatio = isJoined
     ? Number(joinedAmountByActionIdByAccount / joinedAmountByActionId) * 100 + '%'
-    : '- %';
+    : '0%';
 
   // 获取验证信息
   const {
@@ -86,7 +86,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
       </div>
 
       {!isJoined ? (
-        <Link href="/participate-action" className="btn-primary btn w-1/2">
+        <Link href={`/acting/join?id=${actionId}`} className="btn-primary btn w-1/2">
           参与行动
         </Link>
       ) : (

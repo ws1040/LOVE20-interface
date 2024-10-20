@@ -17,7 +17,7 @@ export const useCaculateRandomAccounts = (
   num: bigint,
   tokenAddress: `0x${string}`,
   round: bigint,
-  actionId: bigint
+  actionId: bigint,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -36,7 +36,7 @@ export const useCumulatedJoinedAmountsByActionId = (
   account: `0x${string}`,
   param1: bigint,
   param2: bigint,
-  param3: bigint
+  param3: bigint,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -68,7 +68,7 @@ export const useJoinedAccountsByActionId = (
   tokenAddress: `0x${string}`,
   round: bigint,
   actionId: bigint,
-  accountIndex: bigint
+  accountIndex: bigint,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -83,18 +83,14 @@ export const useJoinedAccountsByActionId = (
 /**
  * Hook for joinedAmount
  */
-export const useJoinedAmount = (
-  tokenAddress: `0x${string}`,
-  round?: bigint
-) => {
-
+export const useJoinedAmount = (tokenAddress: `0x${string}`, round?: bigint) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20JoinAbi,
     functionName: 'joinedAmount',
     args: [tokenAddress, round || BigInt(0)],
     query: {
-      enabled: !!tokenAddress && !!round, 
+      enabled: !!tokenAddress && !!round,
     },
   });
 
@@ -108,18 +104,14 @@ export const useJoinedAmount = (
 /**
  * Hook for joinedAmountByActionId tokenAddress => round => actionId => amount
  */
-export const useJoinedAmountByActionId = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  actionId: bigint
-) => {
+export const useJoinedAmountByActionId = (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20JoinAbi,
     functionName: 'joinedAmountByActionId',
     args: [tokenAddress, round, actionId],
     query: {
-      enabled: !!tokenAddress && !!round && actionId !== undefined, 
+      enabled: !!tokenAddress && !!round && actionId !== undefined,
     },
   });
 
@@ -133,7 +125,7 @@ export const useJoinedAmountByActionIdByAccount = (
   tokenAddress: `0x${string}`,
   round: bigint,
   actionId: bigint,
-  account: `0x${string}`
+  account: `0x${string}`,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -141,7 +133,7 @@ export const useJoinedAmountByActionIdByAccount = (
     functionName: 'joinedAmountByActionIdByAccount',
     args: [tokenAddress, round, actionId, account],
     query: {
-      enabled: !!tokenAddress && !!round && !!account && actionId !== undefined, 
+      enabled: !!tokenAddress && !!round && !!account && actionId !== undefined,
     },
   });
 
@@ -154,7 +146,7 @@ export const useJoinedAmountByActionIdByAccount = (
 export const useLastJoinedRoundByAccountByActionId = (
   tokenAddress: `0x${string}`,
   account: `0x${string}`,
-  actionId: bigint
+  actionId: bigint,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -162,7 +154,7 @@ export const useLastJoinedRoundByAccountByActionId = (
     functionName: 'lastJoinedRoundByAccountByActionId',
     args: [tokenAddress, account, actionId],
     query: {
-      enabled: !!tokenAddress && !!account, 
+      enabled: !!tokenAddress && !!account,
     },
   });
 
@@ -190,7 +182,7 @@ export const useRandomAccounts = (
   round: bigint,
   actionId: bigint,
   randomSeed: bigint,
-  num: bigint
+  num: bigint,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -251,11 +243,7 @@ export const useRoundRange = (round: bigint) => {
 /**
  * Hook for stakedActionIdsByAccount
  */
-export const useStakedActionIdsByAccount = (
-  account1: `0x${string}`,
-  account2: `0x${string}`,
-  param: bigint
-) => {
+export const useStakedActionIdsByAccount = (account1: `0x${string}`, account2: `0x${string}`, param: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20JoinAbi,
@@ -269,10 +257,7 @@ export const useStakedActionIdsByAccount = (
 /**
  * Hook for stakedAmountByAccount
  */
-export const useStakedAmountByAccount = (
-  tokenAddress: `0x${string}`,
-  account: `0x${string}`
-) => {
+export const useStakedAmountByAccount = (tokenAddress: `0x${string}`, account: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20JoinAbi,
@@ -289,7 +274,7 @@ export const useStakedAmountByAccount = (
 export const useStakedAmountByAccountByActionId = (
   account1: `0x${string}`,
   account2: `0x${string}`,
-  actionId: bigint
+  actionId: bigint,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -304,10 +289,7 @@ export const useStakedAmountByAccountByActionId = (
 /**
  * Hook for stakedAmountByActionId
  */
-export const useStakedAmountByActionId = (
-  account: `0x${string}`,
-  actionId: bigint
-) => {
+export const useStakedAmountByActionId = (account: `0x${string}`, actionId: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20JoinAbi,
@@ -339,7 +321,7 @@ export const useVerificationInfo = (
   round: bigint,
   actionId: bigint,
   account: `0x${string}`,
-  isJoined: boolean
+  isJoined: boolean,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -347,7 +329,7 @@ export const useVerificationInfo = (
     functionName: 'verificationInfo',
     args: [tokenAddress, round, actionId, account],
     query: {
-      enabled: isJoined && !!tokenAddress && !!round && !!account && actionId !== undefined, 
+      enabled: isJoined && !!tokenAddress && !!round && !!account && actionId !== undefined,
     },
   });
 
@@ -375,7 +357,7 @@ export const useVerificationInfos = (
   account: `0x${string}`,
   param1: bigint,
   param2: bigint,
-  anotherAccount: `0x${string}`
+  anotherAccount: `0x${string}`,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -408,19 +390,14 @@ export const useVoteAddress = () => {
  * Hook for generateAndStoreRandomAccounts
  */
 export const useGenerateAndStoreRandomAccounts = () => {
-  const {
-    writeContract,
-    data: writeData,
-    isPending,
-    error,
-  } = useWriteContract();
+  const { writeContract, data: writeData, isPending, error } = useWriteContract();
 
   const generateAndStoreRandomAccounts = async (
     tokenAddress: `0x${string}`,
     round: bigint,
     actionId: bigint,
     randomSeed: bigint,
-    num: bigint
+    num: bigint,
   ) => {
     try {
       await writeContract({
@@ -434,7 +411,7 @@ export const useGenerateAndStoreRandomAccounts = () => {
     }
   };
 
-  const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 
@@ -445,19 +422,14 @@ export const useGenerateAndStoreRandomAccounts = () => {
  * Hook for join
  */
 export const useJoin = () => {
-  const {
-    writeContract,
-    data: writeData,
-    isPending,
-    error,
-  } = useWriteContract();
+  const { writeContract, data: writeData, isPending, error } = useWriteContract();
 
   const join = async (
     tokenAddress: `0x${string}`,
     actionId: bigint,
     additionalStakeAmount: bigint,
     verificationInfo_: string,
-    rounds: bigint
+    rounds: bigint,
   ) => {
     try {
       await writeContract({
@@ -471,7 +443,7 @@ export const useJoin = () => {
     }
   };
 
-  const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 
@@ -482,18 +454,13 @@ export const useJoin = () => {
  * Hook for updateVerificationInfo
  */
 export const useUpdateVerificationInfo = () => {
-  const {
-    writeContract,
-    data: writeData,
-    isPending,
-    error,
-  } = useWriteContract();
+  const { writeContract, data: writeData, isPending, error } = useWriteContract();
 
   const updateVerificationInfo = async (
     tokenAddress: `0x${string}`,
     actionId: bigint,
     aVerificationInfo: string,
-    rounds: bigint
+    rounds: bigint,
   ) => {
     try {
       await writeContract({
@@ -507,7 +474,7 @@ export const useUpdateVerificationInfo = () => {
     }
   };
 
-  const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 
@@ -518,17 +485,9 @@ export const useUpdateVerificationInfo = () => {
  * Hook for withdraw
  */
 export const useWithdraw = () => {
-  const {
-    writeContract,
-    data: writeData,
-    isPending,
-    error,
-  } = useWriteContract();
+  const { writeContract, data: writeData, isPending, error } = useWriteContract();
 
-  const withdraw = async (
-    tokenAddress: `0x${string}`,
-    actionId: bigint
-  ) => {
+  const withdraw = async (tokenAddress: `0x${string}`, actionId: bigint) => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
@@ -541,7 +500,7 @@ export const useWithdraw = () => {
     }
   };
 
-  const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 

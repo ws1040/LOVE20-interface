@@ -48,7 +48,7 @@ export const useAbstentionScoreWithReward = (account: `0x${string}`, someNumber:
     args: [account, someNumber],
     query: {
       enabled: !!account && someNumber !== undefined,
-    }
+    },
   });
 
   return { abstentionScoreWithReward: data as bigint | undefined, isPending, error };
@@ -78,7 +78,7 @@ export const useActionIdsVerified = (tokenAddress: `0x${string}`, round: bigint)
     args: [tokenAddress, round],
     query: {
       enabled: !!tokenAddress && round !== undefined,
-    }
+    },
   });
 
   return { actionIdsVerified: data as bigint[] | undefined, isPending, error };
@@ -95,7 +95,7 @@ export const useActionIdsWithReward = (tokenAddress: `0x${string}`, round: bigin
     args: [tokenAddress, round],
     query: {
       enabled: !!tokenAddress && round !== undefined,
-    }
+    },
   });
 
   return { actionIdsWithReward: data as bigint[] | undefined, isPending, error };
@@ -130,11 +130,7 @@ export const useFirstTokenAddress = () => {
 /**
  * Hook for isActionIdWithReward
  */
-export const useIsActionIdWithReward = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  actionId: bigint
-) => {
+export const useIsActionIdWithReward = (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VerifyAbi,
@@ -142,7 +138,7 @@ export const useIsActionIdWithReward = (
     args: [tokenAddress, round, actionId],
     query: {
       enabled: !!tokenAddress && round !== undefined && actionId !== undefined,
-    }
+    },
   });
 
   return { isActionIdWithReward: data as boolean | undefined, isPending, error };
@@ -198,7 +194,7 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
     args: [blockNumber],
     query: {
       enabled: blockNumber !== undefined,
-    }
+    },
   });
 
   return { roundByBlockNumber: data as bigint | undefined, isPending, error };
@@ -215,7 +211,7 @@ export const useRoundRange = (round: bigint) => {
     args: [round],
     query: {
       enabled: round !== undefined,
-    }
+    },
   });
 
   return { roundRange: data as { start: bigint; end: bigint } | undefined, isPending, error };
@@ -232,7 +228,7 @@ export const useScore = (account: `0x${string}`, someNumber: bigint) => {
     args: [account, someNumber],
     query: {
       enabled: !!account && someNumber !== undefined,
-    }
+    },
   });
 
   return { score: data as bigint | undefined, isPending, error };
@@ -241,11 +237,7 @@ export const useScore = (account: `0x${string}`, someNumber: bigint) => {
 /**
  * Hook for scoreByActionId
  */
-export const useScoreByActionId = (
-  account: `0x${string}`,
-  someNumber1: bigint,
-  someNumber2: bigint
-) => {
+export const useScoreByActionId = (account: `0x${string}`, someNumber1: bigint, someNumber2: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VerifyAbi,
@@ -253,7 +245,7 @@ export const useScoreByActionId = (
     args: [account, someNumber1, someNumber2],
     query: {
       enabled: !!account && someNumber1 !== undefined && someNumber2 !== undefined,
-    }
+    },
   });
 
   return { scoreByActionId: data as bigint | undefined, isPending, error };
@@ -266,7 +258,7 @@ export const useScoreByActionIdByAccount = (
   account: `0x${string}`,
   someNumber1: bigint,
   someNumber2: bigint,
-  anotherAccount: `0x${string}`
+  anotherAccount: `0x${string}`,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -274,12 +266,8 @@ export const useScoreByActionIdByAccount = (
     functionName: 'scoreByActionIdByAccount',
     args: [account, someNumber1, someNumber2, anotherAccount],
     query: {
-      enabled:
-      !!account &&
-      someNumber1 !== undefined &&
-      someNumber2 !== undefined &&
-      !!anotherAccount,
-    }
+      enabled: !!account && someNumber1 !== undefined && someNumber2 !== undefined && !!anotherAccount,
+    },
   });
 
   return { scoreByActionIdByAccount: data as bigint | undefined, isPending, error };
@@ -288,11 +276,7 @@ export const useScoreByActionIdByAccount = (
 /**
  * Hook for scoreByVerifier
  */
-export const useScoreByVerifier = (
-  verifier: `0x${string}`,
-  someNumber: bigint,
-  anotherVerifier: `0x${string}`
-) => {
+export const useScoreByVerifier = (verifier: `0x${string}`, someNumber: bigint, anotherVerifier: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VerifyAbi,
@@ -300,10 +284,10 @@ export const useScoreByVerifier = (
     args: [verifier, someNumber, anotherVerifier],
     query: {
       enabled: !!verifier && someNumber !== undefined && !!anotherVerifier,
-    }
+    },
   });
 
-  return { scoreByVerifier: data as bigint , isPending, error };
+  return { scoreByVerifier: data as bigint, isPending, error };
 };
 
 /**
@@ -313,7 +297,7 @@ export const useScoreByVerifierByActionId = (
   verifier: `0x${string}`,
   someNumber1: bigint,
   anotherVerifier: `0x${string}`,
-  someNumber2: bigint
+  someNumber2: bigint,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -321,12 +305,8 @@ export const useScoreByVerifierByActionId = (
     functionName: 'scoreByVerifierByActionId',
     args: [verifier, someNumber1, anotherVerifier, someNumber2],
     query: {
-      enabled:
-      !!verifier &&
-      someNumber1 !== undefined &&
-      !!anotherVerifier &&
-      someNumber2 !== undefined,
-    }
+      enabled: !!verifier && someNumber1 !== undefined && !!anotherVerifier && someNumber2 !== undefined,
+    },
   });
 
   return { scoreByVerifierByActionId: data as bigint | undefined, isPending, error };
@@ -343,7 +323,7 @@ export const useScoreWithReward = (account: `0x${string}`, someNumber: bigint) =
     args: [account, someNumber],
     query: {
       enabled: !!account && someNumber !== undefined,
-    }
+    },
   });
 
   return { scoreWithReward: data as bigint | undefined, isPending, error };
@@ -396,17 +376,9 @@ export const useVoteAddress = () => {
  * Hook for initialize
  */
 export function useInitialize() {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
-  const initialize = async (
-    randomAddress: `0x${string}`,
-    firstTokenAddress: `0x${string}`
-  ) => {
+  const initialize = async (randomAddress: `0x${string}`, firstTokenAddress: `0x${string}`) => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
@@ -419,7 +391,7 @@ export function useInitialize() {
     }
   };
 
-  const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 
@@ -430,19 +402,9 @@ export function useInitialize() {
  * Hook for verify
  */
 export function useVerify() {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
-  const verify = async (
-    tokenAddress: `0x${string}`,
-    actionId: bigint,
-    abstentionScore: bigint,
-    scores: bigint[]
-  ) => {
+  const verify = async (tokenAddress: `0x${string}`, actionId: bigint, abstentionScore: bigint, scores: bigint[]) => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
@@ -455,7 +417,7 @@ export function useVerify() {
     }
   };
 
-  const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 

@@ -263,7 +263,7 @@ export const useApprove = (address: `0x${string}`) => {
     }
   };
 
-  const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 
@@ -289,7 +289,7 @@ export const useBurn = (address: `0x${string}`) => {
     }
   };
 
-  const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 
@@ -315,7 +315,7 @@ export const useMint = (address: `0x${string}`) => {
     }
   };
 
-  const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 
@@ -341,7 +341,7 @@ export const useTransfer = (address: `0x${string}`) => {
     }
   };
 
-  const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 
@@ -367,7 +367,7 @@ export const useTransferFrom = (address: `0x${string}`) => {
     }
   };
 
-  const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 
@@ -393,7 +393,7 @@ export const useWithdrawFee = (address: `0x${string}`) => {
     }
   };
 
-  const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 

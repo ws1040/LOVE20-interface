@@ -21,7 +21,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     token?.stTokenAddress as `0x${string}`,
   );
 
-  // Hooks: 授权(approve)、质押(stakeLiquidity)
+  // Hooks: 授权(approve)、质押(stakeToken)
   const {
     approve: approveToken,
     isWriting: isPendingApproveToken,
@@ -41,7 +41,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
   const [stakeTokenAmount, setStakeTokenAmount] = useState('');
   const [releasePeriod, setReleasePeriod] = useState('4'); // 将初始值从 '1' 改为 '4'
 
-  // 提交质押
+  // 提交
   const [isSubmitted, setIsSubmitted] = useState(false);
   const handleSubmit = async () => {
     if (BigInt(stakeTokenAmount) === 0n) {

@@ -3,7 +3,6 @@
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { LOVE20TokenAbi } from '../../abis/LOVE20Token';
 
-
 /* =======================
    ===== Read Hooks ======
    ======================= */
@@ -175,7 +174,7 @@ export const useTotalSupply = (token: `0x${string}`) => {
     functionName: 'totalSupply',
     args: [],
     query: {
-      enabled: !!token, 
+      enabled: !!token,
     },
   });
 
@@ -189,215 +188,180 @@ export const useTotalSupply = (token: `0x${string}`) => {
  * useApprove Hook
  */
 export function useApprove(token: `0x${string}`) {
-    const {
-      writeContract,
-      isPending: isWriting,
-      data: writeData,
-      error: writeError,
-    } = useWriteContract();
-  
-    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-      hash: writeData,
-    });
-  
-    const approve = async (spender: `0x${string}`, value: bigint) => {
-      try {
-        await writeContract({
-          address: token,
-          abi: LOVE20TokenAbi,
-          functionName: 'approve',
-          args: [spender, value],
-        });
-      } catch (err) {
-        console.error('Approve failed:', err);
-      }
-    };
-  
-    return { approve, writeData, isWriting, writeError, isConfirming, isConfirmed };
-  }
-  
-  /**
-   * useBurn Hook
-   */
-  export function useBurn(token: `0x${string}`) {
-    const {
-      writeContract,
-      isPending: isWriting,
-      data: writeData,
-      error: writeError,
-    } = useWriteContract();
-  
-    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-      hash: writeData,
-    });
-  
-    const burn = async (amount: bigint) => {
-      try {
-        await writeContract({
-          address: token,
-          abi: LOVE20TokenAbi,
-          functionName: 'burn',
-          args: [amount],
-        });
-      } catch (err) {
-        console.error('Burn failed:', err);
-      }
-    };
-  
-    return { burn, writeData, isWriting, writeError, isConfirming, isConfirmed };
-  }
-  
-  /**
-   * useBurnForParentToken Hook
-   */
-  export function useBurnForParentToken(token: `0x${string}`) {
-    const {
-      writeContract,
-      isPending: isWriting,
-      data: writeData,
-      error: writeError,
-    } = useWriteContract();
-  
-    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-      hash: writeData,
-    });
-  
-    const burnForParentToken = async (amount: bigint) => {
-      try {
-        await writeContract({
-          address: token,
-          abi: LOVE20TokenAbi,
-          functionName: 'burnForParentToken',
-          args: [amount],
-        });
-      } catch (err) {
-        console.error('Burn for Parent Token failed:', err);
-      }
-    };
-  
-    return { burnForParentToken, writeData, isWriting, writeError, isConfirming, isConfirmed };
-  }
-  
-  /**
-   * useInitialize Hook
-   */
-  export function useInitialize(token: `0x${string}`) {
-    const {
-      writeContract,
-      isPending: isWriting,
-      data: writeData,
-      error: writeError,
-    } = useWriteContract();
-  
-    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-      hash: writeData,
-    });
-  
-    const initialize = async (mintableAddress: `0x${string}`, parentTokenAddress: `0x${string}`) => {
-      try {
-        await writeContract({
-          address: token,
-          abi: LOVE20TokenAbi,
-          functionName: 'initialize',
-          args: [mintableAddress, parentTokenAddress],
-        });
-      } catch (err) {
-        console.error('Initialize failed:', err);
-      }
-    };
-  
-    return { initialize, writeData, isWriting, writeError, isConfirming, isConfirmed };
-  }
-  
-  /**
-   * useMint Hook
-   */
-  export function useMint(token: `0x${string}`) {
-    const {
-      writeContract,
-      isPending: isWriting,
-      data: writeData,
-      error: writeError,
-    } = useWriteContract();
-  
-    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-      hash: writeData,
-    });
-  
-    const mint = async (to: `0x${string}`, amount: bigint) => {
-      try {
-        await writeContract({
-          address: token,
-          abi: LOVE20TokenAbi,
-          functionName: 'mint',
-          args: [to, amount],
-        });
-      } catch (err) {
-        console.error('Mint failed:', err);
-      }
-    };
-  
-    return { mint, writeData, isWriting, writeError, isConfirming, isConfirmed };
-  }
-  
-  /**
-   * useTransfer Hook
-   */
-  export function useTransfer(token: `0x${string}`) {
-    const {
-      writeContract,
-      isPending: isWriting,
-      data: writeData,
-      error: writeError,
-    } = useWriteContract();
-  
-    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-      hash: writeData,
-    });
-  
-    const transfer = async (to: `0x${string}`, value: bigint) => {
-      try {
-        await writeContract({
-          address: token,
-          abi: LOVE20TokenAbi,
-          functionName: 'transfer',
-          args: [to, value],
-        });
-      } catch (err) {
-        console.error('Transfer failed:', err);
-      }
-    };
-  
-    return { transfer, writeData, isWriting, writeError, isConfirming, isConfirmed };
-  }
-  
-  /**
-   * useTransferFrom Hook
-   */
-  export function useTransferFrom(token: `0x${string}`) {
-    const {
-      writeContract,
-      isPending: isWriting,
-      data: writeData,
-      error: writeError,
-    } = useWriteContract();
-  
-    const { isPending: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-      hash: writeData,
-    });
-  
-    const transferFrom = async (from: `0x${string}`, to: `0x${string}`, value: bigint) => {
-      try {
-        await writeContract({
-          address: token,
-          abi: LOVE20TokenAbi,
-          functionName: 'transferFrom',
-          args: [from, to, value],
-        });
-      } catch (err) {
-        console.error('Transfer From failed:', err);
-      }
-    };
-  
-    return { transferFrom, writeData, isWriting, writeError, isConfirming, isConfirmed };
-  }
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash: writeData,
+  });
+
+  const approve = async (spender: `0x${string}`, value: bigint) => {
+    try {
+      await writeContract({
+        address: token,
+        abi: LOVE20TokenAbi,
+        functionName: 'approve',
+        args: [spender, value],
+      });
+    } catch (err) {
+      console.error('Approve failed:', err);
+    }
+  };
+
+  return { approve, writeData, isWriting, writeError, isConfirming, isConfirmed };
+}
+
+/**
+ * useBurn Hook
+ */
+export function useBurn(token: `0x${string}`) {
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash: writeData,
+  });
+
+  const burn = async (amount: bigint) => {
+    try {
+      await writeContract({
+        address: token,
+        abi: LOVE20TokenAbi,
+        functionName: 'burn',
+        args: [amount],
+      });
+    } catch (err) {
+      console.error('Burn failed:', err);
+    }
+  };
+
+  return { burn, writeData, isWriting, writeError, isConfirming, isConfirmed };
+}
+
+/**
+ * useBurnForParentToken Hook
+ */
+export function useBurnForParentToken(token: `0x${string}`) {
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash: writeData,
+  });
+
+  const burnForParentToken = async (amount: bigint) => {
+    try {
+      await writeContract({
+        address: token,
+        abi: LOVE20TokenAbi,
+        functionName: 'burnForParentToken',
+        args: [amount],
+      });
+    } catch (err) {
+      console.error('Burn for Parent Token failed:', err);
+    }
+  };
+
+  return { burnForParentToken, writeData, isWriting, writeError, isConfirming, isConfirmed };
+}
+
+/**
+ * useInitialize Hook
+ */
+export function useInitialize(token: `0x${string}`) {
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash: writeData,
+  });
+
+  const initialize = async (mintableAddress: `0x${string}`, parentTokenAddress: `0x${string}`) => {
+    try {
+      await writeContract({
+        address: token,
+        abi: LOVE20TokenAbi,
+        functionName: 'initialize',
+        args: [mintableAddress, parentTokenAddress],
+      });
+    } catch (err) {
+      console.error('Initialize failed:', err);
+    }
+  };
+
+  return { initialize, writeData, isWriting, writeError, isConfirming, isConfirmed };
+}
+
+/**
+ * useMint Hook
+ */
+export function useMint(token: `0x${string}`) {
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash: writeData,
+  });
+
+  const mint = async (to: `0x${string}`, amount: bigint) => {
+    try {
+      await writeContract({
+        address: token,
+        abi: LOVE20TokenAbi,
+        functionName: 'mint',
+        args: [to, amount],
+      });
+    } catch (err) {
+      console.error('Mint failed:', err);
+    }
+  };
+
+  return { mint, writeData, isWriting, writeError, isConfirming, isConfirmed };
+}
+
+/**
+ * useTransfer Hook
+ */
+export function useTransfer(token: `0x${string}`) {
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash: writeData,
+  });
+
+  const transfer = async (to: `0x${string}`, value: bigint) => {
+    try {
+      await writeContract({
+        address: token,
+        abi: LOVE20TokenAbi,
+        functionName: 'transfer',
+        args: [to, value],
+      });
+    } catch (err) {
+      console.error('Transfer failed:', err);
+    }
+  };
+
+  return { transfer, writeData, isWriting, writeError, isConfirming, isConfirmed };
+}
+
+/**
+ * useTransferFrom Hook
+ */
+export function useTransferFrom(token: `0x${string}`) {
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash: writeData,
+  });
+
+  const transferFrom = async (from: `0x${string}`, to: `0x${string}`, value: bigint) => {
+    try {
+      await writeContract({
+        address: token,
+        abi: LOVE20TokenAbi,
+        functionName: 'transferFrom',
+        args: [from, to, value],
+      });
+    } catch (err) {
+      console.error('Transfer From failed:', err);
+    }
+  };
+
+  return { transferFrom, writeData, isWriting, writeError, isConfirming, isConfirmed };
+}

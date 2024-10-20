@@ -80,21 +80,22 @@ const VotingSubmitPage = () => {
     // 提交投票
     try {
       await vote(token?.address as `0x${string}`, actionIds, votes);
-      if (isConfirmed && !submitError) {
-        toast.success('提交成功', {
-          duration: 2000, // 2秒
-        });
-        setTimeout(() => {
-          router.push('/governance');
-        }, 2000);
-      } else {
-        throw new Error('投票未确认或存在错误');
-      }
     } catch (error) {
       console.error('投票提交失败:', error);
       toast.error('提交失败，请重试');
     }
   };
+
+  useEffect(() => {
+    if (isConfirmed && !submitError) {
+      toast.success('提交成功', {
+        duration: 2000, // 2秒
+      });
+      setTimeout(() => {
+        router.push('/gov');
+      }, 2000);
+    }
+  }, [isConfirmed, submitError]);
 
   return (
     <>
@@ -148,10 +149,10 @@ const VotingSubmitPage = () => {
             <button className="btn btn-primary w-1/2" onClick={handleSubmit} disabled={isWriting || isConfirming}>
               {isWriting || isConfirming ? '提交中...' : '提交投票'}
             </button>
-            {submitError ? (
-              <p className="text-red-500">Error: {(submitError as BaseError).shortMessage || submitError.message}</p>
-            ) : null}
           </div>
+          {submitError ? (
+            <div className="text-red-500">Error: {(submitError as BaseError).shortMessage || submitError.message}</div>
+          ) : null}
         </div>
       </main>
     </>
