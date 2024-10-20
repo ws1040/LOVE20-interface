@@ -1,7 +1,7 @@
 
 import { Abi } from 'abitype';
 
-export const uniswapV2FactoryAbi = [
+export const UniswapV2FactoryAbi = [
   {
     "type": "constructor",
     "inputs": [

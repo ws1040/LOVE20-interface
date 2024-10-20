@@ -1,5 +1,6 @@
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { LOVE20SLTokenAbi } from '../../abis/LOVE20SLToken';
+import { useEffect, useState } from 'react';
 
 // =====================
 // === 读取 Hook ===
@@ -145,7 +146,9 @@ export const useTokenAddress = (address: `0x${string}`) => {
  * Hook for tokenAmounts
  */
 export const useTokenAmounts = (address: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const { data, isPending, error, refetch } = useReadContract({
     address,
     abi: LOVE20SLTokenAbi,
     functionName: 'tokenAmounts',
@@ -155,6 +158,17 @@ export const useTokenAmounts = (address: `0x${string}`) => {
     },
   });
 
+  useEffect(() => {
+    if (address) {
+      refetch();
+    }
+  }, [address, refreshKey, refetch]);
+
+  // 提供一个方法来手动刷新数据
+  const refreshData = () => {
+    setRefreshKey((prevKey) => prevKey + 1);
+  };
+
   return {
     tokenAmount: data?.[0],
     parentTokenAmount: data?.[1],
@@ -162,6 +176,7 @@ export const useTokenAmounts = (address: `0x${string}`) => {
     feeParentTokenAmount: data?.[3],
     isPending,
     error,
+    refreshData, // 返回刷新数据的方法
   };
 };
 
@@ -233,12 +248,7 @@ export const useUniswapV2Pair = (address: `0x${string}`) => {
  * Hook for approve
  */
 export const useApprove = (address: `0x${string}`) => {
-  const {
-    writeContract,
-    data: writeData,
-    isPending,
-    error,
-  } = useWriteContract();
+  const { writeContract, data: writeData, isPending, error } = useWriteContract();
 
   const approve = async (spender: `0x${string}`, value: bigint) => {
     try {
@@ -264,12 +274,7 @@ export const useApprove = (address: `0x${string}`) => {
  * Hook for burn
  */
 export const useBurn = (address: `0x${string}`) => {
-  const {
-    writeContract,
-    data: writeData,
-    isPending,
-    error,
-  } = useWriteContract();
+  const { writeContract, data: writeData, isPending, error } = useWriteContract();
 
   const burn = async (to: `0x${string}`) => {
     try {
@@ -295,12 +300,7 @@ export const useBurn = (address: `0x${string}`) => {
  * Hook for mint
  */
 export const useMint = (address: `0x${string}`) => {
-  const {
-    writeContract,
-    data: writeData,
-    isPending,
-    error,
-  } = useWriteContract();
+  const { writeContract, data: writeData, isPending, error } = useWriteContract();
 
   const mint = async (to: `0x${string}`) => {
     try {
@@ -326,12 +326,7 @@ export const useMint = (address: `0x${string}`) => {
  * Hook for transfer
  */
 export const useTransfer = (address: `0x${string}`) => {
-  const {
-    writeContract,
-    data: writeData,
-    isPending,
-    error,
-  } = useWriteContract();
+  const { writeContract, data: writeData, isPending, error } = useWriteContract();
 
   const transfer = async (to: `0x${string}`, value: bigint) => {
     try {
@@ -357,12 +352,7 @@ export const useTransfer = (address: `0x${string}`) => {
  * Hook for transferFrom
  */
 export const useTransferFrom = (address: `0x${string}`) => {
-  const {
-    writeContract,
-    data: writeData,
-    isPending,
-    error,
-  } = useWriteContract();
+  const { writeContract, data: writeData, isPending, error } = useWriteContract();
 
   const transferFrom = async (from: `0x${string}`, to: `0x${string}`, value: bigint) => {
     try {
@@ -388,12 +378,7 @@ export const useTransferFrom = (address: `0x${string}`) => {
  * Hook for withdrawFee
  */
 export const useWithdrawFee = (address: `0x${string}`) => {
-  const {
-    writeContract,
-    data: writeData,
-    isPending,
-    error,
-  } = useWriteContract();
+  const { writeContract, data: writeData, isPending, error } = useWriteContract();
 
   const withdrawFee = async (to: `0x${string}`) => {
     try {

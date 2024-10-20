@@ -32,7 +32,7 @@ const Sidebar: React.FC = () => {
             </Link>
           </li>
           <li className="p-4 hover:bg-gray-700">
-            <Link href="/governance">
+            <Link href="/gov">
               <span>治理首页</span>
             </Link>
           </li>

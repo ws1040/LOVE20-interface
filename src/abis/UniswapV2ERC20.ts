@@ -1,7 +1,7 @@
 
 import { Abi } from 'abitype';
 
-export const uniswapV2ERC20Abi = [
+export const UniswapV2ERC20Abi = [
   {
     "type": "constructor",
     "inputs": [],

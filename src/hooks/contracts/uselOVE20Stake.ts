@@ -100,7 +100,7 @@ export const useCumulatedTokenAmount = (tokenAddress: `0x${string}`, round: bigi
 export const useCumulatedTokenAmountByAccount = (
   tokenAddress: `0x${string}`,
   round: bigint,
-  accountAddress: `0x${string}`
+  accountAddress: `0x${string}`,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -123,7 +123,7 @@ export const useCurrentRound = () => {
     args: [],
   });
 
-  return { currentRound: data as bigint | undefined, isPending, error };
+  return { currentRound: data as bigint, isPending, error };
 };
 
 /**
@@ -215,7 +215,7 @@ export const useStakeUpdateRoundsByPage = (
   tokenAddress: `0x${string}`,
   start: bigint,
   end: bigint,
-  reverse: boolean
+  reverse: boolean,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -298,12 +298,7 @@ export const useValidGovVotes = (tokenAddress: `0x${string}`, accountAddress: `0
  * 初始化代币
  */
 export const useInitToken = () => {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
   /**
    * 调用合约的 initToken 函数
@@ -333,28 +328,21 @@ export const useInitToken = () => {
  * 质押流动性
  */
 export const useStakeLiquidity = () => {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
-  /**
-   * 调用合约的 stakeLiquidity 函数
-   * @param tokenAddress 代币地址
-   * @param tokenAmountForLP LP代币数量
-   * @param parentTokenAmountForLP 父代币LP数量
-   * @param promisedWaitingRounds 预期等待轮数
-   * @param to 接收地址
-   */
   const stakeLiquidity = async (
     tokenAddress: `0x${string}`,
     tokenAmountForLP: bigint,
     parentTokenAmountForLP: bigint,
     promisedWaitingRounds: bigint,
-    to: `0x${string}`
+    to: `0x${string}`,
   ) => {
+    console.log('tokenAddress:', tokenAddress);
+    console.log('tokenAmountForLP:', tokenAmountForLP);
+    console.log('parentTokenAmountForLP:', parentTokenAmountForLP);
+    console.log('promisedWaitingRounds:', promisedWaitingRounds);
+    console.log('to:', to);
+
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
@@ -385,12 +373,7 @@ export const useStakeLiquidity = () => {
  * 质押代币
  */
 export const useStakeToken = () => {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
   /**
    * 调用合约的 stakeToken 函数
@@ -403,7 +386,7 @@ export const useStakeToken = () => {
     tokenAddress: `0x${string}`,
     tokenAmount: bigint,
     promisedWaitingRounds: bigint,
-    to: `0x${string}`
+    to: `0x${string}`,
   ) => {
     try {
       await writeContract({
@@ -435,12 +418,7 @@ export const useStakeToken = () => {
  * 取消质押
  */
 export const useUnstake = () => {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
   /**
    * 调用合约的 unstake 函数
@@ -470,12 +448,7 @@ export const useUnstake = () => {
  * 提款
  */
 export const useWithdraw = () => {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
   /**
    * 调用合约的 withdraw 函数

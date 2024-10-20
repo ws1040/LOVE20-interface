@@ -34,7 +34,7 @@ const MyStakingPanel: React.FC = () => {
         </div>
       </div>
 
-      <Link href="/stake" className="btn-primary btn w-1/2">
+      <Link href="/gov/stake" className="btn-primary btn w-1/2">
         去质押
       </Link>
     </div>

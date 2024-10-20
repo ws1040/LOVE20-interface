@@ -1,7 +1,7 @@
 // src/scripts/generateAbiTs.ts
 const fs = require('fs');
 const path = require('path');
-const dotenv = require('dotenv'); 
+const dotenv = require('dotenv');
 
 // 根据 NODE_ENV 确定加载哪个 .env 文件
 const env = process.env.NODE_ENV || 'local';
@@ -18,12 +18,28 @@ if (!abiDirPath) {
 }
 
 // 指定要转换的文件名列表
-const filesToConvert = ['LOVE20Join', 'LOVE20Launch', 'LOVE20Mint', 'LOVE20Random', 'LOVE20SLToken', 'LOVE20STToken', 'LOVE20Stake', 'LOVE20Submit', 'LOVE20Token', 'LOVE20Verify', 'LOVE20Vote', 'WETH9','UniswapV2ERC20', 'UniswapV2Factory', 'UniswapV2Pair'];
+const filesToConvert = [
+  'LOVE20Join',
+  'LOVE20Launch',
+  'LOVE20Mint',
+  'LOVE20Random',
+  'LOVE20SLToken',
+  'LOVE20STToken',
+  'LOVE20Stake',
+  'LOVE20Submit',
+  'LOVE20Token',
+  'LOVE20Verify',
+  'LOVE20Vote',
+  'WETH9',
+  'UniswapV2ERC20',
+  'UniswapV2Factory',
+  'UniswapV2Pair',
+];
 
 // 遍历文件名列表，进行转换
 filesToConvert.forEach((fileName) => {
   const abiJsonPath = path.resolve(abiDirPath, `${fileName}.sol/${fileName}.json`);
-  const abiTsPath = path.resolve(__dirname, 'abis', `${fileName}.ts`);
+  const abiTsPath = path.resolve(__dirname, '../src/abis', `${fileName}.ts`);
 
   // 检查 ABI JSON 文件是否存在
   if (!fs.existsSync(abiJsonPath)) {
@@ -38,11 +54,7 @@ filesToConvert.forEach((fileName) => {
   const content = `
 import { Abi } from 'abitype';
 
-export const ${fileName.charAt(0).toLowerCase() + fileName.slice(1)}Abi = ${JSON.stringify(
-    abiJson.abi || abiJson,
-    null,
-    2
-  )} as const satisfies Abi;
+export const ${fileName}Abi = ${JSON.stringify(abiJson.abi || abiJson, null, 2)} as const satisfies Abi;
 `;
 
   // 将内容写入到 .ts 文件
