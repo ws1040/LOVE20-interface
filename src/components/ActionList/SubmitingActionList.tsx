@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { useRouter } from 'next/router';
 
 import { useActionInfosByPage, useActionSubmits } from '../../hooks/contracts/useLOVE20Submit';
 
@@ -13,6 +14,7 @@ interface SubmitingActionListProps {
 
 const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
+  const router = useRouter();
 
   const {
     actionInfos,
@@ -37,7 +39,15 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
 
   return (
     <div className="p-4">
-      <h2 className="text-sm font-bold mb-4 text-gray-600">所有行动</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-sm font-bold text-gray-600">所有行动</h2>
+        <button
+          onClick={() => router.push('/action/new')}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          发起新行动
+        </button>
+      </div>
       <div className="space-y-4">
         {actionInfos?.map((action: ActionInfo, index: number) => {
           const isSubmitted = actionSubmits?.some((submit) => submit.actionId === action.head.id);
