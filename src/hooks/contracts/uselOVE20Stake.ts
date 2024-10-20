@@ -337,12 +337,6 @@ export const useStakeLiquidity = () => {
     promisedWaitingRounds: bigint,
     to: `0x${string}`,
   ) => {
-    console.log('tokenAddress:', tokenAddress);
-    console.log('tokenAmountForLP:', tokenAmountForLP);
-    console.log('parentTokenAmountForLP:', parentTokenAmountForLP);
-    console.log('promisedWaitingRounds:', promisedWaitingRounds);
-    console.log('to:', to);
-
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,

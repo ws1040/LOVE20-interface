@@ -51,7 +51,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
       toast.error('请输入正确的数量');
       return;
     }
-    console.log('parentToken', parentToken, 'stakeToken', stakeToken, 'releasePeriod', releasePeriod);
+
     try {
       setIsSubmitted(true);
       // 发送授权交易
