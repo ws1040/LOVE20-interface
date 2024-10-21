@@ -276,14 +276,14 @@ export const useScoreByActionIdByAccount = (
 /**
  * Hook for scoreByVerifier
  */
-export const useScoreByVerifier = (verifier: `0x${string}`, someNumber: bigint, anotherVerifier: `0x${string}`) => {
+export const useScoreByVerifier = (tokenAddress: `0x${string}`, round: bigint, verifier: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VerifyAbi,
     functionName: 'scoreByVerifier',
-    args: [verifier, someNumber, anotherVerifier],
+    args: [tokenAddress, round, verifier],
     query: {
-      enabled: !!verifier && someNumber !== undefined && !!anotherVerifier,
+      enabled: !!tokenAddress && !!round && !!verifier,
     },
   });
 
@@ -366,6 +366,23 @@ export const useVoteAddress = () => {
   });
 
   return { voteAddress: data as `0x${string}` | undefined, isPending, error };
+};
+
+/**
+ * Hook for accountsForVerify
+ */
+export const useAccountsForVerify = (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20VerifyAbi,
+    functionName: 'accountsForVerify',
+    args: [tokenAddress, round, actionId],
+    query: {
+      enabled: !!tokenAddress && round !== undefined && actionId !== undefined,
+    },
+  });
+
+  return { accountsForVerify: data as `0x${string}`[], isPending, error };
 };
 
 // =====================

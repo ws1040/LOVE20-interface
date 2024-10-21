@@ -22,7 +22,7 @@ const TokenLabel: React.FC<TokenLabelProps> = ({ showGovernanceLink = false }) =
       <div className="mr-2">
         <div className="flex items-center">
           <span className="font-bold text-2xl text-yellow-500">$</span>
-          <span className="font-bold text-2xl">{token.symbol}</span>
+          <span className="font-bold text-2xl mr-2">{token.symbol}</span>
           <AddressWithCopyButton address={token.address as `0x${string}`} />
         </div>
       </div>

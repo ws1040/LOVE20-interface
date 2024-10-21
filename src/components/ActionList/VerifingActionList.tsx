@@ -7,6 +7,8 @@ import { useActionInfosByIds } from '../../hooks/contracts/useLOVE20Submit';
 import { TokenContext } from '../../contexts/TokenContext';
 import { ActionInfo } from '../../types/life20types';
 
+import Loading from '../Common/Loading';
+
 interface JoiningActionListProps {
   currentRound: bigint;
 }
@@ -14,9 +16,12 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   const { token } = useContext(TokenContext) || {};
   const {
     actionIds,
+    votes,
     isPending: isPendingVotesNums,
     error: errorVotesNums,
   } = useVotesNums((token?.address as `0x${string}`) || '', currentRound);
+  // console.log('actionIds', actionIds);
+  // console.log('votes', votes);
   const {
     actionInfos,
     isPending: isPendingActionInfosByIds,
@@ -24,7 +29,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   } = useActionInfosByIds((token?.address as `0x${string}`) || '', actionIds || []);
 
   if (isPendingVotesNums || isPendingActionInfosByIds) {
-    return <div>加载中...</div>;
+    return <Loading />;
   }
 
   if (errorVotesNums || errorActionInfosByIds) {

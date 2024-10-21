@@ -18,20 +18,23 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress } = useAccount();
 
-  const { votesNumByAccount, isPending: isPendingVotesNumByAccount } = useVotesNumByAccount(
-    token?.address as `0x${string}`,
-    currentRound,
-    (accountAddress as `0x${string}`) || '',
-  );
-  const { scoreByVerifier, isPending: isPendingScoreByVerifier } = useScoreByVerifier(
-    token?.address as `0x${string}`,
-    currentRound,
-    (accountAddress as `0x${string}`) || '',
-  );
+  const {
+    votesNumByAccount,
+    isPending: isPendingVotesNumByAccount,
+    error: isVotesNumByAccountError,
+  } = useVotesNumByAccount(token?.address as `0x${string}`, currentRound, (accountAddress as `0x${string}`) || '');
+  const {
+    scoreByVerifier,
+    isPending: isPendingScoreByVerifier,
+    error: isScoreByVerifierError,
+  } = useScoreByVerifier(token?.address as `0x${string}`, currentRound, (accountAddress as `0x${string}`) || '');
 
-  console.log('votesNumByAccount', votesNumByAccount);
-  console.log('isPendingVotesNumByAccount', isPendingVotesNumByAccount);
-  console.log('showBtn', showBtn);
+  // console.log('====================');
+  // console.log('isPendingVotesNumByAccount', isPendingVotesNumByAccount);
+  // console.log('isPendingScoreByVerifier', isPendingScoreByVerifier);
+  // console.log('isVotesNumByAccountError', isVotesNumByAccountError);
+  // console.log('isScoreByVerifierError', isScoreByVerifierError);
+
   return (
     <div className="flex flex-col items-center space-y-4 p-6 bg-base-100">
       <h1 className="text-base text-center">

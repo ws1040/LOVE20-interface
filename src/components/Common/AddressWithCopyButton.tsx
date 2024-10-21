@@ -26,7 +26,7 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({ address, 
 
   return (
     <>
-      <span className="ml-2 text-xs text-gray-500">{abbreviateAddress(address)}</span>
+      <span className="text-xs text-gray-500">{abbreviateAddress(address)}</span>
       {showCopyButton && ( // 根据 showCopyButton 显示或隐藏按钮
         <CopyToClipboard text={address} onCopy={handleCopy}>
           <button className="" onClick={handleClick}>

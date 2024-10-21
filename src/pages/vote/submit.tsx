@@ -40,8 +40,6 @@ const VotingSubmitPage = () => {
     currentRound,
     accountAddress as `0x${string}`,
   );
-  console.log('validGovVotes', validGovVotes);
-  console.log('votesNumByAccount', votesNumByAccount);
 
   // 行动列表hook：
   const actionIds = idList?.map((id: number) => BigInt(id)) || [];
@@ -62,7 +60,7 @@ const VotingSubmitPage = () => {
     }));
   };
 
-  // 提交投票：注意，百分比之和必须是100，否则toast报错“百分比之和必须为100”
+  // 提交投票
   const handleSubmit = async () => {
     // percentages 百分比之和必须为100
     const totalPercentage = Object.values(percentages).reduce((sum, percentage) => sum + percentage, 0);
@@ -74,7 +72,7 @@ const VotingSubmitPage = () => {
     const actionIds = idList.map((id) => BigInt(id));
     const votes = idList.map((id) => {
       const percentage = percentages[id] || 0;
-      return BigInt(Math.floor((percentage * Number(validGovVotes)) / 100));
+      return (BigInt(percentage) * validGovVotes) / 100n;
     });
 
     // 提交投票
@@ -85,7 +83,6 @@ const VotingSubmitPage = () => {
       toast.error('提交失败，请重试');
     }
   };
-
   useEffect(() => {
     if (isConfirmed && !submitError) {
       toast.success('提交成功', {
