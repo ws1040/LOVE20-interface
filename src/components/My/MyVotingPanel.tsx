@@ -33,7 +33,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
   console.log('votesNumByAccount', votesNumByAccount);
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-6 bg-base-100 mt-4">
+    <div className="flex flex-col items-center space-y-4 p-6 bg-base-100 mt-4 mb-4">
       <h1 className="text-base text-center">
         投票轮（第
         <span className="text-red-500">{currentRound === undefined ? <Loading /> : Number(currentRound)}</span>
@@ -61,7 +61,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
       {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
         <Loading />
       ) : validGovVotes > votesNumByAccount ? (
-        <Link href="/voting" className="btn-primary btn w-1/2">
+        <Link href="/vote" className="btn-primary btn w-1/2">
           去投票
         </Link>
       ) : (

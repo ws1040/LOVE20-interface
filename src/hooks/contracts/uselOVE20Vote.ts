@@ -199,7 +199,7 @@ export const useVotedActionIdsByAccount = (
     args: [account, round, anotherAccount, actionId],
   });
 
-  return { votedActionIdsByAccount: data as bigint | undefined, isPending, error };
+  return { votedActionIdsByAccount: data as bigint, isPending, error };
 };
 
 /**

@@ -111,7 +111,7 @@ export const useCurrentRound = () => {
     functionName: 'currentRound',
   });
 
-  return { currentRound: data as bigint | undefined, isPending, error };
+  return { currentRound: data as bigint, isPending, error };
 };
 
 /**
@@ -294,22 +294,22 @@ export const useScoreByVerifier = (verifier: `0x${string}`, someNumber: bigint, 
  * Hook for scoreByVerifierByActionId
  */
 export const useScoreByVerifierByActionId = (
+  tokenAddress: `0x${string}`,
+  round: bigint,
   verifier: `0x${string}`,
-  someNumber1: bigint,
-  anotherVerifier: `0x${string}`,
-  someNumber2: bigint,
+  actionId: bigint,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VerifyAbi,
     functionName: 'scoreByVerifierByActionId',
-    args: [verifier, someNumber1, anotherVerifier, someNumber2],
+    args: [tokenAddress, round, verifier, actionId],
     query: {
-      enabled: !!verifier && someNumber1 !== undefined && !!anotherVerifier && someNumber2 !== undefined,
+      enabled: !!tokenAddress && round !== undefined && !!verifier && actionId !== undefined,
     },
   });
 
-  return { scoreByVerifierByActionId: data as bigint | undefined, isPending, error };
+  return { scoreByVerifierByActionId: data as bigint, isPending, error };
 };
 
 /**

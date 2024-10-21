@@ -6,7 +6,7 @@ import { useCurrentRound } from '../../hooks/contracts/useLOVE20Vote';
 import VotingActionList from '../../components/ActionList/VotingActionList';
 import Loading from '../../components/Common/Loading';
 
-const VotingPage = () => {
+const VotePage = () => {
   const { currentRound, isPending: isPendingCurrentRound, error: errCurrentRound } = useCurrentRound();
 
   return (
@@ -19,7 +19,7 @@ const VotingPage = () => {
             <span className="text-red-500">{isPendingCurrentRound ? <Loading /> : Number(currentRound)}</span>
             轮）
           </h1>
-          <Link href="/voting/actions4submit" className="btn w-1/2">
+          <Link href="/vote/actions4submit" className="btn w-1/2">
             推举其他行动
           </Link>
         </div>
@@ -30,4 +30,4 @@ const VotingPage = () => {
   );
 };
 
-export default VotingPage;
+export default VotePage;

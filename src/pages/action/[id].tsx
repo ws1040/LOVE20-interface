@@ -6,7 +6,7 @@ import ActionDetail from '../../components/ActionDetail/ActionDetail';
 import ActionPanelForSubmit from '../../components/ActionDetail/ActionPanelForSubmit';
 import ActionPanelForVoting from '../../components/ActionDetail/ActionPanelForVoting';
 import ActionPanelForJoin from '../../components/ActionDetail/ActionPanelForJoin';
-
+import ActionPanelForVerifing from '../../components/ActionDetail/ActionPanelForVerifing';
 const ActionPage = () => {
   const router = useRouter();
   const { id, type, submitted } = router.query;
@@ -35,6 +35,9 @@ const ActionPage = () => {
         )}
         {(typeParam === 'join' || typeParam === undefined) && (
           <ActionPanelForJoin actionId={BigInt(idParam || 0)} onRoundChange={handleRoundChange} />
+        )}
+        {typeParam === 'verify' && (
+          <ActionPanelForVerifing actionId={BigInt(idParam || 0)} onRoundChange={handleRoundChange} />
         )}
         <ActionDetail
           actionId={BigInt(idParam || 0)}

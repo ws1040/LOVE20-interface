@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { useAccount } from 'wagmi';
+import Link from 'next/link';
 
 import { useVotesNumByAccount } from '../../hooks/contracts/useLOVE20Vote';
 import { useScoreByVerifier } from '../../hooks/contracts/useLOVE20Verify';
@@ -7,13 +8,13 @@ import { useScoreByVerifier } from '../../hooks/contracts/useLOVE20Verify';
 import { TokenContext } from '../../contexts/TokenContext';
 import { formatTokenAmount } from '../../utils/strings';
 import Loading from '../Common/Loading';
-import { Link } from '@mui/icons-material';
 
 interface MyVerifingPanelProps {
   currentRound: bigint;
+  showBtn?: boolean;
 }
 
-const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound }) => {
+const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn = true }) => {
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress } = useAccount();
 
@@ -28,8 +29,11 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound }) => {
     (accountAddress as `0x${string}`) || '',
   );
 
+  console.log('votesNumByAccount', votesNumByAccount);
+  console.log('isPendingVotesNumByAccount', isPendingVotesNumByAccount);
+  console.log('showBtn', showBtn);
   return (
-    <div className="flex flex-col items-center space-y-4 p-6 bg-base-100 mt-4">
+    <div className="flex flex-col items-center space-y-4 p-6 bg-base-100">
       <h1 className="text-base text-center">
         验证轮（第 <span className="text-red-500">{Number(currentRound)}</span> 轮）
       </h1>
@@ -52,15 +56,17 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound }) => {
           </span>
         </div>
       </div>
-      {isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
-        <Loading />
-      ) : votesNumByAccount > scoreByVerifier ? (
-        <Link href="/verify" className="btn-primary btn w-1/2">
-          去验证
-        </Link>
-      ) : (
-        <span className="text-gray-500 text-sm">无剩余验证票</span>
-      )}
+
+      {showBtn &&
+        (isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
+          <Loading />
+        ) : votesNumByAccount > scoreByVerifier ? (
+          <Link href="/verify" className="btn-primary btn w-1/2">
+            去验证
+          </Link>
+        ) : (
+          <span className="text-gray-500 text-sm">无剩余验证票</span>
+        ))}
     </div>
   );
 };

@@ -61,7 +61,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
   // 投票
   const handleSubmit = () => {
     const selectedIds = Array.from(selectedActions).join(',');
-    router.push(`/voting/submit?ids=${selectedIds}`);
+    router.push(`/vote/submit?ids=${selectedIds}`);
   };
 
   // 加载中

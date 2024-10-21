@@ -52,7 +52,7 @@ const NewAction = () => {
     if (isSubmitted) {
       //需要用事件来获取 actionId
       //router.push(`/action/${writeData}`);
-      router.push('/voting/actions4submit');
+      router.push('/vote/actions4submit');
     }
   }, [isSubmitted, writeData]);
 
