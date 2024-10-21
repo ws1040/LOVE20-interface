@@ -134,45 +134,6 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
-    "name": "generateAndStoreRandomAccounts",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "round",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "actionId",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "randomSeed",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "num",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address[]",
-        "internalType": "address[]"
-      }
-    ],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "join",
     "inputs": [
       {

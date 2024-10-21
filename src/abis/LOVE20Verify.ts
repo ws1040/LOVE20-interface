@@ -21,7 +21,7 @@ export const LOVE20VerifyAbi = [
         "internalType": "address"
       },
       {
-        "name": "actionAddress_",
+        "name": "joinAddress_",
         "type": "address",
         "internalType": "address"
       },
@@ -76,6 +76,40 @@ export const LOVE20VerifyAbi = [
   },
   {
     "type": "function",
+    "name": "_accountsForVerify",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "abstentionScoreWithReward",
     "inputs": [
       {
@@ -100,13 +134,29 @@ export const LOVE20VerifyAbi = [
   },
   {
     "type": "function",
-    "name": "actionAddress",
-    "inputs": [],
+    "name": "accountsForVerify",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "outputs": [
       {
         "name": "",
-        "type": "address",
-        "internalType": "address"
+        "type": "address[]",
+        "internalType": "address[]"
       }
     ],
     "stateMutability": "view"
@@ -228,6 +278,19 @@ export const LOVE20VerifyAbi = [
         "name": "",
         "type": "bool",
         "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "joinAddress",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "stateMutability": "view"
