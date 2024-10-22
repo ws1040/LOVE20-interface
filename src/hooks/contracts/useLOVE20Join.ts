@@ -265,25 +265,28 @@ export const useStakedAmountByAccount = (tokenAddress: `0x${string}`, account: `
     args: [tokenAddress, account],
   });
 
-  return { stakedAmount: data as bigint | undefined, isPending, error };
+  return { stakedAmount: data as bigint, isPending, error };
 };
 
 /**
  * Hook for stakedAmountByAccountByActionId
  */
 export const useStakedAmountByAccountByActionId = (
-  account1: `0x${string}`,
-  account2: `0x${string}`,
+  tokenAddress: `0x${string}`,
+  account: `0x${string}`,
   actionId: bigint,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20JoinAbi,
     functionName: 'stakedAmountByAccountByActionId',
-    args: [account1, account2, actionId],
+    args: [tokenAddress, account, actionId],
+    query: {
+      enabled: !!tokenAddress && !!account && actionId !== undefined,
+    },
   });
 
-  return { stakedAmountByAccountByActionId: data as bigint | undefined, isPending, error };
+  return { stakedAmountByAccountByActionId: data as bigint, isPending, error };
 };
 
 /**

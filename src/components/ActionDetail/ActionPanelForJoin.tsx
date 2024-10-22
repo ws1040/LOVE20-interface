@@ -10,6 +10,7 @@ import {
 } from '../../hooks/contracts/useLOVE20Join';
 import { TokenContext } from '../../contexts/TokenContext';
 import Loading from '../Common/Loading';
+import { formatTokenAmount } from '../../utils/strings';
 
 interface ActionPanelForJoinProps {
   actionId: bigint;
@@ -76,7 +77,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
         <div className="flex flex-col items-center">
           <span className="text-sm text-gray-500">我参与的代币数</span>
           <span className="text-2xl font-bold text-orange-400">
-            {isPendingJoinedAmount ? '加载中...' : `${joinedAmountByActionIdByAccount}`}
+            {isPendingJoinedAmount ? <Loading /> : formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0))}
           </span>
         </div>
         <div className="flex flex-col items-center">

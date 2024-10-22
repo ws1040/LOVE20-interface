@@ -7,6 +7,7 @@ import { useApprove } from '../../hooks/contracts/useLOVE20Token';
 import { useTotalSupply } from '../../hooks/contracts/useLOVE20STToken';
 import { TokenContext } from '../../contexts/TokenContext';
 import { formatTokenAmount } from '../../utils/strings';
+import Loading from '../Common/Loading';
 
 interface StakeTokenPanelProps {
   tokenBalance: bigint;
@@ -104,7 +105,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
         <span>
           <span className="text-sm text-gray-500 mr-2">代币质押总量</span>
           <span className="text-2xl font-bold text-orange-400">
-            {isPendingStakeToken ? 'Loading...' : formatTokenAmount(stTokenAmount || BigInt(0))}
+            {isPendingStakeToken ? <Loading /> : formatTokenAmount(stTokenAmount || BigInt(0))}
           </span>
         </span>
       </div>

@@ -94,9 +94,9 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
           </div>
         </div>
 
-        {(isPendingActionInfo || isPendingActionSubmits) && <Loading />}
+        {(isPendingActionInfo || (showSubmitter && isPendingActionSubmits)) && <Loading />}
 
-        {(errorActionInfo || errorActionSubmits) && (
+        {(errorActionInfo || (showSubmitter && errorActionSubmits)) && (
           <div className="text-center text-sm text-red-500">
             {errorActionInfo?.message || errorActionSubmits?.message}
           </div>
