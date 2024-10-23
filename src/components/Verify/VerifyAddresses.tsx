@@ -134,15 +134,22 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
         </ul>
       </div>
 
-      <button
-        onClick={handleSubmit}
-        disabled={isWriting || isConfirmed}
-        className={`mt-6 px-6 py-2 rounded ${
-          isConfirmed ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-        } text-white`}
-      >
-        {isConfirmed ? '已提交' : '提交'}
-      </button>
+      {remainingVotes > 0 && (
+        <button
+          onClick={handleSubmit}
+          disabled={isWriting || isConfirmed}
+          className={`mt-6 px-6 py-2 rounded ${
+            isConfirmed ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+          } text-white`}
+        >
+          {isConfirmed ? '已提交' : '提交'}
+        </button>
+      )}
+      {!remainingVotes && (
+        <button disabled className="btn btn-ghost mt-6 px-6 py-2 rounded">
+          无需验证
+        </button>
+      )}
       {submitError && <div className="text-red-500 text-center">{submitError.message}</div>}
     </>
   );

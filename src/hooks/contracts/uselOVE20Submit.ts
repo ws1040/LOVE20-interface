@@ -38,12 +38,12 @@ export const useActionIdsByAuthor = (tokenAddress: `0x${string}`, author: `0x${s
 /**
  * Hook for actionInfo
  */
-export const useActionInfo = (tokenAddress: `0x${string}`, actionId: bigint) => {
+export const useActionInfo = (tokenAddress: `0x${string}`, actionId: bigint | undefined) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20SubmitAbi,
     functionName: 'actionInfo',
-    args: [tokenAddress, actionId],
+    args: [tokenAddress, actionId || 0n],
     query: {
       enabled: !!tokenAddress && actionId !== undefined,
     },

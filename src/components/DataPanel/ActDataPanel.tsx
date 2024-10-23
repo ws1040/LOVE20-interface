@@ -27,7 +27,7 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
   return (
     <div className="flex flex-col items-center space-y-4 p-6 bg-base-100">
       <h1 className="text-base text-center">
-        行动轮（第 <span className="text-red-500">{Number(currentRound)}</span> 轮）
+        行动轮（第 <span className="text-red-500">{Number(currentRound ?? 0n)}</span> 轮）
       </h1>
 
       <div className="flex w-full justify-center space-x-20">
@@ -48,10 +48,6 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
           </span>
         </div>
       </div>
-
-      <a href="#" className="text-blue-400 text-sm hover:underline">
-        查看以往轮次奖励 &gt;&gt;
-      </a>
     </div>
   );
 };
