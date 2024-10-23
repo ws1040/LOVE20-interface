@@ -27,15 +27,6 @@ const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> =
     }
   }, [verifiedAddresses]);
 
-  console.log('================begin====================');
-  // console.log('token?.address', token?.address);
-  // console.log('round', round);
-  // console.log('actionId', actionId);
-  console.log('isPendingVerifiedAddresses', isPendingVerifiedAddresses);
-  console.log('errorVerifiedAddresses', errorVerifiedAddresses);
-  console.log('verifiedAddresses', verifiedAddresses);
-  console.log('====================================');
-
   // 领取奖励
   const {
     mintActionReward,
@@ -58,7 +49,7 @@ const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> =
   if (errorVerifiedAddresses) return <div>发生错误: {errorVerifiedAddresses.message}</div>;
 
   return (
-    <div className="pt-4 pl-4 bg-base-100 mb-4">
+    <div className="relative pt-4 pl-4 bg-base-100 mb-4">
       <h2 className="relative pl-4 text-gray-700 text-base font-medium before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
         验证地址结果
       </h2>
@@ -107,6 +98,24 @@ const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> =
         </table>
       )}
       {mintError && <div className="text-red-500">{mintError.message}</div>}
+
+      {/* 遮罩层 */}
+      {(isMinting || isConfirmingMint) && (
+        <div className="absolute top-0 left-0 w-full h-full bg-gray-500 bg-opacity-50 flex items-center justify-center z-20">
+          <div className="text-white text-lg flex items-center">
+            <svg
+              className="animate-spin mr-3 h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            正在提交中...
+          </div>
+        </div>
+      )}
     </div>
   );
 };
