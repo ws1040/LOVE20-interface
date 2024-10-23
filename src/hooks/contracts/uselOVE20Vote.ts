@@ -280,14 +280,14 @@ export const useVotesNumByActionId = (tokenAddress: `0x${string}`, round: bigint
 /**
  * Hook to get the number of votes (multiple).
  */
-export const useVotesNums = (tokenAddress: `0x${string}`, round?: bigint) => {
+export const useVotesNums = (tokenAddress: `0x${string}`, round: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
     functionName: 'votesNums',
     args: [tokenAddress, round || BigInt(0)],
     query: {
-      enabled: !!tokenAddress && round !== undefined && round !== BigInt(0),
+      enabled: !!tokenAddress && round !== undefined,
     },
   });
 

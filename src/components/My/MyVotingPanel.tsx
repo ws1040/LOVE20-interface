@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useValidGovVotes } from '../../hooks/contracts/useLOVE20Stake';
 import { useVotesNumByAccount } from '../../hooks/contracts/useLOVE20Vote';
 import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 import Loading from '../Common/Loading';
 
 interface MyVotingPanelProps {

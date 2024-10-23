@@ -3,7 +3,7 @@ import { useRewardAvailable } from '../../hooks/contracts/useLOVE20Mint';
 import { useJoinedAmount } from '../../hooks/contracts/useLOVE20Join';
 
 import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 import Loading from '../Common/Loading';
 
 interface ActDataPanelProps {

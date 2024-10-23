@@ -14,22 +14,28 @@ interface JoiningActionListProps {
 }
 const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
+
+  // 获取投票id列表、投票数
   const {
     actionIds,
     votes,
     isPending: isPendingVotesNums,
     error: errorVotesNums,
   } = useVotesNums((token?.address as `0x${string}`) || '', currentRound);
-  // console.log('actionIds', actionIds);
-  // console.log('votes', votes);
+
+  // 获取行动详情
   const {
     actionInfos,
     isPending: isPendingActionInfosByIds,
     error: errorActionInfosByIds,
   } = useActionInfosByIds((token?.address as `0x${string}`) || '', actionIds || []);
 
-  if (isPendingVotesNums || isPendingActionInfosByIds) {
-    return <Loading />;
+  if (isPendingVotesNums || (actionIds && actionIds.length > 0 && isPendingActionInfosByIds)) {
+    return (
+      <div className="p-4 flex justify-center items-center">
+        <Loading />
+      </div>
+    );
   }
 
   if (errorVotesNums || errorActionInfosByIds) {

@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 
 import { useTokenAmounts } from '../../hooks/contracts/useLOVE20SLToken';
 import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 
 import Loading from '../Common/Loading';
 

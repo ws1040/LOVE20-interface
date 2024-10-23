@@ -4,9 +4,10 @@ import React, { useContext } from 'react';
 
 import { useActionInfo } from '../../hooks/contracts/useLOVE20Submit';
 import { useActionSubmits } from '../../hooks/contracts/useLOVE20Submit';
-
 import { ActionSubmit } from '../../types/life20types';
 import { TokenContext } from '../../contexts/TokenContext';
+import { formatTokenAmount } from '../../utils/format';
+
 import AddressWithCopyButton from '../Common/AddressWithCopyButton';
 import Loading from '../Common/Loading';
 
@@ -62,7 +63,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
         <div className="mb-6">
           <div className="mb-4">
             <h3 className="text-base font-semibold text-gray-500">参与资产上限</h3>
-            <p className="text-lg">{actionInfo?.body.maxStake.toString() || '-'}</p>
+            <p className="text-lg">{formatTokenAmount(actionInfo?.body.maxStake || BigInt(0))}</p>
           </div>
 
           <div className="mb-4">

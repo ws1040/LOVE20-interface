@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi';
 
 import { useStakedAmountByAccount } from '../../hooks/contracts/useLOVE20Join';
 import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 import Loading from '../Common/Loading';
 
 const MyActAssetsPanel = () => {

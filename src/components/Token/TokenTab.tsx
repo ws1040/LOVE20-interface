@@ -6,14 +6,17 @@ import { useTotalSupply } from '../../hooks/contracts/useLOVE20Token';
 
 import TokenLabel from './TokenLabel';
 import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 import Loading from '../Common/Loading';
 
 export default function TokenTab() {
-
   const { token } = useContext(TokenContext) || {};
-  const { totalSupply, isPending: isTotalSupplyPending, error: totalSupplyError } = useTotalSupply(token?.address as `0x${string}` || '');
-  
+  const {
+    totalSupply,
+    isPending: isTotalSupplyPending,
+    error: totalSupplyError,
+  } = useTotalSupply((token?.address as `0x${string}`) || '');
+
   // 控制 Tooltip 的显隐 begin
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const handleTooltipToggle = () => {
@@ -26,42 +29,34 @@ export default function TokenTab() {
 
   if (!token?.address) {
     return <div>Loading token information...</div>;
-  }else{
+  } else {
     return (
       <div className="p-6 bg-base-100 border-t border-gray-100 mb-4">
-      
-      <TokenLabel showGovernanceLink={true} />
+        <TokenLabel showGovernanceLink={true} />
 
-      <div className="flex items-center">
-        <div className="mr-2">
-          <span className="text-sm text-gray-500">已铸币量: </span>
-          <span className="text-lg font-semibold text-orange-400">
-            {
-              isTotalSupplyPending 
-                ? <Loading /> 
-                : formatTokenAmount(totalSupply || 0n)  
-            }
-          </span>
-        </div>
-        <Tooltip
-          // 1e10
-          title={`铸币上限 ${1e10.toLocaleString()}`}
-          open={tooltipOpen}
-          onClose={handleTooltipClose}
-          disableHoverListener
-          disableFocusListener
-          disableTouchListener
-          // 可以根据需要添加 TransitionComponent 等属性
-        >
-          <button
-            className="btn btn-circle btn-ghost btn-xs text-gray-400"
-            onClick={handleTooltipToggle}
+        <div className="flex items-center">
+          <div className="mr-2">
+            <span className="text-sm text-gray-500">已铸币量: </span>
+            <span className="text-lg font-semibold text-orange-400">
+              {isTotalSupplyPending ? <Loading /> : formatTokenAmount(totalSupply || 0n)}
+            </span>
+          </div>
+          <Tooltip
+            // 1e10
+            title={`铸币上限 ${(1e10).toLocaleString()}`}
+            open={tooltipOpen}
+            onClose={handleTooltipClose}
+            disableHoverListener
+            disableFocusListener
+            disableTouchListener
+            // 可以根据需要添加 TransitionComponent 等属性
           >
-            <HelpOutlineIcon />
-          </button>
-        </Tooltip>
+            <button className="btn btn-circle btn-ghost btn-xs text-gray-400" onClick={handleTooltipToggle}>
+              <HelpOutlineIcon />
+            </button>
+          </Tooltip>
+        </div>
       </div>
-    </div>
-  );
+    );
   }
 }

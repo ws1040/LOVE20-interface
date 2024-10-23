@@ -58,7 +58,7 @@ const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> =
   if (errorVerifiedAddresses) return <div>发生错误: {errorVerifiedAddresses.message}</div>;
 
   return (
-    <div className="pt-4 pl-4 bg-base-100 mb-4">
+    <div className="p-4 bg-base-100 mb-4">
       <h2 className="relative pl-4 text-gray-700 text-base font-medium before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
         验证地址结果
       </h2>

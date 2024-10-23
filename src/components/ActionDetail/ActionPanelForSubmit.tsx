@@ -1,5 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { BaseError } from 'viem/_types/errors/base';
+import { useRouter } from 'next/router';
+import { toast } from 'react-hot-toast';
 
 import { useCurrentRound, useSubmit } from '../../hooks/contracts/useLOVE20Submit';
 import { TokenContext } from '../../contexts/TokenContext';
@@ -13,6 +15,7 @@ interface ActionPanelForJoinProps {
 
 const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, submitted, onRoundChange }) => {
   const { token } = useContext(TokenContext) || {};
+  const router = useRouter();
 
   // 获取当前轮次, 并设置状态给父组件
   const { currentRound, isPending: isPendingCurrentRound, error: errCurrentRound } = useCurrentRound();
@@ -30,6 +33,16 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
     }
     submit(token?.address as `0x${string}`, actionId);
   };
+  useEffect(() => {
+    if (isConfirmed && !errSubmit) {
+      toast.success('提交成功', {
+        duration: 2000, // 2秒
+      });
+      setTimeout(() => {
+        router.push('/vote/actions4submit');
+      }, 2000);
+    }
+  }, [isConfirmed, errSubmit]);
 
   return (
     <div className="flex flex-col items-center space-y-6 p-8 bg-base-100 mb-4 border-t border-gray-100">

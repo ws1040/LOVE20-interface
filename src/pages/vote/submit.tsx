@@ -4,15 +4,15 @@ import { BaseError, useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 
+import { formatTokenAmount } from '../../utils/format';
+import { ActionInfo } from '../../types/life20types';
+import { TokenContext } from '../../contexts/TokenContext';
 import { useActionInfosByIds } from '../../hooks/contracts/useLOVE20Submit';
 import { useValidGovVotes } from '../../hooks/contracts/useLOVE20Stake';
 import { useCurrentRound, useVotesNumByAccount, useVote } from '../../hooks/contracts/useLOVE20Vote';
 
 import Header from '../../components/Header';
 import Loading from '../../components/Common/Loading';
-import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/strings';
-import { ActionInfo } from '../../types/life20types';
 
 const VotingSubmitPage = () => {
   const { token } = useContext(TokenContext) || {};
@@ -30,7 +30,42 @@ const VotingSubmitPage = () => {
     }
   }, [ids]);
 
-  // 剩余票数hook：
+  useEffect(() => {
+    if (idList.length === 1) {
+      setPercentages({ [idList[0]]: 100 });
+    } else {
+      const initialPercentages: { [key: number]: number } = {};
+      const equalPercentage = Math.floor(100 / idList.length);
+      idList.forEach((id, index) => {
+        if (index === idList.length - 1) {
+          initialPercentages[id] = 100 - equalPercentage * (idList.length - 1);
+        } else {
+          initialPercentages[id] = equalPercentage;
+        }
+      });
+      setPercentages(initialPercentages);
+    }
+  }, [idList]);
+
+  const handlePercentageChange = (actionId: number, value: number) => {
+    if (idList.length === 1) return;
+
+    const updatedPercentages = { ...percentages, [actionId]: value };
+    const otherIds = idList.slice(0, -1);
+    const total = otherIds.reduce((sum, id) => sum + (updatedPercentages[id] || 0), 0);
+
+    if (total > 100) {
+      toast.error('投票百分比之和不能超过100%');
+      return;
+    }
+
+    const lastId = idList[idList.length - 1];
+    updatedPercentages[lastId] = 100 - total;
+
+    setPercentages(updatedPercentages);
+  };
+
+  // 获取剩余票数
   const { validGovVotes, isPending: isPendingValidGovVotes } = useValidGovVotes(
     token?.address as `0x${string}`,
     accountAddress as `0x${string}`,
@@ -41,7 +76,7 @@ const VotingSubmitPage = () => {
     accountAddress as `0x${string}`,
   );
 
-  // 行动列表hook：
+  // 获取行动列表
   const actionIds = idList?.map((id: number) => BigInt(id)) || [];
   const {
     actionInfos,
@@ -49,16 +84,8 @@ const VotingSubmitPage = () => {
     error: errorActionInfosByIds,
   } = useActionInfosByIds(token?.address as `0x${string}`, actionIds);
 
-  // 投票hook：
+  // 提交投票
   const { vote, isWriting, isConfirming, isConfirmed, writeError: submitError } = useVote();
-
-  // 百分比变化：
-  const handlePercentageChange = (actionId: number, value: number) => {
-    setPercentages((prev) => ({
-      ...prev,
-      [actionId]: value,
-    }));
-  };
 
   // 提交投票
   const handleSubmit = async () => {
@@ -118,29 +145,37 @@ const VotingSubmitPage = () => {
         <div className="p-4">
           <h2 className="text-sm font-bold mb-4 text-gray-600">行动列表 (行动轮)</h2>
           <div className="space-y-4">
-            {actionInfos?.map((action: ActionInfo, index: number) => (
-              <div key={action.head.id} className="bg-white p-4 rounded-lg mb-4 flex justify-between items-center">
-                <Link href={`/action/${action.head.id}?type=vote`} key={action.head.id} className="flex-grow">
-                  <div className="font-semibold mb-2">
-                    <span className="text-gray-400 text-base mr-1">{`No.${action.head.id}`}</span>
-                    <span className="text-gray-800 text-lg">{`${action.body.action}`}</span>
+            {actionInfos?.map((action: ActionInfo, index: number) => {
+              const isLast = index === actionInfos.length - 1;
+              const otherIds = idList.slice(0, -1);
+              const total = otherIds.reduce((sum, id) => sum + (percentages[id] || 0), 0);
+              const lastValue = 100 - total;
+
+              return (
+                <div key={action.head.id} className="bg-white p-4 rounded-lg mb-4 flex justify-between items-center">
+                  <Link href={`/action/${action.head.id}?type=vote`} key={action.head.id} className="flex-grow">
+                    <div className="font-semibold mb-2">
+                      <span className="text-gray-400 text-base mr-1">{`No.${action.head.id}`}</span>
+                      <span className="text-gray-800 text-lg">{`${action.body.action}`}</span>
+                    </div>
+                    <p className="leading-tight">{action.body.consensus}</p>
+                  </Link>
+                  <div className="flex items-center">
+                    <input
+                      type="number"
+                      min={isLast ? lastValue : 1}
+                      max="100"
+                      value={isLast ? lastValue : percentages[action.head.id] || ''}
+                      onChange={(e) => handlePercentageChange(action.head.id, Number(e.target.value))}
+                      className="p-2 border rounded w-16"
+                      disabled={idList.length === 1 || isLast}
+                      placeholder=""
+                    />
+                    %
                   </div>
-                  <p className="leading-tight">{action.body.consensus}</p>
-                </Link>
-                <div className="flex items-center">
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={percentages[action.head.id] || ''}
-                    onChange={(e) => handlePercentageChange(action.head.id, Number(e.target.value))}
-                    className="p-2 border rounded w-16"
-                    placeholder=""
-                  />
-                  %
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="flex justify-center mt-4">
             <button className="btn btn-primary w-1/2" onClick={handleSubmit} disabled={isWriting || isConfirming}>

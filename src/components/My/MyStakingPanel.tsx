@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 import Loading from '../Common/Loading';
 
 import { useAccountStakeStatus } from '../../hooks/contracts/useLOVE20Stake';

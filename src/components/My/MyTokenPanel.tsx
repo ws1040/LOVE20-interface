@@ -3,7 +3,7 @@ import { useContext } from 'react';
 
 import { TokenContext } from '../../contexts/TokenContext';
 import { useBalanceOf } from '../../hooks/contracts/useLOVE20Token';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 import Loading from '../Common/Loading';
 
 const MyTokenPanel = () => {

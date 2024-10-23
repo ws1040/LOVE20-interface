@@ -10,7 +10,7 @@ import {
 } from '../../hooks/contracts/useLOVE20Join';
 import { TokenContext } from '../../contexts/TokenContext';
 import Loading from '../Common/Loading';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 
 interface ActionPanelForJoinProps {
   actionId: bigint;
@@ -29,7 +29,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
     }
   }, [currentRound, onRoundChange]);
 
-  // 获取行动代币数、用户代币数
+  // 获取我的行动代币数
   const {
     joinedAmountByActionIdByAccount,
     isPending: isPendingJoinedAmountByAccount,
@@ -40,6 +40,8 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
     actionId,
     (account as `0x${string}`) || '',
   );
+
+  // 获取所有用户代币数，计算参与比例
   const {
     joinedAmountByActionId,
     isPending: isPendingJoinedAmount,

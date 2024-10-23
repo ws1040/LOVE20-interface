@@ -5,7 +5,7 @@ import { GovReward } from '../../types/life20types';
 import { TokenContext } from '../../contexts/TokenContext';
 import { useGovRewardsByAccountByRounds } from '../../hooks/contracts/useLOVE20DataViewer';
 import { useMintGovReward, useCurrentRound } from '../../hooks/contracts/useLOVE20Mint';
-
+import { formatTokenAmount } from '../../utils/format';
 import Header from '../../components/Header';
 import Loading from '../../components/Common/Loading';
 
@@ -32,7 +32,7 @@ const GovRewardsPage: React.FC = () => {
   const [rewardList, setRewardList] = useState<GovReward[]>([]);
   useEffect(() => {
     if (rewards) {
-      setRewardList(rewards);
+      setRewardList([...rewards].sort((a, b) => (a.round > b.round ? -1 : 1))); // 按round倒序排列
     }
   }, [rewards]);
 
@@ -74,7 +74,7 @@ const GovRewardsPage: React.FC = () => {
               {rewardList.map((item) => (
                 <tr key={item.round.toString()}>
                   <td>{item.round.toString()}</td>
-                  <td>{item.unminted.toString()}</td>
+                  <td>{formatTokenAmount(item.unminted)}</td>
                   <td>
                     {item.unminted > 0n ? (
                       <button
@@ -84,8 +84,10 @@ const GovRewardsPage: React.FC = () => {
                       >
                         {isWriting || isConfirming ? '领取中...' : '领取'}
                       </button>
+                    ) : item.minted > 0n ? (
+                      <span className="text-green-500">已领取</span>
                     ) : (
-                      <span className="text-gray-500">{item.minted > 0n ? '已领取' : '无奖励'}</span>
+                      <span className="text-gray-500">无奖励</span>
                     )}
                   </td>
                 </tr>

@@ -10,7 +10,7 @@ import { TokenContext } from '../../contexts/TokenContext';
 
 import Header from '../../components/Header';
 import ActionAbstract from '../../components/ActionDetail/ActionAbstract';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 
 const JoinPage = () => {
   const router = useRouter();
@@ -26,23 +26,23 @@ const JoinPage = () => {
   const [rounds, setRounds] = useState('');
   const [verificationInfo, setVerificationInfo] = useState('');
 
-  // Hooks: 当前轮次
+  // 获取当前轮次
   const { currentRound, error: errorCurrentRound } = useCurrentRound();
 
-  // Hooks: 代币余额
+  // 获取代币余额
   const { balance: tokenBalance, error: errorTokenBalance } = useBalanceOf(
     token?.address as `0x${string}`,
     accountAddress as `0x${string}`,
   );
 
-  // Hooks: 行动详情
+  // 获取行动详情
   const {
     actionInfo,
     isPending: isPendingActionInfo,
     error: errorActionInfo,
   } = useActionInfo(token?.address as `0x${string}`, BigInt(actionId || 0));
 
-  // Hooks: 授权(approve)
+  // 授权(approve)
   const {
     approve: approveToken,
     isWriting: isPendingApproveToken,
@@ -50,7 +50,7 @@ const JoinPage = () => {
     writeError: errApproveToken,
   } = useApprove(token?.address as `0x${string}`);
 
-  // Hooks: 加入行动
+  // 加入行动
   const {
     join,
     isPending: isPendingJoin,
@@ -83,7 +83,7 @@ const JoinPage = () => {
       join(
         token?.address as `0x${string}`,
         BigInt(actionId),
-        BigInt(additionalStakeAmount),
+        BigInt(additionalStakeAmount) * 10n ** BigInt(decimals),
         verificationInfo,
         BigInt(rounds),
       )

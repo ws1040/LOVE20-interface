@@ -165,6 +165,19 @@ export const useGovRewardsByAccountByRounds = (
   return { rewards: data as GovReward[], isPending, error };
 };
 
+export const useVerificationInfosByAction = (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'verificationInfosByAction',
+    args: [tokenAddress, round, actionId],
+    query: {
+      enabled: !!tokenAddress && round !== undefined && actionId !== undefined,
+    },
+  });
+  return { accounts: data?.[0] as `0x${string}`[], infos: data?.[1] as string[], isPending, error };
+};
+
 // =====================
 // === 写入 Hooks ===
 // =====================

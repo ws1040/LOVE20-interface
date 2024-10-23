@@ -6,7 +6,7 @@ import StakedLiquidDataPanel from '../DataPanel/StakedLiquidDataPanel';
 import { useStakeLiquidity } from '../../hooks/contracts/useLOVE20Stake';
 import { useApprove } from '../../hooks/contracts/useLOVE20Token';
 import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 
 interface StakeLiquidityPanelProps {
   tokenBalance: bigint;

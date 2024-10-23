@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { TokenContext } from '../../contexts/TokenContext';
 import { useAccountStakeStatus } from '../../hooks/contracts/useLOVE20Stake';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 import Loading from '../Common/Loading';
 
 const MyGovernanceAssetsPanel = () => {

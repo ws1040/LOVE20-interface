@@ -35,9 +35,10 @@ const NewAction = () => {
   };
 
   // 提交表单
+  const decimals = process.env.NEXT_PUBLIC_TOKEN_DECIMALS || 18;
   const handleSubmit = async () => {
     const actionBody = {
-      maxStake: form.maxStake ? BigInt(form.maxStake) : 0n,
+      maxStake: form.maxStake ? BigInt(form.maxStake) * 10n ** BigInt(decimals) : 0n,
       maxRandomAccounts: form.rewardAddressCount ? BigInt(form.rewardAddressCount) : 0n,
       whiteList: form.whiteList ? form.whiteList.split(',').map((addr) => addr.trim() as `0x${string}`) : [],
       action: form.actionName,

@@ -8,7 +8,7 @@ import {
 } from '../../hooks/contracts/useLOVE20Join';
 import { TokenContext } from '../../contexts/TokenContext';
 import Loading from '../Common/Loading';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 
 interface MyJoinInfoOfActionPancelProps {
   actionId: bigint;

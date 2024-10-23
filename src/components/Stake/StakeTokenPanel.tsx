@@ -6,7 +6,7 @@ import { useStakeToken } from '../../hooks/contracts/useLOVE20Stake';
 import { useApprove } from '../../hooks/contracts/useLOVE20Token';
 import { useTotalSupply } from '../../hooks/contracts/useLOVE20STToken';
 import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 import Loading from '../Common/Loading';
 
 interface StakeTokenPanelProps {

@@ -6,6 +6,7 @@ import { useActionInfosByIds } from '../../hooks/contracts/useLOVE20Submit';
 import { useJoinedActions } from '../../hooks/contracts/useLOVE20DataViewer';
 import { TokenContext } from '../../contexts/TokenContext';
 import { JoinedAction } from '../../types/life20types';
+import { formatTokenAmount } from '../../utils/format';
 import Loading from '../Common/Loading';
 
 const MyStakedActionList: React.FC = () => {
@@ -48,7 +49,7 @@ const MyStakedActionList: React.FC = () => {
               <p className="leading-tight">{actionInfos?.[index]?.body.consensus}</p>
               <div className="flex justify-between mt-1">
                 <span className="text-sm">参与到第 {action.lastJoinedRound.toString()} 轮</span>
-                <span className="text-sm">参与代币数量：{action.stakedAmount.toString()}</span>
+                <span className="text-sm">参与代币数量：{formatTokenAmount(action.stakedAmount)}</span>
               </div>
             </Link>
           </div>

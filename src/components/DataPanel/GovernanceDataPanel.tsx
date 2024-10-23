@@ -4,7 +4,7 @@ import { useGovVotesNum } from '../../hooks/contracts/useLOVE20Stake';
 import { useTotalSupply } from '../../hooks/contracts/useLOVE20STToken';
 
 import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 import TokenLabel from '../Token/TokenLabel';
 import StakedLiquidDataPanel from './StakedLiquidDataPanel';
 

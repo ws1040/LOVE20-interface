@@ -6,7 +6,7 @@ import { useCurrentRound, useVotesNumByAccountByActionId, useVote } from '../../
 
 import { TokenContext } from '../../contexts/TokenContext';
 import Loading from '../Common/Loading';
-import { formatTokenAmount } from '../../utils/strings';
+import { formatTokenAmount } from '../../utils/format';
 
 interface ActionPanelForVoteProps {
   actionId: bigint;
