@@ -42,7 +42,7 @@ export const LOVE20DataViewerAbi = [
       {
         "name": "rewards",
         "type": "tuple[]",
-        "internalType": "struct GovRewardByAccountByRound[]",
+        "internalType": "struct GovReward[]",
         "components": [
           {
             "name": "round",
