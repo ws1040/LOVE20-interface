@@ -35,11 +35,11 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
   };
   useEffect(() => {
     if (isConfirmed && !errSubmit) {
-      toast.success('提交成功', {
+      toast.success('推举成功', {
         duration: 2000, // 2秒
       });
       setTimeout(() => {
-        router.push('/vote/actions4submit');
+        router.push('/vote');
       }, 2000);
     }
   }, [isConfirmed, errSubmit]);

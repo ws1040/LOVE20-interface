@@ -34,7 +34,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
 
   // 行动详情
   const actionIds = actionSubmits?.map((actionSubmit: ActionSubmit) => BigInt(actionSubmit.actionId)) || [];
-  const uniqueActionIds = Array.from(new Set(actionIds)).sort((a, b) => Number(a) - Number(b));
+  const uniqueActionIds = Array.from(new Set(actionIds)).sort((a, b) => Number(a) - Number(b)); //从小到大排列
   const {
     actionInfos,
     isPending: isPendingActionInfosByIds,
@@ -65,7 +65,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
       toast.error('请选择行动');
       return;
     }
-    router.push(`/vote/submit?ids=${selectedIds}`);
+    router.push(`/vote/vote?ids=${selectedIds}`);
   };
 
   // 加载中
@@ -98,35 +98,33 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
               )?.submitter;
 
               return (
-                <>
-                  <div key={action.head.id} className="flex bg-white p-4 rounded-lg mb-4">
-                    <input
-                      type="checkbox"
-                      className="checkbox checkbox-warning mr-2"
-                      checked={selectedActions.has(BigInt(action.head.id))}
-                      onChange={() => handleCheckboxChange(BigInt(action.head.id))}
-                    />
-                    <Link href={`/action/${action.head.id}?type=vote`} key={action.head.id} className="flex-grow block">
-                      <div className="font-semibold mb-2">
-                        <span className="text-gray-400 text-base mr-1">{`No.${action.head.id}`}</span>
-                        <span className="text-gray-800 text-lg">{`${action.body.action}`}</span>
-                      </div>
-                      <p className="leading-tight">{action.body.consensus}</p>
-                      <div className="flex justify-between mt-1 text-gray-400">
-                        <span className="text-sm flex-1">
-                          推举人 <AddressWithCopyButton address={submitter} showCopyButton={false} />
-                        </span>
-                        <span className="text-sm flex-1 text-right">
-                          <span className="mr-1">投票占比</span>
-                          {Number(votes?.[index] || 0n) === 0
-                            ? '0'
-                            : ((Number(votes?.[index] || 0n) * 100) / Number(totalVotes)).toFixed(1)}
-                          %
-                        </span>
-                      </div>
-                    </Link>
-                  </div>
-                </>
+                <div key={action.head.id} className="flex bg-white p-4 rounded-lg mb-4">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-warning mr-2"
+                    checked={selectedActions.has(BigInt(action.head.id))}
+                    onChange={() => handleCheckboxChange(BigInt(action.head.id))}
+                  />
+                  <Link href={`/action/${action.head.id}?type=vote`} className="flex-grow block">
+                    <div className="font-semibold mb-2">
+                      <span className="text-gray-400 text-base mr-1">{`No.${action.head.id}`}</span>
+                      <span className="text-gray-800 text-lg">{`${action.body.action}`}</span>
+                    </div>
+                    <p className="leading-tight">{action.body.consensus}</p>
+                    <div className="flex justify-between mt-1 text-gray-400">
+                      <span className="text-sm flex-1">
+                        推举人 <AddressWithCopyButton address={submitter} showCopyButton={false} />
+                      </span>
+                      <span className="text-sm flex-1 text-right">
+                        <span className="mr-1">投票占比</span>
+                        {Number(votes?.[index] || 0n) === 0
+                          ? '0'
+                          : ((Number(votes?.[index] || 0n) * 100) / Number(totalVotes)).toFixed(1)}
+                        %
+                      </span>
+                    </div>
+                  </Link>
+                </div>
               );
             })}
             <div className="flex justify-center mt-4">

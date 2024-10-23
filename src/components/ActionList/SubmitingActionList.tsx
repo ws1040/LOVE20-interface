@@ -20,7 +20,7 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
     actionInfos,
     isPending: isPendingActionInfosByPage,
     error: errorActionInfosByPage,
-  } = useActionInfosByPage((token?.address as `0x${string}`) || '', 0n, 10n, false);
+  } = useActionInfosByPage((token?.address as `0x${string}`) || '', 0n, 100n, false);
 
   const {
     actionSubmits,

@@ -147,7 +147,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       )}
       {!remainingVotes && (
         <button disabled className="btn btn-ghost mt-6 px-6 py-2 rounded">
-          无需验证
+          提交
         </button>
       )}
       {submitError && <div className="text-red-500 text-center">{submitError.message}</div>}

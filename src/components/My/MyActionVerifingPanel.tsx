@@ -57,10 +57,6 @@ const MyActionVerifingPanel: React.FC<MyActionVerifingPanelProps> = ({
     }
   }, [remainingVotes]);
 
-  // console.log('votesNumByAccount', isPendingVotesNumByAccount);
-  // console.log('scoreByVerifier', scoreByVerifierByActionId);
-  // console.log('remainingVotes', remainingVotes);
-
   return (
     <div className="mb-4 text-center">
       <span className="font-semibold">

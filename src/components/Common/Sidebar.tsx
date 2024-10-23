@@ -10,6 +10,10 @@ const Sidebar: React.FC = () => {
     setIsOpen(!isOpen);
   };
 
+  const closeSidebar = () => {
+    setIsOpen(false);
+  };
+
   return (
     <div>
       {/* 头部的汉堡菜单按钮 */}
@@ -18,6 +22,9 @@ const Sidebar: React.FC = () => {
         <div className="w-6 h-1 bg-black mb-1"></div>
         <div className="w-6 h-1 bg-black"></div>
       </button>
+
+      {/* 覆盖层 */}
+      {isOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={closeSidebar}></div>}
 
       {/* 左侧导航菜单 */}
       <div

@@ -94,7 +94,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
         </Link>
       ) : (
         <div className="flex flex-col items-center">
-          <button disabled className="btn-disabled">
+          <button disabled className="btn btn-disabled">
             您已参与
           </button>
           <div className="mt-2 text-sm text-gray-600">{isPendingVerificationInfo ? '加载中...' : verificationInfo}</div>

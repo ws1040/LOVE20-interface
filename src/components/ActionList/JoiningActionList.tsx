@@ -21,6 +21,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
     isPending: isPendingJoinableActions,
     error: errorJoinableActions,
   } = useJoinableActions((token?.address as `0x${string}`) || '', currentRound);
+  joinableActions?.sort((a, b) => Number(a.actionId) - Number(b.actionId)); // 排序：将 joinableActions 按 actionId 从小到大排序
   const actionIds = joinableActions?.map((action) => action.actionId);
   const totalVotes = joinableActions?.reduce((acc, action) => acc + action.votesNum, 0n) || 0n;
 

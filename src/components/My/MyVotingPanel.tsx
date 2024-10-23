@@ -61,11 +61,21 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
       {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
         <Loading />
       ) : validGovVotes > votesNumByAccount ? (
-        <Link href="/vote" className="btn-primary btn w-1/2">
-          去投票
-        </Link>
+        <div className="flex justify-center space-x-6">
+          <Link href="/vote/actions4submit" className="btn-primary btn w-1/2">
+            去推举
+          </Link>
+          <Link href="/vote" className="btn-primary btn w-1/2">
+            去投票
+          </Link>
+        </div>
       ) : (
-        <span className="text-gray-500 text-sm">无剩余票数</span>
+        <div className="flex justify-center space-x-6">
+          <Link href="/vote/actions4submit" className="btn-primary btn w-1/2">
+            去推举
+          </Link>
+          <button className="btn btn-disabled w-1/2">去投票</button>
+        </div>
       )}
     </div>
   );

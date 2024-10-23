@@ -39,6 +39,8 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   }
 
   if (errorVotesNums || errorActionInfosByIds) {
+    console.log('errorVotesNums', errorVotesNums);
+    console.log('errorActionInfosByIds', errorActionInfosByIds);
     return <div>加载出错，请稍后再试。</div>;
   }
 

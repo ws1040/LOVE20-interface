@@ -112,6 +112,8 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     }
   }, [isConfirmedJoin]);
 
+  const maxStake = BigInt(actionInfo.body.maxStake) - (stakedAmount || 0n);
+
   return (
     <>
       <div className="w-full flex flex-col rounded p-4 bg-base-100 mt-1">
@@ -121,9 +123,12 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
           </label>
           <input
             type="number"
-            placeholder={`${token?.symbol} 数量，不能超过 ${formatTokenAmount(
-              BigInt(actionInfo.body.maxStake) - (stakedAmount || 0n),
-            )}`}
+            disabled={maxStake <= 0n}
+            placeholder={
+              maxStake > 0n
+                ? `${token?.symbol} 数量，不能超过 ${formatTokenAmount(maxStake)}`
+                : `已到最大${formatTokenAmount(BigInt(actionInfo.body.maxStake))}，不能再追加`
+            }
             value={additionalStakeAmount}
             onChange={(e) => setAdditionalStakeAmount(e.target.value)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
