@@ -16,7 +16,7 @@ interface StakeLiquidityPanelProps {
 const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance, parentTokenBalance }) => {
   const { address: accountAddress } = useAccount();
   const { token } = useContext(TokenContext) || {};
-  const decimals = process.env.NEXT_PUBLIC_TOKEN_DECIMALS || 18;
+  const decimals = parseInt(process.env.NEXT_PUBLIC_TOKEN_DECIMALS || '18', 10);
 
   // Hooks: 授权(approve)、质押(stakeLiquidity)
   const {
@@ -46,27 +46,60 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
 
   // 提交质押
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const handleSubmit = async () => {
-    if (BigInt(parentToken) === 0n || BigInt(stakeToken) === 0n) {
-      toast.error('请输入正确的数量');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateInput(parentToken) || !validateInput(stakeToken)) {
+      toast.error('请输入有效的数量，最多支持9位小数');
       return;
     }
 
     try {
       setIsSubmitted(true);
+      const stakeAmount = decimalToBigInt(stakeToken, decimals);
+      const parentAmount = decimalToBigInt(parentToken, decimals);
+
+      if (stakeAmount === null || parentAmount === null) {
+        toast.error('输入格式错误');
+        setIsSubmitted(false);
+        return;
+      }
+
       // 发送授权交易
-      await approveToken(
-        process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
-        BigInt(stakeToken) * 10n ** BigInt(decimals),
-      );
-      await approveParentToken(
-        process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
-        BigInt(parentToken) * 10n ** BigInt(decimals),
-      );
+      await approveToken(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, stakeAmount);
+      await approveParentToken(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, parentAmount);
     } catch (error) {
       console.error('Approve failed', error);
       setIsSubmitted(false);
     }
+  };
+
+  // 验证输入是否为有效的数字且最多9位小数
+  const validateInput = (value: string) => {
+    const regex = /^\d+(\.\d{0,9})?$/;
+    return regex.test(value);
+  };
+
+  // 将十进制字符串转换为 BigInt
+  const decimalToBigInt = (value: string, decimals: number): bigint | null => {
+    const parts = value.split('.');
+    if (parts.length > 2) return null;
+    const whole = parts[0];
+    const fraction = parts[1] || '';
+    if (fraction.length > 9) return null;
+    const paddedFraction = fraction.padEnd(decimals, '0');
+    try {
+      return BigInt(whole) * BigInt(10) ** BigInt(decimals) + BigInt(paddedFraction.slice(0, decimals));
+    } catch {
+      return null;
+    }
+  };
+
+  // 格式化显示，去除多余的0
+  const formatInputValue = (value: string) => {
+    if (value.includes('.')) {
+      return parseFloat(value).toString();
+    }
+    return value;
   };
 
   // 监听授权交易的确认状态
@@ -74,11 +107,19 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
     const bothApproved = isConfirmedApproveToken && isConfirmedApproveParentToken && isSubmitted;
 
     if (bothApproved) {
+      const stakeAmount = decimalToBigInt(stakeToken, decimals);
+      const parentAmount = decimalToBigInt(parentToken, decimals);
+      if (stakeAmount === null || parentAmount === null) {
+        toast.error('转换金额时出错');
+        setIsSubmitted(false);
+        return;
+      }
+
       // 调用质押函数
       stakeLiquidity(
         token?.address as `0x${string}`,
-        BigInt(stakeToken) * 10n ** BigInt(decimals),
-        BigInt(parentToken) * 10n ** BigInt(decimals),
+        stakeAmount,
+        parentAmount,
         BigInt(releasePeriod),
         accountAddress as `0x${string}`,
       )
@@ -90,7 +131,18 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
           setIsSubmitted(false);
         });
     }
-  }, [isConfirmedApproveToken, isConfirmedApproveParentToken, isSubmitted]);
+  }, [
+    isConfirmedApproveToken,
+    isConfirmedApproveParentToken,
+    isSubmitted,
+    stakeLiquidity,
+    token,
+    releasePeriod,
+    accountAddress,
+    decimals,
+    parentToken,
+    stakeToken,
+  ]);
 
   // 如果质押成功，则用toast显示质押成功并重新加载数据
   useEffect(() => {
@@ -99,13 +151,61 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
       // 重置表单
       setParentToken('');
       setStakeToken('');
-      setReleasePeriod('');
+      setReleasePeriod('4');
       // 2秒后刷新页面
       setTimeout(() => {
         window.location.reload();
       }, 2000);
     }
   }, [isConfirmedStakeLiquidity]);
+
+  // 处理父币输入变化
+  const handleParentTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '' || validateInput(value)) {
+      setParentToken(value);
+      if (value && !value.endsWith('.')) {
+        const stakeValue = (parseFloat(value) * 100000).toFixed(9).replace(/\.?0+$/, '');
+        setStakeToken(stakeValue);
+      } else {
+        setStakeToken(value);
+      }
+    }
+  };
+
+  // 处理质押token输入变化
+  const handleStakeTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '' || validateInput(value)) {
+      setStakeToken(value);
+      if (value && !value.endsWith('.')) {
+        const parentValue = (parseFloat(value) / 100000).toFixed(9).replace(/\.?0+$/, '');
+        setParentToken(parentValue);
+      } else {
+        setParentToken(value);
+      }
+    }
+  };
+
+  // 处理父币输入失去焦点
+  const handleParentTokenBlur = () => {
+    if (parentToken) {
+      setParentToken(formatInputValue(parentToken));
+    }
+    if (stakeToken) {
+      setStakeToken(formatInputValue(stakeToken));
+    }
+  };
+
+  // 处理质押token输入失去焦点
+  const handleStakeTokenBlur = () => {
+    if (stakeToken) {
+      setStakeToken(formatInputValue(stakeToken));
+    }
+    if (parentToken) {
+      setParentToken(formatInputValue(parentToken));
+    }
+  };
 
   return (
     <>
@@ -124,14 +224,11 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
               质押父币数 (当前持有：{formatTokenAmount(parentTokenBalance)} {token?.parentTokenSymbol})
             </label>
             <input
-              type="number"
+              type="text"
               placeholder={`输入 ${token?.parentTokenSymbol} 数量`}
               value={parentToken}
-              onChange={(e) => {
-                const parentToken = e.target.value;
-                setStakeToken((BigInt(parentToken) * BigInt(2)).toString());
-                setParentToken(parentToken);
-              }}
+              onChange={handleParentTokenChange}
+              onBlur={handleParentTokenBlur}
               className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
               required
             />
@@ -141,14 +238,11 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
               质押token数 (当前持有：{formatTokenAmount(tokenBalance)} {token?.symbol})
             </label>
             <input
-              type="number"
+              type="text"
               placeholder={`输入 ${token?.symbol} 数量`}
               value={stakeToken}
-              onChange={(e) => {
-                const stakeValue = e.target.value;
-                setStakeToken(stakeValue);
-                setParentToken((BigInt(stakeValue) / BigInt(2)).toString());
-              }}
+              onChange={handleStakeTokenChange}
+              onBlur={handleStakeTokenBlur}
               className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
               required
             />
@@ -170,10 +264,9 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
           </div>
           <div className="flex justify-center">
             <button
-              type="button"
+              type="submit"
               className="w-1/2 bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
               disabled={isPendingStakeLiquidity || isConfirmingStakeLiquidity}
-              onClick={handleSubmit}
             >
               {isPendingStakeLiquidity || isConfirmingStakeLiquidity ? '质押中...' : '质押'}
             </button>
