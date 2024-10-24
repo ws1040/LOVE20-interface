@@ -31,7 +31,6 @@ const CHAIN_MAP: Record<string, Chain> = {
   sepolia: sepolia,
   bscTestnet: bscTestnet,
   anvil: anvil,
-  // 你可以在这里添加更多自定义链
 };
 
 // 从环境变量中获取所选的链名称
@@ -39,16 +38,15 @@ const selectedChainName = process.env.NEXT_PUBLIC_CHAIN || 'mainnet';
 
 // 获取对应的链配置，如果未找到则默认使用 mainnet
 const selectedChain = CHAIN_MAP[selectedChainName] || mainnet;
-console.log('selectedChainName', selectedChainName);
-console.log('process.env.NEXT_PUBLIC_CHAIN', process.env.NEXT_PUBLIC_CHAIN);
-console.log('selectedChain', selectedChain);
 
 export const config = getDefaultConfig({
   appName: 'Life20 DApp',
-  projectId: '3e08c0ee570fce9c29473eb34b0532c3',
+
+  // WalletConnect Cloud Project ID
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '',
 
   chains: [selectedChain],
 
-  // 如果你需要启用服务器端渲染（SSR），保留此选项
+  // 启用服务器端渲染（SSR）
   ssr: true,
 });

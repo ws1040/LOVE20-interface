@@ -1,0 +1,76 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 检出仓库代码
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 设置 Node.js 环境
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' # 根据项目需求选择 Node.js 版本
+
+      # 安装依赖
+      - name: Install dependencies
+        run: yarn install
+
+      # 构建项目
+      - name: Build
+        env:
+          NEXT_PUBLIC_CHAIN: sepolia
+          NEXT_PUBLIC_ANVIL_RPC_URL: http://127.0.0.1:8545
+          NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: 3e08c0ee570fce9c29473eb34b0532c3
+          NEXT_PUBLIC_BASE_PATH: /LIFE20-DApp
+          NEXT_PUBLIC_ASSET_PREFIX: /LIFE20-DApp
+          NEXT_PUBLIC_FOUNDRY_CORE_ABI_PATH: ../LOVE20-core/out/
+          NEXT_PUBLIC_FOUNDRY_PERIPHERAL_ABI_PATH: ../LOVE20-peripheral/out/
+
+          NEXT_PUBLIC_FIRST_TOKEN_NAME: TEST20
+          NEXT_PUBLIC_FIRST_TOKEN_SYMBOL: TEST20
+          NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL: ETH20
+          NEXT_PUBLIC_TOKEN_DECIMALS: 18
+
+          NEXT_PUBLIC_CONTRACT_ADDRESS_FEE_TO_SETTER:
+          NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_FACTORY: '0x91dc5775d04C8c13551C43Bbc793E4e0Ca02c869'
+          NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN: '0xc2F9D4CAd67124e86d7a5E7Bcd9DF26259B8c588'
+          NEXT_PUBLIC_CONTRACT_ADDRESS_TOKEN_FACTORY: '0x09C5385f986023309252d94b79e38084049aB795'
+          NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH: '0x5978945B0C36a5442FD4cc5483091c08202DF044'
+          NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE: '0xf63D97fA996A57a78bf14839d112dd741Dc27321'
+          NEXT_PUBLIC_CONTRACT_ADDRESS_SUBMIT: '0x48dA69Bc34fe5067E103D67759239fFc13af2C13'
+          NEXT_PUBLIC_CONTRACT_ADDRESS_VOTE: '0xCFF1D4ADF897aFdc52a0256E69d70D26126FeDf4'
+          NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN: '0x34Aa27F8d9f85d36d797402BD672Fc9977417f1a'
+          NEXT_PUBLIC_CONTRACT_ADDRESS_RANDOM: '0x0E7A49dB563ed24C3ee1a74ed2776c4487AfF3F1'
+          NEXT_PUBLIC_CONTRACT_ADDRESS_VERIFY: '0x284aAC9Fd2BC6Ecab189e9b9D729B0112Ee3fDf6'
+          NEXT_PUBLIC_CONTRACT_ADDRESS_MINT: '0x96dB510F5D9241ec71cf675D7583Dc2bCf7f8dec'
+          NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_TOKEN: '0x52961E46a166c999b14066E76CD67a1A5FE4F3f6'
+
+          NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_SL_TOKEN: '0x5D6A3A26d0311726cAa91Ba1e01c6cD214a3f700'
+          NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_ST_TOKEN: '0xb7C098Ac9e485a5daDc6d8AF805CC540F8C58392'
+          NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_DATAVIEWER: '0x089A51a5879B835c340014cf419C164e8e17d16C'
+          # 添加其他环境变量，如果有的话
+        run: yarn build
+
+      # 部署到 gh-pages 分支
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out
+          publish_branch: gh-pages
+          # 如果需要自定义域名，可以添加以下内容
+          # cname: your-custom-domain.com
