@@ -243,12 +243,12 @@ export const useRoundRange = (round: bigint) => {
 /**
  * Hook for stakedActionIdsByAccount
  */
-export const useStakedActionIdsByAccount = (account1: `0x${string}`, account2: `0x${string}`, param: bigint) => {
+export const useStakedActionIdsByAccount = (account1: `0x${string}`, account2: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20JoinAbi,
     functionName: 'stakedActionIdsByAccount',
-    args: [account1, account2, param],
+    args: [account1, account2],
   });
 
   return { stakedActionId: data as bigint | undefined, isPending, error };
@@ -388,38 +388,6 @@ export const useVoteAddress = () => {
 // =====================
 // === 写入 Hook ===
 // =====================
-
-/**
- * Hook for generateAndStoreRandomAccounts
- */
-export const useGenerateAndStoreRandomAccounts = () => {
-  const { writeContract, data: writeData, isPending, error } = useWriteContract();
-
-  const generateAndStoreRandomAccounts = async (
-    tokenAddress: `0x${string}`,
-    round: bigint,
-    actionId: bigint,
-    randomSeed: bigint,
-    num: bigint,
-  ) => {
-    try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20JoinAbi,
-        functionName: 'generateAndStoreRandomAccounts',
-        args: [tokenAddress, round, actionId, randomSeed, num],
-      });
-    } catch (err) {
-      console.error('Generate and Store Random Accounts failed:', err);
-    }
-  };
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
-
-  return { generateAndStoreRandomAccounts, writeData, isPending, error, isConfirming, isConfirmed };
-};
 
 /**
  * Hook for join

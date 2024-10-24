@@ -124,12 +124,12 @@ export const useLaunchingChildTokens = (parentAddress: `0x${string}`, index: big
 /**
  * Hook for allocatingAmount
  */
-export const useAllocatingAmount = (tokenAddress: `0x${string}`) => {
+export const useAllocatingAmount = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
     functionName: 'allocatingAmount',
-    args: [tokenAddress],
+    args: [tokenAddress, accountAddress],
   });
 
   return { allocatingAmount: data as bigint | undefined, isPending, error };
@@ -138,10 +138,7 @@ export const useAllocatingAmount = (tokenAddress: `0x${string}`) => {
 /**
  * Hook for canDeployToken
  */
-export const useCanDeployToken = (
-  accountAddress: `0x${string}`,
-  parentTokenAddress: `0x${string}`
-) => {
+export const useCanDeployToken = (accountAddress: `0x${string}`, parentTokenAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
@@ -173,7 +170,7 @@ export const useChildTokensByPage = (
   parentTokenAddress: `0x${string}`,
   start: bigint,
   end: bigint,
-  reverse: boolean
+  reverse: boolean,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -290,7 +287,7 @@ export const useLaunchedChildTokensByPage = (
   parentTokenAddress: `0x${string}`,
   start: bigint,
   end: bigint,
-  reverse: boolean
+  reverse: boolean,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -333,11 +330,7 @@ export const useLaunchedTokens = (index: bigint) => {
 /**
  * Hook for launchedTokensByPage
  */
-export const useLaunchedTokensByPage = (
-  start: bigint,
-  end: bigint,
-  reverse: boolean
-) => {
+export const useLaunchedTokensByPage = (start: bigint, end: bigint, reverse: boolean) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
@@ -383,7 +376,7 @@ export const useLaunchingChildTokensByPage = (
   parentTokenAddress: `0x${string}`,
   start: bigint,
   end: bigint,
-  reverse: boolean
+  reverse: boolean,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -426,11 +419,7 @@ export const useLaunchingTokens = (index: bigint) => {
 /**
  * Hook for launchingTokensByPage
  */
-export const useLaunchingTokensByPage = (
-  start: bigint,
-  end: bigint,
-  reverse: boolean
-) => {
+export const useLaunchingTokensByPage = (start: bigint, end: bigint, reverse: boolean) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
@@ -490,7 +479,7 @@ export const useParticipatedTokensByPage = (
   walletAddress: `0x${string}`,
   start: bigint,
   end: bigint,
-  reverse: boolean
+  reverse: boolean,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -575,11 +564,7 @@ export const useTokenNum = () => {
 /**
  * Hook for tokensByPage
  */
-export const useTokensByPage = (
-  start: bigint,
-  end: bigint,
-  reverse: boolean
-) => {
+export const useTokensByPage = (start: bigint, end: bigint, reverse: boolean) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
@@ -598,12 +583,7 @@ export const useTokensByPage = (
  * Hook for claim
  */
 export function useClaim() {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
   const claim = async (tokenAddress: `0x${string}`) => {
     try {
@@ -629,12 +609,7 @@ export function useClaim() {
  * Hook for contribute
  */
 export function useContribute() {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
   const contribute = async (tokenAddress: `0x${string}`, parentTokenAmount: bigint) => {
     try {
@@ -660,12 +635,7 @@ export function useContribute() {
  * Hook for deployToken
  */
 export function useDeployToken() {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
   const deployToken = async (tokenSymbol: string, parentTokenAddress: `0x${string}`) => {
     try {
@@ -685,55 +655,4 @@ export function useDeployToken() {
   });
 
   return { deployToken, writeData, isWriting, writeError, isConfirming, isConfirmed };
-}
-
-/**
- * Hook for initialize
- */
-export function useInitialize() {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
-
-  const initialize = async (
-    submitAddress_: `0x${string}`,
-    mintAddress_: `0x${string}`,
-    stakeAddress_: `0x${string}`,
-    tokenSymbolLength: bigint,
-    firstParentTokenFundraisingGoal: bigint,
-    parentTokenFundraisingGoal: bigint,
-    secondHalfMinBlocks: bigint,
-    totalSupply: bigint,
-    launchAmount: bigint
-  ) => {
-    try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20LaunchAbi,
-        functionName: 'initialize',
-        args: [
-          submitAddress_,
-          mintAddress_,
-          stakeAddress_,
-          tokenSymbolLength,
-          firstParentTokenFundraisingGoal,
-          parentTokenFundraisingGoal,
-          secondHalfMinBlocks,
-          totalSupply,
-          launchAmount,
-        ],
-      });
-    } catch (err) {
-      console.error('Initialize failed:', err);
-    }
-  };
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
-
-  return { initialize, writeData, isWriting, writeError, isConfirming, isConfirmed };
 }

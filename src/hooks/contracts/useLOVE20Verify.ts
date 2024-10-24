@@ -55,19 +55,6 @@ export const useAbstentionScoreWithReward = (account: `0x${string}`, someNumber:
 };
 
 /**
- * Hook for actionAddress
- */
-export const useActionAddress = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'actionAddress',
-  });
-
-  return { actionAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
  * Hook for actionIdsVerified
  */
 export const useActionIdsVerified = (tokenAddress: `0x${string}`, round: bigint) => {
