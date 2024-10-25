@@ -1,6 +1,6 @@
 # LOVE20-interface
 
-decentralized web frontend
+decentralized web frontend of LOVE20 Protocal
 
 ## Tech Stack
 
