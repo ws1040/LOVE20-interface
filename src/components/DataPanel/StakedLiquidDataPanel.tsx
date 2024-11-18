@@ -25,13 +25,9 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({
     isPending: isPendingTokenAmount,
   } = useTokenAmounts(token?.slTokenAddress as `0x${string}`);
 
-  console.log('**********************');
-  console.log('@@@stakedLiquid: tokenAmount', tokenAmount);
-
   useEffect(() => {
     if (onTokenAmountChange && !isPendingTokenAmount) {
       onTokenAmountChange(tokenAmount || BigInt(0)); // 当 tokenAmount 变化时调用回调函数
-      console.log('@@@stakedLiquid: onTokenAmountChange', tokenAmount || BigInt(0));
     }
   }, [tokenAmount, isPendingTokenAmount]);
 

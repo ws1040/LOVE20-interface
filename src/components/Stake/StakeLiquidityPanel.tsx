@@ -47,7 +47,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
   // 捕获表单状态
   const [parentToken, setParentToken] = useState('');
   const [stakeToken, setStakeToken] = useState('');
-  const [releasePeriod, setReleasePeriod] = useState('4'); // 将初始值从 '1' 改为 '4'
+  const [releasePeriod, setReleasePeriod] = useState('4');
   const [isParentTokenChangedByUser, setIsParentTokenChangedByUser] = useState(false); //是否是用户手动输入
   const [isTokenChangedByUser, setIsTokenChangedByUser] = useState(false); //是否是用户手动输入
 
@@ -75,6 +75,10 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     pairExists,
     isTokenChangedByUser,
   );
+
+  // console.log('---stake: amountsOut', amountsOut);
+  // console.log('---stake: amountsOutError', amountsOutError);
+  // console.log('---stake: isAmountsOutLoading', isAmountsOutLoading);
 
   // 提交质押
   const [isSubmitted, setIsSubmitted] = useState(false);
