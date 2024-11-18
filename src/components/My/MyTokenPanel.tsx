@@ -1,10 +1,12 @@
 import { useAccount } from 'wagmi';
 import { useContext } from 'react';
 
-import { TokenContext } from '../../contexts/TokenContext';
-import { useBalanceOf } from '../../hooks/contracts/useLOVE20Token';
-import { formatTokenAmount } from '../../utils/format';
-import Loading from '../Common/Loading';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
+import { formatTokenAmount } from '@/src/lib/format';
+import Loading from '@/src/components/Common/Loading';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const MyTokenPanel = () => {
   const { token } = useContext(TokenContext) || {};
@@ -25,9 +27,9 @@ const MyTokenPanel = () => {
         )}
         <span className="text-gray-500 ml-2">{token?.symbol}</span>
       </p>
-      {/* <div className="flex justify-center mt-2">
-        <button className="bg-blue-500 text-white px-4 py-2 rounded">交易代币</button>
-      </div> */}
+      <Button className="mt-2 w-1/2 bg-blue-600 hover:bg-blue-700" asChild>
+        <Link href="/dex/swap">去交易</Link>
+      </Button>
     </div>
   );
 };

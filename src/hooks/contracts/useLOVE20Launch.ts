@@ -1,7 +1,8 @@
 // hooks/contracts/useLOVE20Launch.ts
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { LOVE20LaunchAbi } from '../../abis/LOVE20Launch';
+import { LOVE20LaunchAbi } from '@/src/abis/LOVE20Launch';
+import { LaunchInfo } from '@/src/types/life20types';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x${string}`;
 
@@ -351,8 +352,22 @@ export const useLaunches = (address: `0x${string}`) => {
     functionName: 'launches',
     args: [address],
   });
+  const launchInfo: LaunchInfo | undefined = data
+    ? {
+        parentTokenAddress: data[0],
+        parentTokenFundraisingGoal: data[1],
+        secondHalfMinBlocks: data[2],
+        launchAmount: data[3],
+        startBlock: data[4],
+        secondHalfStartBlock: data[5],
+        hasEnded: data[6],
+        participantCount: data[7],
+        totalContributed: data[8],
+        totalExtraRefunded: data[9],
+      }
+    : undefined;
 
-  return { launchInfo: data as any | undefined, isPending, error };
+  return { launchInfo, isPending, error };
 };
 
 /**
@@ -609,7 +624,7 @@ export function useClaim() {
  * Hook for contribute
  */
 export function useContribute() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const { writeContract, isPending, data: writeData, error: writeError } = useWriteContract();
 
   const contribute = async (tokenAddress: `0x${string}`, parentTokenAmount: bigint) => {
     try {
@@ -628,7 +643,7 @@ export function useContribute() {
     hash: writeData,
   });
 
-  return { contribute, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { contribute, writeData, isPending, writeError, isConfirming, isConfirmed };
 }
 
 /**

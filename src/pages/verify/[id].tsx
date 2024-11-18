@@ -1,12 +1,12 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
-import { useCurrentRound } from '../../hooks/contracts/useLOVE20Verify';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Verify';
 
-import Header from '../../components/Header';
-import ActionDetail from '../../components/ActionDetail/ActionDetail';
-import MyActionVerifingPanel from '../../components/My/MyActionVerifingPanel';
-import VerifyAddresses from '../../components/Verify/VerifyAddresses';
+import Header from '@/src/components/Header';
+import ActionDetail from '@/src/components/ActionDetail/ActionDetail';
+import MyActionVerifingPanel from '@/src/components/My/MyActionVerifingPanel';
+import VerifyAddresses from '@/src/components/Verify/VerifyAddresses';
 
 const VerifyPage = () => {
   const router = useRouter();

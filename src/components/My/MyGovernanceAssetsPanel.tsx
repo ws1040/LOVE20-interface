@@ -1,11 +1,12 @@
 import { useContext } from 'react';
 import { useAccount } from 'wagmi';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
-import { TokenContext } from '../../contexts/TokenContext';
-import { useAccountStakeStatus } from '../../hooks/contracts/useLOVE20Stake';
-import { formatTokenAmount } from '../../utils/format';
-import Loading from '../Common/Loading';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { useAccountStakeStatus } from '@/src/hooks/contracts/useLOVE20Stake';
+import { formatTokenAmount } from '@/src/lib/format';
+import Loading from '@/src/components/Common/Loading';
 
 const MyGovernanceAssetsPanel = () => {
   const { token } = useContext(TokenContext) || {};
@@ -60,9 +61,9 @@ const MyGovernanceAssetsPanel = () => {
           </div>
         </div>
         <div className="flex w-full justify-center mt-2">
-          <Link href="/my/govrewards" className="btn-primary btn w-1/2">
-            查看治理奖励
-          </Link>
+          <Button className="w-1/2 bg-blue-600 hover:bg-blue-700" asChild>
+            <Link href="/my/govrewards">查看治理奖励</Link>
+          </Button>
         </div>
       </div>
     </>

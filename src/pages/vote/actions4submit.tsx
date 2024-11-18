@@ -1,7 +1,7 @@
-import Header from '../../components/Header';
-import { useCurrentRound } from '../../hooks/contracts/useLOVE20Submit';
-import SubmitingActionList from '../../components/ActionList/SubmitingActionList';
-import Loading from '../../components/Common/Loading';
+import Header from '@/src/components/Header';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Submit';
+import SubmitingActionList from '@/src/components/ActionList/SubmitingActionList';
+import Loading from '@/src/components/Common/Loading';
 
 const Actions4SubmitPage = () => {
   const { currentRound, isPending, error } = useCurrentRound();

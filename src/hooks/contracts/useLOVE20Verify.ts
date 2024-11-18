@@ -1,7 +1,7 @@
 // hooks/contracts/useLOVE20Verify.ts
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { LOVE20VerifyAbi } from '../../abis/LOVE20Verify';
+import { LOVE20VerifyAbi } from '@/src/abis/LOVE20Verify';
 import { Abi } from 'abitype';
 
 // 定义合约地址，请根据实际情况设置

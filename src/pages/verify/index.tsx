@@ -1,9 +1,9 @@
-import Header from '../../components/Header';
+import Header from '@/src/components/Header';
 
-import { useCurrentRound } from '../../hooks/contracts/useLOVE20Verify';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Verify';
 
-import MyVerifingPanel from '../../components/My/MyVerifingPanel';
-import VerifingActionList from '../../components/ActionList/VerifingActionList';
+import MyVerifingPanel from '@/src/components/My/MyVerifingPanel';
+import VerifingActionList from '@/src/components/ActionList/VerifingActionList';
 
 const VerifyPage = () => {
   const { currentRound } = useCurrentRound();

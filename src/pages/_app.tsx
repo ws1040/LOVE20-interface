@@ -6,9 +6,9 @@ import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { Toaster } from 'react-hot-toast';
 import { WagmiProvider } from 'wagmi';
 
-import { TokenProvider } from '../contexts/TokenContext';
-import { config } from '../wagmi';
-import Footer from '../components/Footer';
+import { TokenProvider } from '@/src/contexts/TokenContext';
+import { config } from '@/src/wagmi';
+import Footer from '@/src/components/Footer';
 
 import '../styles/globals.css';
 import '@rainbow-me/rainbowkit/styles.css';

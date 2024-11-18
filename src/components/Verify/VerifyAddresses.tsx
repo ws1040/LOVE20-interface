@@ -2,12 +2,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
 
-import { useVerificationInfosByAction } from '../../hooks/contracts/useLOVE20DataViewer';
-import { useVerify } from '../../hooks/contracts/useLOVE20Verify';
-import { TokenContext } from '../../contexts/TokenContext';
+import { useVerificationInfosByAction } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useVerify } from '@/src/hooks/contracts/useLOVE20Verify';
+import { TokenContext } from '@/src/contexts/TokenContext';
 
-import AddressWithCopyButton from '../../components/Common/AddressWithCopyButton';
-import Loading from '../../components/Common/Loading';
+import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
+import Loading from '@/src/components/Common/Loading';
 
 interface VerifyAddressesProps {
   currentRound: bigint;

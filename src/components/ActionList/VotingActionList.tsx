@@ -1,14 +1,14 @@
 import React, { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
-import { useActionSubmits, useActionInfosByIds } from '../../hooks/contracts/useLOVE20Submit';
-import { useVotesNums } from '../../hooks/contracts/useLOVE20Vote';
+import { useActionSubmits, useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useVotesNums } from '@/src/hooks/contracts/useLOVE20Vote';
 
-import { TokenContext } from '../../contexts/TokenContext';
-import { ActionInfo, ActionSubmit } from '../../types/life20types';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { ActionInfo, ActionSubmit } from '@/src/types/life20types';
 import Link from 'next/link';
-import Loading from '../Common/Loading';
-import AddressWithCopyButton from '../Common/AddressWithCopyButton';
+import Loading from '@/src/components/Common/Loading';
+import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 
 interface VotingActionListProps {
   currentRound: bigint;

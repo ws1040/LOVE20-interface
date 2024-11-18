@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { LOVE20VoteAbi } from '../../abis/LOVE20Vote';
+import { LOVE20VoteAbi } from '@/src/abis/LOVE20Vote';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_VOTE as `0x${string}`;
 

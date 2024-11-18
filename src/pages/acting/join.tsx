@@ -1,15 +1,15 @@
 import { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 
-import { useActionInfo } from '../../hooks/contracts/useLOVE20Submit';
-import { useCurrentRound } from '../../hooks/contracts/useLOVE20Join';
-import { TokenContext } from '../../contexts/TokenContext';
+import { useActionInfo } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Join';
+import { TokenContext } from '@/src/contexts/TokenContext';
 
-import Header from '../../components/Header';
-import ActionAbstract from '../../components/ActionDetail/ActionAbstract';
-import MyJoinInfoOfActionAbstract from '../../components/My/MyJoinInfoOfActionAbstract';
-import SubmitJoin from '../../components/Join/SubmitJoin';
-import Loading from '../../components/Common/Loading';
+import Header from '@/src/components/Header';
+import ActionAbstract from '@/src/components/ActionDetail/ActionAbstract';
+import MyJoinInfoOfActionAbstract from '@/src/components/My/MyJoinInfoOfActionAbstract';
+import SubmitJoin from '@/src/components/Join/SubmitJoin';
+import Loading from '@/src/components/Common/Loading';
 
 const JoinPage = () => {
   const router = useRouter();

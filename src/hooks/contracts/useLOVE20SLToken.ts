@@ -1,5 +1,5 @@
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { LOVE20SLTokenAbi } from '../../abis/LOVE20SLToken';
+import { LOVE20SLTokenAbi } from '@/src/abis/LOVE20SLToken';
 import { useEffect, useState } from 'react';
 
 // =====================

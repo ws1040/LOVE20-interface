@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
 import Link from 'next/link';
 
-import { useVotesNums } from '../../hooks/contracts/useLOVE20Vote';
-import { useActionInfosByIds } from '../../hooks/contracts/useLOVE20Submit';
+import { useVotesNums } from '@/src/hooks/contracts/useLOVE20Vote';
+import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
 
-import { TokenContext } from '../../contexts/TokenContext';
-import { ActionInfo } from '../../types/life20types';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { ActionInfo } from '@/src/types/life20types';
 
-import Loading from '../Common/Loading';
+import Loading from '@/src/components/Common/Loading';
 
 interface JoiningActionListProps {
   currentRound: bigint;

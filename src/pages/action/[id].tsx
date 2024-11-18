@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import Header from '../../components/Header';
+import Header from '@/src/components/Header';
 
-import ActionDetail from '../../components/ActionDetail/ActionDetail';
-import ActionPanelForSubmit from '../../components/ActionDetail/ActionPanelForSubmit';
-import ActionPanelForVoting from '../../components/ActionDetail/ActionPanelForVoting';
-import ActionPanelForJoin from '../../components/ActionDetail/ActionPanelForJoin';
-import ActionPanelForVerifing from '../../components/ActionDetail/ActionPanelForVerifing';
+import ActionDetail from '@/src/components/ActionDetail/ActionDetail';
+import ActionPanelForSubmit from '@/src/components/ActionDetail/ActionPanelForSubmit';
+import ActionPanelForVoting from '@/src/components/ActionDetail/ActionPanelForVoting';
+import ActionPanelForJoin from '@/src/components/ActionDetail/ActionPanelForJoin';
+import ActionPanelForVerifing from '@/src/components/ActionDetail/ActionPanelForVerifing';
 const ActionPage = () => {
   const router = useRouter();
   const { id, type, submitted } = router.query;

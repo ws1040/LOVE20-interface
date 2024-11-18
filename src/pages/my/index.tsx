@@ -1,9 +1,9 @@
-import Header from '../../components/Header';
+import Header from '@/src/components/Header';
 
-import MyTokenPanel from '../../components/My/MyTokenPanel';
-import MyActAssetsPanel from '../../components/My/MyActAssetsPanel';
-import MyGovernanceAssetsPanel from '../../components/My/MyGovernanceAssetsPanel';
-import MyStakedActionList from '../../components/ActionList/MyStakedActionList';
+import MyTokenPanel from '@/src/components/My/MyTokenPanel';
+import MyActAssetsPanel from '@/src/components/My/MyActAssetsPanel';
+import MyGovernanceAssetsPanel from '@/src/components/My/MyGovernanceAssetsPanel';
+import MyStakedActionList from '@/src/components/ActionList/MyStakedActionList';
 const MyPage = () => {
   return (
     <>

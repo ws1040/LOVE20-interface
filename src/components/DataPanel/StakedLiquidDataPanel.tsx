@@ -1,32 +1,39 @@
 import React, { useContext, useEffect } from 'react';
 
-import { useTokenAmounts } from '../../hooks/contracts/useLOVE20SLToken';
-import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/format';
+import { useTokenAmounts } from '@/src/hooks/contracts/useLOVE20SLToken';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { formatTokenAmount } from '@/src/lib/format';
 
-import Loading from '../Common/Loading';
+import Loading from '@/src/components/Common/Loading';
 
 interface StakedLiquidDataPanelProps {
   showStakeToken?: boolean;
+  onTokenAmountChange?: (tokenAmount: bigint) => void;
 }
 
-const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({ showStakeToken = true }) => {
+const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({
+  showStakeToken = true,
+  onTokenAmountChange,
+}) => {
   const { token } = useContext(TokenContext) || {};
 
   const {
-    tokenAmount: slTokenAmount,
+    tokenAmount,
     parentTokenAmount,
     feeTokenAmount,
     feeParentTokenAmount,
     isPending: isPendingTokenAmount,
-    // refreshData,
   } = useTokenAmounts(token?.slTokenAddress as `0x${string}`);
 
-  // useEffect(() => {
-  //   if (reloadKey) {
-  //     refreshData();
-  //   }
-  // }, [reloadKey, refreshData]);
+  console.log('**********************');
+  console.log('@@@stakedLiquid: tokenAmount', tokenAmount);
+
+  useEffect(() => {
+    if (onTokenAmountChange && !isPendingTokenAmount) {
+      onTokenAmountChange(tokenAmount || BigInt(0)); // 当 tokenAmount 变化时调用回调函数
+      console.log('@@@stakedLiquid: onTokenAmountChange', tokenAmount || BigInt(0));
+    }
+  }, [tokenAmount, isPendingTokenAmount]);
 
   return (
     <>
@@ -38,9 +45,7 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({ showStake
           <div className="flex w-full justify-center space-x-20">
             <span>
               <span className="text-sm text-gray-500 mr-2">${token?.symbol}</span>
-              <span className="text-2xl font-bold text-orange-400">
-                {formatTokenAmount(slTokenAmount || BigInt(0))}
-              </span>
+              <span className="text-2xl font-bold text-orange-400">{formatTokenAmount(tokenAmount || BigInt(0))}</span>
             </span>
             <span>
               <span className="text-sm text-gray-500 mr-2">${token?.parentTokenSymbol}</span>

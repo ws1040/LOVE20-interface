@@ -2,12 +2,12 @@ import { useContext, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 
-import { useStakeToken } from '../../hooks/contracts/useLOVE20Stake';
-import { useApprove } from '../../hooks/contracts/useLOVE20Token';
-import { useTotalSupply } from '../../hooks/contracts/useLOVE20STToken';
-import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/format';
-import Loading from '../Common/Loading';
+import { useStakeToken } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
+import { useTotalSupply } from '@/src/hooks/contracts/useLOVE20STToken';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { formatTokenAmount, parseUnits } from '@/src/lib/format';
+import Loading from '@/src/components/Common/Loading';
 
 interface StakeTokenPanelProps {
   tokenBalance: bigint;
@@ -16,7 +16,6 @@ interface StakeTokenPanelProps {
 const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
   const { address: accountAddress } = useAccount();
   const { token } = useContext(TokenContext) || {};
-  const decimals = process.env.NEXT_PUBLIC_TOKEN_DECIMALS || 18;
 
   const { totalSupply: stTokenAmount, isPending: isPendingStTokenAmount } = useTotalSupply(
     token?.stTokenAddress as `0x${string}`,
@@ -53,10 +52,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     try {
       setIsSubmitted(true);
       // 发送授权交易
-      await approveToken(
-        process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
-        BigInt(stakeTokenAmount) * 10n ** BigInt(decimals),
-      );
+      await approveToken(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, parseUnits(stakeTokenAmount));
     } catch (error) {
       console.error('Approve failed', error);
       setIsSubmitted(false);
@@ -71,7 +67,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
       // 调用质押函数
       stakeToken(
         token?.address as `0x${string}`,
-        BigInt(stakeTokenAmount) * 10n ** BigInt(decimals),
+        parseUnits(stakeTokenAmount),
         BigInt(releasePeriod),
         accountAddress as `0x${string}`,
       )

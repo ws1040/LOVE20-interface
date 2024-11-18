@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
 import Link from 'next/link';
 
-import { useJoinableActions } from '../../hooks/contracts/useLOVE20DataViewer';
-import { useActionInfosByIds } from '../../hooks/contracts/useLOVE20Submit';
-import { TokenContext } from '../../contexts/TokenContext';
-import { ActionInfo } from '../../types/life20types';
-import { formatTokenAmount } from '../../utils/format';
+import { useJoinableActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { ActionInfo } from '@/src/types/life20types';
+import { formatTokenAmount } from '@/src/lib/format';
 
-import Loading from '../../components/Common/Loading';
+import Loading from '@/src/components/Common/Loading';
 
 interface JoiningActionListProps {
   currentRound: bigint;

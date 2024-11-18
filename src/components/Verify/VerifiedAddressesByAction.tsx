@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useAccount } from 'wagmi';
 
-import { VerifiedAddress } from '../../types/life20types';
-import { TokenContext } from '../../contexts/TokenContext';
-import { useVerifiedAddressesByAction } from '../../hooks/contracts/useLOVE20DataViewer';
-import { useMintActionReward } from '../../hooks/contracts/useLOVE20Mint';
-import { formatTokenAmount } from '../../utils/format';
+import { VerifiedAddress } from '@/src/types/life20types';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { useVerifiedAddressesByAction } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useMintActionReward } from '@/src/hooks/contracts/useLOVE20Mint';
+import { formatTokenAmount } from '@/src/lib/format';
 
-import Loading from '../Common/Loading';
-import AddressWithCopyButton from '../Common/AddressWithCopyButton';
+import Loading from '@/src/components/Common/Loading';
+import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 
 const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> = ({ round, actionId }) => {
   const { token } = useContext(TokenContext) || {};

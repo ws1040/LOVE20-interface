@@ -3,11 +3,11 @@ import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 
-import { TokenContext } from '../../contexts/TokenContext';
-import { ActionInfo } from '../../types/life20types';
-import { useJoin } from '../../hooks/contracts/useLOVE20Join';
-import { useApprove, useBalanceOf } from '../../hooks/contracts/useLOVE20Token';
-import { formatTokenAmount } from '../../utils/format';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { ActionInfo } from '@/src/types/life20types';
+import { useJoin } from '@/src/hooks/contracts/useLOVE20Join';
+import { useApprove, useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
+import { formatTokenAmount, parseUnits } from '@/src/lib/format';
 
 interface SubmitJoinProps {
   actionInfo: ActionInfo;
@@ -16,8 +16,6 @@ interface SubmitJoinProps {
 
 const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => {
   const router = useRouter();
-  const decimals = process.env.NEXT_PUBLIC_TOKEN_DECIMALS || 18;
-
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress } = useAccount();
 
@@ -50,10 +48,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
   } = useJoin();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const handleSubmit = async () => {
-    if (
-      stakedAmount &&
-      BigInt(additionalStakeAmount) * 10n ** BigInt(decimals) + stakedAmount > BigInt(actionInfo.body.maxStake)
-    ) {
+    if (stakedAmount && parseUnits(additionalStakeAmount) + stakedAmount > BigInt(actionInfo.body.maxStake)) {
       toast.error('增加的代币数不能超过最大参与代币数');
       return;
     }
@@ -67,7 +62,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
       // 发送授权交易
       await approveToken(
         process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN as `0x${string}`,
-        BigInt(additionalStakeAmount) * 10n ** BigInt(decimals),
+        parseUnits(additionalStakeAmount),
       );
     } catch (error) {
       console.error('Approve failed', error);
@@ -83,7 +78,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
       join(
         token?.address as `0x${string}`,
         BigInt(actionInfo.head.id),
-        BigInt(additionalStakeAmount) * 10n ** BigInt(decimals),
+        parseUnits(additionalStakeAmount),
         verificationInfo,
         BigInt(rounds),
       )

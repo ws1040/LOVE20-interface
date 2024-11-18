@@ -1,11 +1,11 @@
-import Header from '../../components/Header';
+import Header from '@/src/components/Header';
 
-import { useCurrentRound } from '../../hooks/contracts/useLOVE20Vote';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Vote';
 
-import GovernanceDataPanel from '../../components/DataPanel/GovernanceDataPanel';
-import MyStakingPanel from '../../components/My/MyStakingPanel';
-import MyVotingPanel from '../../components/My/MyVotingPanel';
-import MyVerifingPanel from '../../components/My/MyVerifingPanel';
+import GovernanceDataPanel from '@/src/components/DataPanel/GovernanceDataPanel';
+import MyStakingPanel from '@/src/components/My/MyStakingPanel';
+import MyVotingPanel from '@/src/components/My/MyVotingPanel';
+import MyVerifingPanel from '@/src/components/My/MyVerifingPanel';
 
 const ActingPage = () => {
   const { currentRound: currentVoteRound } = useCurrentRound();

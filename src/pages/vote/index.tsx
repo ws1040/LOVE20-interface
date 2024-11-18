@@ -1,10 +1,10 @@
-import Header from '../../components/Header';
+import Header from '@/src/components/Header';
 import Link from 'next/link';
 
-import { useCurrentRound } from '../../hooks/contracts/useLOVE20Vote';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Vote';
 
-import VotingActionList from '../../components/ActionList/VotingActionList';
-import Loading from '../../components/Common/Loading';
+import VotingActionList from '@/src/components/ActionList/VotingActionList';
+import Loading from '@/src/components/Common/Loading';
 
 const VotePage = () => {
   const { currentRound, isPending: isPendingCurrentRound, error: errCurrentRound } = useCurrentRound();

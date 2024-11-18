@@ -2,21 +2,26 @@ import { useContext, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 
-import StakedLiquidDataPanel from '../DataPanel/StakedLiquidDataPanel';
-import { useStakeLiquidity } from '../../hooks/contracts/useLOVE20Stake';
-import { useApprove } from '../../hooks/contracts/useLOVE20Token';
-import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/format';
+import { useStakeLiquidity } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
+import { TokenContext, Token } from '@/src/contexts/TokenContext';
+import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
+import { useGetAmountsIn, useGetAmountsOut } from '@/src/components/Stake/getAmountHooks';
+import Loading from '@/src/components/Common/Loading';
 
 interface StakeLiquidityPanelProps {
   tokenBalance: bigint;
   parentTokenBalance: bigint;
+  stakedTokenAmountOfLP: bigint;
 }
 
-const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance, parentTokenBalance }) => {
+const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
+  tokenBalance,
+  parentTokenBalance,
+  stakedTokenAmountOfLP,
+}) => {
   const { address: accountAddress } = useAccount();
   const { token } = useContext(TokenContext) || {};
-  const decimals = parseInt(process.env.NEXT_PUBLIC_TOKEN_DECIMALS || '18', 10);
 
   // Hooks: 授权(approve)、质押(stakeLiquidity)
   const {
@@ -43,6 +48,33 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
   const [parentToken, setParentToken] = useState('');
   const [stakeToken, setStakeToken] = useState('');
   const [releasePeriod, setReleasePeriod] = useState('4'); // 将初始值从 '1' 改为 '4'
+  const [isParentTokenChangedByUser, setIsParentTokenChangedByUser] = useState(false); //是否是用户手动输入
+  const [isTokenChangedByUser, setIsTokenChangedByUser] = useState(false); //是否是用户手动输入
+
+  // 计算LP对应的另一种代币数量
+  const pairExists = stakedTokenAmountOfLP > 0n;
+  const {
+    data: amountsOut,
+    error: amountsOutError,
+    isLoading: isAmountsOutLoading,
+  } = useGetAmountsOut(
+    parseUnits(parentToken),
+    [token?.parentTokenAddress as `0x${string}`, token?.address as `0x${string}`],
+    token as Token,
+    pairExists,
+    isParentTokenChangedByUser,
+  );
+  const {
+    data: amountsIn,
+    error: amountsInError,
+    isLoading: isAmountsInLoading,
+  } = useGetAmountsIn(
+    parseUnits(stakeToken),
+    [token?.parentTokenAddress as `0x${string}`, token?.address as `0x${string}`],
+    token as Token,
+    pairExists,
+    isTokenChangedByUser,
+  );
 
   // 提交质押
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -55,9 +87,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
 
     try {
       setIsSubmitted(true);
-      const stakeAmount = decimalToBigInt(stakeToken, decimals);
-      const parentAmount = decimalToBigInt(parentToken, decimals);
-
+      const stakeAmount = parseUnits(stakeToken);
+      const parentAmount = parseUnits(parentToken);
       if (stakeAmount === null || parentAmount === null) {
         toast.error('输入格式错误');
         setIsSubmitted(false);
@@ -79,36 +110,13 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
     return regex.test(value);
   };
 
-  // 将十进制字符串转换为 BigInt
-  const decimalToBigInt = (value: string, decimals: number): bigint | null => {
-    const parts = value.split('.');
-    if (parts.length > 2) return null;
-    const whole = parts[0];
-    const fraction = parts[1] || '';
-    if (fraction.length > 9) return null;
-    const paddedFraction = fraction.padEnd(decimals, '0');
-    try {
-      return BigInt(whole) * BigInt(10) ** BigInt(decimals) + BigInt(paddedFraction.slice(0, decimals));
-    } catch {
-      return null;
-    }
-  };
-
-  // 格式化显示，去除多余的0
-  const formatInputValue = (value: string) => {
-    if (value.includes('.')) {
-      return parseFloat(value).toString();
-    }
-    return value;
-  };
-
   // 监听授权交易的确认状态
   useEffect(() => {
     const bothApproved = isConfirmedApproveToken && isConfirmedApproveParentToken && isSubmitted;
 
     if (bothApproved) {
-      const stakeAmount = decimalToBigInt(stakeToken, decimals);
-      const parentAmount = decimalToBigInt(parentToken, decimals);
+      const stakeAmount = parseUnits(stakeToken);
+      const parentAmount = parseUnits(parentToken);
       if (stakeAmount === null || parentAmount === null) {
         toast.error('转换金额时出错');
         setIsSubmitted(false);
@@ -139,7 +147,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
     token,
     releasePeriod,
     accountAddress,
-    decimals,
     parentToken,
     stakeToken,
   ]);
@@ -162,56 +169,62 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
   // 处理父币输入变化
   const handleParentTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    // console.log('!!!stake: handleParentTokenChange', value);
+    setIsParentTokenChangedByUser(true);
     if (value === '' || validateInput(value)) {
       setParentToken(value);
-      if (value && !value.endsWith('.')) {
-        const stakeValue = (parseFloat(value) * 100000).toFixed(9).replace(/\.?0+$/, '');
-        setStakeToken(stakeValue);
-      } else {
-        setStakeToken(value);
-      }
+    }
+    if (!value) {
+      setStakeToken('0');
     }
   };
+  // 设置需要的子币数量
+  useEffect(() => {
+    if (amountsOut && amountsOut.length > 1) {
+      setIsTokenChangedByUser(false);
+      setIsParentTokenChangedByUser(false);
+      const amountOut = formatUnits(BigInt(amountsOut[1]));
+      const amountOutShow = Number(amountOut)
+        .toFixed(12)
+        .replace(/\.?0+$/, '');
+      setStakeToken(amountOutShow);
+    }
+  }, [amountsOut]);
 
   // 处理质押token输入变化
   const handleStakeTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    // console.log('---stake: handleStakeTokenChange', value);
+    setIsTokenChangedByUser(true);
     if (value === '' || validateInput(value)) {
       setStakeToken(value);
-      if (value && !value.endsWith('.')) {
-        const parentValue = (parseFloat(value) / 100000).toFixed(9).replace(/\.?0+$/, '');
-        setParentToken(parentValue);
-      } else {
-        setParentToken(value);
-      }
+    }
+    if (!value) {
+      setParentToken('0');
     }
   };
+  // 设置父币数量
+  useEffect(() => {
+    if (amountsIn && amountsIn.length > 1) {
+      setIsParentTokenChangedByUser(false);
+      setIsTokenChangedByUser(false);
+      const amountIn = formatUnits(BigInt(amountsIn[0]));
+      const amountInShow = Number(amountIn)
+        .toFixed(12)
+        .replace(/\.?0+$/, '');
+      setParentToken(amountInShow);
 
-  // 处理父币输入失去焦点
-  const handleParentTokenBlur = () => {
-    if (parentToken) {
-      setParentToken(formatInputValue(parentToken));
+      // console.log('--------begin---------');
+      // console.log('amountsIn', amountsIn);
+      // console.log('amountsIn[0]', amountsIn[0]);
+      // console.log('amountIn', amountIn);
+      // console.log('amountInShow', amountInShow);
+      // console.log('--------end---------');
     }
-    if (stakeToken) {
-      setStakeToken(formatInputValue(stakeToken));
-    }
-  };
-
-  // 处理质押token输入失去焦点
-  const handleStakeTokenBlur = () => {
-    if (stakeToken) {
-      setStakeToken(formatInputValue(stakeToken));
-    }
-    if (parentToken) {
-      setParentToken(formatInputValue(parentToken));
-    }
-  };
+  }, [amountsIn]);
 
   return (
     <>
-      <div className="w-full flex flex-col items-center rounded p-4 bg-base-100 border-t border-gray-100">
-        <StakedLiquidDataPanel showStakeToken={false} />
-      </div>
       <div className="w-full flex flex-col items-center rounded p-4 bg-base-100 mt-1">
         <div className="w-full text-left mb-4">
           <h2 className="relative pl-4 text-gray-700 text-base font-medium before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
@@ -228,7 +241,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
               placeholder={`输入 ${token?.parentTokenSymbol} 数量`}
               value={parentToken}
               onChange={handleParentTokenChange}
-              onBlur={handleParentTokenBlur}
               className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
               required
             />
@@ -242,7 +254,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ tokenBalance,
               placeholder={`输入 ${token?.symbol} 数量`}
               value={stakeToken}
               onChange={handleStakeTokenChange}
-              onBlur={handleStakeTokenBlur}
               className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
               required
             />

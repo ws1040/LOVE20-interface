@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 import { useAccount } from 'wagmi';
 
-import { useStakedAmountByAccount } from '../../hooks/contracts/useLOVE20Join';
-import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/format';
-import Loading from '../Common/Loading';
+import { useStakedAmountByAccount } from '@/src/hooks/contracts/useLOVE20Join';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { formatTokenAmount } from '@/src/lib/format';
+import Loading from '@/src/components/Common/Loading';
 
 const MyActAssetsPanel = () => {
   const { token } = useContext(TokenContext) || {};

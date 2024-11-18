@@ -48,6 +48,21 @@ const Sidebar: React.FC = () => {
               <span>我的首页</span>
             </Link>
           </li>
+          <li className="p-4 hover:bg-gray-700">
+            <Link href="/launch">
+              <span>发射平台</span>
+            </Link>
+          </li>
+          <li className="p-4 hover:bg-gray-700">
+            <Link href="/dex/swap">
+              <span>交易代币</span>
+            </Link>
+          </li>
+          <li className="p-4 hover:bg-gray-700">
+            <Link href="/launch/deposit">
+              <span>兑换{process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}</span>
+            </Link>
+          </li>
         </ul>
       </div>
     </div>

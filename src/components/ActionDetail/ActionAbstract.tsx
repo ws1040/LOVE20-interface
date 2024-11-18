@@ -2,12 +2,12 @@
 
 import React, { useContext } from 'react';
 
-import { useActionSubmits } from '../../hooks/contracts/useLOVE20Submit';
+import { useActionSubmits } from '@/src/hooks/contracts/useLOVE20Submit';
 
-import { ActionInfo, ActionSubmit } from '../../types/life20types';
-import { TokenContext } from '../../contexts/TokenContext';
-import AddressWithCopyButton from '../Common/AddressWithCopyButton';
-import Loading from '../Common/Loading';
+import { ActionInfo, ActionSubmit } from '@/src/types/life20types';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
+import Loading from '@/src/components/Common/Loading';
 
 interface ActionAbstractProps {
   actionInfo: ActionInfo;

@@ -1,5 +1,5 @@
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { LOVE20SubmitAbi } from '../../abis/LOVE20Submit';
+import { LOVE20SubmitAbi } from '@/src/abis/LOVE20Submit';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_SUBMIT as `0x${string}`;
 

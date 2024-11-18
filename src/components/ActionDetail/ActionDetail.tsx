@@ -2,14 +2,14 @@
 
 import React, { useContext } from 'react';
 
-import { useActionInfo } from '../../hooks/contracts/useLOVE20Submit';
-import { useActionSubmits } from '../../hooks/contracts/useLOVE20Submit';
-import { ActionSubmit } from '../../types/life20types';
-import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/format';
+import { useActionInfo } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useActionSubmits } from '@/src/hooks/contracts/useLOVE20Submit';
+import { ActionSubmit } from '@/src/types/life20types';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { formatTokenAmount } from '@/src/lib/format';
 
-import AddressWithCopyButton from '../Common/AddressWithCopyButton';
-import Loading from '../Common/Loading';
+import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
+import Loading from '@/src/components/Common/Loading';
 
 interface ActivityDetailProps {
   actionId: bigint;

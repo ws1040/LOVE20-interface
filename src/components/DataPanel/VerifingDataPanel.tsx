@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
-import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/format';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { formatTokenAmount } from '@/src/lib/format';
 
 interface VerifingDataPanelProps {
   currentRound: bigint;

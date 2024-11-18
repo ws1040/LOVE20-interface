@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import { useRouter } from 'next/router';
 
-import { useActionInfosByPage, useActionSubmits } from '../../hooks/contracts/useLOVE20Submit';
+import { useActionInfosByPage, useActionSubmits } from '@/src/hooks/contracts/useLOVE20Submit';
 
-import { TokenContext } from '../../contexts/TokenContext';
-import { ActionInfo, ActionSubmit } from '../../types/life20types';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { ActionInfo, ActionSubmit } from '@/src/types/life20types';
 import Link from 'next/link';
-import Loading from '../Common/Loading';
+import Loading from '@/src/components/Common/Loading';
 
 interface SubmitingActionListProps {
   currentRound: bigint;

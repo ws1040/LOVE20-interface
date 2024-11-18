@@ -3,8 +3,8 @@
 import React, { useContext } from 'react';
 import Link from 'next/link';
 
-import AddressWithCopyButton from '../Common/AddressWithCopyButton';
-import { TokenContext } from '../../contexts/TokenContext';
+import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
+import { TokenContext } from '@/src/contexts/TokenContext';
 
 interface TokenLabelProps {
   showGovernanceLink?: boolean;

@@ -1,7 +1,7 @@
 // hooks/useLove20Join.ts
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { LOVE20JoinAbi } from '../../abis/LOVE20Join';
+import { LOVE20JoinAbi } from '@/src/abis/LOVE20Join';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN as `0x${string}`;
 

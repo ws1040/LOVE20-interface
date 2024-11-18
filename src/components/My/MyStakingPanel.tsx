@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { useAccount } from 'wagmi';
-import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/format';
-import Loading from '../Common/Loading';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { formatTokenAmount } from '@/src/lib/format';
+import Loading from '@/src/components/Common/Loading';
 
-import { useAccountStakeStatus } from '../../hooks/contracts/useLOVE20Stake';
+import { useAccountStakeStatus } from '@/src/hooks/contracts/useLOVE20Stake';
 import Link from 'next/link';
 
 const MyStakingPanel: React.FC = () => {

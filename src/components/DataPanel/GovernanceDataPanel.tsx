@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 
-import { useGovVotesNum } from '../../hooks/contracts/useLOVE20Stake';
-import { useTotalSupply } from '../../hooks/contracts/useLOVE20STToken';
+import { useGovVotesNum } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useTotalSupply } from '@/src/hooks/contracts/useLOVE20STToken';
 
-import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/format';
-import TokenLabel from '../Token/TokenLabel';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { formatTokenAmount } from '@/src/lib/format';
+import TokenLabel from '@/src/components/Token/TokenLabel';
 import StakedLiquidDataPanel from './StakedLiquidDataPanel';
 
 const GovernanceDataPanel: React.FC = () => {

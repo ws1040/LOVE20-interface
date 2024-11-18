@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { ClipboardDocumentIcon } from '@heroicons/react/24/outline';
 
-import { abbreviateAddress } from '../../utils/format';
+import { abbreviateAddress } from '@/src/lib/format';
 
 interface AddressWithCopyButtonProps {
   address: `0x${string}`;

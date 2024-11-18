@@ -1,14 +1,12 @@
-import Header from '../../components/Header';
+import Header from '@/src/components/Header';
 
-import { useCurrentRound } from '../../hooks/contracts/useLOVE20Join';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Join';
 
-import TokenTab from '../../components/Token/TokenTab';
-import ActDataPanel from '../../components/DataPanel/ActDataPanel';
-import JoiningActionList from '../../components/ActionList/JoiningActionList';
-
+import TokenTab from '@/src/components/Token/TokenTab';
+import ActDataPanel from '@/src/components/DataPanel/ActDataPanel';
+import JoiningActionList from '@/src/components/ActionList/JoiningActionList';
 
 const ActingPage = () => {
-
   const { currentRound } = useCurrentRound();
 
   return (

@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useAccount } from 'wagmi';
 
-import { GovReward } from '../../types/life20types';
-import { TokenContext } from '../../contexts/TokenContext';
-import { useGovRewardsByAccountByRounds } from '../../hooks/contracts/useLOVE20DataViewer';
-import { useMintGovReward, useCurrentRound } from '../../hooks/contracts/useLOVE20Mint';
-import { formatTokenAmount } from '../../utils/format';
-import Header from '../../components/Header';
-import Loading from '../../components/Common/Loading';
+import { GovReward } from '@/src/types/life20types';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { useGovRewardsByAccountByRounds } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useMintGovReward, useCurrentRound } from '@/src/hooks/contracts/useLOVE20Mint';
+import { formatTokenAmount } from '@/src/lib/format';
+import Header from '@/src/components/Header';
+import Loading from '@/src/components/Common/Loading';
 
 const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};

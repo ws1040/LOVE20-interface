@@ -2,12 +2,12 @@ import React, { useContext } from 'react';
 import { useAccount } from 'wagmi';
 import Link from 'next/link';
 
-import { useActionInfosByIds } from '../../hooks/contracts/useLOVE20Submit';
-import { useJoinedActions } from '../../hooks/contracts/useLOVE20DataViewer';
-import { TokenContext } from '../../contexts/TokenContext';
-import { JoinedAction } from '../../types/life20types';
-import { formatTokenAmount } from '../../utils/format';
-import Loading from '../Common/Loading';
+import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useJoinedActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { JoinedAction } from '@/src/types/life20types';
+import { formatTokenAmount } from '@/src/lib/format';
+import Loading from '@/src/components/Common/Loading';
 
 const MyStakedActionList: React.FC = () => {
   const { token } = useContext(TokenContext) || {};

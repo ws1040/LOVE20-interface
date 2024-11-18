@@ -6,10 +6,10 @@ import {
   useStakedAmountByAccountByActionId,
   useLastJoinedRoundByAccountByActionId,
   useWithdraw,
-} from '../../hooks/contracts/useLOVE20Join';
-import { TokenContext } from '../../contexts/TokenContext';
-import Loading from '../Common/Loading';
-import { formatTokenAmount } from '../../utils/format';
+} from '@/src/hooks/contracts/useLOVE20Join';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import Loading from '@/src/components/Common/Loading';
+import { formatTokenAmount } from '@/src/lib/format';
 
 interface MyJoinInfoOfActionPancelProps {
   actionId: bigint;

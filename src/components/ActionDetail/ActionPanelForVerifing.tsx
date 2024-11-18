@@ -2,10 +2,10 @@ import React, { useEffect, useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { BaseError } from 'viem/_types/errors/base';
 
-import { useCurrentRound, useScoreByVerifierByActionId } from '../../hooks/contracts/useLOVE20Verify';
-import { TokenContext } from '../../contexts/TokenContext';
+import { useCurrentRound, useScoreByVerifierByActionId } from '@/src/hooks/contracts/useLOVE20Verify';
+import { TokenContext } from '@/src/contexts/TokenContext';
 
-import Loading from '../Common/Loading';
+import Loading from '@/src/components/Common/Loading';
 import Link from 'next/link';
 
 interface ActionPanelForVerifingProps {

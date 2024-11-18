@@ -1,7 +1,7 @@
 // hooks/useLove20Token.ts
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { LOVE20TokenAbi } from '../../abis/LOVE20Token';
+import { LOVE20TokenAbi } from '@/src/abis/LOVE20Token';
 
 /* =======================
    ===== Read Hooks ======

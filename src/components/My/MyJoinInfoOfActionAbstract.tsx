@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 
-import { useStakedAmountByAccountByActionId } from '../../hooks/contracts/useLOVE20Join';
-import { TokenContext } from '../../contexts/TokenContext';
-import Loading from '../Common/Loading';
-import { formatTokenAmount } from '../../utils/format';
+import { useStakedAmountByAccountByActionId } from '@/src/hooks/contracts/useLOVE20Join';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import Loading from '@/src/components/Common/Loading';
+import { formatTokenAmount } from '@/src/lib/format';
 
 interface MyJoinInfoOfActionAbstractProps {
   actionId: bigint;

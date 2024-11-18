@@ -1,7 +1,7 @@
 // hooks/contracts/useLOVE20Mint.ts
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { LOVE20MintAbi } from '../../abis/LOVE20Mint';
+import { LOVE20MintAbi } from '@/src/abis/LOVE20Mint';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MINT as `0x${string}`;
 
@@ -66,10 +66,7 @@ export const useRoundRewardGovPerThousand = () => {
 /**
  * Hook for actionReward
  */
-export const useActionReward = (
-  tokenAddress: `0x${string}`,
-  round: bigint
-) => {
+export const useActionReward = (tokenAddress: `0x${string}`, round: bigint) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
@@ -91,7 +88,7 @@ export const useActionRewardByActionIdByAccount = (
   tokenAddress: `0x${string}`,
   round: bigint,
   actionId: bigint,
-  accountAddress: `0x${string}`
+  accountAddress: `0x${string}`,
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -114,7 +111,7 @@ export const useActionRewardMintedByAccount = (
   accountAddress: `0x${string}`,
   round: bigint,
   actionId: bigint,
-  targetAddress: `0x${string}`
+  targetAddress: `0x${string}`,
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -138,7 +135,7 @@ export const useActionRewardRoundsByAccount = (
   accountAddress: `0x${string}`,
   actionId: bigint,
   roundStart: bigint,
-  roundEnd: bigint
+  roundEnd: bigint,
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -158,10 +155,7 @@ export const useActionRewardRoundsByAccount = (
 /**
  * Hook for calculateRoundActionReward
  */
-export const useCalculateRoundActionReward = (
-  tokenAddress: `0x${string}`,
-  round: bigint
-) => {
+export const useCalculateRoundActionReward = (tokenAddress: `0x${string}`, round: bigint) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
@@ -179,9 +173,7 @@ export const useCalculateRoundActionReward = (
 /**
  * Hook for calculateRoundGovReward
  */
-export const useCalculateRoundGovReward = (
-  tokenAddress: `0x${string}`
-) => {
+export const useCalculateRoundGovReward = (tokenAddress: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
@@ -217,10 +209,7 @@ export const useCurrentRound = () => {
 /**
  * Hook for govReward
  */
-export const useGovReward = (
-  tokenAddress: `0x${string}`,
-  round: bigint
-) => {
+export const useGovReward = (tokenAddress: `0x${string}`, round: bigint) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
@@ -238,11 +227,7 @@ export const useGovReward = (
 /**
  * Hook for govRewardByAccount
  */
-export const useGovRewardByAccount = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  accountAddress: `0x${string}`
-) => {
+export const useGovRewardByAccount = (tokenAddress: `0x${string}`, round: bigint, accountAddress: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
@@ -265,7 +250,7 @@ export const useGovRewardByAccount = (
 export const useGovRewardMintedByAccount = (
   accountAddress: `0x${string}`,
   round: bigint,
-  targetAddress: `0x${string}`
+  targetAddress: `0x${string}`,
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -284,10 +269,7 @@ export const useGovRewardMintedByAccount = (
 /**
  * Hook for isRewardPrepared
  */
-export const useIsRewardPrepared = (
-  tokenAddress: `0x${string}`,
-  round: bigint
-) => {
+export const useIsRewardPrepared = (tokenAddress: `0x${string}`, round: bigint) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
@@ -323,16 +305,14 @@ export const useOriginBlocks = () => {
 /**
  * Hook for rewardAvailable
  */
-export const useRewardAvailable = (
-  tokenAddress: `0x${string}`
-) => {
+export const useRewardAvailable = (tokenAddress: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'rewardAvailable',
     args: [tokenAddress],
     query: {
-      enabled: !!tokenAddress, 
+      enabled: !!tokenAddress,
     },
   });
 
@@ -346,9 +326,7 @@ export const useRewardAvailable = (
 /**
  * Hook for rewardBurned
  */
-export const useRewardBurned = (
-  accountAddress: `0x${string}`
-) => {
+export const useRewardBurned = (accountAddress: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
@@ -366,9 +344,7 @@ export const useRewardBurned = (
 /**
  * Hook for rewardMinted
  */
-export const useRewardMinted = (
-  accountAddress: `0x${string}`
-) => {
+export const useRewardMinted = (accountAddress: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
@@ -386,9 +362,7 @@ export const useRewardMinted = (
 /**
  * Hook for rewardReserved
  */
-export const useRewardReserved = (
-  accountAddress: `0x${string}`
-) => {
+export const useRewardReserved = (accountAddress: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
@@ -424,9 +398,7 @@ export const useRoundBlocks = () => {
 /**
  * Hook for roundByBlockNumber
  */
-export const useRoundByBlockNumber = (
-  blockNumber: bigint
-) => {
+export const useRoundByBlockNumber = (blockNumber: bigint) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
@@ -444,9 +416,7 @@ export const useRoundByBlockNumber = (
 /**
  * Hook for roundRange
  */
-export const useRoundRange = (
-  round: bigint
-) => {
+export const useRoundRange = (round: bigint) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
@@ -506,18 +476,9 @@ export const useVerifyAddress = () => {
  * Hook for mintActionReward
  */
 export function useMintActionReward() {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
-  const mintActionReward = async (
-    tokenAddress: `0x${string}`,
-    round: bigint,
-    actionId: bigint
-  ) => {
+  const mintActionReward = async (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
@@ -530,10 +491,7 @@ export function useMintActionReward() {
     }
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-  } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 
@@ -551,17 +509,9 @@ export function useMintActionReward() {
  * Hook for mintGovReward
  */
 export function useMintGovReward() {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
-  const mintGovReward = async (
-    tokenAddress: `0x${string}`,
-    round: bigint
-  ) => {
+  const mintGovReward = async (tokenAddress: `0x${string}`, round: bigint) => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
@@ -574,10 +524,7 @@ export function useMintGovReward() {
     }
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-  } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 
@@ -595,17 +542,9 @@ export function useMintGovReward() {
  * Hook for prepareRewardIfNeeded
  */
 export function usePrepareRewardIfNeeded() {
-  const {
-    writeContract,
-    isPending: isWriting,
-    data: writeData,
-    error: writeError,
-  } = useWriteContract();
+  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
-  const prepareRewardIfNeeded = async (
-    tokenAddress: `0x${string}`,
-    round: bigint
-  ) => {
+  const prepareRewardIfNeeded = async (tokenAddress: `0x${string}`, round: bigint) => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
@@ -618,10 +557,7 @@ export function usePrepareRewardIfNeeded() {
     }
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-  } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
   });
 

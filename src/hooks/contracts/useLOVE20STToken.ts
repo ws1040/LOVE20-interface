@@ -1,14 +1,10 @@
 import { useReadContract } from 'wagmi';
-import { LOVE20STTokenAbi } from '../../abis/LOVE20STToken';
+import { LOVE20STTokenAbi } from '@/src/abis/LOVE20STToken';
 
 /**
  * Hook for allowance
  */
-export const useAllowance = (
-  address: `0x${string}`, 
-  owner: `0x${string}`,
-  spender: `0x${string}`
-) => {
+export const useAllowance = (address: `0x${string}`, owner: `0x${string}`, spender: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address,
     abi: LOVE20STTokenAbi,
@@ -16,7 +12,7 @@ export const useAllowance = (
     args: [owner, spender],
     query: {
       enabled: !!owner && !!spender,
-    }
+    },
   });
 
   return {

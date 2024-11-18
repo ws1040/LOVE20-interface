@@ -2,12 +2,12 @@ import React, { useContext, useState } from 'react';
 import { Tooltip } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
-import { useTotalSupply } from '../../hooks/contracts/useLOVE20Token';
+import { useTotalSupply } from '@/src/hooks/contracts/useLOVE20Token';
 
 import TokenLabel from './TokenLabel';
-import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/format';
-import Loading from '../Common/Loading';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { formatTokenAmount } from '@/src/lib/format';
+import Loading from '@/src/components/Common/Loading';
 
 export default function TokenTab() {
   const { token } = useContext(TokenContext) || {};

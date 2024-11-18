@@ -1,12 +1,12 @@
 import React, { useContext, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 
-import { useVotesNumByAccountByActionId } from '../../hooks/contracts/useLOVE20Vote';
-import { useScoreByVerifierByActionId } from '../../hooks/contracts/useLOVE20Verify';
+import { useVotesNumByAccountByActionId } from '@/src/hooks/contracts/useLOVE20Vote';
+import { useScoreByVerifierByActionId } from '@/src/hooks/contracts/useLOVE20Verify';
 
-import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/format';
-import Loading from '../Common/Loading';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { formatTokenAmount } from '@/src/lib/format';
+import Loading from '@/src/components/Common/Loading';
 
 interface MyActionVerifingPanelProps {
   currentRound: bigint;

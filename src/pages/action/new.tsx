@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
-import { useSubmitNewAction } from '../../hooks/contracts/useLOVE20Submit';
-import { TokenContext } from '../../contexts/TokenContext';
+import { useSubmitNewAction } from '@/src/hooks/contracts/useLOVE20Submit';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { parseUnits } from '@/src/lib/format';
 
-import Header from '../../components/Header';
+import Header from '@/src/components/Header';
 
 const NewAction = () => {
   // hook
@@ -35,10 +36,9 @@ const NewAction = () => {
   };
 
   // 提交表单
-  const decimals = process.env.NEXT_PUBLIC_TOKEN_DECIMALS || 18;
   const handleSubmit = async () => {
     const actionBody = {
-      maxStake: form.maxStake ? BigInt(form.maxStake) * 10n ** BigInt(decimals) : 0n,
+      maxStake: form.maxStake ? parseUnits(form.maxStake) : 0n,
       maxRandomAccounts: form.rewardAddressCount ? BigInt(form.rewardAddressCount) : 0n,
       whiteList: form.whiteList ? form.whiteList.split(',').map((addr) => addr.trim() as `0x${string}`) : [],
       action: form.actionName,
@@ -51,8 +51,6 @@ const NewAction = () => {
 
   useEffect(() => {
     if (isSubmitted) {
-      //需要用事件来获取 actionId
-      //router.push(`/action/${writeData}`);
       router.push('/vote/actions4submit');
     }
   }, [isSubmitted, writeData]);

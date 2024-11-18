@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
-import Header from '../../components/Header';
-import { useCurrentRound } from '../../hooks/contracts/useLOVE20Verify';
-import ActionDetail from '../../components/ActionDetail/ActionDetail';
-import Loading from '../../components/Common/Loading';
+import Header from '@/src/components/Header';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Verify';
+import ActionDetail from '@/src/components/ActionDetail/ActionDetail';
+import Loading from '@/src/components/Common/Loading';
 
-import MyJoinInfoOfActionPancel from '../../components/My/MyJoinInfoOfActionPancel';
-import VerifiedAddressesByAction from '../../components/Mint/VerifiedAddressesByAction';
+import MyJoinInfoOfActionPancel from '@/src/components/My/MyJoinInfoOfActionPancel';
+import VerifiedAddressesByAction from '@/src/components/Mint/VerifiedAddressesByAction';
 
 const ActRewardsPage = () => {
   const router = useRouter();

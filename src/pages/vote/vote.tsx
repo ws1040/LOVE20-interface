@@ -4,15 +4,15 @@ import { BaseError, useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 
-import { formatTokenAmount } from '../../utils/format';
-import { ActionInfo } from '../../types/life20types';
-import { TokenContext } from '../../contexts/TokenContext';
-import { useActionInfosByIds } from '../../hooks/contracts/useLOVE20Submit';
-import { useValidGovVotes } from '../../hooks/contracts/useLOVE20Stake';
-import { useCurrentRound, useVotesNumByAccount, useVote } from '../../hooks/contracts/useLOVE20Vote';
+import { formatTokenAmount } from '@/src/lib/format';
+import { ActionInfo } from '@/src/types/life20types';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useCurrentRound, useVotesNumByAccount, useVote } from '@/src/hooks/contracts/useLOVE20Vote';
 
-import Header from '../../components/Header';
-import Loading from '../../components/Common/Loading';
+import Header from '@/src/components/Header';
+import Loading from '@/src/components/Common/Loading';
 
 const VotingSubmitPage = () => {
   const { token } = useContext(TokenContext) || {};

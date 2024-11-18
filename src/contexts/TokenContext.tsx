@@ -14,7 +14,7 @@ export interface Token {
 }
 
 // 定义 Context 的类型
-interface TokenContextType {
+export interface TokenContextType {
   token: Token | null;
   setToken: (token: Token) => void;
 }
@@ -35,11 +35,11 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     try {
       const storedToken = localStorage.getItem('currentToken');
       if (storedToken && JSON.parse(storedToken)) {
-        setToken( JSON.parse(storedToken));
+        setToken(JSON.parse(storedToken));
       } else {
-        setToken({ 
-          name: process.env.NEXT_PUBLIC_FIRST_TOKEN_NAME || '', 
-          symbol: process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || '', 
+        setToken({
+          name: process.env.NEXT_PUBLIC_FIRST_TOKEN_NAME || '',
+          symbol: process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || '',
           address: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_TOKEN || '') as `0x${string}`,
           parentTokenAddress: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN || '') as `0x${string}`,
           parentTokenSymbol: process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL || '',
@@ -84,9 +84,5 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     };
   }, []);
 
-  return (
-    <TokenContext.Provider value={{ token, setToken }}>
-      {children}
-    </TokenContext.Provider>
-  );
+  return <TokenContext.Provider value={{ token, setToken }}>{children}</TokenContext.Provider>;
 };

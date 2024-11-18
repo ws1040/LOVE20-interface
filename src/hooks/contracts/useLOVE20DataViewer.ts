@@ -1,8 +1,8 @@
 // hooks/contracts/useLOVE20Launch.ts
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { LOVE20DataViewerAbi } from '../../abis/LOVE20DataViewer';
-import { JoinableAction, JoinedAction, LaunchInfo, VerifiedAddress, GovReward } from '../../types/life20types';
+import { LOVE20DataViewerAbi } from '@/src/abis/LOVE20DataViewer';
+import { JoinableAction, JoinedAction, LaunchInfo, VerifiedAddress, GovReward } from '@/src/types/life20types';
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_DATAVIEWER as `0x${string}`;
 
 // =====================

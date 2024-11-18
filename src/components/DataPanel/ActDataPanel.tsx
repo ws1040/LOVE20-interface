@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
-import { useRewardAvailable } from '../../hooks/contracts/useLOVE20Mint';
-import { useJoinedAmount } from '../../hooks/contracts/useLOVE20Join';
+import { useRewardAvailable } from '@/src/hooks/contracts/useLOVE20Mint';
+import { useJoinedAmount } from '@/src/hooks/contracts/useLOVE20Join';
 
-import { TokenContext } from '../../contexts/TokenContext';
-import { formatTokenAmount } from '../../utils/format';
-import Loading from '../Common/Loading';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { formatTokenAmount } from '@/src/lib/format';
+import Loading from '@/src/components/Common/Loading';
 
 interface ActDataPanelProps {
   currentRound: bigint;

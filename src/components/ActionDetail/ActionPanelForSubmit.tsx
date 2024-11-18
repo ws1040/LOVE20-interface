@@ -3,9 +3,9 @@ import { BaseError } from 'viem/_types/errors/base';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 
-import { useCurrentRound, useSubmit } from '../../hooks/contracts/useLOVE20Submit';
-import { TokenContext } from '../../contexts/TokenContext';
-import Loading from '../Common/Loading';
+import { useCurrentRound, useSubmit } from '@/src/hooks/contracts/useLOVE20Submit';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import Loading from '@/src/components/Common/Loading';
 
 interface ActionPanelForJoinProps {
   actionId: bigint;

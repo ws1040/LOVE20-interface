@@ -1,12 +1,12 @@
 import React, { useEffect, useContext } from 'react';
 import { BaseError, useAccount } from 'wagmi';
 
-import { useValidGovVotes } from '../../hooks/contracts/useLOVE20Stake';
-import { useCurrentRound, useVotesNumByAccountByActionId, useVote } from '../../hooks/contracts/useLOVE20Vote';
+import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useCurrentRound, useVotesNumByAccountByActionId, useVote } from '@/src/hooks/contracts/useLOVE20Vote';
 
-import { TokenContext } from '../../contexts/TokenContext';
-import Loading from '../Common/Loading';
-import { formatTokenAmount } from '../../utils/format';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import Loading from '@/src/components/Common/Loading';
+import { formatTokenAmount } from '@/src/lib/format';
 
 interface ActionPanelForVoteProps {
   actionId: bigint;
