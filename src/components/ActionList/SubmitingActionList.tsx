@@ -1,10 +1,9 @@
 import React, { useContext } from 'react';
 import { useRouter } from 'next/router';
-
+import { Button } from '@/components/ui/button';
 import { useActionInfosByPage, useActionSubmits } from '@/src/hooks/contracts/useLOVE20Submit';
-
 import { TokenContext } from '@/src/contexts/TokenContext';
-import { ActionInfo, ActionSubmit } from '@/src/types/life20types';
+import { ActionInfo } from '@/src/types/life20types';
 import Link from 'next/link';
 import Loading from '@/src/components/Common/Loading';
 
@@ -37,12 +36,9 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-sm font-bold text-gray-600">所有行动</h2>
-        <button
-          onClick={() => router.push('/action/new')}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
+        <Button onClick={() => router.push('/action/new')} className="bg-blue-600 hover:bg-blue-700">
           发起新行动
-        </button>
+        </Button>
       </div>
       {isPendingActionInfosByPage || isPendingActionSubmits ? (
         <Loading />

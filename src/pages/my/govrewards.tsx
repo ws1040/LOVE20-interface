@@ -58,13 +58,13 @@ const GovRewardsPage: React.FC = () => {
     <>
       <Header title="行动详情" />
       <main className="flex-grow">
-        <div className="flex flex-col space-y-6 p-4 bg-base-100 border-t border-gray-100">
+        <div className="flex flex-col space-y-6 p-4 bg-white border-t border-gray-100">
           <h2 className="relative pl-4 text-gray-700 text-base font-medium before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
             铸造治理奖励
           </h2>
           <table className="table w-full table-auto">
             <thead>
-              <tr>
+              <tr className="border-b border-gray-100">
                 <th>轮次</th>
                 <th>奖励</th>
                 <th></th>
@@ -72,7 +72,7 @@ const GovRewardsPage: React.FC = () => {
             </thead>
             <tbody>
               {rewardList.map((item) => (
-                <tr key={item.round.toString()}>
+                <tr key={item.round.toString()} className="border-b border-gray-100">
                   <td>{item.round.toString()}</td>
                   <td>{formatTokenAmount(item.unminted)}</td>
                   <td>

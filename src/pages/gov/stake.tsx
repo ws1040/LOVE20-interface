@@ -25,7 +25,7 @@ const StakePage = () => {
     <>
       <Header title="质押" />
       <main className="flex-grow">
-        <div className="w-full flex flex-col items-center rounded p-4 bg-base-100 border-t border-gray-100">
+        <div className="w-full flex flex-col items-center rounded p-4 bg-white border-t border-gray-100">
           <StakedLiquidDataPanel showStakeToken={false} onTokenAmountChange={setStakedTokenAmountOfLP} />
         </div>
         {stakedTokenAmountOfLP !== BigInt(-1) && (
@@ -36,7 +36,7 @@ const StakePage = () => {
           />
         )}
         {stakedTokenAmountOfLP !== BigInt(-1) && <StakeTokenPanel tokenBalance={tokenBalance || 0n} />}
-        <div className="flex flex-col w-full rounded p-4 bg-base-100 mt-4">
+        <div className="flex flex-col w-full rounded p-4 bg-white mt-4">
           <div className="text-base font-bold text-gray-700 pb-2">规则说明：</div>
           <div className="text-sm text-gray-500">1、所得治理票数 = LP 数量 * 释放期轮次</div>
           <div className="text-sm text-gray-500">

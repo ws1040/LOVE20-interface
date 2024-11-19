@@ -40,7 +40,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
 
   return (
     <>
-      <div className="max-w-4xl mx-auto p-6 bg-base-100 mb-4">
+      <div className="max-w-4xl mx-auto p-6 bg-white mb-4">
         <div className="flex flex-col">
           <span className="text-sm text-gray-500">No.{actionInfo?.head.id.toString()}</span>
           <span className="text-2xl font-bold text-black">{actionInfo?.body.action}</span>
@@ -59,30 +59,30 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
           )}
         </div>
       </div>
-      <div className="max-w-4xl mx-auto p-6 bg-base-100">
+      <div className="max-w-4xl mx-auto p-6 bg-white">
         <div className="mb-6">
           <div className="mb-4">
-            <h3 className="text-base font-semibold text-gray-500">参与资产上限</h3>
+            <h3 className="text-base text-gray-500">参与资产上限</h3>
             <p className="text-lg">{formatTokenAmount(actionInfo?.body.maxStake || BigInt(0))}</p>
           </div>
 
           <div className="mb-4">
-            <h3 className="text-base font-semibold text-gray-500">随机奖励地址数</h3>
+            <h3 className="text-base text-gray-500">随机奖励地址数</h3>
             <p className="text-lg">{actionInfo?.body.maxRandomAccounts.toString() || '-'}</p>
           </div>
 
           <div className="mb-4">
-            <h3 className="text-base font-semibold text-gray-500">验证规则</h3>
+            <h3 className="text-base text-gray-500">验证规则</h3>
             <p className="text-lg">{actionInfo?.body.verificationRule || '-'}</p>
           </div>
 
           <div className="mb-4">
-            <h3 className="text-base font-semibold text-gray-500">验证信息填写指引</h3>
+            <h3 className="text-base text-gray-500">验证信息填写指引</h3>
             <p className="text-lg">{actionInfo?.body.verificationInfoGuide || '-'}</p>
           </div>
 
           <div className="mb-4">
-            <h3 className="text-base font-semibold text-gray-500">白名单</h3>
+            <h3 className="text-base text-gray-500">白名单</h3>
             <p className="text-lg flex flex-wrap items-center">
               {actionInfo?.body.whiteList.length
                 ? actionInfo.body.whiteList.map((addr: string, index: number) => (

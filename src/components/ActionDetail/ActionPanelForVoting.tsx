@@ -1,5 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 import { BaseError, useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
 
 import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useCurrentRound, useVotesNumByAccountByActionId, useVote } from '@/src/hooks/contracts/useLOVE20Vote';
@@ -54,7 +55,7 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
   };
 
   return (
-    <div className="flex flex-col items-center space-y-6 p-8 bg-base-100 mb-4 border-t border-gray-100 ">
+    <div className="flex flex-col items-center space-y-6 p-8 bg-white mb-4 border-t border-gray-100 ">
       <h1 className="text-base text-center">
         投票轮 (第
         <span className="text-red-500">{isPendingCurrentRound ? <Loading /> : Number(currentRound)}</span>
@@ -84,14 +85,16 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
       </div>
 
       {!isPendingVotesNumByAccountByActionId && !votesNumByAccountByActionId ? (
-        <button className="btn-primary btn w-1/2" onClick={handleSubmit} disabled={isWriting || isConfirmingVote}>
+        <Button
+          className="w-1/2 bg-blue-600 hover:bg-blue-700"
+          onClick={handleSubmit}
+          disabled={isWriting || isConfirmingVote}
+        >
           {isWriting || isConfirmingVote ? <Loading /> : '投100%票'}
-        </button>
+        </Button>
       ) : (
         <div className="flex flex-col items-center">
-          <button disabled className="btn-disabled">
-            您已投票
-          </button>
+          <Button className="w-1/2 bg-gray-400 cursor-not-allowed">您已投票</Button>
         </div>
       )}
 

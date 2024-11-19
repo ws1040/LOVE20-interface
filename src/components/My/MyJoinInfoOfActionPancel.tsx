@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
+import { Button } from '@/components/ui/button';
 
 import {
   useStakedAmountByAccountByActionId,
@@ -75,7 +76,7 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
 
   return (
     <>
-      <div className="flex flex-col items-center space-y-6 pb-8 bg-base-100 mb-4">
+      <div className="flex flex-col items-center space-y-6 pb-8 bg-white mb-4">
         <div className="flex w-full justify-center space-x-20">
           <div className="flex flex-col items-center">
             <span className="text-sm text-gray-500">我参与的代币数</span>
@@ -90,17 +91,15 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
         </div>
 
         {stakedAmountByAccountByActionId <= 0 ? (
-          <button className="text-gray-500 btn btn-disabled" disabled>
-            已取回
-          </button>
+          <Button className="w-full bg-gray-400 cursor-not-allowed">已取回</Button>
         ) : lastJoinedRound && Number(lastJoinedRound) + 1 < Number(currentRound) ? (
-          <button
+          <Button
             className="btn-primary btn w-1/2"
             onClick={handleWithdraw}
             disabled={isPendingWithdraw || isConfirmingWithdraw}
           >
             {isPendingWithdraw || isConfirmingWithdraw ? <Loading /> : '取回代币'}
-          </button>
+          </Button>
         ) : (
           <span className="text-sm text-gray-500">
             提示：到第 {(1 + Number(lastJoinedRound)).toString()} 轮后可取回

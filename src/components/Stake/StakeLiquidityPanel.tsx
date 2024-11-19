@@ -1,13 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
+import { Button } from '@/components/ui/button';
 
 import { useStakeLiquidity } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import { TokenContext, Token } from '@/src/contexts/TokenContext';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useGetAmountsIn, useGetAmountsOut } from '@/src/components/Stake/getAmountHooks';
-import Loading from '@/src/components/Common/Loading';
 
 interface StakeLiquidityPanelProps {
   tokenBalance: bigint;
@@ -79,13 +79,15 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
   // console.log('---stake: amountsOut', amountsOut);
   // console.log('---stake: amountsOutError', amountsOutError);
   // console.log('---stake: isAmountsOutLoading', isAmountsOutLoading);
-
+  // console.log('---stake: amountsIn', amountsIn);
+  // console.log('---stake: amountsInError', amountsInError);
+  // console.log('---stake: isAmountsInLoading', isAmountsInLoading);
   // 提交质押
   const [isSubmitted, setIsSubmitted] = useState(false);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateInput(parentToken) || !validateInput(stakeToken)) {
-      toast.error('请输入有效的数量，最多支持9位小数');
+      toast.error('请输入有效的数量，最多支持12位小数');
       return;
     }
 
@@ -110,7 +112,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
 
   // 验证输入是否为有效的数字且最多9位小数
   const validateInput = (value: string) => {
-    const regex = /^\d+(\.\d{0,9})?$/;
+    const regex = /^\d+(\.\d{0,12})?$/;
     return regex.test(value);
   };
 
@@ -229,7 +231,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
 
   return (
     <>
-      <div className="w-full flex flex-col items-center rounded p-4 bg-base-100 mt-1">
+      <div className="w-full flex flex-col items-center rounded p-4 bg-white mt-1">
         <div className="w-full text-left mb-4">
           <h2 className="relative pl-4 text-gray-700 text-base font-medium before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
             质押获取治理票：
@@ -245,7 +247,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
               placeholder={`输入 ${token?.parentTokenSymbol} 数量`}
               value={parentToken}
               onChange={handleParentTokenChange}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring bg-white"
               required
             />
           </div>
@@ -258,7 +260,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
               placeholder={`输入 ${token?.symbol} 数量`}
               value={stakeToken}
               onChange={handleStakeTokenChange}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring bg-white"
               required
             />
           </div>
@@ -267,7 +269,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
             <select
               value={releasePeriod}
               onChange={(e) => setReleasePeriod(e.target.value)}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring  bg-white"
               required
             >
               {Array.from({ length: 9 }, (_, i) => (
@@ -278,13 +280,13 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
             </select>
           </div>
           <div className="flex justify-center">
-            <button
+            <Button
               type="submit"
               className="w-1/2 bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
               disabled={isPendingStakeLiquidity || isConfirmingStakeLiquidity}
             >
               {isPendingStakeLiquidity || isConfirmingStakeLiquidity ? '质押中...' : '质押'}
-            </button>
+            </Button>
           </div>
         </form>
         {errStakeLiquidity && <div className="text-red-500">{errStakeLiquidity.message}</div>}

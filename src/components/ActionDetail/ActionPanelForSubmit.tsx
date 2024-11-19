@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { BaseError } from 'viem/_types/errors/base';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
+import { Button } from '@/components/ui/button';
 
 import { useCurrentRound, useSubmit } from '@/src/hooks/contracts/useLOVE20Submit';
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -45,17 +46,17 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
   }, [isConfirmed, errSubmit]);
 
   return (
-    <div className="flex flex-col items-center space-y-6 p-8 bg-base-100 mb-4 border-t border-gray-100">
+    <div className="flex flex-col items-center space-y-6 p-8 bg-white mb-4 border-t border-gray-100">
       <h1 className="text-base text-center">
         投票轮 (第 <span className="text-red-500">{isPendingCurrentRound ? <Loading /> : Number(currentRound)}</span>轮)
       </h1>
 
       {submitted || isConfirmed ? (
-        <button className="btn w-1/2">已推举</button>
+        <Button className="w-1/2 bg-gray-400 cursor-not-allowed">已推举</Button>
       ) : (
-        <button onClick={handleSubmit} className="btn-primary btn w-1/2">
+        <Button onClick={handleSubmit} className="w-1/2 bg-blue-600 hover:bg-blue-700">
           {isWriting || isConfirming ? <Loading /> : '推举'}
-        </button>
+        </Button>
       )}
 
       {errSubmit ? (

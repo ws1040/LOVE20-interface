@@ -37,7 +37,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
     !isPendingVotesNumByAccount && !isPendingScoreByVerifier ? votesNumByAccount - scoreByVerifier : BigInt(0);
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-6 bg-base-100">
+    <div className="flex flex-col items-center space-y-4 p-6 bg-white">
       <h1 className="text-base text-center">
         验证轮（第 <span className="text-red-500">{Number(currentRound)}</span> 轮）
       </h1>

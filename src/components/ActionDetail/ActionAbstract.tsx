@@ -31,7 +31,7 @@ const ActionAbstract: React.FC<ActionAbstractProps> = ({ actionInfo, round, show
 
   return (
     <>
-      <div className="max-w-4xl mx-auto p-6 bg-base-100 border-t border-gray-100 mb-4">
+      <div className="max-w-4xl mx-auto p-6 bg-white border-t border-gray-100 mb-4">
         <div className="flex flex-col">
           <span className="text-sm text-gray-500">No.{actionInfo?.head.id.toString()}</span>
           <span className="text-2xl font-bold text-black">{actionInfo?.body.action}</span>

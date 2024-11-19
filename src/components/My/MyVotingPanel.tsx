@@ -7,6 +7,7 @@ import { useVotesNumByAccount } from '@/src/hooks/contracts/useLOVE20Vote';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
 import Loading from '@/src/components/Common/Loading';
+import { Button } from '@/components/ui/button';
 
 interface MyVotingPanelProps {
   currentRound: bigint;
@@ -33,7 +34,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
   console.log('votesNumByAccount', votesNumByAccount);
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-6 bg-base-100 mt-4 mb-4">
+    <div className="flex flex-col items-center space-y-4 p-6 bg-white mt-4 mb-4">
       <h1 className="text-base text-center">
         投票轮（第
         <span className="text-red-500">{currentRound === undefined ? <Loading /> : Number(currentRound)}</span>
@@ -62,19 +63,19 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
         <Loading />
       ) : validGovVotes > votesNumByAccount ? (
         <div className="flex justify-center space-x-6">
-          <Link href="/vote/actions4submit" className="btn-primary btn w-1/2">
-            去推举
+          <Link href="/vote/actions4submit">
+            <Button className="w-full bg-blue-600 hover:bg-blue-700">去推举</Button>
           </Link>
-          <Link href="/vote" className="btn-primary btn w-1/2">
-            去投票
+          <Link href="/vote">
+            <Button className="w-full bg-blue-600 hover:bg-blue-700">去投票</Button>
           </Link>
         </div>
       ) : (
         <div className="flex justify-center space-x-6">
-          <Link href="/vote/actions4submit" className="btn-primary btn w-1/2">
-            去推举
+          <Link href="/vote/actions4submit">
+            <Button className="w-full bg-blue-600 hover:bg-blue-700">去推举</Button>
           </Link>
-          <button className="btn btn-disabled w-1/2">去投票</button>
+          <Button className="w-1/2 bg-gray-400 cursor-not-allowed">去投票</Button>
         </div>
       )}
     </div>

@@ -25,7 +25,7 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
   } = useJoinedAmount((token?.address as `0x${string}`) || '', currentRound);
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-6 bg-base-100">
+    <div className="flex flex-col items-center space-y-4 p-6 bg-white">
       <h1 className="text-base text-center">
         行动轮（第 <span className="text-red-500">{Number(currentRound ?? 0n)}</span> 轮）
       </h1>

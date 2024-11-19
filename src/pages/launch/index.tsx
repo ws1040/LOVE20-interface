@@ -32,7 +32,7 @@ export default function TokenFairLaunch() {
     <>
       <Header title="Launch" />
       <main className="flex-grow">
-        <div className="px-6 pt-6 pb-1 bg-base-100 border-t border-gray-100">
+        <div className="px-6 pt-6 pb-1 border-t border-gray-100 bg-white">
           <TokenLabel showGovernanceLink={false} />
         </div>
         <LaunchStatus token={token} launchInfo={launchInfo} />

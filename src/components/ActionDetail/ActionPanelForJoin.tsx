@@ -11,6 +11,7 @@ import {
 import { TokenContext } from '@/src/contexts/TokenContext';
 import Loading from '@/src/components/Common/Loading';
 import { formatTokenAmount } from '@/src/lib/format';
+import { Button } from '@/components/ui/button';
 
 interface ActionPanelForJoinProps {
   actionId: bigint;
@@ -70,7 +71,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
   );
 
   return (
-    <div className="flex flex-col items-center space-y-6 p-8 bg-base-100 mb-4 border-t border-gray-100 ">
+    <div className="flex flex-col items-center space-y-6 p-8 bg-white mb-4 border-t border-gray-100 ">
       <h1 className="text-base text-center">
         行动轮 (第 <span className="text-red-500">{isPendingCurrentRound ? <Loading /> : Number(currentRound)}</span>轮)
       </h1>
@@ -89,14 +90,14 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
       </div>
 
       {!isJoined ? (
-        <Link href={`/acting/join?id=${actionId}`} className="btn-primary btn w-1/2">
-          参与行动
+        <Link href={`/acting/join?id=${actionId}`} className="w-1/2">
+          <Button className="w-full bg-blue-600 hover:bg-blue-700">参与行动</Button>
         </Link>
       ) : (
         <div className="flex flex-col items-center">
-          <button disabled className="btn btn-disabled">
+          <Button disabled className="w-full bg-gray-400 cursor-not-allowed">
             您已参与
-          </button>
+          </Button>
           <div className="mt-2 text-sm text-gray-600">{isPendingVerificationInfo ? '加载中...' : verificationInfo}</div>
         </div>
       )}

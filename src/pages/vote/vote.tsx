@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 import { BaseError, useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 import { formatTokenAmount } from '@/src/lib/format';
@@ -125,7 +126,7 @@ const VotingSubmitPage = () => {
     <>
       <Header title="执行投票页" />
       <main className="flex-grow">
-        <div className="flex flex-col items-center space-y-4 p-6 bg-base-100">
+        <div className="flex flex-col items-center space-y-4 p-6 bg-white">
           <h1 className="text-base text-center">
             投票轮 （第
             <span className="text-red-500">{isPendingCurrentRound ? <Loading /> : Number(currentRound)}</span>
@@ -178,9 +179,13 @@ const VotingSubmitPage = () => {
             })}
           </div>
           <div className="flex justify-center mt-4">
-            <button className="btn btn-primary w-1/2" onClick={handleSubmit} disabled={isWriting || isConfirming}>
+            <Button
+              className="w-1/2 bg-blue-600 hover:bg-blue-700"
+              onClick={handleSubmit}
+              disabled={isWriting || isConfirming}
+            >
               {isWriting || isConfirming ? '提交中...' : '提交投票'}
-            </button>
+            </Button>
           </div>
           {submitError ? (
             <div className="text-red-500">Error: {(submitError as BaseError).shortMessage || submitError.message}</div>

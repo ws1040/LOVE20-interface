@@ -38,7 +38,7 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({
       ) : (
         <>
           <div className="text-sm text-gray-500">流动性质押总量</div>
-          <div className="flex w-full justify-center space-x-20">
+          <div className="flex w-full justify-center space-x-10">
             <span>
               <span className="text-sm text-gray-500 mr-2">${token?.symbol}</span>
               <span className="text-2xl font-bold text-orange-400">{formatTokenAmount(tokenAmount || BigInt(0))}</span>
@@ -53,7 +53,7 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({
           {showStakeToken && (
             <>
               <div className="text-sm text-gray-500">手续费待分配收益</div>
-              <div className="flex w-full justify-center space-x-20">
+              <div className="flex w-full justify-center space-x-10">
                 <span>
                   <span className="text-sm text-gray-500 mr-2">${token?.symbol}</span>
                   <span className="text-2xl font-bold text-orange-400">

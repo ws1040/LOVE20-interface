@@ -17,10 +17,10 @@ const GovernanceDataPanel: React.FC = () => {
   );
 
   return (
-    <div className="p-6 bg-base-100 border-t border-gray-100">
+    <div className="p-6 bg-white border-t border-gray-100">
       <TokenLabel />
 
-      <div className="flex w-full justify-center space-x-20">
+      <div className="flex w-full justify-center space-x-20 mb-4">
         <div className="flex flex-col items-center">
           <span className="text-sm text-gray-500">总治理票</span>
           <span className="text-2xl font-bold text-orange-400">
@@ -34,7 +34,7 @@ const GovernanceDataPanel: React.FC = () => {
           </span>
         </div>
       </div>
-      <div className="w-full flex flex-col items-center space-y-4 bg-base-200 rounded p-4">
+      <div className="w-full flex flex-col items-center space-y-4 bg-gray-100 rounded p-4">
         <StakedLiquidDataPanel />
       </div>
     </div>

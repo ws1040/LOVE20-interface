@@ -19,7 +19,7 @@ const MyActAssetsPanel = () => {
 
   return (
     <>
-      <div className="w-full flex flex-col items-center rounded p-4 bg-base-100 mt-4">
+      <div className="w-full flex flex-col items-center rounded p-4 bg-white mt-4">
         <div className="w-full text-left mb-4">
           <h2 className="relative pl-4 text-gray-700 text-base font-medium before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
             我参与行动的资产

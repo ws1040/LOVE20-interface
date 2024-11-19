@@ -1,6 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
+import { Button } from '@/components/ui/button';
+
 import { useActionSubmits, useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useVotesNums } from '@/src/hooks/contracts/useLOVE20Vote';
 
@@ -128,9 +130,9 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
               );
             })}
             <div className="flex justify-center mt-4">
-              <button className="btn btn-primary w-1/2" onClick={handleSubmit}>
+              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleSubmit}>
                 投票
-              </button>
+              </Button>
             </div>
           </>
         ) : (

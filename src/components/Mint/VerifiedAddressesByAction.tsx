@@ -58,7 +58,7 @@ const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> =
       ) : (
         <table className="table w-full">
           <thead>
-            <tr>
+            <tr className="border-b border-gray-100">
               <th>地址</th>
               <th>得分</th>
               <th>奖励</th>
@@ -67,7 +67,7 @@ const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> =
           </thead>
           <tbody>
             {addresses.map((item) => (
-              <tr key={item.account}>
+              <tr key={item.account} className="border-b border-gray-100">
                 <td>
                   <AddressWithCopyButton address={item.account} showCopyButton={false} />
                 </td>

@@ -8,6 +8,7 @@ import Loading from '@/src/components/Common/Loading';
 
 import MyJoinInfoOfActionPancel from '@/src/components/My/MyJoinInfoOfActionPancel';
 import VerifiedAddressesByAction from '@/src/components/Mint/VerifiedAddressesByAction';
+import { Button } from '@/components/ui/button';
 
 const ActRewardsPage = () => {
   const router = useRouter();
@@ -36,7 +37,7 @@ const ActRewardsPage = () => {
     <>
       <Header title="行动详情" />
       <main className="flex-grow">
-        <div className="flex flex-col items-center space-y-6 p-4 bg-base-100 border-t border-gray-100">
+        <div className="flex flex-col items-center space-y-6 p-4 bg-white border-t border-gray-100">
           <h1 className="text-base text-center">
             {isPendingCurrentRound ? (
               <Loading />
@@ -44,12 +45,12 @@ const ActRewardsPage = () => {
               <>
                 已完成 (第
                 <span className="text-red-500">{Number(selectedRound)}</span>轮)
-                <button
+                <Button
                   onClick={togglePicker}
                   className="ml-4 px-2 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                 >
                   切换轮次
-                </button>
+                </Button>
               </>
             ) : (
               '没有完成的轮次'

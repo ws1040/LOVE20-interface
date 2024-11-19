@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
+import { Button } from '@/components/ui/button';
 
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { ActionInfo } from '@/src/types/life20types';
@@ -111,7 +112,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
 
   return (
     <>
-      <div className="w-full flex flex-col rounded p-4 bg-base-100 mt-1">
+      <div className="w-full flex flex-col rounded p-4 bg-white mt-1">
         <div className="mb-4">
           <label className="block text-left mb-1 text-sm text-gray-500">
             增加参与代币: (当前持有：{formatTokenAmount(tokenBalance || 0n)} {token?.symbol})
@@ -126,7 +127,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
             }
             value={additionalStakeAmount}
             onChange={(e) => setAdditionalStakeAmount(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white"
           />
         </div>
         <div className="mb-4">
@@ -136,7 +137,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
             placeholder="输入参数轮数"
             value={rounds}
             onChange={(e) => setRounds(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white"
           />
         </div>
         <div>
@@ -145,20 +146,20 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
             placeholder={`${actionInfo?.body.verificationInfoGuide}`}
             value={verificationInfo}
             onChange={(e) => setVerificationInfo(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white"
           />
         </div>
         <div className="flex justify-center">
           {isConfirmedJoin ? (
-            <button className="mt-4 w-1/2 bg-blue-500 text-white py-2 px-4 rounded">加入成功</button>
+            <Button className="mt-4 w-1/2 bg-blue-600 hover:bg-blue-700">加入成功</Button>
           ) : (
-            <button
+            <Button
               onClick={handleSubmit}
               disabled={isPendingJoin || isConfirmingJoin}
               className="mt-4 w-1/2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 disabled:bg-gray-400"
             >
               {isPendingJoin || isConfirmingJoin ? '加入中...' : '加入行动'}
-            </button>
+            </Button>
           )}
         </div>
         {errorTokenBalance && <div className="text-red-500 text-center">{errorTokenBalance.message}</div>}

@@ -17,7 +17,7 @@ const MyTokenPanel = () => {
   if (error) return <div>错误: {error.message}</div>;
 
   return (
-    <div className="flex flex-col items-center max-w-4xl mx-auto p-4 bg-base-100 mb-4 border-t border-gray-100">
+    <div className="flex flex-col items-center max-w-4xl mx-auto p-4 bg-white mb-4 border-t border-gray-100">
       <p className="text-gray-500 text-sm">持有代币数量</p>
       <p className="mt-2">
         {isPending ? (

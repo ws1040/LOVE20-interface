@@ -8,6 +8,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 import Loading from '@/src/components/Common/Loading';
+import { Button } from '@/components/ui/button';
 
 interface VerifyAddressesProps {
   currentRound: bigint;
@@ -135,7 +136,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       </div>
 
       {remainingVotes > 0 && (
-        <button
+        <Button
           onClick={handleSubmit}
           disabled={isWriting || isConfirmed}
           className={`mt-6 px-6 py-2 rounded ${
@@ -143,12 +144,12 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
           } text-white`}
         >
           {isConfirmed ? '已提交' : '提交'}
-        </button>
+        </Button>
       )}
       {!remainingVotes && (
-        <button disabled className="btn btn-ghost mt-6 px-6 py-2 rounded">
+        <Button disabled className="w-full bg-gray-400 cursor-not-allowed">
           提交
-        </button>
+        </Button>
       )}
       {submitError && <div className="text-red-500 text-center">{submitError.message}</div>}
     </>

@@ -7,6 +7,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 
 import Loading from '@/src/components/Common/Loading';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 interface ActionPanelForVerifingProps {
   actionId: bigint;
@@ -38,7 +39,7 @@ const ActionPanelForVerifing: React.FC<ActionPanelForVerifingProps> = ({ actionI
 
   return (
     <>
-      <div className="flex flex-col items-center space-y-6 p-8 bg-base-100 mb-4 border-t border-gray-100">
+      <div className="flex flex-col items-center space-y-6 p-8 bg-white mb-4 border-t border-gray-100">
         <h1 className="text-base text-center">
           验证轮 (第 <span className="text-red-500">{isPendingCurrentRound ? <Loading /> : Number(currentRound)}</span>
           轮)
@@ -47,10 +48,10 @@ const ActionPanelForVerifing: React.FC<ActionPanelForVerifingProps> = ({ actionI
         {isPendingScoreByVerifierByActionId ? (
           <Loading />
         ) : scoreByVerifierByActionId ? (
-          <button className="btn-default btn w-1/2">已验证</button>
+          <Button className="w-full bg-gray-400 cursor-not-allowed">已验证</Button>
         ) : (
-          <Link href={`/verify/${actionId}`} className="btn-primary btn w-1/2">
-            去验证
+          <Link href={`/verify/${actionId}`} className="w-1/2">
+            <Button className="w-full bg-blue-600 hover:bg-blue-700">去验证</Button>
           </Link>
         )}
 

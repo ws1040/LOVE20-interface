@@ -31,7 +31,7 @@ export default function TokenTab() {
     return <div>Loading token information...</div>;
   } else {
     return (
-      <div className="p-6 bg-base-100 border-t border-gray-100 mb-4">
+      <div className="p-6 bg-white border-t border-gray-100 mb-4">
         <TokenLabel showGovernanceLink={true} />
 
         <div className="flex items-center">

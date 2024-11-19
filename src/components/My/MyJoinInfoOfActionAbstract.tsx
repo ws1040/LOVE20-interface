@@ -39,7 +39,7 @@ const MyJoinInfoOfActionAbstract: React.FC<MyJoinInfoOfActionAbstractProps> = ({
   }
 
   return (
-    <div className="flex items-end w-full p-4 bg-base-100 mb-4">
+    <div className="flex items-end w-full p-4 bg-white mb-4">
       <span className="text-sm text-gray-500 mr-2">待参与代币数:</span>
       <span className="text-xl font-bold text-orange-400">
         {isPendingStakedAmountByAccountByActionId ? (

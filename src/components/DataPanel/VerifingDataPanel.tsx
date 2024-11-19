@@ -10,7 +10,7 @@ interface VerifingDataPanelProps {
 const VerifingDataPanel: React.FC<VerifingDataPanelProps> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
 
-  return <div className="flex flex-col items-center space-y-4 p-6 bg-base-100"></div>;
+  return <div className="flex flex-col items-center space-y-4 p-6 bg-white"></div>;
 };
 
 export default VerifingDataPanel;
