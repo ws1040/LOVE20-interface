@@ -37,13 +37,13 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({
         <Loading />
       ) : (
         <>
-          <div className="text-sm text-gray-500">流动性质押总量</div>
+          <div className="text-sm text-gray-500 font-bold">流动性质押总量</div>
           <div className="flex w-full justify-center space-x-10">
-            <span>
+            <span className="flex flex-col items-center">
               <span className="text-sm text-gray-500 mr-2">${token?.symbol}</span>
               <span className="text-2xl font-bold text-orange-400">{formatTokenAmount(tokenAmount || BigInt(0))}</span>
             </span>
-            <span>
+            <span className="flex flex-col items-center">
               <span className="text-sm text-gray-500 mr-2">${token?.parentTokenSymbol}</span>
               <span className="text-2xl font-bold text-orange-400">
                 {formatTokenAmount(parentTokenAmount || BigInt(0))}
@@ -52,15 +52,15 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({
           </div>
           {showStakeToken && (
             <>
-              <div className="text-sm text-gray-500">手续费待分配收益</div>
+              <div className="text-sm text-gray-500 font-bold">手续费待分配收益</div>
               <div className="flex w-full justify-center space-x-10">
-                <span>
+                <span className="flex flex-col items-center">
                   <span className="text-sm text-gray-500 mr-2">${token?.symbol}</span>
                   <span className="text-2xl font-bold text-orange-400">
                     {formatTokenAmount(feeTokenAmount || BigInt(0))}
                   </span>
                 </span>
-                <span>
+                <span className="flex flex-col items-center">
                   <span className="text-sm text-gray-500 mr-2">${token?.parentTokenSymbol}</span>
                   <span className="text-2xl font-bold text-orange-400">
                     {formatTokenAmount(feeParentTokenAmount || BigInt(0))}

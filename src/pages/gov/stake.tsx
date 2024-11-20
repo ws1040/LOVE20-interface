@@ -25,7 +25,7 @@ const StakePage = () => {
     <>
       <Header title="质押" />
       <main className="flex-grow">
-        <div className="w-full flex flex-col items-center rounded p-4 bg-white border-t border-gray-100">
+        <div className="w-full flex flex-col items-center rounded p-4 bg-white  space-y-4">
           <StakedLiquidDataPanel showStakeToken={false} onTokenAmountChange={setStakedTokenAmountOfLP} />
         </div>
         {stakedTokenAmountOfLP !== BigInt(-1) && (

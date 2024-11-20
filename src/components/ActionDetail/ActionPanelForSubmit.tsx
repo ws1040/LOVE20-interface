@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useCurrentRound, useSubmit } from '@/src/hooks/contracts/useLOVE20Submit';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import Loading from '@/src/components/Common/Loading';
+import Round from '@/src/components/Common/Round';
 
 interface ActionPanelForJoinProps {
   actionId: bigint;
@@ -46,10 +47,8 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
   }, [isConfirmed, errSubmit]);
 
   return (
-    <div className="flex flex-col items-center space-y-6 p-8 bg-white mb-4 border-t border-gray-100">
-      <h1 className="text-base text-center">
-        投票轮 (第 <span className="text-red-500">{isPendingCurrentRound ? <Loading /> : Number(currentRound)}</span>轮)
-      </h1>
+    <div className="flex flex-col items-center space-y-4 p-8 bg-white mb-4 ">
+      {isPendingCurrentRound ? <Loading /> : <Round currentRound={currentRound} roundName="投票轮" />}
 
       {submitted || isConfirmed ? (
         <Button className="w-1/2 bg-gray-400 cursor-not-allowed">已推举</Button>

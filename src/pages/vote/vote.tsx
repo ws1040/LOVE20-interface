@@ -14,6 +14,7 @@ import { useCurrentRound, useVotesNumByAccount, useVote } from '@/src/hooks/cont
 
 import Header from '@/src/components/Header';
 import Loading from '@/src/components/Common/Loading';
+import Round from '@/src/components/Common/Round';
 
 const VotingSubmitPage = () => {
   const { token } = useContext(TokenContext) || {};
@@ -127,11 +128,7 @@ const VotingSubmitPage = () => {
       <Header title="执行投票页" />
       <main className="flex-grow">
         <div className="flex flex-col items-center space-y-4 p-6 bg-white">
-          <h1 className="text-base text-center">
-            投票轮 （第
-            <span className="text-red-500">{isPendingCurrentRound ? <Loading /> : Number(currentRound)}</span>
-            轮）
-          </h1>
+          {isPendingCurrentRound ? <Loading /> : <Round currentRound={currentRound} roundName="投票轮" />}
           <div className="text-base text-gray-500">
             <span>我的剩余票数：</span>
             {isPendingValidGovVotes || isPendingVotesNumByAccount ? (

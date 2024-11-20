@@ -58,7 +58,7 @@ const GovRewardsPage: React.FC = () => {
     <>
       <Header title="行动详情" />
       <main className="flex-grow">
-        <div className="flex flex-col space-y-6 p-4 bg-white border-t border-gray-100">
+        <div className="flex flex-col space-y-6 p-4 bg-white ">
           <h2 className="relative pl-4 text-gray-700 text-base font-medium before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
             铸造治理奖励
           </h2>

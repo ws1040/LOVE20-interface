@@ -8,6 +8,7 @@ import { useScoreByVerifier } from '@/src/hooks/contracts/useLOVE20Verify';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
 import Loading from '@/src/components/Common/Loading';
+import Round from '@/src/components/Common/Round';
 
 interface MyVerifingPanelProps {
   currentRound: bigint;
@@ -37,12 +38,10 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
     !isPendingVotesNumByAccount && !isPendingScoreByVerifier ? votesNumByAccount - scoreByVerifier : BigInt(0);
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-6 bg-white">
-      <h1 className="text-base text-center">
-        验证轮（第 <span className="text-red-500">{Number(currentRound)}</span> 轮）
-      </h1>
+    <div className="flex flex-col items-center bg-white py-4">
+      <Round currentRound={currentRound} roundName="验证轮" />
 
-      <div className="flex w-full justify-center space-x-20">
+      <div className="flex w-full justify-center space-x-20 my-4">
         <div className="flex flex-col items-center">
           <span className="text-sm text-gray-500">我的已投验证票</span>
           <span className="text-2xl font-bold text-orange-400">

@@ -1,9 +1,15 @@
-import { formatTokenAmount } from '@/src/lib/format';
+import { formatSeconds, formatTokenAmount } from '@/src/lib/format';
 import { Token } from '@/src/contexts/TokenContext';
 import { LaunchInfo } from '@/src/types/life20types';
 import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
+import { useBlockNumber } from 'wagmi';
 
 const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
+  const { data: blockNumber } = useBlockNumber();
+  const leftBlocks = blockNumber ? launchInfo.secondHalfMinBlocks - (blockNumber - launchInfo.secondHalfStartBlock) : 0;
+  const timeLeft = leftBlocks > 0 ? Number(leftBlocks) * Number(process.env.NEXT_PUBLIC_BLOCK_TIME) : 0;
+  const timeLeftText = formatSeconds(timeLeft);
+
   if (!launchInfo) {
     return <div className="text-red-500">找不到发射信息</div>;
   }
@@ -11,13 +17,16 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
   return (
     <div className="bg-white px-6 pb-6 mb-4 shadow-sm">
       <div className="flex items-center justify-between mb-2">
-        <div>
-          {launchInfo?.hasEnded ? (
+        {launchInfo?.hasEnded ? (
+          <div className="flex justify-between items-center">
             <h2 className="text-xl font-medium text-red-600">发射已结束</h2>
-          ) : (
-            <h2 className="text-xl font-medium text-blue-400">公平发射中</h2>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div>
+            <h2 className="text-xl font-medium text-blue-400 mr-2">公平发射中</h2>
+            <span className="text-sm text-gray-600">剩余时间: {timeLeftText}</span>
+          </div>
+        )}
         {/* <p className="text-sm text-gray-600">剩余时间: {formatTimeLeft(launchInfo?.timeLeft)}</p> */}
       </div>
       <div className="space-y-6">

@@ -1,13 +1,13 @@
 import React, { useEffect, useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { BaseError } from 'viem/_types/errors/base';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 import { useCurrentRound, useScoreByVerifierByActionId } from '@/src/hooks/contracts/useLOVE20Verify';
 import { TokenContext } from '@/src/contexts/TokenContext';
-
 import Loading from '@/src/components/Common/Loading';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import Round from '@/src/components/Common/Round';
 
 interface ActionPanelForVerifingProps {
   actionId: bigint;
@@ -39,11 +39,8 @@ const ActionPanelForVerifing: React.FC<ActionPanelForVerifingProps> = ({ actionI
 
   return (
     <>
-      <div className="flex flex-col items-center space-y-6 p-8 bg-white mb-4 border-t border-gray-100">
-        <h1 className="text-base text-center">
-          验证轮 (第 <span className="text-red-500">{isPendingCurrentRound ? <Loading /> : Number(currentRound)}</span>
-          轮)
-        </h1>
+      <div className="flex flex-col items-center space-y-4 p-8 bg-white mb-4 ">
+        {isPendingCurrentRound ? <Loading /> : <Round currentRound={currentRound} roundName="验证轮" />}
 
         {isPendingScoreByVerifierByActionId ? (
           <Loading />

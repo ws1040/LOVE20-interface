@@ -2,6 +2,7 @@ import Header from '@/src/components/Header';
 import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Submit';
 import SubmitingActionList from '@/src/components/ActionList/SubmitingActionList';
 import Loading from '@/src/components/Common/Loading';
+import Round from '@/src/components/Common/Round';
 
 const Actions4SubmitPage = () => {
   const { currentRound, isPending, error } = useCurrentRound();
@@ -11,9 +12,7 @@ const Actions4SubmitPage = () => {
       <Header title="推举" />
       <main className="flex-grow">
         <div className="flex flex-col items-center space-y-4 p-6 bg-white">
-          <h1 className="text-base text-center">
-            投票轮（第 {isPending ? <Loading /> : <span className="text-red-500">{Number(currentRound)}</span>} 轮）
-          </h1>
+          {isPending ? <Loading /> : <Round currentRound={currentRound} roundName="投票轮" />}
         </div>
         {isPending ? <Loading /> : <SubmitingActionList currentRound={currentRound} />}
       </main>

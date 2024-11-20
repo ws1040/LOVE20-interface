@@ -17,7 +17,7 @@ const GovernanceDataPanel: React.FC = () => {
   );
 
   return (
-    <div className="p-6 bg-white border-t border-gray-100">
+    <div className="p-6 bg-white ">
       <TokenLabel />
 
       <div className="flex w-full justify-center space-x-20 mb-4">

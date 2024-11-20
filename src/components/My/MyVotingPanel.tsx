@@ -8,6 +8,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
 import Loading from '@/src/components/Common/Loading';
 import { Button } from '@/components/ui/button';
+import Round from '@/src/components/Common/Round';
 
 interface MyVotingPanelProps {
   currentRound: bigint;
@@ -34,14 +35,10 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
   console.log('votesNumByAccount', votesNumByAccount);
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-6 bg-white mt-4 mb-4">
-      <h1 className="text-base text-center">
-        投票轮（第
-        <span className="text-red-500">{currentRound === undefined ? <Loading /> : Number(currentRound)}</span>
-        轮）
-      </h1>
+    <div className="flex flex-col items-center p-6 bg-white mt-4 mb-4">
+      <Round currentRound={currentRound} roundName="投票轮" />
 
-      <div className="flex w-full justify-center space-x-20">
+      <div className="flex w-full justify-center space-x-20 my-4">
         <div className="flex flex-col items-center">
           <span className="text-sm text-gray-500">我的已投票数</span>
           <span className="text-2xl font-bold text-orange-400">

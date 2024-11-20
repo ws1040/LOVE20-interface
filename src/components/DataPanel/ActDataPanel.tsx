@@ -5,6 +5,7 @@ import { useJoinedAmount } from '@/src/hooks/contracts/useLOVE20Join';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
 import Loading from '@/src/components/Common/Loading';
+import Round from '@/src/components/Common/Round';
 
 interface ActDataPanelProps {
   currentRound: bigint;
@@ -25,12 +26,10 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
   } = useJoinedAmount((token?.address as `0x${string}`) || '', currentRound);
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-6 bg-white">
-      <h1 className="text-base text-center">
-        行动轮（第 <span className="text-red-500">{Number(currentRound ?? 0n)}</span> 轮）
-      </h1>
+    <div className="flex flex-col items-center p-6 bg-white">
+      <Round currentRound={currentRound} roundName="行动轮" />
 
-      <div className="flex w-full justify-center space-x-20">
+      <div className="flex w-full justify-center space-x-20 mt-4">
         <div className="flex flex-col items-center">
           <span className="text-sm text-gray-500">预计新增铸币</span>
           <span className="text-2xl font-bold text-orange-400">

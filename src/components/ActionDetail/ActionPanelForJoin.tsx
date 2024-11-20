@@ -1,5 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 import {
@@ -9,9 +10,9 @@ import {
   useVerificationInfo,
 } from '@/src/hooks/contracts/useLOVE20Join';
 import { TokenContext } from '@/src/contexts/TokenContext';
-import Loading from '@/src/components/Common/Loading';
 import { formatTokenAmount } from '@/src/lib/format';
-import { Button } from '@/components/ui/button';
+import Loading from '@/src/components/Common/Loading';
+import Round from '@/src/components/Common/Round';
 
 interface ActionPanelForJoinProps {
   actionId: bigint;
@@ -71,10 +72,8 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
   );
 
   return (
-    <div className="flex flex-col items-center space-y-6 p-8 bg-white mb-4 border-t border-gray-100 ">
-      <h1 className="text-base text-center">
-        行动轮 (第 <span className="text-red-500">{isPendingCurrentRound ? <Loading /> : Number(currentRound)}</span>轮)
-      </h1>
+    <div className="flex flex-col items-center space-y-4 p-8 bg-white mb-4  ">
+      {isPendingCurrentRound ? <Loading /> : <Round currentRound={currentRound} roundName="行动轮" />}
 
       <div className="flex w-full justify-center space-x-20">
         <div className="flex flex-col items-center">

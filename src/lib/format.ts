@@ -36,3 +36,16 @@ export const removeExtraZeros = (value: string) => {
   }
   return value;
 };
+
+// 将秒转换为小时和分钟
+export const formatSeconds = (seconds: number): string => {
+  if (seconds > 86400) {
+    return `${Math.floor(seconds / 86400)}天${Math.floor((seconds % 86400) / 3600)}小时${Math.floor(
+      (seconds % 3600) / 60,
+    )}分`;
+  } else if (seconds > 3600) {
+    return `${Math.floor(seconds / 3600)}小时${Math.floor((seconds % 3600) / 60)}分`;
+  } else {
+    return `${Math.floor(seconds / 60)}分${seconds % 60}秒`;
+  }
+};

@@ -37,7 +37,7 @@ const ActRewardsPage = () => {
     <>
       <Header title="行动详情" />
       <main className="flex-grow">
-        <div className="flex flex-col items-center space-y-6 p-4 bg-white border-t border-gray-100">
+        <div className="flex flex-col items-center space-y-6 p-4 bg-white ">
           <h1 className="text-base text-center">
             {isPendingCurrentRound ? (
               <Loading />
