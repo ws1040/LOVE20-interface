@@ -327,17 +327,24 @@ const SwapPanel = () => {
             disabled={isPendingApproveToken || isPendingApproveParentToken || isApproved}
           >
             {(isPendingApproveToken || isPendingApproveParentToken) && <Loader2 className="animate-spin" />}
-            {isApproved ? '已授权' : '授权'}
+            {isApproved ? '1.已授权' : '1.授权'}
           </Button>
           <Button
             className={`w-1/2 text-white ${
               isApproved ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
             }`}
             onClick={handleSwap}
-            disabled={!isApproved || isPendingApproveToken || isPendingApproveParentToken || isSwapping}
+            disabled={
+              !isApproved ||
+              isPendingApproveToken ||
+              isPendingApproveParentToken ||
+              isSwapping ||
+              isConfirmingSwap ||
+              isConfirmedSwap
+            }
           >
-            {isSwapping && <Loader2 className="animate-spin" />}
-            {'兑换'}
+            {(isSwapping || isConfirmingSwap) && <Loader2 className="animate-spin" />}
+            {isSwapping || isConfirmingSwap ? '2.兑换中' : '2.兑换'}
           </Button>
         </div>
         {amountsOutError && <div className="text-red-500">{amountsOutError.message}</div>}

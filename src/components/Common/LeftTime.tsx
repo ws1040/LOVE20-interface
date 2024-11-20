@@ -7,11 +7,11 @@ interface LeftTimeProps {
 
 const LeftTime: React.FC<LeftTimeProps> = ({ initialTimeLeft }) => {
   const [timeLeft, setTimeLeft] = useState<number>(initialTimeLeft);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const isMountedRef = useRef<boolean>(false);
+  // const timerRef = useRef<NodeJS.Timeout | null>(null);
+  // const isMountedRef = useRef<boolean>(false);
 
   useEffect(() => {
-    isMountedRef.current = true;
+    // isMountedRef.current = true;
 
     if (initialTimeLeft <= 0) {
       return;
@@ -19,19 +19,20 @@ const LeftTime: React.FC<LeftTimeProps> = ({ initialTimeLeft }) => {
       setTimeLeft(initialTimeLeft);
     }
 
-    // 清除之前的定时器
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
+    // // 清除之前的定时器
+    // if (timerRef.current) {
+    //   clearInterval(timerRef.current);
+    // }
 
-    timerRef.current = setInterval(() => {
+    const timerRef = setInterval(() => {
       // 如果组件已卸载，直接返回
-      if (!isMountedRef.current) return;
+      // if (!isMountedRef.current) return;
 
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
-          clearInterval(timerRef.current!);
+          clearInterval(timerRef);
           console.log('1.prevTime', prevTime);
+          window.location.reload();
           return 0;
         }
         console.log('2.prevTime', prevTime);
@@ -40,10 +41,7 @@ const LeftTime: React.FC<LeftTimeProps> = ({ initialTimeLeft }) => {
     }, 1000);
 
     return () => {
-      isMountedRef.current = false;
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
+      clearInterval(timerRef);
     };
   }, [initialTimeLeft]);
 
