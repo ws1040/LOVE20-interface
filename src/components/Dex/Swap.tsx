@@ -115,11 +115,11 @@ const SwapPanel = () => {
   //   error: amountsInError,
   //   isLoading: isAmountsInLoading,
   // } = useGetAmountsIn(toTokenInfo.amount, [fromTokenInfo.address, toTokenInfo.address]);
-  console.log('--------------------------------');
-  console.log('fromTokenInfo.amount', fromTokenInfo.amount);
-  console.log('amountsOutError', amountsOutError);
-  console.log('amountsOut', amountsOut);
-  console.log('isAmountsOutLoading', isAmountsOutLoading);
+  // console.log('--------------------------------');
+  // console.log('fromTokenInfo.amount', fromTokenInfo.amount);
+  // console.log('amountsOutError', amountsOutError);
+  // console.log('amountsOut', amountsOut);
+  // console.log('isAmountsOutLoading', isAmountsOutLoading);
 
   // 监听授权交易
   useEffect(() => {

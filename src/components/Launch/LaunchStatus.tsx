@@ -1,8 +1,9 @@
 import { formatSeconds, formatTokenAmount } from '@/src/lib/format';
+import { useBlockNumber } from 'wagmi';
 import { Token } from '@/src/contexts/TokenContext';
 import { LaunchInfo } from '@/src/types/life20types';
 import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
-import { useBlockNumber } from 'wagmi';
+import LeftTime from '@/src/components/Common/LeftTime';
 
 const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const { data: blockNumber } = useBlockNumber();
@@ -25,7 +26,9 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
           <div>
             <h2 className="text-xl font-medium text-blue-400 mr-2">公平发射中</h2>
             {Number(launchInfo.totalContributed) >= Number(launchInfo.parentTokenFundraisingGoal) && (
-              <span className="text-sm text-gray-600">剩余结束时间: {timeLeftText}</span>
+              <span className="text-sm text-gray-600">
+                剩余结束时间: <LeftTime initialTimeLeft={timeLeft} />
+              </span>
             )}
           </div>
         )}
