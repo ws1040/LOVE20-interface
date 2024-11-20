@@ -24,7 +24,9 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
         ) : (
           <div>
             <h2 className="text-xl font-medium text-blue-400 mr-2">公平发射中</h2>
-            <span className="text-sm text-gray-600">剩余时间: {timeLeftText}</span>
+            {Number(launchInfo.totalContributed) >= Number(launchInfo.parentTokenFundraisingGoal) && (
+              <span className="text-sm text-gray-600">剩余结束时间: {timeLeftText}</span>
+            )}
           </div>
         )}
         {/* <p className="text-sm text-gray-600">剩余时间: {formatTimeLeft(launchInfo?.timeLeft)}</p> */}
