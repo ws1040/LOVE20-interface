@@ -33,6 +33,7 @@ jobs:
       - name: Build
         env:
           NEXT_PUBLIC_CHAIN: sepolia
+          NEXT_PUBLIC_BLOCK_TIME: 12
           NEXT_PUBLIC_ANVIL_RPC_URL: http://127.0.0.1:8545
           NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: 3e08c0ee570fce9c29473eb34b0532c3
           NEXT_PUBLIC_BASE_PATH: /LOVE20-interface
