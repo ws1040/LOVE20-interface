@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Loader2, CirclePlus } from 'lucide-react';
 import { useAccount, useWalletClient } from 'wagmi';
+import toast from 'react-hot-toast';
 
 interface AddToMetamaskProps {
   tokenAddress: string;
@@ -45,14 +46,14 @@ export default function AddToMetamask({ tokenAddress, tokenSymbol, tokenDecimals
 
       if (wasAdded) {
         console.log('代币已添加到 MetaMask 钱包');
-        alert('代币已成功添加到 MetaMask 钱包');
+        toast.success('代币已成功添加到 MetaMask 钱包');
       } else {
         console.log('用户拒绝添加代币');
-        alert('用户拒绝添加代币');
+        toast.error('用户拒绝添加代币');
       }
     } catch (error) {
       console.error('添加代币失败:', error);
-      alert('添加代币失败，请检查控制台以获取更多信息');
+      toast.error('添加代币失败，请检查控制台以获取更多信息');
     } finally {
       setIsAdding(false);
     }
