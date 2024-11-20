@@ -30,10 +30,6 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     isConfirmed: isConfirmedApproveToken,
     writeError: errApproveToken,
   } = useApprove(token?.address as `0x${string}`);
-  // 打印这两个hook的所有返回状态
-  console.log('---isPendingApproveToken', isPendingApproveToken);
-  console.log('---isConfirmedApproveToken', isConfirmedApproveToken);
-  console.log('---errApproveToken', errApproveToken);
 
   const {
     stakeToken,
@@ -42,12 +38,6 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     isConfirmed: isConfirmedStakeToken,
     writeError: errStakeToken,
   } = useStakeToken();
-
-  // 打印这两个hook的所有返回状态
-  console.log('---isPendingStakeToken', isPendingStakeToken);
-  console.log('---isConfirmingStakeToken', isConfirmingStakeToken);
-  console.log('---isConfirmedStakeToken', isConfirmedStakeToken);
-  console.log('---errStakeToken', errStakeToken);
 
   // 捕获表单状态
   const [stakeTokenAmount, setStakeTokenAmount] = useState('');
