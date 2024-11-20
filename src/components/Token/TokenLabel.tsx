@@ -3,8 +3,9 @@
 import React, { useContext } from 'react';
 import Link from 'next/link';
 
-import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 import { TokenContext } from '@/src/contexts/TokenContext';
+import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
+import AddToMetamask from '@/src/components/Common/AddToMetamask';
 
 interface TokenLabelProps {
   showGovernanceLink?: boolean;
@@ -24,6 +25,11 @@ const TokenLabel: React.FC<TokenLabelProps> = ({ showGovernanceLink = false }) =
           <span className="font-bold text-2xl text-yellow-500">$</span>
           <span className="font-bold text-2xl mr-2">{token.symbol}</span>
           <AddressWithCopyButton address={token.address as `0x${string}`} />
+          <AddToMetamask
+            tokenAddress={token?.address as `0x${string}`}
+            tokenSymbol={token?.symbol || ''}
+            tokenDecimals={token?.decimals || 0}
+          />
         </div>
       </div>
 

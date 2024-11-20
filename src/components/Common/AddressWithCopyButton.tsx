@@ -1,7 +1,6 @@
-// components/Common/AddressWithCopyButton.tsx
 import toast from 'react-hot-toast';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { ClipboardDocumentIcon } from '@heroicons/react/24/outline';
+import { Copy } from 'lucide-react';
 
 import { abbreviateAddress } from '@/src/lib/format';
 
@@ -25,16 +24,20 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({ address, 
   };
 
   return (
-    <>
+    <div className="flex items-center space-x-2">
       <span className="text-xs text-gray-500">{abbreviateAddress(address)}</span>
       {showCopyButton && ( // 根据 showCopyButton 显示或隐藏按钮
         <CopyToClipboard text={address} onCopy={handleCopy}>
-          <button className="" onClick={handleClick}>
-            <ClipboardDocumentIcon className="h-4 w-4 text-xs text-gray-500" />
+          <button
+            className="flex items-center justify-center p-1 rounded hover:bg-gray-200 focus:outline-none"
+            onClick={handleClick}
+            aria-label="复制地址"
+          >
+            <Copy className="h-4 w-4 text-gray-500" />
           </button>
         </CopyToClipboard>
       )}
-    </>
+    </div>
   );
 };
 
