@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 import { useVotesNumByAccount } from '@/src/hooks/contracts/useLOVE20Vote';
@@ -60,8 +61,8 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
         (isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
           <Loading />
         ) : votesNumByAccount > scoreByVerifier ? (
-          <Link href="/verify" className="btn-primary btn w-1/2">
-            去验证
+          <Link href="/verify" className="w-1/2">
+            <Button className="w-full bg-blue-600 hover:bg-blue-700">去验证</Button>
           </Link>
         ) : (
           <span className="text-gray-500 text-sm">无剩余验证票</span>

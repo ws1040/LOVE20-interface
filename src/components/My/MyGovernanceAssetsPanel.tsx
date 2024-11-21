@@ -7,6 +7,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { useAccountStakeStatus } from '@/src/hooks/contracts/useLOVE20Stake';
 import { formatTokenAmount } from '@/src/lib/format';
 import Loading from '@/src/components/Common/Loading';
+import AddToMetamask from '@/src/components/Common/AddToMetamask';
 
 const MyGovernanceAssetsPanel = () => {
   const { token } = useContext(TokenContext) || {};
@@ -21,6 +22,10 @@ const MyGovernanceAssetsPanel = () => {
     error: errorAccountStakeStatus,
   } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
 
+  if (!token) {
+    return <Loading />;
+  }
+
   return (
     <>
       <div className="w-full flex flex-col items-center rounded p-4 bg-white mt-1">
@@ -31,13 +36,27 @@ const MyGovernanceAssetsPanel = () => {
         </div>
         <div className="flex w-full justify-center">
           <div className="flex flex-col items-center flex-1">
-            <span className="text-sm text-gray-500">流动性质押</span>
+            <span className="flex items-center">
+              <span className="text-sm text-gray-500">流动性质押</span>
+              <AddToMetamask
+                tokenAddress={token.slTokenAddress as `0x${string}`}
+                tokenSymbol={'sl' + token.symbol}
+                tokenDecimals={token.decimals}
+              />
+            </span>
             <span className="text-2xl font-bold text-orange-400">
               {isPendingAccountStakeStatus ? <Loading /> : formatTokenAmount(slAmount || BigInt(0))}
             </span>
           </div>
           <div className="flex flex-col items-center flex-1">
-            <span className="text-sm text-gray-500">质押代币</span>
+            <span className="flex items-center">
+              <span className="text-sm text-gray-500">质押代币</span>
+              <AddToMetamask
+                tokenAddress={token.stTokenAddress as `0x${string}`}
+                tokenSymbol={'st' + token.symbol}
+                tokenDecimals={token.decimals}
+              />
+            </span>
             <span className="text-2xl font-bold text-orange-400">
               {isPendingAccountStakeStatus ? <Loading /> : formatTokenAmount(stAmount || BigInt(0))}
             </span>
