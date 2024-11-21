@@ -2,8 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { PlusCircle, Loader2, CirclePlus } from 'lucide-react';
+import { Loader2, CirclePlus } from 'lucide-react';
 import { useAccount, useWalletClient } from 'wagmi';
 import toast from 'react-hot-toast';
 

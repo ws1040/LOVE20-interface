@@ -42,7 +42,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
           name: process.env.NEXT_PUBLIC_FIRST_TOKEN_NAME || '',
           symbol: process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || '',
           address: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_TOKEN || '') as `0x${string}`,
-          decimals: Number(process.env.NEXT_PUBLIC_TOKEN_DECIMALS || 0),
+          decimals: Number(process.env.NEXT_PUBLIC_TOKEN_DECIMALS || 18),
           parentTokenAddress: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN || '') as `0x${string}`,
           parentTokenSymbol: process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL || '',
           slTokenAddress: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_SL_TOKEN || '') as `0x${string}`,
