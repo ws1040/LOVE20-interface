@@ -7,9 +7,14 @@ import { abbreviateAddress } from '@/src/lib/format';
 interface AddressWithCopyButtonProps {
   address: `0x${string}`;
   showCopyButton?: boolean;
+  showAddress?: boolean;
 }
 
-const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({ address, showCopyButton = true }) => {
+const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
+  address,
+  showCopyButton = true,
+  showAddress = true,
+}) => {
   const handleCopy = (text: string, result: boolean) => {
     if (result) {
       toast.success('复制成功');
@@ -25,7 +30,7 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({ address, 
 
   return (
     <div className="flex items-center space-x-2">
-      <span className="text-xs text-gray-500">{abbreviateAddress(address)}</span>
+      {showAddress && <span className="text-xs text-gray-500">{abbreviateAddress(address)}</span>}
       {showCopyButton && ( // 根据 showCopyButton 显示或隐藏按钮
         <CopyToClipboard text={address} onCopy={handleCopy}>
           <button

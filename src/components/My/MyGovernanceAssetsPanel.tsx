@@ -8,6 +8,7 @@ import { useAccountStakeStatus } from '@/src/hooks/contracts/useLOVE20Stake';
 import { formatTokenAmount } from '@/src/lib/format';
 import Loading from '@/src/components/Common/Loading';
 import AddToMetamask from '@/src/components/Common/AddToMetamask';
+import AddressWithCopyButton from '../Common/AddressWithCopyButton';
 
 const MyGovernanceAssetsPanel = () => {
   const { token } = useContext(TokenContext) || {};
@@ -38,6 +39,7 @@ const MyGovernanceAssetsPanel = () => {
           <div className="flex flex-col items-center flex-1">
             <span className="flex items-center">
               <span className="text-sm text-gray-500">流动性质押</span>
+              <AddressWithCopyButton address={token.slTokenAddress as `0x${string}`} showAddress={false} />
               <AddToMetamask
                 tokenAddress={token.slTokenAddress as `0x${string}`}
                 tokenSymbol={'sl' + token.symbol}
@@ -51,6 +53,7 @@ const MyGovernanceAssetsPanel = () => {
           <div className="flex flex-col items-center flex-1">
             <span className="flex items-center">
               <span className="text-sm text-gray-500">质押代币</span>
+              <AddressWithCopyButton address={token.stTokenAddress as `0x${string}`} showAddress={false} />
               <AddToMetamask
                 tokenAddress={token.stTokenAddress as `0x${string}`}
                 tokenSymbol={'st' + token.symbol}
