@@ -49,6 +49,11 @@ const Sidebar: React.FC = () => {
             </Link>
           </li>
           <li className="p-4 hover:bg-gray-700">
+            <Link href="/launch/tokens">
+              <span>所有代币</span>
+            </Link>
+          </li>
+          <li className="p-4 hover:bg-gray-700">
             <Link href="/launch">
               <span>发射平台</span>
             </Link>

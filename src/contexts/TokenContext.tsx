@@ -8,6 +8,7 @@ export interface Token {
   symbol: string;
   address: `0x${string}`;
   decimals: number;
+  hasEnded: boolean;
   parentTokenAddress: `0x${string}`;
   parentTokenSymbol: string;
   slTokenAddress: `0x${string}`;
@@ -43,6 +44,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
           symbol: process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || '',
           address: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_TOKEN || '') as `0x${string}`,
           decimals: Number(process.env.NEXT_PUBLIC_TOKEN_DECIMALS || 18),
+          hasEnded: false,
           parentTokenAddress: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN || '') as `0x${string}`,
           parentTokenSymbol: process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL || '',
           slTokenAddress: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_SL_TOKEN || '') as `0x${string}`,
@@ -59,8 +61,6 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     try {
       if (token) {
         localStorage.setItem('currentToken', JSON.stringify(token));
-      } else {
-        localStorage.removeItem('currentToken');
       }
     } catch (error) {
       console.error('Failed to save token to localStorage:', error);

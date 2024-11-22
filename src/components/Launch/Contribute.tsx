@@ -14,7 +14,6 @@ import Link from 'next/link';
 
 const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const [contributeAmount, setContributeAmount] = useState('');
-  const [isApproved, setIsApproved] = useState(false);
   const { address: account } = useAccount();
 
   // 读取信息hooks
@@ -49,7 +48,6 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
   };
   useEffect(() => {
     if (isConfirmedApproveParentToken) {
-      setIsApproved(true);
       toast.success('授权成功');
     }
   }, [isConfirmedApproveParentToken]);
@@ -86,6 +84,9 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
     setContributeAmount(formatUnits(balanceOfParentToken || 0n));
   };
 
+  const hasStartedApproving =
+    isPendingApproveParentToken || isConfirmingApproveParentToken || isConfirmedApproveParentToken;
+
   return (
     <div className="bg-white p-6 shadow-sm space-y-6">
       <div>
@@ -106,7 +107,7 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
             value={contributeAmount}
             onChange={(e) => setContributeAmount(e.target.value)}
             className="my-auto"
-            disabled={isPendingApproveParentToken || isConfirmingApproveParentToken || isApproved}
+            disabled={hasStartedApproving || (balanceOfParentToken || 0n) <= 0n}
           />
         </div>
 
@@ -118,13 +119,21 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
             variant="link"
             size="sm"
             onClick={setMaxAmount}
-            className="text-blue-600"
-            disabled={isPendingApproveParentToken || isConfirmingApproveParentToken || isApproved}
+            className={`${
+              hasStartedApproving || (balanceOfParentToken || 0n) <= 0n
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'text-blue-600'
+            }`}
+            disabled={hasStartedApproving || (balanceOfParentToken || 0n) <= 0n}
           >
             最高
           </Button>
           <Link href="/launch/deposit">
-            <Button variant="link" size="sm" className="text-gray-600 font-normal">
+            <Button
+              variant="link"
+              size="sm"
+              className={`${(balanceOfParentToken || 0n) > 0n ? 'text-gray-400' : 'text-blue-600'}`}
+            >
               获取{token?.parentTokenSymbol}
             </Button>
           </Link>
@@ -133,14 +142,12 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
         <div className="flex flex-row gap-2">
           <Button
             className={`w-1/2 text-white ${
-              !isApproved && !isPendingApproveParentToken && !isConfirmingApproveParentToken
-                ? 'bg-blue-600 hover:bg-blue-700'
-                : 'bg-gray-400 cursor-not-allowed'
+              !hasStartedApproving ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
             }`}
             onClick={handleApprove}
-            disabled={isApproved || isPendingApproveParentToken}
+            disabled={hasStartedApproving}
           >
-            {!isApproved
+            {!hasStartedApproving
               ? isPendingApproveParentToken || isConfirmingApproveParentToken
                 ? '授权中...'
                 : '1.授权'
@@ -148,12 +155,10 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
           </Button>
           <Button
             className={`w-1/2 text-white py-2 rounded-lg ${
-              isApproved && !isPendingContributeToken && !isConfirmingContributeToken
-                ? 'bg-blue-600 hover:bg-blue-700'
-                : 'bg-gray-400 cursor-not-allowed'
+              isConfirmedApproveParentToken ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
             }`}
             onClick={handleContribute}
-            disabled={!isApproved || isPendingContributeToken || isConfirmingContributeToken}
+            disabled={!isConfirmedApproveParentToken || isPendingContributeToken || isConfirmingContributeToken}
           >
             {isPendingContributeToken || isConfirmingContributeToken
               ? '申购中...'

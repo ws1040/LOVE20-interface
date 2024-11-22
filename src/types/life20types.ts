@@ -47,6 +47,15 @@ export interface GovReward {
   unminted: bigint;
 }
 
+export interface TokenInfo {
+  name: string;
+  symbol: string;
+  decimals: number;
+  parentTokenSymbol: string;
+  slAddress: `0x${string}`;
+  stAddress: `0x${string}`;
+}
+
 export interface LaunchInfo {
   parentTokenAddress: `0x${string}`;
   parentTokenFundraisingGoal: bigint;

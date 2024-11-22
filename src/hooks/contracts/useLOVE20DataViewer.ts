@@ -2,7 +2,14 @@
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { LOVE20DataViewerAbi } from '@/src/abis/LOVE20DataViewer';
-import { JoinableAction, JoinedAction, LaunchInfo, VerifiedAddress, GovReward } from '@/src/types/life20types';
+import {
+  JoinableAction,
+  JoinedAction,
+  LaunchInfo,
+  VerifiedAddress,
+  GovReward,
+  TokenInfo,
+} from '@/src/types/life20types';
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_DATAVIEWER as `0x${string}`;
 
 // =====================
@@ -117,9 +124,27 @@ export const useTokenDetail = (tokenAddress: `0x${string}`) => {
   });
 
   return {
-    tokeySymbol: data?.[0],
-    parentTokenSymbol: data?.[1],
-    launchInfo: data?.[2] as LaunchInfo | undefined,
+    token: data?.[0] as TokenInfo | undefined,
+    launchInfo: data?.[1] as LaunchInfo | undefined,
+    isPending,
+    error,
+  };
+};
+
+/**
+ * Hook for tokenDetails
+ * Reads the details of multiple tokens.
+ */
+export const useTokenDetails = (tokenAddresses: `0x${string}`[]) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'tokenDetails',
+    args: [tokenAddresses],
+  });
+  return {
+    tokens: data?.[0] as TokenInfo[] | undefined,
+    launchInfos: data?.[1] as LaunchInfo[] | undefined,
     isPending,
     error,
   };

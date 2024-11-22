@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 import AddToMetamask from '@/src/components/Common/AddToMetamask';
+import Loading from '@/src/components/Common/Loading';
 
 interface TokenLabelProps {
   showGovernanceLink?: boolean;
@@ -13,10 +14,10 @@ interface TokenLabelProps {
 
 const TokenLabel: React.FC<TokenLabelProps> = ({ showGovernanceLink = false }) => {
   const tokenContext = useContext(TokenContext);
-  if (!tokenContext || !tokenContext.token) {
-    return <div className="text-center text-error">Token information is not available.</div>;
+  const { token } = tokenContext || {};
+  if (!token) {
+    return <Loading />;
   }
-  const { token } = tokenContext;
 
   return (
     <div className="flex items-center mb-4">

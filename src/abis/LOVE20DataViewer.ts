@@ -256,14 +256,41 @@ export const LOVE20DataViewerAbi = [
     ],
     "outputs": [
       {
-        "name": "symbol",
-        "type": "string",
-        "internalType": "string"
-      },
-      {
-        "name": "parentTokenSymbol",
-        "type": "string",
-        "internalType": "string"
+        "name": "tokenInfo",
+        "type": "tuple",
+        "internalType": "struct TokenInfo",
+        "components": [
+          {
+            "name": "name",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "decimals",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "parentTokenSymbol",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "slAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "stAddress",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
       },
       {
         "name": "launchInfo",
@@ -337,14 +364,41 @@ export const LOVE20DataViewerAbi = [
     ],
     "outputs": [
       {
-        "name": "symbols",
-        "type": "string[]",
-        "internalType": "string[]"
-      },
-      {
-        "name": "parentTokenSymbols",
-        "type": "string[]",
-        "internalType": "string[]"
+        "name": "tokenInfos",
+        "type": "tuple[]",
+        "internalType": "struct TokenInfo[]",
+        "components": [
+          {
+            "name": "name",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "decimals",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "parentTokenSymbol",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "slAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "stAddress",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
       },
       {
         "name": "launchInfos",

@@ -1,19 +1,17 @@
-'use client';
-
 import { useEffect, useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
+import { useRouter } from 'next/navigation';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { toast } from 'react-hot-toast';
 import { useDeposit } from '@/src/hooks/contracts/useWETH';
-import Loading from '../Common/Loading';
+import Loading from '@/src/components/Common/Loading';
 
 const Deposit: React.FC = () => {
   const [depositAmount, setDepositAmount] = useState('');
   const { address: account } = useAccount();
-
+  const router = useRouter();
   // 读取余额
   const {
     data: balance,
@@ -44,7 +42,8 @@ const Deposit: React.FC = () => {
       toast.success('兑换成功');
       // 2秒后刷新
       setTimeout(() => {
-        window.location.reload();
+        //跳到上一页
+        router.back();
       }, 2000);
     }
   }, [isConfirmedDeposit]);
