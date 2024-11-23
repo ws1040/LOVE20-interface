@@ -5,15 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
+import { useRouter } from 'next/router';
 
 import { useDeployToken } from '@/src/hooks/contracts/useLOVE20Launch';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import Loading from '../Common/Loading';
 import LoadingOverlay from '../Common/LoadingOverlay';
-import router from 'next/router';
 
 export default function TokenDeployment() {
+  const router = useRouter();
+
   // 中间变量
   const [symbol, setSymbol] = useState('');
   const [error, setError] = useState('');
@@ -29,6 +31,12 @@ export default function TokenDeployment() {
       setError(writeError.message || '部署失败');
     }
   }, [writeError]);
+
+  useEffect(() => {
+    if (isConfirmed) {
+      router.push(`/tokens`);
+    }
+  }, [isConfirmed]);
 
   // 当前token
   const tokenContext = useContext(TokenContext);
@@ -76,16 +84,8 @@ export default function TokenDeployment() {
     }
   };
 
-  useEffect(() => {
-    if (isConfirmed) {
-      router.push(`/tokens`);
-    }
-  }, [isConfirmed]);
-
   const isLoading = isWriting || isConfirming;
   const isSuccess = isConfirmed;
-
-  console.log('writeData', writeData);
 
   return (
     <Card className="w-full border-none shadow-none rounded-none">
@@ -127,14 +127,7 @@ export default function TokenDeployment() {
           onClick={handleDeploy}
           disabled={isLoading || !isConnected || isSuccess}
         >
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              部署中...
-            </>
-          ) : (
-            '部署'
-          )}
+          {isLoading ? <>部署中...</> : '部署'}
         </Button>
       </CardFooter>
     </Card>

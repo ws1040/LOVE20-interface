@@ -22,7 +22,7 @@ export interface TokenContextType {
   setToken: (token: Token) => void;
 }
 
-// 创建 Context，初始值为 null
+// 创建 Context
 export const TokenContext = createContext<TokenContextType | undefined>(undefined);
 
 // 定义 Provider 的 Props 类型
@@ -39,25 +39,39 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   const {
     token: tokenInfoBySymbol,
     launchInfo: launchInfoBySymbol,
-    isPending: isPendingBySymbol,
     error: errorBySymbol,
   } = useTokenDetailBySymbol(currentTokenSymbol as string);
+  useEffect(() => {
+    if (errorBySymbol) {
+      console.error('useTokenDetailBySymbol error:', errorBySymbol);
+    }
+  }, [errorBySymbol]);
 
-  console.log('---------TokenProvider--------');
-  console.log('token', token);
-  console.log('tokenInfoBySymbol', tokenInfoBySymbol);
-  console.log('launchInfoBySymbol', launchInfoBySymbol);
-  console.log('isPendingBySymbol', isPendingBySymbol);
-  console.log('errorBySymbol', errorBySymbol);
+  // 根据合约返回结果，更新 token
+  useEffect(() => {
+    if (tokenInfoBySymbol && launchInfoBySymbol) {
+      setToken({
+        name: tokenInfoBySymbol.name,
+        symbol: tokenInfoBySymbol.symbol,
+        address: tokenInfoBySymbol.tokenAddress,
+        decimals: Number(tokenInfoBySymbol.decimals),
+        hasEnded: launchInfoBySymbol.hasEnded,
+        parentTokenAddress: launchInfoBySymbol.parentTokenAddress,
+        parentTokenSymbol: tokenInfoBySymbol.parentTokenSymbol,
+        slTokenAddress: tokenInfoBySymbol.slAddress,
+        stTokenAddress: tokenInfoBySymbol.stAddress,
+      });
+    }
+  }, [tokenInfoBySymbol, launchInfoBySymbol]);
 
+  // 根据 symbol 设置 token
   const setTokenBySymbol = (tokenSymbol: string) => {
-    const ifNoSymbol =
-      !tokenSymbol ||
-      (typeof tokenSymbol === 'string' && tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase());
+    // symbol是首字母是大写，所以小写字母开头是path或page名称
+    const ifNoSymbol = !tokenSymbol || tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase();
 
     try {
-      const storedToken = localStorage.getItem('currentToken');
       let _token: Token;
+      const storedToken = localStorage.getItem('currentToken');
 
       if (storedToken && JSON.parse(storedToken)) {
         _token = JSON.parse(storedToken);
@@ -77,6 +91,9 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
       if (ifNoSymbol || tokenSymbol === _token.symbol) {
         setToken(_token);
+        if (!_token.hasEnded) {
+          setCurrentTokenSymbol(_token.name);
+        }
       } else if (tokenSymbol) {
         setCurrentTokenSymbol(tokenSymbol as string);
       }
@@ -85,7 +102,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     }
   };
 
-  // 从 window.location 加载 symbol
+  // [方式1]:Github Pages只支持静态导出部署，所以动态路由有问题，所以从 window.location 加载 symbol
   useEffect(() => {
     if (!process.env.NEXT_PUBLIC_BASE_PATH || typeof window == 'undefined') {
       return;
@@ -94,39 +111,16 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     const basePath = process.env.NEXT_PUBLIC_BASE_PATH.replace(/^\/|\/$/g, '');
     const basePathIndex = pathSegments.indexOf(basePath);
     const symbol = pathSegments[basePathIndex + 1];
-    console.log('>>>pathSegments@window.location', pathSegments);
-    console.log('>>>basePath', basePath);
-    console.log('>>>basePathIndex', basePathIndex);
-    console.log('>>>symbol@window.location', symbol);
-
     setTokenBySymbol(symbol);
   }, []);
 
+  // [方式2]:从动态路由加载 symbol
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_BASE_PATH || !router.isReady) {
       return;
     }
-    console.log('>>>router.isReady', router.isReady);
-    console.log('>>>router.query.symbol', router.query.symbol);
     setTokenBySymbol(router.query.symbol as string);
   }, [router.isReady, router.query.symbol]);
-
-  // 当 token 变化时，更新 tokenInfoBySymbol
-  useEffect(() => {
-    if (tokenInfoBySymbol && launchInfoBySymbol) {
-      setToken({
-        name: tokenInfoBySymbol.name,
-        symbol: tokenInfoBySymbol.symbol,
-        address: tokenInfoBySymbol.tokenAddress,
-        decimals: Number(tokenInfoBySymbol.decimals),
-        hasEnded: launchInfoBySymbol.hasEnded,
-        parentTokenAddress: launchInfoBySymbol.parentTokenAddress,
-        parentTokenSymbol: tokenInfoBySymbol.parentTokenSymbol,
-        slTokenAddress: tokenInfoBySymbol.slAddress,
-        stTokenAddress: tokenInfoBySymbol.stAddress,
-      });
-    }
-  }, [tokenInfoBySymbol, launchInfoBySymbol]);
 
   // 当 token 变化时，更新 Local Storage
   useEffect(() => {

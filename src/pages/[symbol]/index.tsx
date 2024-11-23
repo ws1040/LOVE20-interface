@@ -13,9 +13,6 @@ const Home: NextPage = () => {
     return <Loading />;
   }
 
-  console.log('<<<<<<<<<<<<<<<<<<<<<<<token>>>>>>>>>>>>>>>>>>>>>>>');
-  console.log(token);
-
   return token.hasEnded ? <ActingPage /> : <LaunchPage />;
 };
 
