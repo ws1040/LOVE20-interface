@@ -47,7 +47,7 @@ const ActionPanelForVerifing: React.FC<ActionPanelForVerifingProps> = ({ actionI
         ) : scoreByVerifierByActionId ? (
           <Button className="w-full bg-gray-400 cursor-not-allowed">已验证</Button>
         ) : (
-          <Link href={`/${token.symbol}/verify/${actionId}`} className="w-1/2">
+          <Link href={`/${token?.symbol}/verify/${actionId}`} className="w-1/2">
             <Button className="w-full bg-blue-600 hover:bg-blue-700">去验证</Button>
           </Link>
         )}

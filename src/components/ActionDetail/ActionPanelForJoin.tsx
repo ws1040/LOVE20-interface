@@ -89,7 +89,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
       </div>
 
       {!isJoined ? (
-        <Link href={`/${token.symbol}/acting/join?id=${actionId}`} className="w-1/2">
+        <Link href={`/${token?.symbol}/acting/join?id=${actionId}`} className="w-1/2">
           <Button className="w-full bg-blue-600 hover:bg-blue-700">参与行动</Button>
         </Link>
       ) : (

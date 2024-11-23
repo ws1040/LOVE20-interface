@@ -44,7 +44,7 @@ const MyStakedActionList: React.FC = () => {
         <div className="space-y-4">
           {joinedActions?.map((action: JoinedAction, index: number) => (
             <div key={action.actionId} className="bg-white p-4 rounded-lg mb-4">
-              <Link href={`/${token.symbol}/my/actrewards?id=${action.actionId}`} key={action.actionId}>
+              <Link href={`/${token?.symbol}/my/actrewards?id=${action.actionId}`} key={action.actionId}>
                 <div className="font-semibold mb-2">
                   <span className="text-gray-400 text-base mr-1">{`No.${action.actionId}`}</span>
                   <span className="text-gray-800 text-lg">{actionInfos?.[index]?.body.action}</span>
