@@ -1,10 +1,14 @@
 // components/Common/Sidebar.tsx
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Link from 'next/link';
+
+import { TokenContext } from '@/src/contexts/TokenContext';
 
 const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const tokenContext = useContext(TokenContext);
+  const { token } = tokenContext || {};
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -13,6 +17,10 @@ const Sidebar: React.FC = () => {
   const closeSidebar = () => {
     setIsOpen(false);
   };
+
+  if (!token) {
+    return '';
+  }
 
   return (
     <div>
@@ -34,37 +42,37 @@ const Sidebar: React.FC = () => {
       >
         <ul className="mt-8">
           <li className="p-4 hover:bg-gray-700">
-            <Link href="/">
+            <Link href={`/${token.symbol}/acting`}>
               <span>社区首页</span>
             </Link>
           </li>
           <li className="p-4 hover:bg-gray-700">
-            <Link href="/gov">
+            <Link href={`/${token.symbol}/gov`}>
               <span>治理首页</span>
             </Link>
           </li>
           <li className="p-4 hover:bg-gray-700">
-            <Link href="/my">
+            <Link href={`/${token.symbol}/my`}>
               <span>我的首页</span>
             </Link>
           </li>
           <li className="p-4 hover:bg-gray-700">
-            <Link href="/launch/tokens">
+            <Link href={`/tokens`}>
               <span>所有代币</span>
             </Link>
           </li>
           <li className="p-4 hover:bg-gray-700">
-            <Link href="/launch">
+            <Link href={`/${token.symbol}/launch`}>
               <span>发射平台</span>
             </Link>
           </li>
           <li className="p-4 hover:bg-gray-700">
-            <Link href="/dex/swap">
+            <Link href={`/${token.symbol}/dex/swap`}>
               <span>交易代币</span>
             </Link>
           </li>
           <li className="p-4 hover:bg-gray-700">
-            <Link href="/launch/deposit">
+            <Link href={`/${token.symbol}/launch/deposit`}>
               <span>兑换{process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}</span>
             </Link>
           </li>

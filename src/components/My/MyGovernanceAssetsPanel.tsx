@@ -84,7 +84,7 @@ const MyGovernanceAssetsPanel = () => {
         </div>
         <div className="flex w-full justify-center mt-2">
           <Button className="w-1/2 bg-blue-600 hover:bg-blue-700" asChild>
-            <Link href="/my/govrewards">查看治理奖励</Link>
+            <Link href={`/${token.symbol}/my/govrewards`}>查看治理奖励</Link>
           </Button>
         </div>
       </div>

@@ -34,8 +34,8 @@ const TokenLabel: React.FC<TokenLabelProps> = ({ showGovernanceLink = false }) =
         </div>
       </div>
 
-      {showGovernanceLink && (
-        <Link href="/gov" className="text-blue-400 text-sm hover:underline ml-auto">
+      {false && (
+        <Link href={`/${token?.symbol}/gov`} className="text-blue-400 text-sm hover:underline ml-auto">
           参与治理&gt;&gt;
         </Link>
       )}

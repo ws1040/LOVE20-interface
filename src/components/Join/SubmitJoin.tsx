@@ -103,7 +103,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
       setVerificationInfo('');
       // 2秒后返回
       setTimeout(() => {
-        router.push(`/action/${actionInfo.head.id}?type=join`);
+        router.push(`/${token?.symbol}/action/${actionInfo.head.id}?type=join`);
       }, 2000);
     }
   }, [isConfirmedJoin]);

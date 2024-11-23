@@ -34,6 +34,10 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
   console.log('validGovVotes', validGovVotes);
   console.log('votesNumByAccount', votesNumByAccount);
 
+  if (!token) {
+    return '';
+  }
+
   return (
     <div className="flex flex-col items-center p-6 bg-white mt-4 mb-4">
       <Round currentRound={currentRound} roundName="投票轮" />
@@ -60,16 +64,16 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
         <Loading />
       ) : validGovVotes > votesNumByAccount ? (
         <div className="flex justify-center space-x-6">
-          <Link href="/vote/actions4submit">
+          <Link href={`/${token.symbol}/vote/actions4submit`}>
             <Button className="w-full bg-blue-600 hover:bg-blue-700">去推举</Button>
           </Link>
-          <Link href="/vote">
+          <Link href={`/${token.symbol}/vote`}>
             <Button className="w-full bg-blue-600 hover:bg-blue-700">去投票</Button>
           </Link>
         </div>
       ) : (
         <div className="flex justify-center space-x-6">
-          <Link href="/vote/actions4submit">
+          <Link href={`/${token.symbol}/vote/actions4submit`}>
             <Button className="w-full bg-blue-600 hover:bg-blue-700">去推举</Button>
           </Link>
           <Button className="w-1/2 bg-gray-400 cursor-not-allowed">去投票</Button>

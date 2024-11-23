@@ -16,6 +16,10 @@ const MyTokenPanel = () => {
   if (isPending) return <Loading />;
   if (error) return <div>错误: {error.message}</div>;
 
+  if (!token) {
+    return '';
+  }
+
   return (
     <div className="flex flex-col items-center max-w-4xl mx-auto p-4 bg-white mb-4 ">
       <p className="text-gray-500 text-sm">持有代币数量</p>
@@ -28,7 +32,7 @@ const MyTokenPanel = () => {
         <span className="text-gray-500 ml-2">{token?.symbol}</span>
       </p>
       <Button className="mt-2 w-1/2 bg-blue-600 hover:bg-blue-700" asChild>
-        <Link href="/dex/swap">去交易</Link>
+        <Link href={`/${token.symbol}/dex/swap`}>去交易</Link>
       </Button>
     </div>
   );

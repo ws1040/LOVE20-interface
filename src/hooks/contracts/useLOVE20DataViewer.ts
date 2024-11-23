@@ -132,6 +132,28 @@ export const useTokenDetail = (tokenAddress: `0x${string}`) => {
 };
 
 /**
+ * Hook for tokenDetailBySymbol
+ * Reads the details of a token by symbol.
+ */
+export const useTokenDetailBySymbol = (symbol: string) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'tokenDetailBySymbol',
+    args: [symbol],
+    query: {
+      enabled: !!symbol,
+    },
+  });
+  return {
+    token: data?.[0] as TokenInfo | undefined,
+    launchInfo: data?.[1] as LaunchInfo | undefined,
+    isPending,
+    error,
+  };
+};
+
+/**
  * Hook for tokenDetails
  * Reads the details of multiple tokens.
  */

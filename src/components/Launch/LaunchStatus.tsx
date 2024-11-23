@@ -1,5 +1,9 @@
 import { formatSeconds, formatTokenAmount } from '@/src/lib/format';
 import { useBlockNumber } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import Link from 'next/link';
+
 import { Token } from '@/src/contexts/TokenContext';
 import { LaunchInfo } from '@/src/types/life20types';
 import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
@@ -64,6 +68,17 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
             <span className="text-gray-500 ml-2">{token?.symbol}</span>
           </p>
         </div>
+
+        {launchInfo?.hasEnded && (
+          <div className="w-full text-center">
+            <Link href={`/${token?.symbol}/launch/deploy`}>
+              <Button size="sm" className="w-1/2 bg-blue-600 hover:bg-blue-700">
+                <Plus className="w-4 h-4" />
+                部署子币
+              </Button>
+            </Link>
+          </div>
+        )}
 
         <div className="bg-gray-100 text-gray-500 rounded-lg p-4 text-sm">
           <p className="mb-1">经济模型：</p>

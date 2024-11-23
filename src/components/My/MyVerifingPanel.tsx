@@ -38,6 +38,10 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
   const remainingVotes =
     !isPendingVotesNumByAccount && !isPendingScoreByVerifier ? votesNumByAccount - scoreByVerifier : BigInt(0);
 
+  if (!token) {
+    return '';
+  }
+
   return (
     <div className="flex flex-col items-center bg-white py-4">
       <Round currentRound={currentRound} roundName="验证轮" />
@@ -61,7 +65,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
         (isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
           <Loading />
         ) : votesNumByAccount > scoreByVerifier ? (
-          <Link href="/verify" className="w-1/2">
+          <Link href={`/${token.symbol}/verify`} className="w-1/2">
             <Button className="w-full bg-blue-600 hover:bg-blue-700">去验证</Button>
           </Link>
         ) : (

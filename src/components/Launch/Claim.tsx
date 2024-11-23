@@ -1,17 +1,19 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
 
 import { formatTokenAmount } from '@/src/lib/format';
 import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
-import { Token } from '@/src/contexts/TokenContext';
+import { Token, TokenContext } from '@/src/contexts/TokenContext';
 import { LaunchInfo } from '@/src/types/life20types';
 import { useContributed, useClaimed, useExtraRefunded, useClaim } from '@/src/hooks/contracts/useLOVE20Launch';
 import Loading from '@/src/components/Common/Loading';
 
 const Claim: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const { address: account } = useAccount();
+  const context = useContext(TokenContext);
+  const { setToken } = context || {};
 
   // 读取数据的hooks
   const {
@@ -57,6 +59,10 @@ const Claim: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ toke
   useEffect(() => {
     if (isClaimConfirmed) {
       toast.success(`领取成功`);
+
+      // 将token 的hasEnded 设置为true
+      setToken?.({ ...token, hasEnded: true });
+
       // 2秒后刷新
       setTimeout(() => {
         window.location.reload();

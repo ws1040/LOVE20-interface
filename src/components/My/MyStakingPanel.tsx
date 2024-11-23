@@ -18,6 +18,11 @@ const MyStakingPanel: React.FC = () => {
     isPending: isPendingAccountStakeStatus,
     error: errorAccountStakeStatus,
   } = useAccountStakeStatus((token?.address as `0x${string}`) || '', (address as `0x${string}`) || '');
+
+  if (!token) {
+    return '';
+  }
+
   return (
     <div className="flex flex-col items-center space-y-4 p-6 bg-white  mt-4">
       <div className="flex w-full justify-center space-x-20">
@@ -35,7 +40,7 @@ const MyStakingPanel: React.FC = () => {
         </div>
       </div>
 
-      <Link href="/gov/stake" className="w-1/2">
+      <Link href={`/${token.symbol}/gov/stake`} className="w-1/2">
         <Button className="w-full bg-blue-600 hover:bg-blue-700">去质押</Button>
       </Link>
     </div>

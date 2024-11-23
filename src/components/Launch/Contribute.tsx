@@ -87,6 +87,10 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
   const hasStartedApproving =
     isPendingApproveParentToken || isConfirmingApproveParentToken || isConfirmedApproveParentToken;
 
+  if (!token) {
+    return '';
+  }
+
   return (
     <div className="bg-white p-6 shadow-sm space-y-6">
       <div>
@@ -94,7 +98,7 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
         <div className="flex justify-center mb-6">
           <p>
             <span className="text-2xl font-bold text-orange-400 mr-1">{formatTokenAmount(contributed || 0n)}</span>
-            <span className="text-sm text-gray-500">{token?.parentTokenSymbol}</span>
+            <span className="text-sm text-gray-500">{token.parentTokenSymbol}</span>
           </p>
         </div>
       </div>
@@ -103,7 +107,7 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
         <div className="flex justify-between">
           <Input
             type="number"
-            placeholder={`增加申购数量(${token?.parentTokenSymbol})`}
+            placeholder={`增加申购数量(${token.parentTokenSymbol})`}
             value={contributeAmount}
             onChange={(e) => setContributeAmount(e.target.value)}
             className="my-auto"
@@ -113,7 +117,7 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
 
         <div className="flex items-center text-sm mb-4">
           <span className="text-gray-400">
-            {formatTokenAmount(balanceOfParentToken || 0n)} {token?.parentTokenSymbol}
+            {formatTokenAmount(balanceOfParentToken || 0n)} {token.parentTokenSymbol}
           </span>
           <Button
             variant="link"
@@ -128,13 +132,13 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
           >
             最高
           </Button>
-          <Link href="/launch/deposit">
+          <Link href={`/${token.symbol}/launch/deposit`}>
             <Button
               variant="link"
               size="sm"
               className={`${(balanceOfParentToken || 0n) > 0n ? 'text-gray-400' : 'text-blue-600'}`}
             >
-              获取{token?.parentTokenSymbol}
+              获取{token.parentTokenSymbol}
             </Button>
           </Link>
         </div>
@@ -158,7 +162,12 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
               isConfirmedApproveParentToken ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
             }`}
             onClick={handleContribute}
-            disabled={!isConfirmedApproveParentToken || isPendingContributeToken || isConfirmingContributeToken}
+            disabled={
+              !isConfirmedApproveParentToken ||
+              isPendingContributeToken ||
+              isConfirmingContributeToken ||
+              isConfirmedContributeToken
+            }
           >
             {isPendingContributeToken || isConfirmingContributeToken
               ? '申购中...'

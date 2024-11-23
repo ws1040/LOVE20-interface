@@ -44,13 +44,17 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
     return <div>加载出错，请稍后再试。</div>;
   }
 
+  if (!token) {
+    return <Loading />;
+  }
+
   return (
     <div className="p-4">
       <h2 className="text-sm font-bold mb-4 text-gray-600">待验证行动</h2>
       <div className="space-y-4">
         {actionInfos?.map((action: ActionInfo, index: number) => (
           <div key={action.head.id} className="bg-white p-4 rounded-lg mb-4">
-            <Link href={`/verify/${action.head.id}`} key={action.head.id}>
+            <Link href={`/${token.symbol}/verify/${action.head.id}`} key={action.head.id}>
               <div className="font-semibold mb-2">
                 <span className="text-gray-400 text-base mr-1">{`No.${action.head.id}`}</span>
                 <span className="text-gray-800 text-lg">{`${action.body.action}`}</span>

@@ -52,7 +52,7 @@ const NewAction = () => {
 
   useEffect(() => {
     if (isSubmitted) {
-      router.push('/vote/actions4submit');
+      router.push(`/${token?.symbol}/vote/actions4submit`);
     }
   }, [isSubmitted, writeData]);
 

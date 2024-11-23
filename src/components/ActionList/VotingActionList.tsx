@@ -67,7 +67,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
       toast.error('请选择行动');
       return;
     }
-    router.push(`/vote/vote?ids=${selectedIds}`);
+    router.push(`/${token?.symbol}/vote/vote?ids=${selectedIds}`);
   };
 
   // 加载中
@@ -86,6 +86,10 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
   // 加载失败
   if (errorActionSubmits || errorActionInfosByIds) {
     return <div>加载出错，请稍后再试。</div>;
+  }
+
+  if (!token) {
+    return <Loading />;
   }
 
   return (
@@ -107,7 +111,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
                     checked={selectedActions.has(BigInt(action.head.id))}
                     onChange={() => handleCheckboxChange(BigInt(action.head.id))}
                   />
-                  <Link href={`/action/${action.head.id}?type=vote`} className="flex-grow block">
+                  <Link href={`/${token.symbol}/action/${action.head.id}?type=vote`} className="flex-grow block">
                     <div className="font-semibold mb-2">
                       <span className="text-gray-400 text-base mr-1">{`No.${action.head.id}`}</span>
                       <span className="text-gray-800 text-lg">{`${action.body.action}`}</span>

@@ -118,10 +118,14 @@ const VotingSubmitPage = () => {
         duration: 2000, // 2秒
       });
       setTimeout(() => {
-        router.push('/gov');
+        router.push(`/${token?.symbol}/gov`);
       }, 2000);
     }
   }, [isConfirmed, submitError]);
+
+  if (!token) {
+    return '';
+  }
 
   return (
     <>
@@ -151,7 +155,11 @@ const VotingSubmitPage = () => {
 
               return (
                 <div key={action.head.id} className="bg-white p-4 rounded-lg mb-4 flex justify-between items-center">
-                  <Link href={`/action/${action.head.id}?type=vote`} key={action.head.id} className="flex-grow">
+                  <Link
+                    href={`/${token.symbol}/action/${action.head.id}?type=vote`}
+                    key={action.head.id}
+                    className="flex-grow"
+                  >
                     <div className="font-semibold mb-2">
                       <span className="text-gray-400 text-base mr-1">{`No.${action.head.id}`}</span>
                       <span className="text-gray-800 text-lg">{`${action.body.action}`}</span>

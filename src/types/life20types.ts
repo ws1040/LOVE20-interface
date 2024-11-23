@@ -48,6 +48,7 @@ export interface GovReward {
 }
 
 export interface TokenInfo {
+  tokenAddress: `0x${string}`;
   name: string;
   symbol: string;
   decimals: number;

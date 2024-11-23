@@ -32,11 +32,15 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
     return <div>加载出错，请稍后再试。</div>;
   }
 
+  if (!token) {
+    return <Loading />;
+  }
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-sm font-bold text-gray-600">所有行动</h2>
-        <Button onClick={() => router.push('/action/new')} className="bg-blue-600 hover:bg-blue-700">
+        <Button onClick={() => router.push(`/${token.symbol}/action/new`)} className="bg-blue-600 hover:bg-blue-700">
           发起新行动
         </Button>
       </div>
@@ -49,7 +53,10 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
 
             return (
               <div key={action.head.id} className="bg-white p-4 rounded-lg mb-4">
-                <Link href={`/action/${action.head.id}?type=submit&submitted=${isSubmitted}`} key={action.head.id}>
+                <Link
+                  href={`/${token.symbol}/action/${action.head.id}?type=submit&submitted=${isSubmitted}`}
+                  key={action.head.id}
+                >
                   <div className="font-semibold mb-2">
                     <span className="text-gray-400 text-base mr-1">{`No.${action.head.id}`}</span>
                     <span className="text-gray-800 text-lg">{`${action.body.action}`}</span>

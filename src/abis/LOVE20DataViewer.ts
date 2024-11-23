@@ -261,6 +261,124 @@ export const LOVE20DataViewerAbi = [
         "internalType": "struct TokenInfo",
         "components": [
           {
+            "name": "tokenAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "decimals",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "parentTokenSymbol",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "slAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "stAddress",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "name": "launchInfo",
+        "type": "tuple",
+        "internalType": "struct LaunchInfo",
+        "components": [
+          {
+            "name": "parentTokenAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "parentTokenFundraisingGoal",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "secondHalfMinBlocks",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "launchAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "startBlock",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "secondHalfStartBlock",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "hasEnded",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "participantCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalContributed",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalExtraRefunded",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "tokenDetailBySymbol",
+    "inputs": [
+      {
+        "name": "symbol",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "tokenInfo",
+        "type": "tuple",
+        "internalType": "struct TokenInfo",
+        "components": [
+          {
+            "name": "tokenAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
             "name": "name",
             "type": "string",
             "internalType": "string"
@@ -368,6 +486,11 @@ export const LOVE20DataViewerAbi = [
         "type": "tuple[]",
         "internalType": "struct TokenInfo[]",
         "components": [
+          {
+            "name": "tokenAddress",
+            "type": "address",
+            "internalType": "address"
+          },
           {
             "name": "name",
             "type": "string",

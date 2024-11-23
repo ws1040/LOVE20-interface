@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useRouter } from 'next/navigation';
-import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
+import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
+
 import { useDeposit } from '@/src/hooks/contracts/useWETH';
+import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import Loading from '@/src/components/Common/Loading';
 
 const Deposit: React.FC = () => {
@@ -101,7 +102,7 @@ const Deposit: React.FC = () => {
               : 'bg-gray-400 cursor-not-allowed'
           }`}
           onClick={handleDeposit}
-          disabled={isPendingDeposit || isConfirmingDeposit}
+          disabled={isPendingDeposit || isConfirmingDeposit || isConfirmedDeposit}
         >
           {isPendingDeposit || isConfirmingDeposit ? '兑换中...' : isConfirmedDeposit ? '兑换成功' : '兑换'}
         </Button>

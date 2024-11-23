@@ -78,7 +78,7 @@ export default function TokenDeployment() {
 
   useEffect(() => {
     if (isConfirmed) {
-      router.push(`/launch/tokens`);
+      router.push(`/tokens`);
     }
   }, [isConfirmed]);
 

@@ -53,7 +53,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
         <div className="space-y-4">
           {actionInfos?.map((action: ActionInfo, index: number) => (
             <div key={action.head.id} className="bg-white p-4 rounded-lg mb-4">
-              <Link href={`/action/${action.head.id}?type=join`} key={action.head.id}>
+              <Link href={`/${token.symbol}/action/${action.head.id}?type=join`} key={action.head.id}>
                 <div className="font-semibold mb-2">
                   <span className="text-gray-400 text-base mr-1">{`No.${action.head.id}`}</span>
                   <span className="text-gray-800 text-lg">{`${action.body.action}`}</span>

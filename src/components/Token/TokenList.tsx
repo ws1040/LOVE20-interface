@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useDebouncedCallback } from 'use-debounce';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
@@ -94,9 +94,9 @@ export default function TokenList() {
     setToken(token);
     //跳转代币详情页
     if (token.hasEnded) {
-      router.push(`/acting`);
+      router.push(`/${token.symbol}/acting`);
     } else {
-      router.push(`/launch`);
+      router.push(`/${token.symbol}/launch`);
     }
   };
 
