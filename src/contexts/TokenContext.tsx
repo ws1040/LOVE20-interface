@@ -1,7 +1,7 @@
 // src/contexts/TokenContext.tsx
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { useRouter } from 'next/router';
 import { useTokenDetailBySymbol } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useRouter } from 'next/router';
 
 // 定义 Token 类型
 export interface Token {
@@ -31,6 +31,7 @@ interface TokenProviderProps {
 }
 
 export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
+  const router = useRouter();
   const [token, setToken] = useState<Token | null>(null);
   const [currentTokenSymbol, setCurrentTokenSymbol] = useState<string | undefined>(undefined);
 
@@ -42,41 +43,22 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     error: errorBySymbol,
   } = useTokenDetailBySymbol(currentTokenSymbol as string);
 
-  // 从路由查询参数获取 symbol
-  const router = useRouter();
-
   console.log('---------TokenProvider--------');
-  console.log('router.isReady', router.isReady);
-  console.log('router.query.symbol', router.query.symbol);
   console.log('token', token);
   console.log('tokenInfoBySymbol', tokenInfoBySymbol);
   console.log('launchInfoBySymbol', launchInfoBySymbol);
   console.log('isPendingBySymbol', isPendingBySymbol);
   console.log('errorBySymbol', errorBySymbol);
 
-  // 从 Local Storage 加载 token
-  useEffect(() => {
-    if (!router.isReady) {
-      return;
-    }
-
-    // 如果 symbolFromRoute 以小写字母开头，是页面，而不是 symbol
+  const setTokenBySymbol = (tokenSymbol: string) => {
     const ifNoSymbol =
-      !router.query.symbol ||
-      (typeof router.query.symbol === 'string' &&
-        router.query.symbol.charAt(0) === router.query.symbol.charAt(0).toLowerCase());
-
-    if (typeof window !== 'undefined') {
-      const pathSegments2 = window.location.pathname.split('/');
-      const basePathIndex2 = pathSegments2.indexOf('LOVE20-interface');
-      const symbolFromRoute2 = pathSegments2[basePathIndex2 + 1];
-      console.log('>>>pathSegments2', pathSegments2);
-      console.log('>>>symbolFromRoute2', symbolFromRoute2);
-    }
+      !tokenSymbol ||
+      (typeof tokenSymbol === 'string' && tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase());
 
     try {
       const storedToken = localStorage.getItem('currentToken');
       let _token: Token;
+
       if (storedToken && JSON.parse(storedToken)) {
         _token = JSON.parse(storedToken);
       } else {
@@ -93,16 +75,37 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
         };
       }
 
-      //if (ifNoSymbol || router.query.symbol === _token.symbol) {
-      if (router.query.symbol === _token.symbol) {
+      if (ifNoSymbol || tokenSymbol === _token.symbol) {
         setToken(_token);
-        //} else if (router.query.symbol) {
-      } else if (router.query.symbol) {
-        setCurrentTokenSymbol(router.query.symbol as string);
+      } else if (tokenSymbol) {
+        setCurrentTokenSymbol(tokenSymbol as string);
       }
     } catch (error) {
       console.error('Failed to load token from localStorage:', error);
     }
+  };
+
+  // 从 window.location 加载 symbol
+  useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_BASE_PATH || typeof window == 'undefined') {
+      return;
+    }
+    const pathSegments = window.location.pathname.split('/');
+    const basePathIndex = pathSegments.indexOf(process.env.NEXT_PUBLIC_BASE_PATH);
+    const symbol = pathSegments[basePathIndex + 1];
+    console.log('>>>pathSegments@window.location', pathSegments);
+    console.log('>>>symbol@window.location', symbol);
+
+    setTokenBySymbol(symbol);
+  }, []);
+
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_BASE_PATH || !router.isReady) {
+      return;
+    }
+    console.log('>>>router.isReady', router.isReady);
+    console.log('>>>router.query.symbol', router.query.symbol);
+    setTokenBySymbol(router.query.symbol as string);
   }, [router.isReady, router.query.symbol]);
 
   // 当 token 变化时，更新 tokenInfoBySymbol
