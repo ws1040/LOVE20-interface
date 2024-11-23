@@ -70,32 +70,21 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     const ifNoSymbol = !tokenSymbol || tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase();
 
     try {
-      let _token: Token;
+      // 从 Local Storage 加载 token
       const storedToken = localStorage.getItem('currentToken');
-
       if (storedToken && JSON.parse(storedToken)) {
-        _token = JSON.parse(storedToken);
-      } else {
-        _token = {
-          name: process.env.NEXT_PUBLIC_FIRST_TOKEN_NAME || '',
-          symbol: process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || '',
-          address: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_TOKEN || '') as `0x${string}`,
-          decimals: Number(process.env.NEXT_PUBLIC_TOKEN_DECIMALS || 18),
-          hasEnded: false,
-          parentTokenAddress: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN || '') as `0x${string}`,
-          parentTokenSymbol: process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL || '',
-          slTokenAddress: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_SL_TOKEN || '') as `0x${string}`,
-          stTokenAddress: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_ST_TOKEN || '') as `0x${string}`,
-        };
+        const _token = JSON.parse(storedToken);
+        if (ifNoSymbol || tokenSymbol === _token.symbol) {
+          setToken(_token);
+          return;
+        }
       }
 
-      if (ifNoSymbol || tokenSymbol === _token.symbol) {
-        setToken(_token);
-        if (!_token.hasEnded) {
-          setCurrentTokenSymbol(_token.name);
-        }
-      } else if (tokenSymbol) {
+      // 从 路由symbol 加载 token
+      if (tokenSymbol.length > 0 && !ifNoSymbol) {
         setCurrentTokenSymbol(tokenSymbol as string);
+      } else {
+        setCurrentTokenSymbol(process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || '');
       }
     } catch (error) {
       console.error('Failed to load token from localStorage:', error);
