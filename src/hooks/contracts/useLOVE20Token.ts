@@ -272,13 +272,18 @@ export function useInitialize(token: `0x${string}`) {
     hash: writeData,
   });
 
-  const initialize = async (mintableAddress: `0x${string}`, parentTokenAddress: `0x${string}`) => {
+  const initialize = async (
+    mintableAddress: `0x${string}`,
+    parentTokenAddress: `0x${string}`,
+    slAddress: `0x${string}`,
+    stAddress: `0x${string}`,
+  ) => {
     try {
       await writeContract({
         address: token,
         abi: LOVE20TokenAbi,
         functionName: 'initialize',
-        args: [mintableAddress, parentTokenAddress],
+        args: [mintableAddress, parentTokenAddress, slAddress, stAddress],
       });
     } catch (err) {
       console.error('Initialize failed:', err);
