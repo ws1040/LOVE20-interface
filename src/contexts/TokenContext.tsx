@@ -46,6 +46,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   const router = useRouter();
 
   console.log('---------TokenProvider--------');
+  console.log('router.isReady', router.isReady);
   console.log('router.query.symbol', router.query.symbol);
   console.log('token', token);
   console.log('tokenInfoBySymbol', tokenInfoBySymbol);
@@ -64,6 +65,14 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
       !router.query.symbol ||
       (typeof router.query.symbol === 'string' &&
         router.query.symbol.charAt(0) === router.query.symbol.charAt(0).toLowerCase());
+
+    if (typeof window !== 'undefined') {
+      const pathSegments2 = window.location.pathname.split('/');
+      const basePathIndex2 = pathSegments2.indexOf('LOVE20-interface');
+      const symbolFromRoute2 = pathSegments2[basePathIndex2 + 1];
+      console.log('>>>pathSegments2', pathSegments2);
+      console.log('>>>symbolFromRoute2', symbolFromRoute2);
+    }
 
     try {
       const storedToken = localStorage.getItem('currentToken');
@@ -84,15 +93,17 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
         };
       }
 
-      if (ifNoSymbol || router.query.symbol === _token.symbol) {
+      //if (ifNoSymbol || router.query.symbol === _token.symbol) {
+      if (router.query.symbol === _token.symbol) {
         setToken(_token);
+        //} else if (router.query.symbol) {
       } else if (router.query.symbol) {
         setCurrentTokenSymbol(router.query.symbol as string);
       }
     } catch (error) {
       console.error('Failed to load token from localStorage:', error);
     }
-  }, [router.isReady, router.query.symbol, currentTokenSymbol]);
+  }, [router.isReady, router.query.symbol]);
 
   // 当 token 变化时，更新 tokenInfoBySymbol
   useEffect(() => {
