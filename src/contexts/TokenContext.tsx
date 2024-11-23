@@ -44,10 +44,9 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
   // 从路由查询参数获取 symbol
   const router = useRouter();
-  const symbolFromRoute = router.query.symbol;
 
   console.log('---------TokenProvider--------');
-  console.log('symbolFromRoute', symbolFromRoute);
+  console.log('router.query.symbol', router.query.symbol);
   console.log('token', token);
   console.log('tokenInfoBySymbol', tokenInfoBySymbol);
   console.log('launchInfoBySymbol', launchInfoBySymbol);
@@ -56,10 +55,15 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
   // 从 Local Storage 加载 token
   useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
+
     // 如果 symbolFromRoute 以小写字母开头，是页面，而不是 symbol
     const ifNoSymbol =
-      !symbolFromRoute ||
-      (typeof symbolFromRoute === 'string' && symbolFromRoute.charAt(0) === symbolFromRoute.charAt(0).toLowerCase());
+      !router.query.symbol ||
+      (typeof router.query.symbol === 'string' &&
+        router.query.symbol.charAt(0) === router.query.symbol.charAt(0).toLowerCase());
 
     try {
       const storedToken = localStorage.getItem('currentToken');
@@ -80,15 +84,15 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
         };
       }
 
-      if (ifNoSymbol || symbolFromRoute === _token.symbol) {
+      if (ifNoSymbol || router.query.symbol === _token.symbol) {
         setToken(_token);
-      } else if (symbolFromRoute) {
-        setCurrentTokenSymbol(symbolFromRoute as string);
+      } else if (router.query.symbol) {
+        setCurrentTokenSymbol(router.query.symbol as string);
       }
     } catch (error) {
       console.error('Failed to load token from localStorage:', error);
     }
-  }, [symbolFromRoute, currentTokenSymbol]);
+  }, [router.isReady, router.query.symbol, currentTokenSymbol]);
 
   // 当 token 变化时，更新 tokenInfoBySymbol
   useEffect(() => {
