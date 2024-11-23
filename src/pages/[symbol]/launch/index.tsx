@@ -36,8 +36,8 @@ export default function TokenFairLaunch() {
           <TokenLabel showGovernanceLink={false} />
         </div>
         <LaunchStatus token={token} launchInfo={launchInfo} />
-        {!launchInfo.hasEnded && <Contribute token={token} launchInfo={launchInfo} />}
-        {launchInfo.hasEnded && <Claim token={token} launchInfo={launchInfo} />}
+        {!launchInfo.hasEnded && token && <Contribute token={token} launchInfo={launchInfo} />}
+        {launchInfo.hasEnded && token && <Claim token={token} launchInfo={launchInfo} />}
       </main>
     </>
   );
