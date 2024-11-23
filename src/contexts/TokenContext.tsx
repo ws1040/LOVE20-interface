@@ -46,6 +46,14 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   const router = useRouter();
   const symbolFromRoute = router.query.symbol;
 
+  console.log('---------TokenProvider--------');
+  console.log('symbolFromRoute', symbolFromRoute);
+  console.log('token', token);
+  console.log('tokenInfoBySymbol', tokenInfoBySymbol);
+  console.log('launchInfoBySymbol', launchInfoBySymbol);
+  console.log('isPendingBySymbol', isPendingBySymbol);
+  console.log('errorBySymbol', errorBySymbol);
+
   // 从 Local Storage 加载 token
   useEffect(() => {
     // 如果 symbolFromRoute 以小写字母开头，是页面，而不是 symbol
