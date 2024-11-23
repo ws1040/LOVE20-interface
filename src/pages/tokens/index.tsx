@@ -1,7 +1,3 @@
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
-
 import Header from '@/src/components/Header';
 import TokenList from '@/src/components/Token/TokenList';
 
