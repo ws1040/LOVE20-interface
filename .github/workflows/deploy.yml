@@ -71,7 +71,6 @@ jobs:
           # 添加其他环境变量，如果有的话
         run: |
           yarn build
-          yarn export
           cp out/index.html out/404.html
 
       # 部署到 gh-pages 分支
