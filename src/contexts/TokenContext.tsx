@@ -91,9 +91,12 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
       return;
     }
     const pathSegments = window.location.pathname.split('/');
-    const basePathIndex = pathSegments.indexOf(process.env.NEXT_PUBLIC_BASE_PATH);
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH.replace(/^\/|\/$/g, '');
+    const basePathIndex = pathSegments.indexOf(basePath);
     const symbol = pathSegments[basePathIndex + 1];
     console.log('>>>pathSegments@window.location', pathSegments);
+    console.log('>>>basePath', basePath);
+    console.log('>>>basePathIndex', basePathIndex);
     console.log('>>>symbol@window.location', symbol);
 
     setTokenBySymbol(symbol);
