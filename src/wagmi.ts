@@ -1,5 +1,5 @@
 // wagmi.ts
-import { createConfig, http } from 'wagmi';
+import { createStorage, createConfig, http } from 'wagmi';
 import { Chain, mainnet, sepolia, bscTestnet } from 'wagmi/chains';
 import { getDefaultWallets } from '@rainbow-me/rainbowkit';
 
@@ -48,9 +48,16 @@ const { connectors } = getDefaultWallets({
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '',
 });
 
+// 创建存储
+const storage = createStorage({
+  key: 'Life20-dapp',
+  storage: typeof window !== 'undefined' ? localStorage : undefined,
+});
+
 // 创建配置
 export const config = createConfig({
   connectors,
+  storage,
   chains: [selectedChain],
   transports:
     selectedChain.id === sepolia.id
