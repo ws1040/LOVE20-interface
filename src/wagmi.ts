@@ -1,6 +1,7 @@
 // wagmi.ts
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { createConfig, http } from 'wagmi';
 import { Chain, mainnet, sepolia, bscTestnet } from 'wagmi/chains';
+import { getDefaultWallets } from '@rainbow-me/rainbowkit';
 
 // 定义自定义链 Anvil
 const anvil: Chain = {
@@ -39,14 +40,25 @@ const selectedChainName = process.env.NEXT_PUBLIC_CHAIN || 'mainnet';
 // 获取对应的链配置，如果未找到则默认使用 mainnet
 const selectedChain = CHAIN_MAP[selectedChainName] || mainnet;
 
-export const config = getDefaultConfig({
+// 通过 RainbowKit 获取连接器
+const { connectors } = getDefaultWallets({
   appName: 'Life20 DApp',
 
   // WalletConnect Cloud Project ID
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '',
+});
 
+// 创建配置
+export const config = createConfig({
+  connectors,
   chains: [selectedChain],
-
-  // 启用服务器端渲染（SSR）
-  ssr: true,
+  transports:
+    selectedChain.id === sepolia.id
+      ? {
+          [sepolia.id]: http(process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL || 'https://eth-sepolia.api.onfinality.io/public'),
+        }
+      : {
+          [selectedChain.id]: http(selectedChain.rpcUrls.default.http[0]),
+        },
+  // ssr: true, // 如果需要服务器端渲染
 });

@@ -2145,7 +2145,7 @@
   resolved "https://registry.npmmirror.com/@radix-ui/rect/-/rect-1.1.0.tgz"
   integrity sha512-A9+lCBZoaMJlVKcRBz2YByCG+Cp2t6nAnMnNba+XiWxnj6r4JUFqfsgwocMBZU9LPtdxC6wB56ySYpc7LQIoJg==
 
-"@rainbow-me/rainbowkit@^2.1.7":
+"@rainbow-me/rainbowkit@^2.2.0":
   version "2.2.0"
   resolved "https://registry.npmmirror.com/@rainbow-me/rainbowkit/-/rainbowkit-2.2.0.tgz"
   integrity sha512-N0wQ39UN6Soi6/ujk9lVy5KY2oY6me/dqMPe5BYWlZIKbpBc2De3cl9phSLPw+/rncL3Cp1r6kRZuMe0b+mP9Q==
@@ -5227,11 +5227,6 @@ lodash.throttle@^4.1.1:
   version "4.1.1"
   resolved "https://registry.npmmirror.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz"
   integrity sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==
-
-lodash@^4.17.21:
-  version "4.17.21"
-  resolved "https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz"
-  integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
 loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.4.0:
   version "1.4.0"

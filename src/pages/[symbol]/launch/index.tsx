@@ -5,7 +5,6 @@ import Link from 'next/link';
 
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { useLaunches } from '@/src/hooks/contracts/useLOVE20Launch';
-import { formatTokenAmount } from '@/src/lib/format';
 
 import Header from '@/src/components/Header';
 import Loading from '@/src/components/Common/Loading';

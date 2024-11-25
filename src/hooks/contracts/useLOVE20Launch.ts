@@ -351,6 +351,9 @@ export const useLaunches = (address: `0x${string}`) => {
     abi: LOVE20LaunchAbi,
     functionName: 'launches',
     args: [address],
+    query: {
+      enabled: !!address,
+    },
   });
   const launchInfo: LaunchInfo | undefined = data
     ? {
