@@ -30,10 +30,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {
             title: '社区首页',
             url: token ? `/${token.symbol}/acting` : '/token/acting',
+            isActive: false,
           },
           {
             title: '治理首页',
             url: token ? `/${token.symbol}/gov` : '/token/gov',
+            isActive: false,
           },
         ],
       },
@@ -44,18 +46,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {
             title: '发射平台',
             url: token ? `/${token.symbol}/launch` : '/token/launch',
+            isActive: false,
           },
           {
             title: '所有代币',
             url: '/tokens',
+            isActive: false,
           },
           {
             title: '交易代币',
             url: token ? `/${token.symbol}/dex/swap` : '/token/dex/swap',
+            isActive: false,
           },
           {
             title: '兑换',
             url: token ? `/${token.symbol}/launch/deposit` : '/token/launch/deposit',
+            isActive: false,
           },
         ],
       },
@@ -66,6 +72,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {
             title: '我的首页',
             url: token ? `/${token.symbol}/my` : '/my',
+            isActive: false,
           },
         ],
       },
