@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
 
 import { GovReward } from '@/src/types/life20types';
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -77,15 +78,17 @@ const GovRewardsPage: React.FC = () => {
                   <td>{formatTokenAmount(item.unminted)}</td>
                   <td>
                     {item.unminted > 0n ? (
-                      <button
-                        className={`btn btn-sm ${isWriting || isConfirming ? 'btn-disabled' : 'btn-primary'}`}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-secondary border-secondary"
                         onClick={() => handleClaim(item.round)}
                         disabled={isWriting || isConfirming}
                       >
                         {isWriting || isConfirming ? '领取中...' : '领取'}
-                      </button>
+                      </Button>
                     ) : item.minted > 0n ? (
-                      <span className="text-green-500">已领取</span>
+                      <span className="text-secondary">已领取</span>
                     ) : (
                       <span className="text-greyscale-500">无奖励</span>
                     )}
