@@ -1,14 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
+import { Button } from '@/components/ui/button';
 
 import { useStakeToken } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import { useTotalSupply } from '@/src/hooks/contracts/useLOVE20STToken';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount, parseUnits } from '@/src/lib/format';
-import Loading from '@/src/components/Common/Loading';
-import { Button } from '@/components/ui/button';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 interface StakeTokenPanelProps {
   tokenBalance: bigint;
@@ -95,24 +95,18 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
 
   return (
     <>
-      <div className="flex justify-center w-full items-center rounded p-4 bg-white mt-4">
-        <span>
-          <span className="text-sm text-gray-500 mr-2">代币质押总量</span>
-          <span className="text-2xl font-bold text-orange-400">
-            {isPendingStakeToken ? <Loading /> : formatTokenAmount(stTokenAmount || BigInt(0))}
-          </span>
-        </span>
-      </div>
-      <div className="w-full flex flex-col items-center rounded p-4 bg-white mt-1">
+      <div className="w-full flex flex-col items-center rounded p-4 mt-1">
         <div className="w-full text-left mb-4">
-          <h2 className="relative pl-4 text-gray-700 text-base font-medium before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
-            质押增加治理收益：<span className="text-gray-500 text-sm font-normal">(最多两倍)</span>
-          </h2>
+          <LeftTitle title="质押增加治理收益" />
         </div>
         <form className="w-full max-w-md" onSubmit={(e) => e.preventDefault()}>
           <div className="mb-4">
-            <label className="block text-left mb-1 text-sm text-gray-500">
-              质押token数 (当前持有：{formatTokenAmount(tokenBalance)} {token?.symbol})
+            <label className="block text-left mb-1 text-sm text-greyscale-500">
+              质押数 (当前持有数量：
+              <span className="text-secondary">
+                {formatTokenAmount(tokenBalance)} {token?.symbol}
+              </span>
+              )
             </label>
             <input
               type="number"
@@ -122,16 +116,16 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
                 const stakeValue = e.target.value;
                 setStakeTokenAmount(stakeValue);
               }}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring bg-white"
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-left mb-1 text-sm text-gray-500">释放期</label>
+            <label className="block text-left mb-1 text-sm text-greyscale-500">释放期</label>
             <select
               value={releasePeriod}
               onChange={(e) => setReleasePeriod(e.target.value)}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring bg-white"
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
               required
             >
               {Array.from({ length: 9 }, (_, i) => (
@@ -143,9 +137,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
           </div>
           <div className="flex justify-center space-x-4">
             <Button
-              className={`w-1/2 ${
-                isConfirmedApproveToken ? 'bg-gray-600 hover:bg-gray-700' : 'bg-blue-600 hover:bg-blue-700'
-              }`}
+              className={`w-1/2`}
               disabled={isPendingApproveToken || isConfirmingApproveToken || isConfirmedApproveToken}
               onClick={handleApprove}
             >
@@ -156,9 +148,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
                 : '1.授权'}
             </Button>
             <Button
-              className={`w-1/2 ${
-                !isConfirmedApproveToken ? 'bg-gray-600 hover:bg-gray-700' : 'bg-blue-600 hover:bg-blue-700'
-              }`}
+              className={`w-1/2`}
               disabled={!isConfirmedApproveToken || isPendingStakeToken || isConfirmingStakeToken}
               onClick={handleStake}
             >

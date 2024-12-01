@@ -6,7 +6,7 @@ import { useScoreByVerifierByActionId } from '@/src/hooks/contracts/useLOVE20Ver
 
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 interface MyActionVerifingPanelProps {
   currentRound: bigint;
@@ -62,9 +62,9 @@ const MyActionVerifingPanel: React.FC<MyActionVerifingPanelProps> = ({
       <span className="font-semibold">
         我的剩余验证票数：
         {isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
-          <Loading />
+          <LoadingIcon />
         ) : (
-          <span className="text-orange-500">{formatTokenAmount(remainingVotes)}</span>
+          <span className="text-secondary">{formatTokenAmount(remainingVotes)}</span>
         )}
       </span>
     </div>

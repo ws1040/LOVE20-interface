@@ -1,17 +1,15 @@
 import { useContext } from 'react';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
 
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { useLaunches } from '@/src/hooks/contracts/useLOVE20Launch';
 
 import Header from '@/src/components/Header';
-import Loading from '@/src/components/Common/Loading';
-import TokenLabel from '@/src/components/Token/TokenLabel';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LaunchStatus from '@/src/components/Launch/LaunchStatus';
-import Contribute from '@/src/components/Launch/Contribute';
+import ContributeInfo from '@/src/components/Launch/ContributeInfo';
 import Claim from '@/src/components/Launch/Claim';
+import TokenTab from '@/src/components/Token/TokenTab';
+import Todeploy from '@/src/components/Launch/Todeploy';
 
 export default function TokenFairLaunch() {
   const tokenContext = useContext(TokenContext);
@@ -23,7 +21,7 @@ export default function TokenFairLaunch() {
   } = useLaunches(token ? token.address : '0x0');
 
   if (isLaunchInfoPending) {
-    return <Loading />;
+    return <LoadingIcon />;
   }
   if (launchInfoError) {
     return <div className="text-red-500">加载发射信息失败</div>;
@@ -36,31 +34,11 @@ export default function TokenFairLaunch() {
     <>
       <Header title="Launch" />
       <main className="flex-grow">
-        <div className="px-6 pt-6 pb-1  bg-white">
-          <TokenLabel showGovernanceLink={false} />
-        </div>
+        <TokenTab />
         <LaunchStatus token={token} launchInfo={launchInfo} />
-        {!launchInfo.hasEnded && token && <Contribute token={token} launchInfo={launchInfo} />}
+        {!launchInfo.hasEnded && token && <ContributeInfo token={token} launchInfo={launchInfo} />}
         {launchInfo.hasEnded && token && <Claim token={token} launchInfo={launchInfo} />}
-
-        {launchInfo?.hasEnded && (
-          <div className="bg-white p-6 mt-4 shadow-sm">
-            <h3 className="text-base font-medium mb-2">部署子币</h3>
-            <div className="w-full text-center">
-              <Link href={`/${token?.symbol}/launch/deploy`}>
-                <Button size="sm" className="w-1/2 bg-blue-600 hover:bg-blue-700">
-                  <Plus className="w-4 h-4" />
-                  去部署
-                </Button>
-              </Link>
-            </div>
-            <div className="bg-gray-100 text-gray-500 rounded-lg p-4 text-sm mt-4">
-              <p className="mb-1">说明：</p>
-              <p>1. 部署者：须持有${token?.symbol}不少于 0.5%的治理票</p>
-              <p>2. 子币发射目标：须筹集 20,000,000个 {token?.symbol}</p>
-            </div>
-          </div>
-        )}
+        {launchInfo.hasEnded && token && <Todeploy token={token} launchInfo={launchInfo} />}
       </main>
     </>
   );

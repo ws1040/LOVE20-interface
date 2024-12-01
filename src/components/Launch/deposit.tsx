@@ -7,7 +7,7 @@ import { toast } from 'react-hot-toast';
 
 import { useDeposit } from '@/src/hooks/contracts/useWETH';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const Deposit: React.FC = () => {
   const [depositAmount, setDepositAmount] = useState('');
@@ -61,10 +61,10 @@ const Deposit: React.FC = () => {
   }, [errBalance]);
 
   return (
-    <div className="bg-white p-6 shadow-sm space-y-6">
+    <div className="p-6 shadow-sm space-y-6">
       <div className="flex items-center mb-2">
         <h3 className="text-base font-medium">兑换{process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}</h3>
-        <span className="text-gray-400 text-sm ml-2">
+        <span className="text-secondary text-sm ml-2">
           (1{balance?.symbol} = 1{process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL})
         </span>
       </div>
@@ -80,14 +80,14 @@ const Deposit: React.FC = () => {
       </div>
 
       <div className="flex items-center text-sm mb-4">
-        <span className="text-gray-400">
-          {isLoadingBalance ? <Loading /> : formatTokenAmount(balance?.value || 0n)} {balance?.symbol}
+        <span className="text-greyscale-400">
+          {isLoadingBalance ? <LoadingIcon /> : formatTokenAmount(balance?.value || 0n)} {balance?.symbol}
         </span>
         <Button
           variant="link"
           size="sm"
           onClick={setMaxAmount}
-          className="text-blue-600"
+          className="text-secondary"
           disabled={isLoadingBalance || isPendingDeposit || isConfirmingDeposit}
         >
           最高
@@ -96,11 +96,7 @@ const Deposit: React.FC = () => {
 
       <div className="flex justify-center">
         <Button
-          className={`w-1/2 text-white py-2 rounded-lg ${
-            !isPendingDeposit && !isConfirmingDeposit
-              ? 'bg-blue-600 hover:bg-blue-700'
-              : 'bg-gray-400 cursor-not-allowed'
-          }`}
+          className={`w-1/2 text-white py-2 rounded-lg`}
           onClick={handleDeposit}
           disabled={isPendingDeposit || isConfirmingDeposit || isConfirmedDeposit}
         >

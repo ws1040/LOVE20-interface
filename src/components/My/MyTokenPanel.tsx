@@ -1,39 +1,66 @@
 import { useAccount } from 'wagmi';
 import { useContext } from 'react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
+import { useStakedAmountByAccount } from '@/src/hooks/contracts/useLOVE20Join';
 import { formatTokenAmount } from '@/src/lib/format';
-import Loading from '@/src/components/Common/Loading';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 const MyTokenPanel = () => {
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress } = useAccount();
-  const { balance, isPending, error } = useBalanceOf(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  const {
+    balance,
+    isPending: isPendingBalance,
+    error: errorBalance,
+  } = useBalanceOf(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  // 获取行动锁定代币总量
+  const {
+    stakedAmount,
+    isPending: isPendingStakedAmount,
+    error: errorStakedAmount,
+  } = useStakedAmountByAccount(token?.address as `0x${string}`, accountAddress as `0x${string}`);
 
-  if (isPending) return <Loading />;
-  if (error) return <div>错误: {error.message}</div>;
+  if (errorBalance) {
+    console.log('errorBalance', errorBalance);
+    return <div>错误: {errorBalance.message}</div>;
+  }
+
+  if (errorStakedAmount) {
+    console.log('errorStakedAmount', errorStakedAmount);
+    return <div>错误: {errorStakedAmount.message}</div>;
+  }
 
   if (!token) {
-    return '';
+    return <LoadingIcon />;
   }
 
   return (
-    <div className="flex flex-col items-center max-w-4xl mx-auto p-4 bg-white mb-4 ">
-      <p className="text-gray-500 text-sm">持有代币数量</p>
-      <p className="mt-2">
-        {isPending ? (
-          <Loading />
-        ) : (
-          <span className="text-orange-500 text-2xl font-bold">{formatTokenAmount(balance || 0n)}</span>
-        )}
-        <span className="text-gray-500 ml-2">{token?.symbol}</span>
-      </p>
-      <Button className="mt-2 w-1/2 bg-blue-600 hover:bg-blue-700" asChild>
-        <Link href={`/${token.symbol}/dex/swap`}>去交易</Link>
-      </Button>
+    <div className="flex-col items-center px-6 py-2">
+      <LeftTitle title="我的代币" />
+      <div className="stats w-full grid grid-cols-2 divide-x-0">
+        <div className="stat place-items-center">
+          <div className="stat-title text-sm">所有 {token?.symbol}</div>
+          <div className="stat-value text-xl">
+            {isPendingBalance ? <LoadingIcon /> : formatTokenAmount(balance || BigInt(0))}
+          </div>
+        </div>
+        <div className="stat place-items-center">
+          <div className="stat-title text-sm">行动锁定 {token?.symbol}</div>
+          <div className="stat-value text-xl">
+            {isPendingStakedAmount ? <LoadingIcon /> : formatTokenAmount(stakedAmount || BigInt(0))}
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-center">
+        <Button variant="outline" size="sm" className="mt-2 w-1/2 text-secondary border-secondary" asChild>
+          <Link href={`/${token.symbol}/dex/swap`}>去交易</Link>
+        </Button>
+      </div>
     </div>
   );
 };

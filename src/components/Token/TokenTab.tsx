@@ -1,13 +1,12 @@
 import React, { useContext, useState } from 'react';
-import { Tooltip } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { Tooltip } from '@mui/material';
 
-import { useTotalSupply } from '@/src/hooks/contracts/useLOVE20Token';
-
-import TokenLabel from './TokenLabel';
-import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
-import Loading from '@/src/components/Common/Loading';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { useTotalSupply } from '@/src/hooks/contracts/useLOVE20Token';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import TokenLabel from './TokenLabel';
 
 export default function TokenTab() {
   const { token } = useContext(TokenContext) || {};
@@ -28,17 +27,19 @@ export default function TokenTab() {
   // 控制 Tooltip 的显隐 end
 
   if (!token?.address) {
-    return <div>Loading token information...</div>;
-  } else {
-    return (
-      <div className="p-6 bg-white mb-4">
-        <TokenLabel showGovernanceLink={true} />
+    return <LoadingIcon />;
+  }
 
+  return (
+    <div className="px-6 pt-2 pb-6">
+      <TokenLabel />
+
+      {false && (
         <div className="flex items-center">
           <div className="mr-2">
-            <span className="text-sm text-gray-500">已铸币量: </span>
+            <span className="text-sm text-greyscale-500">已铸币量: </span>
             <span className="text-lg font-semibold text-orange-400">
-              {isTotalSupplyPending ? <Loading /> : formatTokenAmount(totalSupply || 0n)}
+              {isTotalSupplyPending ? <LoadingIcon /> : formatTokenAmount(totalSupply || 0n)}
             </span>
           </div>
           <Tooltip
@@ -51,12 +52,12 @@ export default function TokenTab() {
             disableTouchListener
             // 可以根据需要添加 TransitionComponent 等属性
           >
-            <button className="btn btn-circle btn-ghost btn-xs text-gray-400" onClick={handleTooltipToggle}>
+            <button className="btn btn-circle btn-ghost btn-xs text-greyscale-400" onClick={handleTooltipToggle}>
               <HelpOutlineIcon />
             </button>
           </Tooltip>
         </div>
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
 }

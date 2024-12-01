@@ -14,6 +14,7 @@ import {
   useGetAmountsOut,
   useSwapExactTokensForTokens,
 } from '@/src/hooks/contracts/useUniswapV2Router';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 export interface TokenInfo {
   symbol: string;
@@ -237,10 +238,9 @@ const SwapPanel = () => {
   }, [fromTokenInfo.amountShow]);
 
   return (
-    <div className="flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md p-6 bg-white ">
-        <h1 className="text-xl font-bold mb-6">兑换</h1>
-
+    <div className="p-6">
+      <LeftTitle title="兑换" />
+      <div className="w-full max-w-md mt-4">
         {/* From Token Block */}
         <div className="mb-4">
           <div className="flex items-center space-x-2 mb-2">
@@ -271,11 +271,11 @@ const SwapPanel = () => {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-center text-sm gap-2">
-            <span className="text-gray-400">
+          <div className="flex items-center text-sm">
+            <span className="text-greyscale-400">
               {formatTokenAmount(fromTokenInfo.balance || 0n)} {fromTokenInfo.symbol}
             </span>
-            <Button variant="outline" size="sm" onClick={setMaxAmount}>
+            <Button variant="link" size="sm" className="text-secondary" onClick={setMaxAmount}>
               最高
             </Button>
           </div>
@@ -312,7 +312,7 @@ const SwapPanel = () => {
             </Select>
           </div>
           <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-400">
+            <span className="text-greyscale-400">
               {formatTokenAmount(toTokenInfo.balance || 0n)} {toTokenInfo.symbol}
             </span>
           </div>
@@ -320,9 +320,7 @@ const SwapPanel = () => {
 
         <div className="flex flex-row gap-2">
           <Button
-            className={`w-1/2 text-white ${
-              !isApproved ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
-            }`}
+            className={`w-1/2`}
             onClick={handleApprove}
             disabled={isPendingApproveToken || isPendingApproveParentToken || isApproved}
           >
@@ -330,9 +328,7 @@ const SwapPanel = () => {
             {isApproved ? '1.已授权' : '1.授权'}
           </Button>
           <Button
-            className={`w-1/2 text-white ${
-              isApproved ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
-            }`}
+            className={`w-1/2`}
             onClick={handleSwap}
             disabled={
               !isApproved ||
@@ -356,13 +352,13 @@ const SwapPanel = () => {
         {fromTokenInfo.amount > 0n && (
           <div className="mt-4 p-4 bg-gray-50 rounded-md">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">手续费 (0.3%)：</span>
+              <span className="text-greyscale-400">手续费 (0.3%)：</span>
               <span>
                 {fee} {fromTokenInfo.symbol}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">滑点上限 (自动)：</span>
+              <span className="text-greyscale-400">滑点上限 (自动)：</span>
               <span>5.5%</span>
             </div>
           </div>

@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useContribute, useContributed } from '@/src/hooks/contracts/useLOVE20Launch';
 import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
-import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
 import { Token } from '@/src/contexts/TokenContext';
 import { LaunchInfo } from '@/src/types/life20types';
-import { toast } from 'react-hot-toast';
-import Link from 'next/link';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const [contributeAmount, setContributeAmount] = useState('');
@@ -92,14 +92,15 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
   }
 
   return (
-    <div className="bg-white p-6 shadow-sm space-y-6">
-      <div>
-        <h3 className="text-base font-medium mb-2">我的申购</h3>
-        <div className="flex justify-center mb-6">
-          <p>
-            <span className="text-2xl font-bold text-orange-400 mr-1">{formatTokenAmount(contributed || 0n)}</span>
-            <span className="text-sm text-gray-500">{token.parentTokenSymbol}</span>
-          </p>
+    <div className="p-6">
+      <LeftTitle title="参与申购" />
+      <div className="stats w-full">
+        <div className="stat place-items-center">
+          <div className="stat-title text-sm mr-6">我已申购质押</div>
+          <div className="stat-value text-secondary">
+            {formatTokenAmount(contributed || 0n)}
+            <span className="text-greyscale-500 font-normal text-sm ml-2">{token.parentTokenSymbol}</span>
+          </div>
         </div>
       </div>
 
@@ -116,41 +117,27 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
         </div>
 
         <div className="flex items-center text-sm mb-4">
-          <span className="text-gray-400">
+          <span className="text-greyscale-400">
             {formatTokenAmount(balanceOfParentToken || 0n)} {token.parentTokenSymbol}
           </span>
           <Button
             variant="link"
             size="sm"
             onClick={setMaxAmount}
-            className={`${
-              hasStartedApproving || (balanceOfParentToken || 0n) <= 0n
-                ? 'text-gray-400 cursor-not-allowed'
-                : 'text-blue-600'
-            }`}
             disabled={hasStartedApproving || (balanceOfParentToken || 0n) <= 0n}
+            className="text-secondary"
           >
             最高
           </Button>
           <Link href={`/${token.symbol}/launch/deposit`}>
-            <Button
-              variant="link"
-              size="sm"
-              className={`${(balanceOfParentToken || 0n) > 0n ? 'text-gray-400' : 'text-blue-600'}`}
-            >
+            <Button variant="link" size="sm" className="text-secondary">
               获取{token.parentTokenSymbol}
             </Button>
           </Link>
         </div>
 
         <div className="flex flex-row gap-2">
-          <Button
-            className={`w-1/2 text-white ${
-              !hasStartedApproving ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
-            }`}
-            onClick={handleApprove}
-            disabled={hasStartedApproving}
-          >
+          <Button className="w-1/2" onClick={handleApprove} disabled={hasStartedApproving}>
             {!hasStartedApproving
               ? isPendingApproveParentToken || isConfirmingApproveParentToken
                 ? '授权中...'
@@ -158,9 +145,7 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
               : '1.已授权'}
           </Button>
           <Button
-            className={`w-1/2 text-white py-2 rounded-lg ${
-              isConfirmedApproveParentToken ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
-            }`}
+            className={`w-1/2 text-white py-2 rounded-lg`}
             onClick={handleContribute}
             disabled={
               !isConfirmedApproveParentToken ||

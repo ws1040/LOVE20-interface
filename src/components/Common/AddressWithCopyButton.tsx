@@ -8,12 +8,14 @@ interface AddressWithCopyButtonProps {
   address: `0x${string}`;
   showCopyButton?: boolean;
   showAddress?: boolean;
+  colorClassName?: string;
 }
 
 const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
   address,
   showCopyButton = true,
   showAddress = true,
+  colorClassName = '',
 }) => {
   const handleCopy = (text: string, result: boolean) => {
     if (result) {
@@ -29,8 +31,10 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
   };
 
   return (
-    <div className="flex items-center space-x-2">
-      {showAddress && <span className="text-xs text-gray-500">{abbreviateAddress(address)}</span>}
+    <span className={`flex items-center space-x-2`}>
+      {showAddress && (
+        <span className={`text-xs ${colorClassName ?? 'text-greyscale-500'}`}>{abbreviateAddress(address)}</span>
+      )}
       {showCopyButton && ( // 根据 showCopyButton 显示或隐藏按钮
         <CopyToClipboard text={address} onCopy={handleCopy}>
           <button
@@ -38,11 +42,11 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
             onClick={handleClick}
             aria-label="复制地址"
           >
-            <Copy className="h-4 w-4 text-gray-500" />
+            <Copy className={`h-4 w-4 ${colorClassName ?? 'text-greyscale-500'}`} />
           </button>
         </CopyToClipboard>
       )}
-    </div>
+    </span>
   );
 };
 

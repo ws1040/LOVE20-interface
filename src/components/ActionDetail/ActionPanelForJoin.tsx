@@ -11,8 +11,7 @@ import {
 } from '@/src/hooks/contracts/useLOVE20Join';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
-import Loading from '@/src/components/Common/Loading';
-import Round from '@/src/components/Common/Round';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 interface ActionPanelForJoinProps {
   actionId: bigint;
@@ -71,33 +70,46 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
     isJoined as boolean,
   );
 
-  return (
-    <div className="flex flex-col items-center space-y-4 p-8 bg-white mb-4  ">
-      {isPendingCurrentRound ? <Loading /> : <Round currentRound={currentRound} roundName="行动轮" />}
+  if (errorJoinedAmountByAccount) {
+    console.error('errorJoinedAmountByAccount', errorJoinedAmountByAccount);
+    return <div>发生错误: {errorJoinedAmountByAccount.message}</div>;
+  }
+  if (errorJoinedAmount) {
+    console.error('errorJoinedAmount', errorJoinedAmount);
+    return <div>发生错误: {errorJoinedAmount.message}</div>;
+  }
+  if (errorVerificationInfo) {
+    console.error('errorVerificationInfo', errorVerificationInfo);
+    return <div>发生错误: {errorVerificationInfo.message}</div>;
+  }
 
-      <div className="flex w-full justify-center space-x-20">
-        <div className="flex flex-col items-center">
-          <span className="text-sm text-gray-500">我参与的代币数</span>
-          <span className="text-2xl font-bold text-orange-400">
-            {isPendingJoinedAmount ? <Loading /> : formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0))}
-          </span>
+  return (
+    <div className="flex flex-col items-center space-y-4 px-6 pt-6 pb-2">
+      <div className="stats w-full border grid grid-cols-2 divide-x-0">
+        <div className="stat place-items-center">
+          <div className="stat-title">我参与本行动的代币</div>
+          <div className="stat-value text-2xl">
+            {isPendingJoinedAmount ? <LoadingIcon /> : formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0))}
+          </div>
         </div>
-        <div className="flex flex-col items-center">
-          <span className="text-sm text-gray-500">所占比例</span>
-          <span className="text-2xl font-bold text-orange-400">{participationRatio}</span>
+        <div className="stat place-items-center">
+          <div className="stat-title">所占比例</div>
+          <div className="stat-value text-2xl">{participationRatio}</div>
         </div>
       </div>
 
       {!isJoined ? (
-        <Link href={`/${token?.symbol}/acting/join?id=${actionId}`} className="w-1/2">
-          <Button className="w-full bg-blue-600 hover:bg-blue-700">参与行动</Button>
-        </Link>
+        <Button variant="outline" className="w-full text-secondary border-secondary" asChild>
+          <Link href={`/${token?.symbol}/acting/join?id=${actionId}`}>参与行动</Link>
+        </Button>
       ) : (
         <div className="flex flex-col items-center">
-          <Button disabled className="w-full bg-gray-400 cursor-not-allowed">
+          <Button disabled className="w-full">
             您已参与
           </Button>
-          <div className="mt-2 text-sm text-gray-600">{isPendingVerificationInfo ? '加载中...' : verificationInfo}</div>
+          <div className="mt-2 text-sm text-greyscale-600">
+            {isPendingVerificationInfo ? '加载中...' : `我的信息：${verificationInfo}`}
+          </div>
         </div>
       )}
     </div>

@@ -31,9 +31,41 @@ const LeftTime: React.FC<LeftTimeProps> = ({ initialTimeLeft }) => {
     };
   }, [initialTimeLeft]);
 
-  const timeLeftText = formatSeconds(timeLeft);
+  const days = Math.floor(timeLeft / 86400);
+  const hours = Math.floor((timeLeft % 86400) / 3600);
+  const minutes = Math.floor((timeLeft % 3600) / 60);
+  const seconds = timeLeft % 60;
 
-  return <>{timeLeftText}</>;
+  return (
+    <div className="inline-flex gap-1  text-secondary">
+      {days > 0 && (
+        <div>
+          <span className="countdown font-mono">
+            <span style={{ '--value': days } as React.CSSProperties}></span>
+          </span>
+          天
+        </div>
+      )}
+      <div>
+        <span className="countdown font-mono">
+          <span style={{ '--value': hours } as React.CSSProperties}></span>
+        </span>
+        时
+      </div>
+      <div>
+        <span className="countdown font-mono">
+          <span style={{ '--value': minutes } as React.CSSProperties}></span>
+        </span>
+        分
+      </div>
+      <div>
+        <span className="countdown font-mono">
+          <span style={{ '--value': seconds } as React.CSSProperties}></span>
+        </span>
+        秒
+      </div>
+    </div>
+  );
 };
 
 export default LeftTime;

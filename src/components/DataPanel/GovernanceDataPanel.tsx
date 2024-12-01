@@ -5,10 +5,11 @@ import { useTotalSupply } from '@/src/hooks/contracts/useLOVE20STToken';
 
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
-import TokenLabel from '@/src/components/Token/TokenLabel';
 import StakedLiquidDataPanel from './StakedLiquidDataPanel';
+import LoadingIcon from '../Common/LoadingIcon';
+import Round from '../Common/Round';
 
-const GovernanceDataPanel: React.FC = () => {
+const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
 
   const { govVotesNum, isPending: isPendingGovVotesNum } = useGovVotesNum(token?.address as `0x${string}`);
@@ -17,26 +18,27 @@ const GovernanceDataPanel: React.FC = () => {
   );
 
   return (
-    <div className="p-6 bg-white ">
-      <TokenLabel />
+    <div className="px-6 pb-6">
+      <Round currentRound={currentRound} roundName="投票轮" />
 
-      <div className="flex w-full justify-center space-x-20 mb-4">
-        <div className="flex flex-col items-center">
-          <span className="text-sm text-gray-500">总治理票</span>
-          <span className="text-2xl font-bold text-orange-400">
-            {isPendingGovVotesNum ? 'Loading...' : formatTokenAmount(govVotesNum || BigInt(0))}
-          </span>
+      <div className="stats border w-full grid grid-cols-2 divide-x-0">
+        <div className="stat place-items-center">
+          <div className="stat-title">总治理票</div>
+          <div className="stat-value text-2xl">
+            {isPendingGovVotesNum ? <LoadingIcon /> : formatTokenAmount(govVotesNum || BigInt(0))}
+          </div>
         </div>
-        <div className="flex flex-col items-center">
-          <span className="text-sm text-gray-500">代币质押量</span>
-          <span className="text-2xl font-bold text-orange-400">
-            {isPendingStTokenAmount ? 'Loading...' : formatTokenAmount(stTokenAmount || BigInt(0))}
-          </span>
+        <div className="stat place-items-center">
+          <div className="stat-title">代币质押量</div>
+          <div className="stat-value text-2xl">
+            {isPendingStTokenAmount ? <LoadingIcon /> : formatTokenAmount(stTokenAmount || BigInt(0))}
+          </div>
         </div>
       </div>
-      <div className="w-full flex flex-col items-center space-y-4 bg-gray-100 rounded p-4">
+
+      {/* 改为弹窗 <div className="w-full flex flex-col items-center space-y-4 bg-gray-100 rounded p-4">
         <StakedLiquidDataPanel />
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -7,7 +7,7 @@ import { useVerify } from '@/src/hooks/contracts/useLOVE20Verify';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import { Button } from '@/components/ui/button';
 
 interface VerifyAddressesProps {
@@ -85,7 +85,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     <>
       <div className="w-full max-w-2xl">
         <ul className="space-y-4">
-          {isPendingVerificationInfosByAction && <Loading />}
+          {isPendingVerificationInfosByAction && <LoadingIcon />}
           {accountsForVerify && accountsForVerify.length > 0 ? (
             accountsForVerify.map((address, index) => (
               <li key={address} className="flex justify-between items-center p-4 border-b border-gray-100">
@@ -93,7 +93,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                   <div className="font-mono">
                     <AddressWithCopyButton address={address} />
                   </div>
-                  <div className="text-sm text-gray-800">{verificationInfos[index]}</div>
+                  <div className="text-sm text-greyscale-800">{verificationInfos[index]}</div>
                 </div>
                 <div className="flex items-center">
                   <input
@@ -110,12 +110,12 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
               </li>
             ))
           ) : (
-            <div className="text-center text-gray-500">没有人参与活动</div>
+            <div className="text-center text-greyscale-500">没有人参与活动</div>
           )}
           {accountsForVerify && (
             <li className="flex justify-between items-center p-4 border-b border-gray-100">
               <div className="text-left">
-                <div className="text-sm text-gray-800">
+                <div className="text-sm text-greyscale-800">
                   <span>弃权票数：</span>
                 </div>
               </div>
@@ -136,19 +136,13 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       </div>
 
       {remainingVotes > 0 && (
-        <Button
-          onClick={handleSubmit}
-          disabled={isWriting || isConfirmed}
-          className={`mt-6 px-6 py-2 rounded ${
-            isConfirmed ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-          } text-white`}
-        >
-          {isConfirmed ? '已提交' : '提交'}
+        <Button onClick={handleSubmit} disabled={isWriting || isConfirmed} className="mt-6 w-1/2">
+          {isConfirmed ? '已提交' : '提交验证'}
         </Button>
       )}
       {!remainingVotes && (
-        <Button disabled className="w-full bg-gray-400 cursor-not-allowed">
-          提交
+        <Button disabled className="mt-6 w-1/2">
+          无剩余票数，无需提交
         </Button>
       )}
       {submitError && <div className="text-red-500 text-center">{submitError.message}</div>}

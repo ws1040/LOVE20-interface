@@ -1,16 +1,16 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
+import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { toast } from 'react-hot-toast';
 import { useDebouncedCallback } from 'use-debounce';
 import { useRouter } from 'next/router';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { toast } from 'react-hot-toast';
 
 import { useTokenDetails } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useTokensByPage } from '@/src/hooks/contracts/useLOVE20Launch';
 import { TokenInfo } from '@/src/types/life20types';
 import { Token, TokenContext } from '@/src/contexts/TokenContext';
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const PAGE_SIZE = 10;
 
@@ -111,14 +111,15 @@ export default function TokenList() {
           <CardContent className="p-4 flex justify-between items-center">
             <div>
               <p className="flex items-center gap-2 ">
-                <span className="font-semibold text-primary mr-4">${token.symbol}</span>
-                <span className="text-gray-500 text-sm">父币 ${token.parentTokenSymbol}</span>
+                <span className="font-semibold mr-4">{token.symbol}</span>
+                <span className="text-greyscale-500 text-sm">父币 </span>
+                <span className="text-sm">{token.parentTokenSymbol}</span>
               </p>
               <p className="text-sm text-muted-foreground">
                 {token.hasEnded ? (
-                  <span className="text-gray-500">发射已完成</span>
+                  <span className="text-greyscale-500">发射已完成</span>
                 ) : (
-                  <span className="text-green-500">发射中</span>
+                  <span className="text-secondary">发射中</span>
                 )}
               </p>
             </div>
@@ -128,7 +129,7 @@ export default function TokenList() {
           </CardContent>
         </Card>
       ))}
-      {(isLoadingTokens || isLoadingDetails) && <Loading />}
+      {(isLoadingTokens || isLoadingDetails) && <LoadingIcon />}
     </div>
   );
 }

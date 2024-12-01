@@ -1,10 +1,10 @@
-// components/Common/Loading.tsx
+// components/Common/LoadingIcon.tsx
 
-const Loading: React.FC = () => {
+const LoadingIcon: React.FC = () => {
   return (
     <span className="flex justify-center items-center">
       <svg
-        className="animate-spin h-5 w-5 mr-3 text-gray-500"
+        className="animate-spin h-5 w-5 mr-3 text-greyscale-500"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -16,4 +16,4 @@ const Loading: React.FC = () => {
   );
 };
 
-export default Loading;
+export default LoadingIcon;

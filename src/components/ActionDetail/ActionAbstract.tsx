@@ -7,7 +7,7 @@ import { useActionSubmits } from '@/src/hooks/contracts/useLOVE20Submit';
 import { ActionInfo, ActionSubmit } from '@/src/types/life20types';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 interface ActionAbstractProps {
   actionInfo: ActionInfo;
@@ -31,15 +31,15 @@ const ActionAbstract: React.FC<ActionAbstractProps> = ({ actionInfo, round, show
 
   return (
     <>
-      <div className="max-w-4xl mx-auto p-6 bg-white  mb-4">
+      <div className="max-w-4xl mx-auto px-6 pt-4 pb-2">
         <div className="flex flex-col">
-          <span className="text-sm text-gray-500">No.{actionInfo?.head.id.toString()}</span>
+          <span className="text-sm text-greyscale-500">No.{actionInfo?.head.id.toString()}</span>
           <span className="text-2xl font-bold text-black">{actionInfo?.body.action}</span>
         </div>
         <div className="mt-2">
-          <span className="text-gray-600">{actionInfo?.body.consensus}</span>
+          <span className="text-greyscale-600">{actionInfo?.body.consensus}</span>
         </div>
-        <div className="mt-2 text-xs text-gray-500 flex justify-between">
+        <div className="mt-2 text-xs text-greyscale-500 flex justify-between">
           <div className="flex items-center">
             创建人 <AddressWithCopyButton address={actionInfo?.head.author as `0x${string}`} />
           </div>

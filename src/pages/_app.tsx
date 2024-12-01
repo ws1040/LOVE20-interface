@@ -5,8 +5,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { Toaster } from 'react-hot-toast';
 import { WagmiProvider } from 'wagmi';
+import { SidebarInset } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 import { TokenProvider } from '@/src/contexts/TokenContext';
+import { AppSidebar } from '@/src/components/Common/AppSidebar';
 import { config } from '@/src/wagmi';
 import Footer from '@/src/components/Footer';
 
@@ -21,19 +24,24 @@ function MyApp({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={client}>
         <TokenProvider>
           <RainbowKitProvider>
-            <div className="min-h-screen bg-gray-100 flex flex-col">
-              <Toaster
-                position="top-center"
-                toastOptions={{
-                  style: {
-                    background: '#000000',
-                    color: '#FFFFFF',
-                  },
-                }}
-              />
-              <Component {...pageProps} />
-              <Footer />
-            </div>
+            <SidebarProvider>
+              <AppSidebar />
+              <SidebarInset>
+                <div className="min-h-screen bg-background flex flex-col">
+                  <Toaster
+                    position="top-center"
+                    toastOptions={{
+                      style: {
+                        background: '#000000',
+                        color: '#FFFFFF',
+                      },
+                    }}
+                  />
+                  <Component {...pageProps} />
+                  <Footer />
+                </div>
+              </SidebarInset>
+            </SidebarProvider>
           </RainbowKitProvider>
         </TokenProvider>
       </QueryClientProvider>

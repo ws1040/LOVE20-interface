@@ -9,8 +9,11 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isLoading }) => {
   if (!isLoading) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
-      <Loader2 className="h-12 w-12 text-white animate-spin" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
+      <div className="text-center">
+        <Loader2 className="mx-auto h-8 w-8 animate-spin text-white" />
+        <p className="mt-2 text-sm font-medium text-white">Loading</p>
+      </div>
     </div>
   );
 };

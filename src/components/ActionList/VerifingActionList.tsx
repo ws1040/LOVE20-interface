@@ -1,18 +1,18 @@
 import React, { useContext } from 'react';
 import Link from 'next/link';
 
+import { ActionInfo } from '@/src/types/life20types';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { TokenContext } from '@/src/contexts/TokenContext';
 import { useVotesNums } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
+import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
-import { TokenContext } from '@/src/contexts/TokenContext';
-import { ActionInfo } from '@/src/types/life20types';
-
-import Loading from '@/src/components/Common/Loading';
-
-interface JoiningActionListProps {
+interface VerifingActionListProps {
   currentRound: bigint;
 }
-const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) => {
+const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
 
   // 获取投票id列表、投票数
@@ -32,8 +32,8 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
 
   if (isPendingVotesNums || (actionIds && actionIds.length > 0 && isPendingActionInfosByIds)) {
     return (
-      <div className="p-4 flex justify-center items-center">
-        <Loading />
+      <div className="p-6 flex justify-center items-center">
+        <LoadingIcon />
       </div>
     );
   }
@@ -45,27 +45,29 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   }
 
   if (!token) {
-    return <Loading />;
+    return <LoadingIcon />;
   }
 
   return (
-    <div className="p-4">
-      <h2 className="text-sm font-bold mb-4 text-gray-600">待验证行动</h2>
-      <div className="space-y-4">
+    <div className="p-6">
+      <LeftTitle title="待验证行动" />
+      <div className="mt-4 space-y-4">
         {actionInfos?.map((action: ActionInfo, index: number) => (
-          <div key={action.head.id} className="bg-white p-4 rounded-lg mb-4">
-            <Link href={`/${token.symbol}/verify/${action.head.id}`} key={action.head.id}>
-              <div className="font-semibold mb-2">
-                <span className="text-gray-400 text-base mr-1">{`No.${action.head.id}`}</span>
-                <span className="text-gray-800 text-lg">{`${action.body.action}`}</span>
-              </div>
-              <p className="leading-tight">{action.body.consensus}</p>
+          <Card key={action.head.id} className="shadow-none">
+            <Link href={`/${token?.symbol}/verify/${action.head.id}`}>
+              <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
+                <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
+                <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
+              </CardHeader>
+              <CardContent className="px-3 pt-1 pb-2">
+                <div className="text-greyscale-500">{action.body.consensus}</div>
+              </CardContent>
             </Link>
-          </div>
+          </Card>
         ))}
       </div>
     </div>
   );
 };
 
-export default JoiningActionList;
+export default VerifingActionList;

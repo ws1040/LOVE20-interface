@@ -7,9 +7,8 @@ import { useActionSubmits } from '@/src/hooks/contracts/useLOVE20Submit';
 import { ActionSubmit } from '@/src/types/life20types';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
-
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 interface ActivityDetailProps {
   actionId: bigint;
@@ -40,15 +39,15 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
 
   return (
     <>
-      <div className="max-w-4xl mx-auto p-6 bg-white mb-4">
+      <div className="max-w-4xl mx-auto p-6 pt-4 pb-2 border-t border-greyscale-100">
         <div className="flex flex-col">
-          <span className="text-sm text-gray-500">No.{actionInfo?.head.id.toString()}</span>
-          <span className="text-2xl font-bold text-black">{actionInfo?.body.action}</span>
+          <span className="text-sm text-greyscale-500">No.{actionInfo?.head.id.toString()}</span>
+          <span className="text-xl font-bold text-black">{actionInfo?.body.action}</span>
         </div>
-        <div className="mt-2">
-          <span className="text-gray-600">{actionInfo?.body.consensus}</span>
+        <div className="mt-1">
+          <span className="text-greyscale-600">{actionInfo?.body.consensus}</span>
         </div>
-        <div className="mt-2 text-xs text-gray-500 flex justify-between">
+        <div className="mt-0 text-xs text-greyscale-500 flex justify-between">
           <div className="flex items-center">
             创建人 <AddressWithCopyButton address={actionInfo?.head.author as `0x${string}`} />
           </div>
@@ -59,31 +58,31 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
           )}
         </div>
       </div>
-      <div className="max-w-4xl mx-auto p-6 bg-white">
+      <div className="max-w-4xl mx-auto p-6 pt-4 pb-2">
         <div className="mb-6">
           <div className="mb-4">
-            <h3 className="text-base text-gray-500">参与资产上限</h3>
-            <p className="text-lg">{formatTokenAmount(actionInfo?.body.maxStake || BigInt(0))}</p>
+            <h3 className="text-sm font-bold">参与资产上限</h3>
+            <p className="text-greyscale-500">{formatTokenAmount(actionInfo?.body.maxStake || BigInt(0))}</p>
           </div>
 
           <div className="mb-4">
-            <h3 className="text-base text-gray-500">随机奖励地址数</h3>
-            <p className="text-lg">{actionInfo?.body.maxRandomAccounts.toString() || '-'}</p>
+            <h3 className="text-sm font-bold">随机奖励地址数</h3>
+            <p className="text-greyscale-500">{actionInfo?.body.maxRandomAccounts.toString() || '-'}</p>
           </div>
 
           <div className="mb-4">
-            <h3 className="text-base text-gray-500">验证规则</h3>
-            <p className="text-lg">{actionInfo?.body.verificationRule || '-'}</p>
+            <h3 className="text-sm font-bold">验证规则</h3>
+            <p className="text-greyscale-500">{actionInfo?.body.verificationRule || '-'}</p>
           </div>
 
           <div className="mb-4">
-            <h3 className="text-base text-gray-500">验证信息填写指引</h3>
-            <p className="text-lg">{actionInfo?.body.verificationInfoGuide || '-'}</p>
+            <h3 className="text-sm font-bold">验证信息填写指引</h3>
+            <p className="text-greyscale-500">{actionInfo?.body.verificationInfoGuide || '-'}</p>
           </div>
 
           <div className="mb-4">
-            <h3 className="text-base text-gray-500">白名单</h3>
-            <p className="text-lg flex flex-wrap items-center">
+            <h3 className="text-sm font-bold">白名单</h3>
+            <p className="text-greyscale-500 flex flex-wrap items-center">
               {actionInfo?.body.whiteList.length
                 ? actionInfo.body.whiteList.map((addr: string, index: number) => (
                     <span key={index} className="flex items-center mr-2">
@@ -95,7 +94,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
           </div>
         </div>
 
-        {(isPendingActionInfo || (showSubmitter && isPendingActionSubmits)) && <Loading />}
+        {(isPendingActionInfo || (showSubmitter && isPendingActionSubmits)) && <LoadingIcon />}
 
         {(errorActionInfo || (showSubmitter && errorActionSubmits)) && (
           <div className="text-center text-sm text-red-500">

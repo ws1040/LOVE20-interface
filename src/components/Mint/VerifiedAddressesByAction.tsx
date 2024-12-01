@@ -1,25 +1,37 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
 
-import { VerifiedAddress } from '@/src/types/life20types';
+import { formatTokenAmount } from '@/src/lib/format';
 import { TokenContext } from '@/src/contexts/TokenContext';
+import { VerifiedAddress } from '@/src/types/life20types';
 import { useVerifiedAddressesByAction } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useMintActionReward } from '@/src/hooks/contracts/useLOVE20Mint';
-import { formatTokenAmount } from '@/src/lib/format';
-
-import Loading from '@/src/components/Common/Loading';
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
+import ChangeRound from '@/src/components/Common/ChangeRound';
+import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
-const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> = ({ round, actionId }) => {
+const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: bigint }> = ({
+  currentJoinRound,
+  actionId,
+}) => {
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress } = useAccount();
+  const [selectedRound, setSelectedRound] = useState(0n);
+  useEffect(() => {
+    if (currentJoinRound >= 2n) {
+      setSelectedRound(currentJoinRound - 2n);
+    }
+  }, [currentJoinRound]);
 
   // 读取验证地址
   const {
     verifiedAddresses,
     isPending: isPendingVerifiedAddresses,
     error: errorVerifiedAddresses,
-  } = useVerifiedAddressesByAction(token?.address as `0x${string}`, round, actionId);
+  } = useVerifiedAddressesByAction(token?.address as `0x${string}`, selectedRound, actionId);
   const [addresses, setAddresses] = useState<VerifiedAddress[]>([]);
   useEffect(() => {
     if (verifiedAddresses) {
@@ -35,34 +47,51 @@ const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> =
     isConfirmed: isConfirmedMint,
     writeError: mintError,
   } = useMintActionReward();
-
   const handleClaim = async (item: VerifiedAddress) => {
     if (accountAddress && item.reward > 0) {
-      await mintActionReward(token?.address as `0x${string}`, round, actionId);
-      if (isConfirmedMint) {
-        setAddresses((prev) => prev.map((addr) => (addr.account === item.account ? { ...addr, reward: 0n } : addr)));
-      }
+      await mintActionReward(token?.address as `0x${string}`, selectedRound, actionId);
     }
   };
+  useEffect(() => {
+    if (isConfirmedMint) {
+      setAddresses((prev) => prev.map((addr) => (addr.account === accountAddress ? { ...addr, reward: 0n } : addr)));
+    }
+  }, [isConfirmedMint]);
 
-  if (isPendingVerifiedAddresses) return <Loading />;
-  if (errorVerifiedAddresses) return <div>发生错误: {errorVerifiedAddresses.message}</div>;
+  const handleChangedRound = (round: number) => {
+    setSelectedRound(BigInt(round));
+  };
+
+  if (isPendingVerifiedAddresses) {
+    return <LoadingIcon />;
+  }
+
+  if (errorVerifiedAddresses) {
+    console.error(errorVerifiedAddresses);
+    return <div>发生错误: {errorVerifiedAddresses.message}</div>;
+  }
 
   return (
-    <div className="relative pt-4 pl-4 bg-base-100 mb-4">
-      <h2 className="relative pl-4 text-gray-700 text-base font-medium before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
-        验证地址结果
-      </h2>
+    <div className="relative px-6 py-4">
+      <div className="flex items-center">
+        <LeftTitle title="验证结果" />
+        <span className="text-sm text-greyscale-500 ml-2">行动轮第</span>
+        <span className="text-sm text-secondary ml-1">{selectedRound.toString()}</span>
+        <span className="text-sm text-greyscale-500 ml-1">轮</span>
+        <ChangeRound
+          currentRound={currentJoinRound ? currentJoinRound - 1n : 0n}
+          handleChangedRound={handleChangedRound}
+        />
+      </div>
       {addresses.length === 0 ? (
-        <div className="text-center text-sm text-gray-500">没有验证地址</div>
+        <div className="text-center text-sm text-greyscale-400 p-4">没有地址参与行动</div>
       ) : (
         <table className="table w-full">
           <thead>
             <tr className="border-b border-gray-100">
               <th>地址</th>
               <th>得分</th>
-              <th>奖励</th>
-              <th></th>
+              <th colSpan={2}>待领取奖励</th>
             </tr>
           </thead>
           <tbody>
@@ -76,15 +105,17 @@ const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> =
                 <td>
                   {item.account === accountAddress ? (
                     item.reward > 0 ? (
-                      <button
-                        className="btn btn-primary btn-sm"
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-secondary border-secondary"
                         onClick={() => handleClaim(item)}
                         disabled={isMinting || isConfirmingMint}
                       >
                         领取
-                      </button>
+                      </Button>
                     ) : item.score > 0 ? (
-                      <span className="text-gray-500">已领取</span>
+                      <span className="text-greyscale-500">已领取</span>
                     ) : (
                       ''
                     )
@@ -99,23 +130,7 @@ const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> =
       )}
       {mintError && <div className="text-red-500">{mintError.message}</div>}
 
-      {/* 遮罩层 */}
-      {(isMinting || isConfirmingMint) && (
-        <div className="absolute top-0 left-0 w-full h-full bg-gray-500 bg-opacity-50 flex items-center justify-center z-20">
-          <div className="text-white text-lg flex items-center">
-            <svg
-              className="animate-spin mr-3 h-5 w-5 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-            </svg>
-            正在提交中...
-          </div>
-        </div>
-      )}
+      <LoadingOverlay isLoading={isMinting || isConfirmingMint} />
     </div>
   );
 };

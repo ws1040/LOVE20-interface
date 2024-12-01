@@ -7,7 +7,8 @@ import { useGovRewardsByAccountByRounds } from '@/src/hooks/contracts/useLOVE20D
 import { useMintGovReward, useCurrentRound } from '@/src/hooks/contracts/useLOVE20Mint';
 import { formatTokenAmount } from '@/src/lib/format';
 import Header from '@/src/components/Header';
-import Loading from '@/src/components/Common/Loading';
+import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
@@ -51,17 +52,16 @@ const GovRewardsPage: React.FC = () => {
     }
   };
 
-  if (isLoadingRewards) return <Loading />;
+  if (isLoadingRewards) return <LoadingIcon />;
   if (errorLoadingRewards) return <div className="text-red-500">发生错误: {errorLoadingRewards.message}</div>;
 
   return (
     <>
       <Header title="行动详情" />
       <main className="flex-grow">
-        <div className="flex flex-col space-y-6 p-4 bg-white ">
-          <h2 className="relative pl-4 text-gray-700 text-base font-medium before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
-            铸造治理奖励
-          </h2>
+        <div className="flex flex-col space-y-6 p-6">
+          <LeftTitle title="铸造治理奖励" />
+
           <table className="table w-full table-auto">
             <thead>
               <tr className="border-b border-gray-100">
@@ -87,7 +87,7 @@ const GovRewardsPage: React.FC = () => {
                     ) : item.minted > 0n ? (
                       <span className="text-green-500">已领取</span>
                     ) : (
-                      <span className="text-gray-500">无奖励</span>
+                      <span className="text-greyscale-500">无奖励</span>
                     )}
                   </td>
                 </tr>

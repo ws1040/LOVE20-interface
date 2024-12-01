@@ -5,7 +5,7 @@ import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 import { TokenContext } from '@/src/contexts/TokenContext';
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const Home: NextPage = () => {
   const { token } = useContext(TokenContext) || {};
@@ -27,10 +27,10 @@ const Home: NextPage = () => {
   }, [token, router]);
 
   if (!token) {
-    return <Loading />;
+    return <LoadingIcon />;
   }
 
-  return <Loading />;
+  return <LoadingIcon />;
 };
 
 export default Home;

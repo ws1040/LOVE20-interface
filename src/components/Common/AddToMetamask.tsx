@@ -63,7 +63,7 @@ export default function AddToMetamask({ tokenAddress, tokenSymbol, tokenDecimals
       disabled={isAdding}
       className="flex items-center justify-center p-1 rounded hover:bg-gray-200 focus:outline-none"
     >
-      {isAdding ? <Loader2 className="h-4 w-4 animate-spin" /> : <CirclePlus className="h-4 w-4 text-gray-500" />}
+      {isAdding ? <Loader2 className="h-4 w-4 animate-spin" /> : <CirclePlus className="h-4 w-4 text-greyscale-500" />}
     </button>
   );
 }

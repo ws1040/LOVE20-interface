@@ -1,12 +1,13 @@
 import React, { useContext } from 'react';
 import { useAccount } from 'wagmi';
-import { TokenContext } from '@/src/contexts/TokenContext';
-import { formatTokenAmount } from '@/src/lib/format';
-import Loading from '@/src/components/Common/Loading';
-
-import { useAccountStakeStatus } from '@/src/hooks/contracts/useLOVE20Stake';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+
+import { formatTokenAmount } from '@/src/lib/format';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { useAccountStakeStatus } from '@/src/hooks/contracts/useLOVE20Stake';
+import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const MyStakingPanel: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
@@ -23,26 +24,37 @@ const MyStakingPanel: React.FC = () => {
     return '';
   }
 
+  if (errorAccountStakeStatus) {
+    console.log('errorAccountStakeStatus', errorAccountStakeStatus);
+  }
+
   return (
-    <div className="flex flex-col items-center space-y-4 p-6 bg-white  mt-4">
-      <div className="flex w-full justify-center space-x-20">
-        <div className="flex flex-col items-center">
-          <span className="text-sm text-gray-500">我的治理票数</span>
-          <span className="text-2xl font-bold text-orange-400">
-            {isPendingAccountStakeStatus ? <Loading /> : formatTokenAmount(govVotes || BigInt(0))}
-          </span>
+    <div className="flex-col items-center px-6 py-2">
+      <LeftTitle title="我的质押" />
+      <div className="stats w-full grid grid-cols-2 divide-x-0">
+        <div className="stat place-items-center">
+          <div className="stat-title text-sm">我的治理票数</div>
+          <div className="stat-value text-xl">
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0))}
+          </div>
+          <div className="stat-actions">
+            <Button variant="outline" size="sm" className="text-secondary border-secondary">
+              <Link href={`/${token.symbol}/gov/stakelp`}>去获取</Link>
+            </Button>
+          </div>
         </div>
-        <div className="flex flex-col items-center">
-          <span className="text-sm text-gray-500">我的质押数</span>
-          <span className="text-2xl font-bold text-orange-400">
-            {isPendingAccountStakeStatus ? <Loading /> : formatTokenAmount(stAmount || BigInt(0))}
-          </span>
+        <div className="stat place-items-center">
+          <div className="stat-title text-sm">我的质押代币数</div>
+          <div className="stat-value text-xl">
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || BigInt(0))}
+          </div>
+          <div className="stat-actions">
+            <Button variant="outline" size="sm" className="text-secondary border-secondary">
+              <Link href={`/${token.symbol}/gov/staketoken`}>去质押</Link>
+            </Button>
+          </div>
         </div>
       </div>
-
-      <Link href={`/${token.symbol}/gov/stake`} className="w-1/2">
-        <Button className="w-full bg-blue-600 hover:bg-blue-700">去质押</Button>
-      </Link>
     </div>
   );
 };

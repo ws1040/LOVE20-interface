@@ -1,21 +1,26 @@
 import React, { useContext } from 'react';
 import Link from 'next/link';
+import { useAccount } from 'wagmi';
 
+import { ActionInfo } from '@/src/types/life20types';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { formatTokenAmount } from '@/src/lib/format';
+import { TokenContext } from '@/src/contexts/TokenContext';
 import { useJoinableActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
-import { TokenContext } from '@/src/contexts/TokenContext';
-import { ActionInfo } from '@/src/types/life20types';
-import { formatTokenAmount } from '@/src/lib/format';
-
-import Loading from '@/src/components/Common/Loading';
+import { useJoinedActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 interface JoiningActionListProps {
   currentRound: bigint;
 }
+
 const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
+  const { address: accountAddress } = useAccount();
 
-  // 获取可加入的行动ids以及投票数、质押币数
+  // 获取可加入的行动ids以及投票数、质押币数 TODO：将3个API合并1个外围API
   const {
     actions: joinableActions,
     isPending: isPendingJoinableActions,
@@ -25,52 +30,81 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   const actionIds = joinableActions?.map((action) => action.actionId);
   const totalVotes = joinableActions?.reduce((acc, action) => acc + action.votesNum, 0n) || 0n;
 
-  // 获取行动详情
+  // 获取行动详情 TODO：将3个API合并1个外围API
   const {
     actionInfos,
     isPending: isPendingActionInfosByIds,
     error: errorActionInfosByIds,
   } = useActionInfosByIds((token?.address as `0x${string}`) || '', actionIds || []);
 
-  if (isPendingJoinableActions || (actionIds && actionIds.length > 0 && isPendingActionInfosByIds)) {
+  // 获取已加入的行动 TODO：将3个API合并1个外围API
+  const {
+    joinedActions,
+    isPending: isPendingJoinedActions,
+    error: errorJoinedActions,
+  } = useJoinedActions((token?.address as `0x${string}`) || '', accountAddress as `0x${string}`);
+
+  if (
+    isPendingJoinableActions ||
+    (actionIds && actionIds.length > 0 && isPendingActionInfosByIds) ||
+    isPendingJoinedActions
+  ) {
     return (
       <div className="p-4 flex justify-center items-center">
-        <Loading />
+        <LoadingIcon />
       </div>
     );
   }
 
-  if (errorJoinableActions || errorActionInfosByIds) {
+  if (errorJoinableActions || errorActionInfosByIds || errorJoinedActions) {
+    console.error('errorJoinableActions', errorJoinableActions);
+    console.error('errorActionInfosByIds', errorActionInfosByIds);
+    console.error('errorJoinedActions', errorJoinedActions);
     return <div>加载出错，请稍后再试。</div>;
   }
 
   return (
-    <div className="p-4">
-      <h2 className="text-sm font-bold mb-4 text-gray-600">行动列表 (行动轮)</h2>
+    <div className="p-6">
+      <LeftTitle title="进行中的行动" />
       {!actionIds?.length ? (
-        <div className="text-sm text-gray-500 text-center">没有行动</div>
+        <div className="text-sm text-greyscale-500 text-center">没有行动</div>
       ) : (
-        <div className="space-y-4">
-          {actionInfos?.map((action: ActionInfo, index: number) => (
-            <div key={action.head.id} className="bg-white p-4 rounded-lg mb-4">
-              <Link href={`/${token?.symbol}/action/${action.head.id}?type=join`} key={action.head.id}>
-                <div className="font-semibold mb-2">
-                  <span className="text-gray-400 text-base mr-1">{`No.${action.head.id}`}</span>
-                  <span className="text-gray-800 text-lg">{`${action.body.action}`}</span>
-                </div>
-                <p className="leading-tight">{action.body.consensus}</p>
-                <div className="flex justify-between mt-1">
-                  <span className="text-sm">
-                    投票占比 {((Number(joinableActions?.[index].votesNum || 0n) * 100) / Number(totalVotes)).toFixed(1)}
-                    %
-                  </span>
-                  <span className="text-sm">
-                    已参与行动代币 {formatTokenAmount(joinableActions?.[index].joinedAmount || 0n)}
-                  </span>
-                </div>
-              </Link>
-            </div>
-          ))}
+        <div className="mt-4 space-y-4">
+          {actionInfos?.map((action: ActionInfo, index: number) => {
+            const isJoined = joinedActions?.some((joinedAction) => joinedAction.actionId === BigInt(action.head.id));
+
+            const href = isJoined
+              ? `/${token?.symbol}/action/${action.head.id}?type=join`
+              : `/${token?.symbol}/acting/join?id=${action.head.id}`;
+
+            return (
+              <Card key={action.head.id} className="shadow-none">
+                <Link href={href}>
+                  <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
+                    <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
+                    <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
+                  </CardHeader>
+                  <CardContent className="px-3 pt-1 pb-2">
+                    <div className="text-greyscale-500">{action.body.consensus}</div>
+                    <div className="flex justify-between mt-1 text-sm">
+                      <span>
+                        <span className="text-greyscale-400 mr-1">投票占比</span>
+                        <span className="text-secondary">
+                          {((Number(joinableActions?.[index].votesNum || 0n) * 100) / Number(totalVotes)).toFixed(1)}%
+                        </span>
+                      </span>
+                      <span>
+                        <span className="text-greyscale-400 mr-1">参与代币数</span>
+                        <span className="text-secondary">
+                          {formatTokenAmount(joinableActions?.[index].joinedAmount || 0n)}
+                        </span>
+                      </span>
+                    </div>
+                  </CardContent>
+                </Link>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>

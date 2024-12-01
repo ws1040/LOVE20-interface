@@ -9,15 +9,16 @@ import {
   useWithdraw,
 } from '@/src/hooks/contracts/useLOVE20Join';
 import { TokenContext } from '@/src/contexts/TokenContext';
-import Loading from '@/src/components/Common/Loading';
+import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import { formatTokenAmount } from '@/src/lib/format';
 
 interface MyJoinInfoOfActionPancelProps {
   actionId: bigint;
-  currentRound: bigint;
+  currentJoinRound: bigint;
 }
 
-const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ actionId, currentRound }) => {
+const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ actionId, currentJoinRound }) => {
   const { address: account } = useAccount();
   const { token } = useContext(TokenContext) || {};
 
@@ -66,7 +67,7 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
   }, [isConfirmedWithdraw]);
 
   if (isPendingStakedAmountByAccountByActionId || isPendingLastJoinedRound) {
-    return <Loading />;
+    return <LoadingIcon />;
   }
 
   if (errorStakedAmountByAccountByActionId || errorLastJoinedRound) {
@@ -75,44 +76,34 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
   }
 
   return (
-    <>
-      <div className="flex flex-col items-center space-y-6 pb-8 bg-white mb-4">
-        <div className="flex w-full justify-center space-x-20">
-          <div className="flex flex-col items-center">
-            <span className="text-sm text-gray-500">我参与的代币数</span>
-            <span className="text-2xl font-bold text-orange-400">
-              {formatTokenAmount(stakedAmountByAccountByActionId || BigInt(0))}
-            </span>
-          </div>
-          <div className="flex flex-col items-center">
-            <span className="text-sm text-gray-500">参加到第几轮</span>
-            <span className="text-2xl font-bold text-orange-400">{lastJoinedRound?.toString()}</span>
-          </div>
+    <div className="px-6 pt-4 pb-2">
+      <LeftTitle title="我的参与" />
+      <div className="stats w-full border grid grid-cols-2 divide-x-0 mt-2">
+        <div className="stat place-items-center">
+          <div className="stat-title">我参与的代币数</div>
+          <div className="stat-value text-2xl">{formatTokenAmount(stakedAmountByAccountByActionId || BigInt(0))}</div>
         </div>
-
+        <div className="stat place-items-center">
+          <div className="stat-title">参加到第几轮</div>
+          <div className="stat-value text-2xl">{lastJoinedRound?.toString()}</div>
+        </div>
+      </div>
+      <div className="flex justify-center mt-2">
         {stakedAmountByAccountByActionId <= 0 ? (
-          <Button className="w-full bg-gray-400 cursor-not-allowed">已取回</Button>
-        ) : lastJoinedRound && Number(lastJoinedRound) + 1 < Number(currentRound) ? (
-          <Button
-            className="btn-primary btn w-1/2"
-            onClick={handleWithdraw}
-            disabled={isPendingWithdraw || isConfirmingWithdraw}
-          >
-            {isPendingWithdraw || isConfirmingWithdraw ? <Loading /> : '取回代币'}
+          <Button className="w-1/2" disabled>
+            已取回
+          </Button>
+        ) : lastJoinedRound && Number(lastJoinedRound) + 1 < Number(currentJoinRound) ? (
+          <Button className="w-1/2" onClick={handleWithdraw} disabled={isPendingWithdraw || isConfirmingWithdraw}>
+            {isPendingWithdraw || isConfirmingWithdraw ? <LoadingIcon /> : '取回代币'}
           </Button>
         ) : (
-          <span className="text-sm text-gray-500">
-            提示：到第 {(1 + Number(lastJoinedRound)).toString()} 轮后可取回
-          </span>
+          <Button className="w-1/2" disabled>
+            到第 {(1 + Number(lastJoinedRound)).toString()} 轮后可取回
+          </Button>
         )}
       </div>
-
-      {errorStakedAmountByAccountByActionId && (
-        <div className="text-red-500">{(errorStakedAmountByAccountByActionId as Error).message}</div>
-      )}
-      {errorLastJoinedRound && <div className="text-red-500">{(errorLastJoinedRound as Error).message}</div>}
-      {errorWithdraw && <div className="text-red-500">{(errorWithdraw as Error).message}</div>}
-    </>
+    </div>
   );
 };
 

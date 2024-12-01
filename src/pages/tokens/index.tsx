@@ -7,7 +7,7 @@ export default function Tokens() {
       <Header title="Launch" />
       <main className="flex-grow">
         <header className="flex justify-between items-center m-4">
-          <h1 className="text-xl font-bold">所有代币</h1>
+          <h1 className="text-lg font-bold">所有代币</h1>
         </header>
         <TokenList />
       </main>

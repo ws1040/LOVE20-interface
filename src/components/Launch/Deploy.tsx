@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 
 import { useDeployToken } from '@/src/hooks/contracts/useLOVE20Launch';
 import { TokenContext } from '@/src/contexts/TokenContext';
-import Loading from '../Common/Loading';
+import LoadingIcon from '../Common/LoadingIcon';
 import LoadingOverlay from '../Common/LoadingOverlay';
 
 export default function TokenDeployment() {
@@ -42,7 +42,7 @@ export default function TokenDeployment() {
   const tokenContext = useContext(TokenContext);
   const { token } = tokenContext || {};
   if (!token) {
-    return <Loading />;
+    return <LoadingIcon />;
   }
 
   // 检查输入是否合法
@@ -93,7 +93,9 @@ export default function TokenDeployment() {
 
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-center">部署子币</CardTitle>
-        <CardDescription className="text-center">创建 ${token.symbol} 的子币</CardDescription>
+        <CardDescription className="text-center">
+          创建 <span className="text-secondary">{token.symbol}</span> 的子币
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
@@ -122,12 +124,8 @@ export default function TokenDeployment() {
         )}
       </CardContent>
       <CardFooter>
-        <Button
-          className="w-full bg-blue-600 hover:bg-blue-700"
-          onClick={handleDeploy}
-          disabled={isLoading || !isConnected || isSuccess}
-        >
-          {isLoading ? <>部署中...</> : '部署'}
+        <Button className="w-full" onClick={handleDeploy} disabled={isLoading || !isConnected || isSuccess}>
+          {isLoading ? <>部署中...</> : '提交'}
         </Button>
       </CardFooter>
     </Card>

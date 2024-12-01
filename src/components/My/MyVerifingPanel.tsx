@@ -1,15 +1,14 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
+import { formatTokenAmount } from '@/src/lib/format';
+import { TokenContext } from '@/src/contexts/TokenContext';
 import { useVotesNumByAccount } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useScoreByVerifier } from '@/src/hooks/contracts/useLOVE20Verify';
-
-import { TokenContext } from '@/src/contexts/TokenContext';
-import { formatTokenAmount } from '@/src/lib/format';
-import Loading from '@/src/components/Common/Loading';
-import Round from '@/src/components/Common/Round';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 interface MyVerifingPanelProps {
   currentRound: bigint;
@@ -43,33 +42,41 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
   }
 
   return (
-    <div className="flex flex-col items-center bg-white py-4">
-      <Round currentRound={currentRound} roundName="验证轮" />
-
-      <div className="flex w-full justify-center space-x-20 my-4">
-        <div className="flex flex-col items-center">
-          <span className="text-sm text-gray-500">我的已投验证票</span>
-          <span className="text-2xl font-bold text-orange-400">
-            {isPendingScoreByVerifier ? <Loading /> : formatTokenAmount(scoreByVerifier || BigInt(0))}
-          </span>
+    <div className="flex-col items-center px-6 pt-6 pb-2">
+      <LeftTitle title="我的验证" />
+      <div className="stats w-full mt-4 border grid grid-cols-2 divide-x-0">
+        <div className="stat place-items-center">
+          <div className="stat-title text-sm">已验证票数</div>
+          <div className="stat-value text-xl">
+            {isPendingVotesNumByAccount ? <LoadingIcon /> : formatTokenAmount(scoreByVerifier || BigInt(0))}
+          </div>
         </div>
-        <div className="flex flex-col items-center">
-          <span className="text-sm text-gray-500">我的剩余验证票</span>
-          <span className="text-2xl font-bold text-orange-400">
-            {isPendingVotesNumByAccount || isPendingScoreByVerifier ? <Loading /> : formatTokenAmount(remainingVotes)}
-          </span>
+        <div className="stat place-items-center">
+          <div className="stat-title text-sm">未验证票数</div>
+          <div className="stat-value text-xl">
+            {isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
+              <LoadingIcon />
+            ) : (
+              formatTokenAmount(remainingVotes)
+            )}
+          </div>
         </div>
       </div>
-
       {showBtn &&
         (isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
-          <Loading />
+          <LoadingIcon />
         ) : votesNumByAccount > scoreByVerifier ? (
-          <Link href={`/${token.symbol}/verify`} className="w-1/2">
-            <Button className="w-full bg-blue-600 hover:bg-blue-700">去验证</Button>
-          </Link>
+          <div className="flex justify-center mt-4">
+            <Button className="w-1/2">
+              <Link href={`/${token.symbol}/verify`}>去验证</Link>
+            </Button>
+          </div>
         ) : (
-          <span className="text-gray-500 text-sm">无剩余验证票</span>
+          <div className="flex justify-center mt-4">
+            <Button disabled className="w-1/2">
+              {scoreByVerifier > 0 ? '已验证' : '未投票，无需验证'}
+            </Button>
+          </div>
         ))}
     </div>
   );

@@ -2,15 +2,16 @@ import React, { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
+import { ActionInfo, ActionSubmit } from '@/src/types/life20types';
+import { TokenContext } from '@/src/contexts/TokenContext';
 import { useActionSubmits, useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useVotesNums } from '@/src/hooks/contracts/useLOVE20Vote';
-
-import { TokenContext } from '@/src/contexts/TokenContext';
-import { ActionInfo, ActionSubmit } from '@/src/types/life20types';
 import Link from 'next/link';
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
+import LeftTitle from '../Common/LeftTitle';
 
 interface VotingActionListProps {
   currentRound: bigint;
@@ -47,6 +48,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
   const [selectedActions, setSelectedActions] = useState<Set<bigint>>(new Set());
   const handleCheckboxChange = (actionId: bigint) => {
     setSelectedActions((prevSelected) => {
+      console.log('prevSelected', prevSelected);
       const newSelected = new Set(prevSelected);
       if (newSelected.has(actionId)) {
         newSelected.delete(actionId);
@@ -78,7 +80,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
   ) {
     return (
       <div className="p-4 flex justify-center items-center">
-        <Loading />
+        <LoadingIcon />
       </div>
     );
   }
@@ -89,12 +91,19 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
   }
 
   if (!token) {
-    return <Loading />;
+    return <LoadingIcon />;
   }
 
   return (
-    <div className="p-4">
-      <h2 className="text-sm font-bold mb-4 text-gray-600">行动列表 (行动轮)</h2>
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-4">
+        <LeftTitle title="投票中的行动" />
+        {token && (
+          <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
+            <Link href={`/${token.symbol}/vote/actions4submit`}>推举其他行动</Link>
+          </Button>
+        )}
+      </div>
       <div className="space-y-4">
         {uniqueActionIds.length > 0 ? (
           <>
@@ -104,43 +113,54 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
               )?.submitter;
 
               return (
-                <div key={action.head.id} className="flex bg-white p-4 rounded-lg mb-4">
+                <Card key={action.head.id} className="shadow-none flex items-center">
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-warning mr-2"
+                    className="checkbox accent-secondary ml-2"
                     checked={selectedActions.has(BigInt(action.head.id))}
                     onChange={() => handleCheckboxChange(BigInt(action.head.id))}
                   />
-                  <Link href={`/${token.symbol}/action/${action.head.id}?type=vote`} className="flex-grow block">
-                    <div className="font-semibold mb-2">
-                      <span className="text-gray-400 text-base mr-1">{`No.${action.head.id}`}</span>
-                      <span className="text-gray-800 text-lg">{`${action.body.action}`}</span>
-                    </div>
-                    <p className="leading-tight">{action.body.consensus}</p>
-                    <div className="flex justify-between mt-1 text-gray-400">
-                      <span className="text-sm flex-1">
-                        推举人 <AddressWithCopyButton address={submitter} showCopyButton={false} />
-                      </span>
-                      <span className="text-sm flex-1 text-right">
-                        <span className="mr-1">投票占比</span>
-                        {Number(votes?.[index] || 0n) === 0
-                          ? '0'
-                          : ((Number(votes?.[index] || 0n) * 100) / Number(totalVotes)).toFixed(1)}
-                        %
-                      </span>
-                    </div>
+                  <Link
+                    href={`/${token.symbol}/action/${action.head.id}?type=vote`}
+                    key={action.head.id}
+                    className="w-full"
+                  >
+                    <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
+                      <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
+                      <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
+                    </CardHeader>
+                    <CardContent className="px-3 pt-1 pb-2">
+                      <div className="text-greyscale-500">{action.body.consensus}</div>
+                      <div className="flex justify-between mt-1 text-sm">
+                        <span className="flex items-center">
+                          <span className="text-greyscale-400 mr-1">推举人</span>
+                          <span className="text-secondary">
+                            <AddressWithCopyButton address={submitter} showCopyButton={false} />
+                          </span>
+                        </span>
+                        <span>
+                          <span className="text-greyscale-400 mr-1">投票占比</span>
+                          <span className="text-secondary">
+                            {Number(votes?.[index] || 0n) === 0
+                              ? '0'
+                              : ((Number(votes?.[index] || 0n) * 100) / Number(totalVotes)).toFixed(1)}
+                            %
+                          </span>
+                        </span>
+                      </div>
+                    </CardContent>
                   </Link>
-                </div>
+                </Card>
               );
             })}
             <div className="flex justify-center mt-4">
-              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleSubmit}>
-                投票
+              <Button className="w-full" onClick={handleSubmit}>
+                去给选中的行动投票
               </Button>
             </div>
           </>
         ) : (
-          <div className="text-sm text-gray-500 text-center">没有行动</div>
+          <div className="text-sm text-greyscale-500 text-center">没有行动</div>
         )}
       </div>
     </div>

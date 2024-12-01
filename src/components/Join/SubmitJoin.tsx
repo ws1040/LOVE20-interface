@@ -112,9 +112,9 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
 
   return (
     <>
-      <div className="w-full flex flex-col rounded p-4 bg-white mt-1">
+      <div className="w-full flex flex-col rounded px-6 pt-0 pb-2">
         <div className="mb-4">
-          <label className="block text-left mb-1 text-sm text-gray-500">
+          <label className="block text-left mb-1 text-sm text-greyscale-500">
             增加参与代币: (当前持有：{formatTokenAmount(tokenBalance || 0n)} {token?.symbol})
           </label>
           <input
@@ -127,37 +127,33 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
             }
             value={additionalStakeAmount}
             onChange={(e) => setAdditionalStakeAmount(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
         <div className="mb-4">
-          <label className="block text-left mb-1 text-sm text-gray-500">参与轮数:</label>
+          <label className="block text-left mb-1 text-sm text-greyscale-500">参与轮数:</label>
           <input
             type="number"
             placeholder="输入参数轮数"
             value={rounds}
             onChange={(e) => setRounds(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
         <div>
-          <label className="block text-left mb-1 text-sm text-gray-500">验证信息:</label>
+          <label className="block text-left mb-1 text-sm text-greyscale-500">验证信息:</label>
           <textarea
             placeholder={`${actionInfo?.body.verificationInfoGuide}`}
             value={verificationInfo}
             onChange={(e) => setVerificationInfo(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
         <div className="flex justify-center">
           {isConfirmedJoin ? (
-            <Button className="mt-4 w-1/2 bg-blue-600 hover:bg-blue-700">加入成功</Button>
+            <Button className="mt-4 w-1/2">加入成功</Button>
           ) : (
-            <Button
-              onClick={handleSubmit}
-              disabled={isPendingJoin || isConfirmingJoin}
-              className="mt-4 w-1/2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 disabled:bg-gray-400"
-            >
+            <Button onClick={handleSubmit} disabled={isPendingJoin || isConfirmingJoin} className="mt-4 w-1/2">
               {isPendingJoin || isConfirmingJoin ? '加入中...' : '加入行动'}
             </Button>
           )}

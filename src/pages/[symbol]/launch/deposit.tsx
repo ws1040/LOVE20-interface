@@ -1,7 +1,9 @@
+import dynamic from 'next/dynamic';
 import Header from '@/src/components/Header';
-import Deposit from '@/src/components/Launch/deposit';
 
-export default function TokenFairLaunch() {
+const Deposit = dynamic(() => import('@/src/components/Launch/deposit'), { ssr: false });
+
+export default function DepositPage() {
   return (
     <>
       <Header title="Launch" />

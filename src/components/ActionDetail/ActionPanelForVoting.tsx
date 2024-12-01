@@ -7,7 +7,7 @@ import { useCurrentRound, useVotesNumByAccountByActionId, useVote } from '@/src/
 
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import Round from '@/src/components/Common/Round';
 
 interface ActionPanelForVoteProps {
@@ -56,43 +56,38 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
   };
 
   return (
-    <div className="flex flex-col items-center space-y-6 p-8 bg-white mb-4  ">
-      {isPendingCurrentRound ? <Loading /> : <Round currentRound={currentRound} roundName="投票轮" />}
-      <div className="flex w-full justify-center space-x-20">
-        <div className="flex flex-col items-center">
-          <span className="text-sm text-gray-500">我的已投票数</span>
-          <span className="text-2xl font-bold text-orange-400">
+    <div className="flex flex-col items-center space-y-6 p-6 mb-4">
+      <div className="stats w-full border grid grid-cols-2 divide-x-0">
+        <div className="stat place-items-center">
+          <div className="stat-title">我的已投票数</div>
+          <div className="stat-value text-2xl">
             {isPendingVotesNumByAccountByActionId ? (
-              <Loading />
+              <LoadingIcon />
             ) : (
-              formatTokenAmount(votesNumByAccountByActionId || BigInt(0))
+              formatTokenAmount(votesNumByAccountByActionId / 10000n)
             )}
-          </span>
+          </div>
         </div>
-        <div className="flex flex-col items-center">
-          <span className="text-sm text-gray-500">我的剩余票数</span>
-          <span className="text-2xl font-bold text-orange-400">
+        <div className="stat place-items-center">
+          <div className="stat-title">我的剩余票数</div>
+          <div className="stat-value text-2xl">
             {isPendingValidGovVotes || isPendingVotesNumByAccountByActionId ? (
-              <Loading />
+              <LoadingIcon />
             ) : (
               formatTokenAmount(validGovVotes - votesNumByAccountByActionId)
             )}
-          </span>
+          </div>
         </div>
       </div>
 
       {!isPendingVotesNumByAccountByActionId && !votesNumByAccountByActionId ? (
-        <Button
-          className="w-1/2 bg-blue-600 hover:bg-blue-700"
-          onClick={handleSubmit}
-          disabled={isWriting || isConfirmingVote}
-        >
-          {isWriting || isConfirmingVote ? <Loading /> : '投100%票'}
+        <Button className="w-1/2" onClick={handleSubmit} disabled={isWriting || isConfirmingVote}>
+          {isWriting || isConfirmingVote ? <LoadingIcon /> : '将100%票投给此行动'}
         </Button>
       ) : (
-        <div className="flex flex-col items-center">
-          <Button className="w-1/2 bg-gray-400 cursor-not-allowed">您已投票</Button>
-        </div>
+        <Button className="w-1/2" disabled>
+          您已投票
+        </Button>
       )}
 
       {errVotesNumByAccountByActionId ? (

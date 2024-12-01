@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi';
 
 import { useStakedAmountByAccountByActionId } from '@/src/hooks/contracts/useLOVE20Join';
 import { TokenContext } from '@/src/contexts/TokenContext';
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import { formatTokenAmount } from '@/src/lib/format';
 
 interface MyJoinInfoOfActionAbstractProps {
@@ -39,16 +39,20 @@ const MyJoinInfoOfActionAbstract: React.FC<MyJoinInfoOfActionAbstractProps> = ({
   }
 
   return (
-    <div className="flex items-end w-full p-4 bg-white mb-4">
-      <span className="text-sm text-gray-500 mr-2">待参与代币数:</span>
-      <span className="text-xl font-bold text-orange-400">
-        {isPendingStakedAmountByAccountByActionId ? (
-          <Loading />
-        ) : (
-          formatTokenAmount(stakedAmountByAccountByActionId || BigInt(0))
-        )}
-      </span>
-      <span className="text-xs text-gray-400 ml-auto">(之前参与，未取回的代币)</span>
+    <div className="flex items-end w-full p-4">
+      <div className="stats w-full border divide-x-0">
+        <div className="stat place-items-center">
+          <div className="stat-title">待参与代币数</div>
+          <div className="stat-value text-2xl">
+            {isPendingStakedAmountByAccountByActionId ? (
+              <LoadingIcon />
+            ) : (
+              formatTokenAmount(stakedAmountByAccountByActionId || BigInt(0))
+            )}
+          </div>
+          <div className="stat-desc text-xs text-greyscale-400">参与之前的轮次，未取回的代币</div>
+        </div>
+      </div>
     </div>
   );
 };

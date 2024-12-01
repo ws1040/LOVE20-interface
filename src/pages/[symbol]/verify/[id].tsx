@@ -25,7 +25,7 @@ const VerifyPage = () => {
     <>
       <Header title="验证页面" />
       <main className="flex-grow">
-        <div className="flex flex-col items-center p-4 border-t border-gray-200 bg-white mb-4">
+        <div className="flex flex-col items-center p-4 border-t border-gray-200 mb-4">
           <MyActionVerifingPanel
             currentRound={currentRound}
             actionId={actionId}

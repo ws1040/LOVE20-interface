@@ -7,8 +7,9 @@ import { useVerifiedAddressesByAction } from '@/src/hooks/contracts/useLOVE20Dat
 import { useMintActionReward } from '@/src/hooks/contracts/useLOVE20Mint';
 import { formatTokenAmount } from '@/src/lib/format';
 
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
+import LeftTitle from '../Common/LeftTitle';
 
 const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> = ({ round, actionId }) => {
   const { token } = useContext(TokenContext) || {};
@@ -54,58 +55,58 @@ const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> =
     }
   };
 
-  if (isPendingVerifiedAddresses) return <Loading />;
+  if (isPendingVerifiedAddresses) return <LoadingIcon />;
   if (errorVerifiedAddresses) return <div>发生错误: {errorVerifiedAddresses.message}</div>;
 
   return (
-    <div className="p-4 bg-base-100 mb-4">
-      <h2 className="relative pl-4 text-gray-700 text-base font-medium before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
-        验证地址结果
-      </h2>
-      {addresses.length === 0 ? (
-        <div className="text-center text-sm text-gray-500">没有验证地址</div>
-      ) : (
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th>地址</th>
-              <th>得分</th>
-              <th>奖励</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {addresses.map((item) => (
-              <tr key={item.account}>
-                <td>
-                  <AddressWithCopyButton address={item.account} showCopyButton={false} />
-                </td>
-                <td>{formatTokenAmount(item.score)}</td>
-                <td>{formatTokenAmount(item.reward)}</td>
-                <td>
-                  {item.account === accountAddress ? (
-                    item.reward > 0 ? (
-                      <button
-                        className="btn btn-primary btn-sm"
-                        onClick={() => handleClaim(item)}
-                        disabled={isMinting || isConfirmingMint}
-                      >
-                        领取
-                      </button>
-                    ) : item.score > 0 ? (
-                      <span className="text-gray-500">已领取</span>
+    <div className="p-6 bg-base-100">
+      <LeftTitle title="验证地址结果" />
+      <div className="mt-4">
+        {addresses.length === 0 ? (
+          <div className="text-center text-sm text-greyscale-500">没有验证地址</div>
+        ) : (
+          <table className="table w-full">
+            <thead>
+              <tr>
+                <th>地址</th>
+                <th>得分</th>
+                <th>奖励</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {addresses.map((item) => (
+                <tr key={item.account}>
+                  <td>
+                    <AddressWithCopyButton address={item.account} showCopyButton={false} />
+                  </td>
+                  <td>{formatTokenAmount(item.score)}</td>
+                  <td>{formatTokenAmount(item.reward)}</td>
+                  <td>
+                    {item.account === accountAddress ? (
+                      item.reward > 0 ? (
+                        <button
+                          className="btn btn-primary btn-sm"
+                          onClick={() => handleClaim(item)}
+                          disabled={isMinting || isConfirmingMint}
+                        >
+                          领取
+                        </button>
+                      ) : item.score > 0 ? (
+                        <span className="text-greyscale-500">已领取</span>
+                      ) : (
+                        ''
+                      )
                     ) : (
                       ''
-                    )
-                  ) : (
-                    ''
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
       {mintError && <div className="text-red-500">{mintError.message}</div>}
     </div>
   );

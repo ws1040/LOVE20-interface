@@ -67,5 +67,5 @@ export const config = createConfig({
       : {
           [selectedChain.id]: http(selectedChain.rpcUrls.default.http[0]),
         },
-  // ssr: true, // 如果需要服务器端渲染
+  ssr: false, // 如果需要服务器端渲染
 });

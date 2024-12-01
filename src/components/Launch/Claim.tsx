@@ -8,7 +8,8 @@ import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
 import { Token, TokenContext } from '@/src/contexts/TokenContext';
 import { LaunchInfo } from '@/src/types/life20types';
 import { useContributed, useClaimed, useExtraRefunded, useClaim } from '@/src/hooks/contracts/useLOVE20Launch';
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LeftTitle from '../Common/LeftTitle';
 
 const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const { address: account } = useAccount();
@@ -33,7 +34,7 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
   } = useExtraRefunded(token?.address as `0x${string}`, account as `0x${string}`);
 
   // 计算待领取代币数量
-  const pendingTokens = launchInfo.totalContributed
+  const gotTokens = launchInfo.totalContributed
     ? (BigInt(TOKEN_CONFIG.fairLaunch) * (contributed || 0n)) / BigInt(launchInfo.totalContributed)
     : 0n;
 
@@ -73,68 +74,69 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
   }, [isClaimConfirmed, claimError]);
 
   if (isClaimedPending) {
-    return <Loading />;
+    return <LoadingIcon />;
   }
 
   return (
-    <div className="bg-white p-6 shadow-sm">
-      <div>
-        <h3 className="text-base font-medium mb-2">领取代币</h3>
-        <div className="flex justify-center mb-2">
-          <p>
-            <span className="text-2xl font-bold text-orange-400 mr-1">{formatTokenAmount(pendingTokens)}</span>
-            <span className="text-sm text-gray-500">{token?.symbol}</span>
-          </p>
+    <div className="p-6">
+      <LeftTitle title="我的领取" />
+
+      <div className="stats w-full border mt-4">
+        <div className="stat place-items-center">
+          <div className="stat-title text-sm mr-6">共获得</div>
+          <div className="stat-value text-secondary">
+            {formatTokenAmount(gotTokens)}
+            <span className="text-greyscale-500 font-normal text-sm ml-2">{token.symbol}</span>
+          </div>
         </div>
       </div>
 
-      <div>
-        <div className="mb-6 flex space-x-8">
-          <p>
-            <span className="text-sm text-gray-500">我的申购：</span>
+      <div className="stats w-full grid grid-cols-2 divide-x-0">
+        <div className="stat place-items-center">
+          <div className="stat-value text-xl">
+            <span className="text-sm font-normal text-greyscale-500">质押 </span>
             {formatTokenAmount(contributed || 0n)}
             {isContributedPending ? (
-              <Loading />
+              <LoadingIcon />
             ) : (
-              <span className="text-sm text-gray-500 ml-1">{token?.parentTokenSymbol}</span>
+              <span className="text-sm font-normal text-greyscale-500 ml-1">{token?.parentTokenSymbol}</span>
             )}
-          </p>
-          <p>
-            <span className="text-sm text-gray-500">退回父币：</span>
+          </div>
+        </div>
+        <div className="stat place-items-center">
+          <div className="stat-value text-xl">
+            <span className="text-sm font-normal text-greyscale-500">退回 </span>
             {formatTokenAmount(extraRefunded || 0n)}
             {isExtraRefundedPending ? (
-              <Loading />
+              <LoadingIcon />
             ) : (
-              <span className="text-sm text-gray-500 ml-1">{token?.parentTokenSymbol}</span>
+              <span className="text-sm font-normal text-greyscale-500 ml-1">{token?.parentTokenSymbol}</span>
             )}
-          </p>
+          </div>
         </div>
-        <div className="flex justify-center">
-          {Number(contributed) <= 0 && (
-            <Button className="w-1/2 bg-gray-500 text-white px-4 py-2 rounded" disabled>
-              未申购
-            </Button>
-          )}
-          {Number(contributed) > 0 && !claimed && (
-            <Button
-              className="w-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-              onClick={handleClaim}
-              disabled={isClaiming || isClaimConfirming}
-            >
-              {isClaiming || isClaimConfirming ? '领取中...' : '领取'}
-            </Button>
-          )}
-          {Number(contributed) > 0 && claimed && (
-            <Button className="w-1/2 bg-gray-400 text-white px-4 py-2 rounded" disabled>
-              已领取
-            </Button>
-          )}
-        </div>
-        {claimError && <div className="text-red-500">{claimError.message}</div>}
-        {contributedError && <div className="text-red-500">{contributedError.message}</div>}
-        {extraRefundedError && <div className="text-red-500">{extraRefundedError.message}</div>}
-        {claimedError && <div className="text-red-500">{claimedError.message}</div>}
       </div>
+
+      <div className="flex justify-center">
+        {Number(contributed) <= 0 && (
+          <Button className="w-1/2" disabled>
+            未申购
+          </Button>
+        )}
+        {Number(contributed) > 0 && !claimed && (
+          <Button className="w-1/2" onClick={handleClaim} disabled={isClaiming || isClaimConfirming}>
+            {isClaiming || isClaimConfirming ? '领取中...' : '领取'}
+          </Button>
+        )}
+        {Number(contributed) > 0 && claimed && (
+          <Button className="w-1/2" disabled>
+            已领取
+          </Button>
+        )}
+      </div>
+      {claimError && <div className="text-red-500">{claimError.message}</div>}
+      {contributedError && <div className="text-red-500">{contributedError.message}</div>}
+      {extraRefundedError && <div className="text-red-500">{extraRefundedError.message}</div>}
+      {claimedError && <div className="text-red-500">{claimedError.message}</div>}
     </div>
   );
 };

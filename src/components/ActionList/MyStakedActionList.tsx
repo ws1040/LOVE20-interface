@@ -1,13 +1,15 @@
 import React, { useContext } from 'react';
 import { useAccount } from 'wagmi';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
 
+import { formatTokenAmount } from '@/src/lib/format';
+import { JoinedAction } from '@/src/types/life20types';
+import { TokenContext } from '@/src/contexts/TokenContext';
 import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useJoinedActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
-import { TokenContext } from '@/src/contexts/TokenContext';
-import { JoinedAction } from '@/src/types/life20types';
-import { formatTokenAmount } from '@/src/lib/format';
-import Loading from '@/src/components/Common/Loading';
+import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const MyStakedActionList: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
@@ -28,7 +30,7 @@ const MyStakedActionList: React.FC = () => {
   );
 
   if (isPendingJoinedActions || (joinedActions && joinedActions.length > 0 && isPendingActionInfosByIds)) {
-    return <Loading />;
+    return <LoadingIcon />;
   }
 
   if (errorJoinedActions) {
@@ -36,26 +38,35 @@ const MyStakedActionList: React.FC = () => {
   }
 
   return (
-    <div className="p-4">
-      <h2 className="text-sm font-bold mb-4 text-gray-600">我参与的行动</h2>
+    <div className="p-6">
+      <LeftTitle title="我参与的行动" />
       {!joinedActions?.length ? (
-        <div className="text-sm text-gray-500 text-center">没有行动</div>
+        <div className="text-sm text-greyscale-500 text-center">没有行动</div>
       ) : (
-        <div className="space-y-4">
+        <div className="mt-4 space-y-4">
           {joinedActions?.map((action: JoinedAction, index: number) => (
-            <div key={action.actionId} className="bg-white p-4 rounded-lg mb-4">
+            <Card key={action.actionId} className="shadow-none">
               <Link href={`/${token?.symbol}/my/actrewards?id=${action.actionId}`} key={action.actionId}>
-                <div className="font-semibold mb-2">
-                  <span className="text-gray-400 text-base mr-1">{`No.${action.actionId}`}</span>
-                  <span className="text-gray-800 text-lg">{actionInfos?.[index]?.body.action}</span>
-                </div>
-                <p className="leading-tight">{actionInfos?.[index]?.body.consensus}</p>
-                <div className="flex justify-between mt-1">
-                  <span className="text-sm">参与到第 {action.lastJoinedRound.toString()} 轮</span>
-                  <span className="text-sm">参与代币数量：{formatTokenAmount(action.stakedAmount)}</span>
-                </div>
+                <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
+                  <span className="text-greyscale-400 text-sm mr-1">{`No.${action.actionId}`}</span>
+                  <span className="font-bold text-greyscale-800">{`${actionInfos?.[index]?.body.action}`}</span>
+                </CardHeader>
+                <CardContent className="px-3 pt-1 pb-2">
+                  <div className="text-greyscale-500">{actionInfos?.[index]?.body.consensus}</div>
+                  <div className="flex justify-between mt-1 text-sm">
+                    <span>
+                      <span className="text-greyscale-400 mr-1">参与到第</span>
+                      <span className="text-secondary">{action.lastJoinedRound.toString()}</span>
+                      <span className="text-greyscale-400 ml-1">轮</span>
+                    </span>
+                    <span>
+                      <span className="text-greyscale-400 mr-1">参与代币数</span>
+                      <span className="text-secondary">{formatTokenAmount(action.stakedAmount)}</span>
+                    </span>
+                  </div>
+                </CardContent>
               </Link>
-            </div>
+            </Card>
           ))}
         </div>
       )}

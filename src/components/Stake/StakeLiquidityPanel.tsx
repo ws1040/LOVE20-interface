@@ -9,6 +9,7 @@ import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import { TokenContext, Token } from '@/src/contexts/TokenContext';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useGetAmountsIn, useGetAmountsOut } from '@/src/components/Stake/getAmountHooks';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 interface StakeLiquidityPanelProps {
   tokenBalance: bigint;
@@ -206,54 +207,59 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
       toast.success('质押成功');
       // 2秒后刷新页面
       setTimeout(() => {
-        window.location.reload();
+        // 跳转到治理首页
+        window.location.href = `/${token?.symbol}/gov`;
       }, 2000);
     }
   }, [isConfirmedStakeLiquidity]);
 
   return (
     <>
-      <div className="w-full flex flex-col items-center rounded p-4 bg-white mt-1">
-        <div className="w-full text-left mb-4">
-          <h2 className="relative pl-4 text-gray-700 text-base font-medium before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
-            质押获取治理票：
-          </h2>
-        </div>
-        <form onSubmit={handleSubmit} className="w-full max-w-md">
+      <div className="w-full flex-col items-center rounded p-4 mt-1">
+        <LeftTitle title="质押获取治理票" />
+        <form onSubmit={handleSubmit} className="w-full max-w-md mt-4">
           <div className="mb-4">
-            <label className="block text-left mb-1 text-sm text-gray-500">
-              质押父币数 (当前持有：{formatTokenAmount(parentTokenBalance)} {token?.parentTokenSymbol})
+            <label className="block text-left mb-1 text-sm text-greyscale-500">
+              质押父币数 (当前持有：
+              <span className="text-secondary-400">
+                {formatTokenAmount(parentTokenBalance)} {token?.parentTokenSymbol}
+              </span>
+              )
             </label>
             <input
               type="text"
               placeholder={`输入 ${token?.parentTokenSymbol} 数量`}
               value={parentToken}
               onChange={handleParentTokenChange}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring bg-white"
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
               required
               disabled={hadStartedApprove}
             />
           </div>
           <div className="mb-4">
-            <label className="block text-left mb-1 text-sm text-gray-500">
-              质押token数 (当前持有：{formatTokenAmount(tokenBalance)} {token?.symbol})
+            <label className="block text-left mb-1 text-sm text-greyscale-500">
+              质押token数 (当前持有：
+              <span className="text-secondary-400">
+                {formatTokenAmount(tokenBalance)} {token?.symbol}
+              </span>
+              )
             </label>
             <input
               type="text"
               placeholder={`输入 ${token?.symbol} 数量`}
               value={stakeToken}
               onChange={handleStakeTokenChange}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring bg-white"
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
               required
               disabled={hadStartedApprove}
             />
           </div>
           <div className="mb-4">
-            <label className="block text-left mb-1 text-sm text-gray-500">释放期</label>
+            <label className="block text-left mb-1 text-sm text-greyscale-500">释放期</label>
             <select
               value={releasePeriod}
               onChange={(e) => setReleasePeriod(e.target.value)}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring  bg-white"
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring "
               required
               disabled={hadStartedApprove}
             >
@@ -265,13 +271,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
             </select>
           </div>
           <div className="flex justify-center space-x-4">
-            <Button
-              className={`w-1/2 ${
-                hadStartedApprove ? 'bg-gray-600 hover:bg-gray-700' : 'bg-blue-600 hover:bg-blue-700'
-              }`}
-              disabled={hadStartedApprove}
-              onClick={handleApprove}
-            >
+            <Button className={`w-1/2 `} disabled={hadStartedApprove} onClick={handleApprove}>
               {isPendingApproveToken || isConfirmingApproveToken ? (
                 <>
                   <Loader2 className="animate-spin" />
@@ -285,11 +285,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
             </Button>
             <Button
               type="submit"
-              className={`w-1/2 text-white py-2 rounded hover:bg-blue-600 ${
-                !isConfirmedApproveToken || !isConfirmedApproveParentToken
-                  ? 'bg-gray-600 hover:bg-gray-700'
-                  : 'bg-blue-600 hover:bg-blue-700'
-              }`}
+              className={`w-1/2`}
               disabled={
                 !isConfirmedApproveToken ||
                 !isConfirmedApproveParentToken ||

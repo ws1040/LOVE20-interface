@@ -13,8 +13,9 @@ import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useCurrentRound, useVotesNumByAccount, useVote } from '@/src/hooks/contracts/useLOVE20Vote';
 
 import Header from '@/src/components/Header';
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import Round from '@/src/components/Common/Round';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 const VotingSubmitPage = () => {
   const { token } = useContext(TokenContext) || {};
@@ -131,21 +132,21 @@ const VotingSubmitPage = () => {
     <>
       <Header title="执行投票页" />
       <main className="flex-grow">
-        <div className="flex flex-col items-center space-y-4 p-6 bg-white">
-          {isPendingCurrentRound ? <Loading /> : <Round currentRound={currentRound} roundName="投票轮" />}
-          <div className="text-base text-gray-500">
+        <div className="flex flex-col items-center space-y-4 p-6">
+          <div className="text-base text-greyscale-500">
             <span>我的剩余票数：</span>
-            {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
-              <Loading />
-            ) : (
-              formatTokenAmount(validGovVotes - votesNumByAccount || BigInt(0))
-            )}
+            <span className="text-secondary">
+              {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
+                <LoadingIcon />
+              ) : (
+                formatTokenAmount(validGovVotes - votesNumByAccount || BigInt(0))
+              )}
+            </span>
           </div>
         </div>
 
         {/* 行动列表 */}
-        <div className="p-4">
-          <h2 className="text-sm font-bold mb-4 text-gray-600">行动列表 (行动轮)</h2>
+        <div className="px-4">
           <div className="space-y-4">
             {actionInfos?.map((action: ActionInfo, index: number) => {
               const isLast = index === actionInfos.length - 1;
@@ -154,17 +155,17 @@ const VotingSubmitPage = () => {
               const lastValue = 100 - total;
 
               return (
-                <div key={action.head.id} className="bg-white p-4 rounded-lg mb-4 flex justify-between items-center">
+                <div key={action.head.id} className="p-4 rounded-lg mb-4 flex justify-between items-center">
                   <Link
                     href={`/${token.symbol}/action/${action.head.id}?type=vote`}
                     key={action.head.id}
                     className="flex-grow"
                   >
                     <div className="font-semibold mb-2">
-                      <span className="text-gray-400 text-base mr-1">{`No.${action.head.id}`}</span>
-                      <span className="text-gray-800 text-lg">{`${action.body.action}`}</span>
+                      <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
+                      <span className="text-greyscale-900">{`${action.body.action}`}</span>
                     </div>
-                    <p className="leading-tight">{action.body.consensus}</p>
+                    <p className="text-greyscale-500">{action.body.consensus}</p>
                   </Link>
                   <div className="flex items-center">
                     <input
@@ -184,11 +185,7 @@ const VotingSubmitPage = () => {
             })}
           </div>
           <div className="flex justify-center mt-4">
-            <Button
-              className="w-1/2 bg-blue-600 hover:bg-blue-700"
-              onClick={handleSubmit}
-              disabled={isWriting || isConfirming}
-            >
+            <Button className="w-1/2" onClick={handleSubmit} disabled={isWriting || isConfirming}>
               {isWriting || isConfirming ? '提交中...' : '提交投票'}
             </Button>
           </div>

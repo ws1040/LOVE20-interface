@@ -1,14 +1,15 @@
 import { useContext } from 'react';
 import { useAccount } from 'wagmi';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { useAccountStakeStatus } from '@/src/hooks/contracts/useLOVE20Stake';
 import { formatTokenAmount } from '@/src/lib/format';
-import Loading from '@/src/components/Common/Loading';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import AddToMetamask from '@/src/components/Common/AddToMetamask';
-import AddressWithCopyButton from '../Common/AddressWithCopyButton';
+import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 const MyGovernanceAssetsPanel = () => {
   const { token } = useContext(TokenContext) || {};
@@ -24,66 +25,60 @@ const MyGovernanceAssetsPanel = () => {
   } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
 
   if (!token) {
-    return <Loading />;
+    return <LoadingIcon />;
   }
 
   return (
     <>
-      <div className="w-full flex flex-col items-center rounded p-4 bg-white mt-1">
-        <div className="w-full text-left mb-4">
-          <h2 className="relative pl-4 text-gray-700 text-base font-medium before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
-            我参与治理的资产
-          </h2>
-        </div>
-        <div className="flex w-full justify-center">
-          <div className="flex flex-col items-center flex-1">
-            <span className="flex items-center">
-              <span className="text-sm text-gray-500">流动性质押</span>
+      <div className="flex-col items-center px-6 pt-6 pb-2">
+        <LeftTitle title="参与治理的资产" />
+        <div className="stats w-full grid grid-cols-2 divide-x-0">
+          <div className="stat place-items-center">
+            <div className="stat-title text-sm flex items-center">
+              流动性质押
               <AddressWithCopyButton address={token.slTokenAddress as `0x${string}`} showAddress={false} />
               <AddToMetamask
                 tokenAddress={token.slTokenAddress as `0x${string}`}
                 tokenSymbol={'sl' + token.symbol}
                 tokenDecimals={token.decimals}
               />
-            </span>
-            <span className="text-2xl font-bold text-orange-400">
-              {isPendingAccountStakeStatus ? <Loading /> : formatTokenAmount(slAmount || BigInt(0))}
-            </span>
+            </div>
+            <div className="stat-value text-xl">
+              {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || BigInt(0))}
+            </div>
           </div>
-          <div className="flex flex-col items-center flex-1">
-            <span className="flex items-center">
-              <span className="text-sm text-gray-500">质押代币</span>
+          <div className="stat place-items-center">
+            <div className="stat-title text-sm flex items-center">
+              质押代币
               <AddressWithCopyButton address={token.stTokenAddress as `0x${string}`} showAddress={false} />
               <AddToMetamask
                 tokenAddress={token.stTokenAddress as `0x${string}`}
                 tokenSymbol={'st' + token.symbol}
                 tokenDecimals={token.decimals}
               />
-            </span>
-            <span className="text-2xl font-bold text-orange-400">
-              {isPendingAccountStakeStatus ? <Loading /> : formatTokenAmount(stAmount || BigInt(0))}
-            </span>
+            </div>
+            <div className="stat-value text-xl">
+              {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || BigInt(0))}
+            </div>
           </div>
         </div>
-        <div className="flex w-full justify-center mt-2">
-          <div className="flex flex-col items-center flex-1">
-            <span className="text-sm text-gray-500">承诺释放间隔轮次</span>
-            <span>
-              <span className="text-2xl font-bold text-orange-400">
-                {isPendingAccountStakeStatus ? <Loading /> : `${promisedWaitingRounds || BigInt(0)}`}
-              </span>
-              <span className="text-sm text-gray-500"> 轮</span>
-            </span>
+        <div className="stats w-full grid grid-cols-2 divide-x-0">
+          <div className="stat place-items-center">
+            <div className="stat-title text-sm">承诺释放间隔轮次</div>
+            <div className="stat-value text-xl">
+              {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingRounds || BigInt(0)}`}
+            </div>
           </div>
-          <div className="flex flex-col items-center flex-1">
-            <span className="text-sm text-gray-500">治理票数</span>
-            <span className="text-2xl font-bold text-orange-400">
-              {isPendingAccountStakeStatus ? <Loading /> : formatTokenAmount(govVotes || BigInt(0))}
-            </span>
+          <div className="stat place-items-center">
+            <div className="stat-title text-sm">治理票数</div>
+            <div className="stat-value text-xl">
+              {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0))}
+            </div>
           </div>
         </div>
+
         <div className="flex w-full justify-center mt-2">
-          <Button className="w-1/2 bg-blue-600 hover:bg-blue-700" asChild>
+          <Button variant="outline" size="sm" className="w-1/2 text-secondary border-secondary" asChild>
             <Link href={`/${token.symbol}/my/govrewards`}>查看治理奖励</Link>
           </Button>
         </div>

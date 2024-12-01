@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import Header from '@/src/components/Header';
 
+import Header from '@/src/components/Header';
 import ActionDetail from '@/src/components/ActionDetail/ActionDetail';
 import ActionPanelForSubmit from '@/src/components/ActionDetail/ActionPanelForSubmit';
 import ActionPanelForVoting from '@/src/components/ActionDetail/ActionPanelForVoting';
 import ActionPanelForJoin from '@/src/components/ActionDetail/ActionPanelForJoin';
-import ActionPanelForVerifing from '@/src/components/ActionDetail/ActionPanelForVerifing';
+
 const ActionPage = () => {
   const router = useRouter();
   const { id, type, submitted } = router.query;
@@ -35,9 +35,6 @@ const ActionPage = () => {
         )}
         {(typeParam === 'join' || typeParam === undefined) && (
           <ActionPanelForJoin actionId={BigInt(idParam || 0)} onRoundChange={handleRoundChange} />
-        )}
-        {typeParam === 'verify' && (
-          <ActionPanelForVerifing actionId={BigInt(idParam || 0)} onRoundChange={handleRoundChange} />
         )}
         <ActionDetail
           actionId={BigInt(idParam || 0)}

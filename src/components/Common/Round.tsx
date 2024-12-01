@@ -18,15 +18,15 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundName }) => {
   const initialTimeLeft = leftBlocks > 0 ? leftBlocks * BLOCK_TIME : 0;
 
   return (
-    <>
-      <h1 className="text-base text-center font-bold">
-        {roundName}（第 <span className="text-red-500">{Number(currentRound ?? 0n)}</span> 轮）
+    <div className="flex justify-between items-center mb-4">
+      <h1 className="text-lg font-bold">
+        {roundName} 第 <span className="text-secondary">{Number(currentRound ?? 0n)}</span> 轮
       </h1>
-      <span className="text-sm text-gray-400 mt-1 pt-0">
+      <span className="text-sm text-greyscale-400 mt-1 pt-0">
         本轮剩余：
         <LeftTime initialTimeLeft={initialTimeLeft} />
       </span>
-    </>
+    </div>
   );
 };
 
