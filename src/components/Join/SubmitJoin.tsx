@@ -9,6 +9,7 @@ import { ActionInfo } from '@/src/types/life20types';
 import { useJoin } from '@/src/hooks/contracts/useLOVE20Join';
 import { useApprove, useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
 import { formatTokenAmount, parseUnits } from '@/src/lib/format';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 interface SubmitJoinProps {
   actionInfo: ActionInfo;
@@ -112,8 +113,9 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
 
   return (
     <>
-      <div className="w-full flex flex-col rounded px-6 pt-0 pb-2">
-        <div className="mb-4">
+      <div className="px-6 pt-0 pb-2">
+        <LeftTitle title="加入行动" />
+        <div className="my-4">
           <label className="block text-left mb-1 text-sm text-greyscale-500">
             增加参与代币: (当前持有：{formatTokenAmount(tokenBalance || 0n)} {token?.symbol})
           </label>
@@ -151,10 +153,10 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
         </div>
         <div className="flex justify-center">
           {isConfirmedJoin ? (
-            <Button className="mt-4 w-1/2">加入成功</Button>
+            <Button className="mt-4 w-1/2">提交成功</Button>
           ) : (
             <Button onClick={handleSubmit} disabled={isPendingJoin || isConfirmingJoin} className="mt-4 w-1/2">
-              {isPendingJoin || isConfirmingJoin ? '加入中...' : '加入行动'}
+              {isPendingJoin || isConfirmingJoin ? '提交中...' : '提交'}
             </Button>
           )}
         </div>

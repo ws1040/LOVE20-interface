@@ -1,10 +1,11 @@
 import React, { useContext, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 
-import { useStakedAmountByAccountByActionId } from '@/src/hooks/contracts/useLOVE20Join';
-import { TokenContext } from '@/src/contexts/TokenContext';
-import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import { formatTokenAmount } from '@/src/lib/format';
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { useStakedAmountByAccountByActionId } from '@/src/hooks/contracts/useLOVE20Join';
+import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 interface MyJoinInfoOfActionAbstractProps {
   actionId: bigint;
@@ -39,10 +40,11 @@ const MyJoinInfoOfActionAbstract: React.FC<MyJoinInfoOfActionAbstractProps> = ({
   }
 
   return (
-    <div className="flex items-end w-full p-4">
-      <div className="stats w-full border divide-x-0">
+    <div className="p-6">
+      <LeftTitle title="以往参与" />
+      <div className="stats w-full border divide-x-0 mt-4">
         <div className="stat place-items-center">
-          <div className="stat-title">待参与代币数</div>
+          <div className="stat-title">未取回代币</div>
           <div className="stat-value text-2xl">
             {isPendingStakedAmountByAccountByActionId ? (
               <LoadingIcon />
@@ -50,7 +52,7 @@ const MyJoinInfoOfActionAbstract: React.FC<MyJoinInfoOfActionAbstractProps> = ({
               formatTokenAmount(stakedAmountByAccountByActionId || BigInt(0))
             )}
           </div>
-          <div className="stat-desc text-xs text-greyscale-400">参与之前的轮次，未取回的代币</div>
+          <div className="stat-desc text-xs text-greyscale-400">之前未取回的代币，再次加入时默认直接参与</div>
         </div>
       </div>
     </div>
