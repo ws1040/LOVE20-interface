@@ -74,6 +74,10 @@ jobs:
           yarn build
           cp out/index.html out/404.html
 
+      # 检查静态文件
+      - name: List build files
+        run: ls -R out/
+
       # 部署到 gh-pages 分支
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
