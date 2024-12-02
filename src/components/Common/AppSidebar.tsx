@@ -19,6 +19,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [isOpen, setIsOpen] = useState(false);
   const tokenContext = useContext(TokenContext);
   const { token } = tokenContext || {};
+  if (!token) {
+    return null;
+  }
+
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
   // 动态生成导航数据
   const data = {
@@ -29,12 +34,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: '社区首页',
-            url: token ? `/${token.symbol}/acting` : '/token/acting',
+            url: `${basePath}/${token.symbol}/acting`,
             isActive: false,
           },
           {
             title: '治理首页',
-            url: token ? `/${token.symbol}/gov` : '/token/gov',
+            url: `${basePath}/${token.symbol}/gov`,
             isActive: false,
           },
         ],
@@ -45,22 +50,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: '发射平台',
-            url: token ? `/${token.symbol}/launch` : '/token/launch',
+            url: `${basePath}/${token.symbol}/launch`,
             isActive: false,
           },
           {
             title: '所有代币',
-            url: '/tokens',
+            url: `${basePath}/tokens`,
             isActive: false,
           },
           {
             title: '交易代币',
-            url: token ? `/${token.symbol}/dex/swap` : '/token/dex/swap',
+            url: `${basePath}/${token.symbol}/dex/swap`,
             isActive: false,
           },
           {
             title: '兑换',
-            url: token ? `/${token.symbol}/launch/deposit` : '/token/launch/deposit',
+            url: `${basePath}/${token.symbol}/launch/deposit`,
             isActive: false,
           },
         ],
@@ -71,7 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: '我的首页',
-            url: token ? `/${token.symbol}/my` : '/my',
+            url: `${basePath}/${token.symbol}/my`,
             isActive: false,
           },
         ],
