@@ -129,7 +129,7 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
           >
             最高
           </Button>
-          <Link href={`/${token.symbol}/launch/deposit`}>
+          <Link href={`/launch/deposit?symbol=${token.symbol}`}>
             <Button variant="link" size="sm" className="text-secondary">
               获取{token.parentTokenSymbol}
             </Button>

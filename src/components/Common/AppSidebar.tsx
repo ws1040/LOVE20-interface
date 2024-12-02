@@ -34,12 +34,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: '社区首页',
-            url: `${basePath}/${token.symbol}/acting`,
+            url: `${basePath}/acting?symbol=${token.symbol}`,
             isActive: false,
           },
           {
             title: '治理首页',
-            url: `${basePath}/${token.symbol}/gov`,
+            url: `${basePath}/gov?symbol=${token.symbol}`,
             isActive: false,
           },
         ],
@@ -50,22 +50,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: '发射平台',
-            url: `${basePath}/${token.symbol}/launch`,
+            url: `${basePath}/launch?symbol=${token.symbol}`,
             isActive: false,
           },
           {
             title: '所有代币',
-            url: `${basePath}/tokens`,
+            url: `${basePath}/tokens?symbol=${token.symbol}`,
             isActive: false,
           },
           {
             title: '交易代币',
-            url: `${basePath}/${token.symbol}/dex/swap`,
+            url: `${basePath}/dex/swap?symbol=${token.symbol}`,
             isActive: false,
           },
           {
             title: '兑换',
-            url: `${basePath}/${token.symbol}/launch/deposit`,
+            url: `${basePath}/launch/deposit?symbol=${token.symbol}`,
             isActive: false,
           },
         ],
@@ -76,7 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: '我的首页',
-            url: `${basePath}/${token.symbol}/my`,
+            url: `${basePath}/my?symbol=${token.symbol}`,
             isActive: false,
           },
         ],

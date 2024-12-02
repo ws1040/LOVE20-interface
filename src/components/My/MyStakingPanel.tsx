@@ -39,7 +39,7 @@ const MyStakingPanel: React.FC = () => {
           </div>
           <div className="stat-actions">
             <Button variant="outline" size="sm" className="text-secondary border-secondary">
-              <Link href={`/${token.symbol}/gov/stakelp`}>去获取</Link>
+              <Link href={`/gov/stakelp?symbol=${token.symbol}`}>去获取</Link>
             </Button>
           </div>
         </div>
@@ -50,7 +50,7 @@ const MyStakingPanel: React.FC = () => {
           </div>
           <div className="stat-actions">
             <Button variant="outline" size="sm" className="text-secondary border-secondary">
-              <Link href={`/${token.symbol}/gov/staketoken`}>去质押</Link>
+              <Link href={`/gov/staketoken?symbol=${token.symbol}`}>去质押</Link>
             </Button>
           </div>
         </div>

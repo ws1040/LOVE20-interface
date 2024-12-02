@@ -69,7 +69,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
       toast.error('请选择行动');
       return;
     }
-    router.push(`/${token?.symbol}/vote/vote?ids=${selectedIds}`);
+    router.push(`/vote/vote?ids=${selectedIds}&symbol=${token?.symbol}`);
   };
 
   // 加载中
@@ -100,7 +100,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
         <LeftTitle title="投票中的行动" />
         {token && (
           <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
-            <Link href={`/${token.symbol}/vote/actions4submit`}>推举其他行动</Link>
+            <Link href={`/vote/actions4submit?symbol=${token?.symbol}`}>推举其他行动</Link>
           </Button>
         )}
       </div>
@@ -121,7 +121,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
                     onChange={() => handleCheckboxChange(BigInt(action.head.id))}
                   />
                   <Link
-                    href={`/${token.symbol}/action/${action.head.id}?type=vote`}
+                    href={`/action/${action.head.id}?type=vote&symbol=${token?.symbol}`}
                     key={action.head.id}
                     className="w-full"
                   >

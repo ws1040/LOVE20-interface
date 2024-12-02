@@ -70,7 +70,7 @@ const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> =
               <tr>
                 <th>地址</th>
                 <th>得分</th>
-                <th>奖励</th>
+                <th className="text-center">待领取奖励</th>
                 <th></th>
               </tr>
             </thead>
@@ -81,8 +81,8 @@ const VerifiedAddressesByAction: React.FC<{ round: bigint; actionId: bigint }> =
                     <AddressWithCopyButton address={item.account} showCopyButton={false} />
                   </td>
                   <td>{formatTokenAmount(item.score)}</td>
-                  <td>{formatTokenAmount(item.reward)}</td>
-                  <td>
+                  <td className="text-center">{formatTokenAmount(item.reward)}</td>
+                  <td className="text-center">
                     {item.account === accountAddress ? (
                       item.reward > 0 ? (
                         <button

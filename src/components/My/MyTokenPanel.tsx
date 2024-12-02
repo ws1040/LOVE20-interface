@@ -58,7 +58,7 @@ const MyTokenPanel = () => {
       </div>
       <div className="flex justify-center">
         <Button variant="outline" size="sm" className="mt-2 w-1/2 text-secondary border-secondary" asChild>
-          <Link href={`/${token.symbol}/dex/swap`}>去交易</Link>
+          <Link href={`/dex/swap?symbol=${token.symbol}`}>去交易</Link>
         </Button>
       </div>
     </div>

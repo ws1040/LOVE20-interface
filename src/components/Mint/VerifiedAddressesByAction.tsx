@@ -102,7 +102,7 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
                 </td>
                 <td>{formatTokenAmount(item.score)}</td>
                 <td>{formatTokenAmount(item.reward)}</td>
-                <td>
+                <td className="text-center">
                   {item.account === accountAddress ? (
                     item.reward > 0 ? (
                       <Button

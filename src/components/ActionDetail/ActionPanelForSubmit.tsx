@@ -40,7 +40,7 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
         duration: 2000, // 2秒
       });
       setTimeout(() => {
-        router.push(`/${token?.symbol}/vote`);
+        router.push(`/vote?symbol=${token?.symbol}`);
       }, 2000);
     }
   }, [isConfirmed, errSubmit]);

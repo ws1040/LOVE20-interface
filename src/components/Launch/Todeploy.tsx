@@ -12,7 +12,7 @@ const Todeploy: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, l
       <LeftTitle title="部署子币" />
       <div className="w-full text-center">
         <Button variant="outline" size="sm" className="mt-2 w-1/2 text-secondary border-secondary" asChild>
-          <Link href={`/${token?.symbol}/launch/deploy`}>
+          <Link href={`/launch/deploy?symbol=${token?.symbol}`}>
             <Plus className="w-4 h-4" />
             去部署
           </Link>

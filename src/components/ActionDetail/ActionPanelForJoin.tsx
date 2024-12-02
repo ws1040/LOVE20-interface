@@ -100,7 +100,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
 
       {!isJoined ? (
         <Button variant="outline" className="w-full text-secondary border-secondary" asChild>
-          <Link href={`/${token?.symbol}/acting/join?id=${actionId}`}>参与行动</Link>
+          <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>参与行动</Link>
         </Button>
       ) : (
         <div className="flex flex-col items-center">

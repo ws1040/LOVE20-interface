@@ -7,9 +7,4 @@ const nextConfig = {
   assetPrefix: process.env.NEXT_PUBLIC_ASSET_PREFIX || '',
 };
 
-// webpack: (config) => {
-//   config.resolve.extensions.push('.mjs');
-//   return config;
-// },
-
 module.exports = nextConfig;

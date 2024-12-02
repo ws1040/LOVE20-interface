@@ -73,7 +73,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
           <LoadingIcon />
         ) : validGovVotes > votesNumByAccount ? (
           <Button className="w-1/2">
-            <Link href={`/${token.symbol}/vote`}>去投票</Link>
+            <Link href={`/vote?symbol=${token.symbol}`}>去投票</Link>
           </Button>
         ) : (
           <Button disabled className="w-1/2">

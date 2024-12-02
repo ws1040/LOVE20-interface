@@ -74,8 +74,8 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
             const isJoined = joinedActions?.some((joinedAction) => joinedAction.actionId === BigInt(action.head.id));
 
             const href = isJoined
-              ? `/${token?.symbol}/action/${action.head.id}?type=join`
-              : `/${token?.symbol}/acting/join?id=${action.head.id}`;
+              ? `/action/${action.head.id}?type=join&symbol=${token?.symbol}`
+              : `/acting/join?id=${action.head.id}&symbol=${token?.symbol}`;
 
             return (
               <Card key={action.head.id} className="shadow-none">

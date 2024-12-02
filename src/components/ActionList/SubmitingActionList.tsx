@@ -43,7 +43,7 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
       <div className="flex justify-between items-center mb-4">
         <LeftTitle title="所有行动" />
         <Button variant="outline" className="text-secondary border-secondary">
-          <Link href={`/${token.symbol}/action/new`}>发起新行动</Link>
+          <Link href={`/action/new`}>发起新行动</Link>
         </Button>
       </div>
       {isPendingActionInfosByPage || isPendingActionSubmits ? (
@@ -54,10 +54,7 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
             const isSubmitted = actionSubmits?.some((submit) => submit.actionId === action.head.id);
             return (
               <Card key={action.head.id} className="shadow-none">
-                <Link
-                  href={`/${token.symbol}/action/${action.head.id}?type=submit&submitted=${isSubmitted}`}
-                  key={action.head.id}
-                >
+                <Link href={`/action/${action.head.id}?type=submit&submitted=${isSubmitted}`} key={action.head.id}>
                   <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
                     <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
                     <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>

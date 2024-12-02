@@ -68,7 +68,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
         ) : votesNumByAccount > scoreByVerifier ? (
           <div className="flex justify-center mt-4">
             <Button className="w-1/2">
-              <Link href={`/${token.symbol}/verify`}>去验证</Link>
+              <Link href={`/verify?symbol=${token.symbol}`}>去验证</Link>
             </Button>
           </div>
         ) : (

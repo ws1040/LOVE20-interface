@@ -54,7 +54,7 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
       <div className="mt-4 space-y-4">
         {actionInfos?.map((action: ActionInfo, index: number) => (
           <Card key={action.head.id} className="shadow-none">
-            <Link href={`/${token?.symbol}/verify/${action.head.id}`}>
+            <Link href={`/verify/${action.head.id}?symbol=${token?.symbol}`}>
               <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
                 <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
                 <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>

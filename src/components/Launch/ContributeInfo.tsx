@@ -36,7 +36,7 @@ const ContributeInfo: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> 
 
       <div className="flex justify-center">
         <Button variant="outline" size="sm" className="w-1/2 text-secondary border-secondary" asChild>
-          <Link href={`/${token.symbol}/launch/contribute`}>去申购</Link>
+          <Link href={`/launch/contribute?symbol=${token.symbol}`}>去申购</Link>
         </Button>
       </div>
     </div>

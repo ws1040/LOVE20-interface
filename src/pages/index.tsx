@@ -19,9 +19,9 @@ const Home: NextPage = () => {
     const symbol = token.symbol;
     if (symbol) {
       if (token.hasEnded) {
-        router.push(`/${symbol}/acting`);
+        router.push(`/acting?symbol=${symbol}`);
       } else {
-        router.push(`/${symbol}/launch`);
+        router.push(`/launch?symbol=${symbol}`);
       }
     }
   }, [token, router]);

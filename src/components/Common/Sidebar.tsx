@@ -47,17 +47,17 @@ const Sidebar: React.FC = () => {
       >
         <ul className="mt-8">
           <li className="p-4 hover:bg-gray-700">
-            <Link href={`/${token.symbol}/acting`}>
+            <Link href={`/acting`}>
               <span>社区首页</span>
             </Link>
           </li>
           <li className="p-4 hover:bg-gray-700">
-            <Link href={`/${token.symbol}/gov`}>
+            <Link href={`/gov`}>
               <span>治理首页</span>
             </Link>
           </li>
           <li className="p-4 hover:bg-gray-700">
-            <Link href={`/${token.symbol}/my`}>
+            <Link href={`/my`}>
               <span>我的首页</span>
             </Link>
           </li>
@@ -67,17 +67,17 @@ const Sidebar: React.FC = () => {
             </Link>
           </li>
           <li className="p-4 hover:bg-gray-700">
-            <Link href={`/${token.symbol}/launch`}>
+            <Link href={`/launch`}>
               <span>发射平台</span>
             </Link>
           </li>
           <li className="p-4 hover:bg-gray-700">
-            <Link href={`/${token.symbol}/dex/swap`}>
+            <Link href={`/dex/swap`}>
               <span>交易代币</span>
             </Link>
           </li>
           <li className="p-4 hover:bg-gray-700">
-            <Link href={`/${token.symbol}/launch/deposit`}>
+            <Link href={`/launch/deposit`}>
               <span>兑换{process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}</span>
             </Link>
           </li>
