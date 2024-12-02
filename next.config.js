@@ -3,8 +3,8 @@ const nextConfig = {
   trailingSlash: true,
   reactStrictMode: true,
   output: 'export',
-  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
-  assetPrefix: process.env.NEXT_PUBLIC_ASSET_PREFIX || '',
+  basePath: process.env.BASE_PATH || '',
+  assetPrefix: process.env.ASSET_PREFIX || '',
 };
 
 module.exports = nextConfig;

@@ -32,6 +32,8 @@ jobs:
       # 构建项目
       - name: Build
         env:
+          BASE_PATH: /LOVE20-interface
+          ASSET_PREFIX: /LOVE20-interface
           NEXT_PUBLIC_CHAIN: sepolia
           NEXT_PUBLIC_BLOCK_TIME: 12
           NEXT_PUBLIC_ANVIL_RPC_URL: http://127.0.0.1:8545
