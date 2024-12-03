@@ -10,6 +10,7 @@ import { TokenContext, Token } from '@/src/contexts/TokenContext';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useGetAmountsIn, useGetAmountsOut } from '@/src/components/Stake/getAmountHooks';
 import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 interface StakeLiquidityPanelProps {
   tokenBalance: bigint;
@@ -129,14 +130,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     writeError: errApproveParentToken,
   } = useApprove(token?.parentTokenAddress as `0x${string}`);
 
-  const hadStartedApprove =
-    isConfirmedApproveToken ||
-    isConfirmedApproveParentToken ||
-    isPendingApproveToken ||
-    isPendingApproveParentToken ||
-    isConfirmingApproveToken ||
-    isConfirmingApproveParentToken;
-
   const handleApprove = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateInput(parentToken) || !validateInput(stakeToken)) {
@@ -208,14 +201,18 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
       // 2秒后刷新页面
       setTimeout(() => {
         // 跳转到治理首页
-        window.location.href = `/${token?.symbol}/gov`;
+        window.location.href = `/gov?symbol=${token?.symbol}`;
       }, 2000);
     }
   }, [isConfirmedStakeLiquidity]);
 
+  const isApproveLoading =
+    isPendingApproveToken || isPendingApproveParentToken || isConfirmingApproveToken || isConfirmingApproveParentToken;
+  const hadStartedApprove = isApproveLoading || isConfirmedApproveToken || isConfirmedApproveParentToken;
+
   return (
     <>
-      <div className="w-full flex-col items-center rounded p-4 mt-1">
+      <div className="w-full flex-col items-center p-6 mt-1">
         <LeftTitle title="质押获取治理票" />
         <form onSubmit={handleSubmit} className="w-full max-w-md mt-4">
           <div className="mb-4">
@@ -272,16 +269,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
           </div>
           <div className="flex justify-center space-x-4">
             <Button className={`w-1/2 `} disabled={hadStartedApprove} onClick={handleApprove}>
-              {isPendingApproveToken || isConfirmingApproveToken ? (
-                <>
-                  <Loader2 className="animate-spin" />
-                  1.授权中...
-                </>
-              ) : isConfirmedApproveToken ? (
-                '1.已授权'
-              ) : (
-                '1.授权'
-              )}
+              {isApproveLoading ? '1.授权中...' : isConfirmedApproveToken ? '1.已授权' : '1.授权'}
             </Button>
             <Button
               type="submit"
@@ -294,22 +282,18 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
                 isConfirmedStakeLiquidity
               }
             >
-              {isPendingStakeLiquidity || isConfirmingStakeLiquidity ? (
-                <>
-                  <Loader2 className="animate-spin" />
-                  2.质押中...
-                </>
-              ) : isConfirmedStakeLiquidity ? (
-                '2.已质押'
-              ) : (
-                '2.质押'
-              )}
+              {isPendingStakeLiquidity || isConfirmingStakeLiquidity
+                ? '2.质押中...'
+                : isConfirmedStakeLiquidity
+                ? '2.已质押'
+                : '2.质押'}
             </Button>
           </div>
         </form>
         {errStakeLiquidity && <div className="text-red-500">{errStakeLiquidity.message}</div>}
         {errApproveToken && <div className="text-red-500">{errApproveToken.message}</div>}
         {errApproveParentToken && <div className="text-red-500">{errApproveParentToken.message}</div>}
+        <LoadingOverlay isLoading={isApproveLoading || isPendingStakeLiquidity || isConfirmingStakeLiquidity} />
       </div>
     </>
   );

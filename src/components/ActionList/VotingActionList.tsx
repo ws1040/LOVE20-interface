@@ -154,8 +154,8 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
               );
             })}
             <div className="flex justify-center mt-4">
-              <Button className="w-full" onClick={handleSubmit}>
-                去给选中的行动投票
+              <Button variant="outline" className="w-1/2 text-secondary border-secondary" onClick={handleSubmit}>
+                给选中的行动投票
               </Button>
             </div>
           </>

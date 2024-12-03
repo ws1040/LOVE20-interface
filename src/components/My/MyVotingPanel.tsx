@@ -68,7 +68,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
           </div>
         </div>
       </div>
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center">
         {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
           <LoadingIcon />
         ) : validGovVotes > votesNumByAccount ? (

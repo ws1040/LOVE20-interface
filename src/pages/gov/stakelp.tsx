@@ -35,7 +35,7 @@ const StakePage = () => {
             stakedTokenAmountOfLP={stakedTokenAmount || 0n}
           />
         )}
-        <div className="flex flex-col w-full rounded p-4 mt-4">
+        <div className="flex flex-col w-full p-6 mt-4">
           <div className="text-base font-bold text-greyscale-700 pb-2">规则说明：</div>
           <div className="text-sm text-greyscale-500">1、所得治理票数 = LP 数量 * 释放期轮次</div>
           <div className="text-sm text-greyscale-500">

@@ -58,14 +58,6 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     });
 
     const abstainVotes = (BigInt(abstainPercentage) * remainingVotes) / 100n;
-
-    // console.log('--------------- submit: -----------------');
-    // console.log('token?.address', token?.address);
-    // console.log('actionId', actionId);
-    // console.log('abstainVotes', abstainVotes);
-    // console.log('scoresArray', scoresArray);
-    // console.log('--------------- end -----------------');
-
     verify(token?.address as `0x${string}`, actionId, abstainVotes, scoresArray);
   };
 
@@ -142,7 +134,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       )}
       {!remainingVotes && (
         <Button disabled className="mt-6 w-1/2">
-          无剩余票数，无需提交
+          已验证
         </Button>
       )}
       {submitError && <div className="text-red-500 text-center">{submitError.message}</div>}

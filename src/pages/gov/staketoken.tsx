@@ -27,13 +27,13 @@ const StakePage = () => {
       <Header title="质押" />
       <main className="flex-grow">
         {stakedTokenAmount && <StakeTokenPanel tokenBalance={tokenBalance || 0n} />}
-        <div className="flex flex-col w-full rounded p-4 mt-4">
+        <div className="flex flex-col w-full p-6 mt-4">
           <div className="text-base font-bold text-greyscale-700 pb-2">规则说明：</div>
-          <div className="text-sm text-greyscale-500">
-            1、单独质押代币可获得激励提升（但提升最高不超过 2 倍的验证激励），同时获得 st 类代币作为质押代币的凭证
+          <div className="text-sm text-greyscale-500 mb-2">
+            1、单独质押代币可获得激励提升（最高不超过 2 倍的验证激励），同时获得 st类代币作为质押的凭证；
           </div>
           <div className="text-sm text-greyscale-500">
-            2、释放期指：申请解锁后，几轮之后可以领取。最小为4轮，最大为12轮。
+            2、释放期指：申请解锁后，几轮之后可以领取。最小为4轮，最大为12轮；
           </div>
         </div>
       </main>

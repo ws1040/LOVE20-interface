@@ -11,6 +11,8 @@ import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import { Token } from '@/src/contexts/TokenContext';
 import { LaunchInfo } from '@/src/types/life20types';
 import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const [contributeAmount, setContributeAmount] = useState('');
@@ -38,10 +40,7 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
   } = useApprove(token?.parentTokenAddress as `0x${string}`);
   const handleApprove = async () => {
     try {
-      await approveParentToken(
-        process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x${string}`,
-        parseUnits(contributeAmount),
-      );
+      await approveParentToken(token?.parentTokenAddress as `0x${string}`, parseUnits(contributeAmount));
     } catch (error) {
       console.error(error);
     }
@@ -88,83 +87,93 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
     isPendingApproveParentToken || isConfirmingApproveParentToken || isConfirmedApproveParentToken;
 
   if (!token) {
-    return '';
+    return <LoadingIcon />;
   }
 
   return (
-    <div className="p-6">
-      <LeftTitle title="参与申购" />
-      <div className="stats w-full">
-        <div className="stat place-items-center">
-          <div className="stat-title text-sm mr-6">我已申购质押</div>
-          <div className="stat-value text-secondary">
-            {formatTokenAmount(contributed || 0n)}
-            <span className="text-greyscale-500 font-normal text-sm ml-2">{token.parentTokenSymbol}</span>
+    <>
+      <div className="p-6">
+        <LeftTitle title="参与申购" />
+        <div className="stats w-full">
+          <div className="stat place-items-center">
+            <div className="stat-title text-sm mr-6">我已申购质押</div>
+            <div className="stat-value text-secondary">
+              {formatTokenAmount(contributed || 0n)}
+              <span className="text-greyscale-500 font-normal text-sm ml-2">{token.parentTokenSymbol}</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div>
-        <div className="flex justify-between">
-          <Input
-            type="number"
-            placeholder={`增加申购数量(${token.parentTokenSymbol})`}
-            value={contributeAmount}
-            onChange={(e) => setContributeAmount(e.target.value)}
-            className="my-auto"
-            disabled={hasStartedApproving || (balanceOfParentToken || 0n) <= 0n}
-          />
-        </div>
+        <div>
+          <div className="flex justify-between">
+            <Input
+              type="number"
+              placeholder={`增加申购数量(${token.parentTokenSymbol})`}
+              value={contributeAmount}
+              onChange={(e) => setContributeAmount(e.target.value)}
+              className="my-auto"
+              disabled={hasStartedApproving || (balanceOfParentToken || 0n) <= 0n}
+            />
+          </div>
 
-        <div className="flex items-center text-sm mb-4">
-          <span className="text-greyscale-400">
-            {formatTokenAmount(balanceOfParentToken || 0n)} {token.parentTokenSymbol}
-          </span>
-          <Button
-            variant="link"
-            size="sm"
-            onClick={setMaxAmount}
-            disabled={hasStartedApproving || (balanceOfParentToken || 0n) <= 0n}
-            className="text-secondary"
-          >
-            最高
-          </Button>
-          <Link href={`/launch/deposit?symbol=${token.symbol}`}>
-            <Button variant="link" size="sm" className="text-secondary">
-              获取{token.parentTokenSymbol}
+          <div className="flex items-center text-sm mb-4">
+            <span className="text-greyscale-400">
+              {formatTokenAmount(balanceOfParentToken || 0n)} {token.parentTokenSymbol}
+            </span>
+            <Button
+              variant="link"
+              size="sm"
+              onClick={setMaxAmount}
+              disabled={hasStartedApproving || (balanceOfParentToken || 0n) <= 0n}
+              className="text-secondary"
+            >
+              最高
             </Button>
-          </Link>
-        </div>
+            <Link href={`/launch/deposit?symbol=${token.symbol}`}>
+              <Button variant="link" size="sm" className="text-secondary">
+                获取{token.parentTokenSymbol}
+              </Button>
+            </Link>
+          </div>
 
-        <div className="flex flex-row gap-2">
-          <Button className="w-1/2" onClick={handleApprove} disabled={hasStartedApproving}>
-            {!hasStartedApproving
-              ? isPendingApproveParentToken || isConfirmingApproveParentToken
-                ? '授权中...'
-                : '1.授权'
-              : '1.已授权'}
-          </Button>
-          <Button
-            className={`w-1/2 text-white py-2 rounded-lg`}
-            onClick={handleContribute}
-            disabled={
-              !isConfirmedApproveParentToken ||
-              isPendingContributeToken ||
-              isConfirmingContributeToken ||
-              isConfirmedContributeToken
-            }
-          >
-            {isPendingContributeToken || isConfirmingContributeToken
-              ? '申购中...'
-              : isConfirmedContributeToken
-              ? '2.申购成功'
-              : '2.申购'}
-          </Button>
+          <div className="flex flex-row gap-2">
+            <Button className="w-1/2" onClick={handleApprove} disabled={hasStartedApproving}>
+              {!hasStartedApproving
+                ? isPendingApproveParentToken || isConfirmingApproveParentToken
+                  ? '授权中...'
+                  : '1.授权'
+                : '1.已授权'}
+            </Button>
+            <Button
+              className={`w-1/2 text-white py-2 rounded-lg`}
+              onClick={handleContribute}
+              disabled={
+                !isConfirmedApproveParentToken ||
+                isPendingContributeToken ||
+                isConfirmingContributeToken ||
+                isConfirmedContributeToken
+              }
+            >
+              {isPendingContributeToken || isConfirmingContributeToken
+                ? '申购中...'
+                : isConfirmedContributeToken
+                ? '2.申购成功'
+                : '2.申购'}
+            </Button>
+          </div>
         </div>
+        {errApproveParentToken && <div className="text-red-500">{errApproveParentToken.message}</div>}
+        {errContributeToken && <div className="text-red-500">{errContributeToken.message}</div>}
       </div>
-      {errApproveParentToken && <div className="text-red-500">{errApproveParentToken.message}</div>}
-      {errContributeToken && <div className="text-red-500">{errContributeToken.message}</div>}
-    </div>
+      <LoadingOverlay
+        isLoading={
+          isPendingApproveParentToken ||
+          isConfirmingApproveParentToken ||
+          isPendingContributeToken ||
+          isConfirmingContributeToken
+        }
+      />
+    </>
   );
 };
 

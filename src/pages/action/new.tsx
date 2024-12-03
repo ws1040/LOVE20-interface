@@ -7,6 +7,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { parseUnits } from '@/src/lib/format';
 import Header from '@/src/components/Header';
 import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 const NewAction = () => {
   // hook
@@ -147,6 +148,7 @@ const NewAction = () => {
         </div>
         {submitError && <div className="text-red-500 text-center">{submitError.message}</div>}
       </div>
+      <LoadingOverlay isLoading={isSubmitting || isConfirming} />
     </>
   );
 };

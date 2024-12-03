@@ -10,6 +10,7 @@ import { useJoin } from '@/src/hooks/contracts/useLOVE20Join';
 import { useApprove, useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
 import { formatTokenAmount, parseUnits } from '@/src/lib/format';
 import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 interface SubmitJoinProps {
   actionInfo: ActionInfo;
@@ -36,20 +37,11 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
   const {
     approve: approveToken,
     isWriting: isPendingApproveToken,
+    isConfirming: isConfirmingApproveToken,
     isConfirmed: isConfirmedApproveToken,
     writeError: errApproveToken,
   } = useApprove(token?.address as `0x${string}`);
-
-  // 执行加入提交
-  const {
-    join,
-    isPending: isPendingJoin,
-    isConfirming: isConfirmingJoin,
-    isConfirmed: isConfirmedJoin,
-    error: errorJoin,
-  } = useJoin();
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const handleSubmit = async () => {
+  const handleApprove = async () => {
     if (stakedAmount && parseUnits(additionalStakeAmount) + stakedAmount > BigInt(actionInfo.body.maxStake)) {
       toast.error('增加的代币数不能超过最大参与代币数');
       return;
@@ -60,7 +52,6 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     }
 
     try {
-      setIsSubmitted(true);
       // 发送授权交易
       await approveToken(
         process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN as `0x${string}`,
@@ -68,31 +59,30 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
       );
     } catch (error) {
       console.error('Approve failed', error);
-      setIsSubmitted(false);
     }
   };
 
-  // 监听授权交易的确认状态
-  useEffect(() => {
-    const bothApproved = isConfirmedApproveToken && isSubmitted;
-
-    if (bothApproved) {
-      join(
+  // 执行加入提交
+  const {
+    join,
+    isPending: isPendingJoin,
+    isConfirming: isConfirmingJoin,
+    isConfirmed: isConfirmedJoin,
+    error: errorJoin,
+  } = useJoin();
+  const handleJoin = async () => {
+    try {
+      await join(
         token?.address as `0x${string}`,
         BigInt(actionInfo.head.id),
         parseUnits(additionalStakeAmount),
         verificationInfo,
         BigInt(rounds),
-      )
-        .then(() => {
-          setIsSubmitted(false); // 重置提交状态
-        })
-        .catch((error) => {
-          console.error('Stake failed', error);
-          setIsSubmitted(false);
-        });
+      );
+    } catch (error) {
+      console.error('Join failed', error);
     }
-  }, [isConfirmedApproveToken, isSubmitted]);
+  };
 
   // 如果质押成功，则用toast显示质押成功并重新加载数据
   useEffect(() => {
@@ -142,7 +132,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-        <div>
+        <div className="mb-4">
           <label className="block text-left mb-1 text-sm text-greyscale-500">验证信息:</label>
           <textarea
             placeholder={`${actionInfo?.body.verificationInfoGuide}`}
@@ -151,19 +141,34 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-        <div className="flex justify-center">
-          {isConfirmedJoin ? (
-            <Button className="mt-4 w-1/2">提交成功</Button>
-          ) : (
-            <Button onClick={handleSubmit} disabled={isPendingJoin || isConfirmingJoin} className="mt-4 w-1/2">
-              {isPendingJoin || isConfirmingJoin ? '提交中...' : '提交'}
-            </Button>
-          )}
+
+        <div className="flex justify-center space-x-4">
+          <Button
+            className={`w-1/2`}
+            disabled={isPendingApproveToken || isConfirmingApproveToken || isConfirmedApproveToken}
+            onClick={handleApprove}
+          >
+            {isPendingApproveToken || isConfirmingApproveToken
+              ? '1.授权中...'
+              : isConfirmedApproveToken
+              ? '1.已授权'
+              : '1.授权'}
+          </Button>
+          <Button
+            className={`w-1/2`}
+            disabled={!isConfirmedApproveToken || isPendingJoin || isConfirmingJoin}
+            onClick={handleJoin}
+          >
+            {isPendingJoin || isConfirmingJoin ? '2.加入中...' : isConfirmedJoin ? '2.已加入' : '2.加入'}
+          </Button>
         </div>
         {errorTokenBalance && <div className="text-red-500 text-center">{errorTokenBalance.message}</div>}
         {errApproveToken && <div className="text-red-500 text-center">{errApproveToken.message}</div>}
         {errorJoin && <div className="text-red-500 text-center">{errorJoin.message}</div>}
       </div>
+      <LoadingOverlay
+        isLoading={isPendingApproveToken || isConfirmingApproveToken || isPendingJoin || isConfirmingJoin}
+      />
     </>
   );
 };

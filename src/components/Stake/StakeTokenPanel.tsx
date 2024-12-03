@@ -9,6 +9,7 @@ import { useTotalSupply } from '@/src/hooks/contracts/useLOVE20STToken';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount, parseUnits } from '@/src/lib/format';
 import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 interface StakeTokenPanelProps {
   tokenBalance: bigint;
@@ -95,7 +96,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
 
   return (
     <>
-      <div className="w-full flex flex-col items-center rounded p-4 mt-1">
+      <div className="w-full flex flex-col items-center p-6 mt-1">
         <div className="w-full text-left mb-4">
           <LeftTitle title="质押增加治理收益" />
         </div>
@@ -142,22 +143,31 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
               onClick={handleApprove}
             >
               {isPendingApproveToken || isConfirmingApproveToken
-                ? '授权中...'
+                ? '1.授权中...'
                 : isConfirmedApproveToken
                 ? '1.已授权'
                 : '1.授权'}
             </Button>
             <Button
               className={`w-1/2`}
-              disabled={!isConfirmedApproveToken || isPendingStakeToken || isConfirmingStakeToken}
+              disabled={
+                !isConfirmedApproveToken || isPendingStakeToken || isConfirmingStakeToken || isConfirmedStakeToken
+              }
               onClick={handleStake}
             >
-              {isPendingStakeToken || isConfirmingStakeToken ? '质押中...' : '2.质押'}
+              {isPendingStakeToken || isConfirmingStakeToken
+                ? '2.质押中...'
+                : isConfirmedStakeToken
+                ? '2.已质押'
+                : '2.质押'}
             </Button>
           </div>
         </form>
         {errStakeToken && <div className="text-red-500">{errStakeToken.message}</div>}
         {errApproveToken && <div className="text-red-500">{errApproveToken.message}</div>}
+        <LoadingOverlay
+          isLoading={isPendingApproveToken || isConfirmingApproveToken || isPendingStakeToken || isConfirmingStakeToken}
+        />
       </div>
     </>
   );

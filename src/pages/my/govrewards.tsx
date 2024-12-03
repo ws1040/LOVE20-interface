@@ -41,17 +41,18 @@ const GovRewardsPage: React.FC = () => {
 
   // 铸造治理奖励
   const { mintGovReward, isWriting, isConfirming, isConfirmed, writeError } = useMintGovReward();
-
+  const [mintingRound, setMintingRound] = useState<bigint | null>(null);
   useEffect(() => {
     if (isConfirmed) {
       setRewardList((prev) =>
-        prev.map((item) => (item.unminted > 0n ? { ...item, unminted: 0n, minted: item.unminted } : item)),
+        prev.map((item) => (item.round === mintingRound ? { ...item, unminted: 0n, minted: item.unminted } : item)),
       );
     }
   }, [isConfirmed]);
 
   const handleClaim = async (round: bigint) => {
     if (token?.address && accountAddress) {
+      setMintingRound(round);
       await mintGovReward(token.address, round);
     }
   };
