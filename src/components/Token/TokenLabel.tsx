@@ -24,9 +24,9 @@ const TokenLabel: React.FC<TokenLabelProps> = ({}) => {
           <span className="font-bold text-2xl mr-2">{token.symbol}</span>
           <AddressWithCopyButton address={token.address as `0x${string}`} />
           <AddToMetamask
-            tokenAddress={token?.address as `0x${string}`}
-            tokenSymbol={token?.symbol || ''}
-            tokenDecimals={token?.decimals || 0}
+            tokenAddress={token.address as `0x${string}`}
+            tokenSymbol={token.symbol || ''}
+            tokenDecimals={token.decimals || 0}
           />
         </div>
       </div>
