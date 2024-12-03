@@ -40,12 +40,11 @@ const MyJoinInfoOfActionAbstract: React.FC<MyJoinInfoOfActionAbstractProps> = ({
   }
 
   return (
-    <div className="p-6">
-      <LeftTitle title="以往参与" />
-      <div className="stats w-full border divide-x-0 mt-4">
+    <div className="px-6 pt-1 pb-4">
+      <div className="stats w-full divide-x-0">
         <div className="stat place-items-center">
           <div className="stat-title">未取回代币</div>
-          <div className="stat-value text-2xl">
+          <div className="stat-value text-2xl text-secondary">
             {isPendingStakedAmountByAccountByActionId ? (
               <LoadingIcon />
             ) : (

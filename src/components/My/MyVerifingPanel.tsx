@@ -44,7 +44,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
   return (
     <div className="flex-col items-center px-6 pt-6 pb-2">
       <LeftTitle title="我的验证" />
-      <div className="stats w-full mt-4 border grid grid-cols-2 divide-x-0">
+      <div className="stats w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center">
           <div className="stat-title text-sm">已验证票数</div>
           <div className="stat-value text-xl">
@@ -62,22 +62,21 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
           </div>
         </div>
       </div>
-      {showBtn &&
-        (isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
-          <LoadingIcon />
-        ) : votesNumByAccount > scoreByVerifier ? (
-          <div className="flex justify-center mt-4">
+      {showBtn && (
+        <div className="flex justify-center">
+          {isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
+            <LoadingIcon />
+          ) : votesNumByAccount > scoreByVerifier ? (
             <Button className="w-1/2">
               <Link href={`/verify?symbol=${token.symbol}`}>去验证</Link>
             </Button>
-          </div>
-        ) : (
-          <div className="flex justify-center mt-4">
+          ) : (
             <Button disabled className="w-1/2">
               {scoreByVerifier > 0 ? '已验证' : '未投票，无需验证'}
             </Button>
-          </div>
-        ))}
+          )}
+        </div>
+      )}
     </div>
   );
 };

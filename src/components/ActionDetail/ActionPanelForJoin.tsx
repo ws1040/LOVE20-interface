@@ -84,33 +84,41 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
   }
 
   return (
-    <div className="flex flex-col items-center space-y-4 px-6 pt-6 pb-2">
-      <div className="stats w-full border grid grid-cols-2 divide-x-0">
-        <div className="stat place-items-center">
-          <div className="stat-title">我参与本行动的代币</div>
-          <div className="stat-value text-2xl">
-            {isPendingJoinedAmount ? <LoadingIcon /> : formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0))}
+    <div className="flex flex-col items-center px-6 pt-1 pb-4">
+      {isJoined && (
+        <div className="stats w-full grid grid-cols-2 divide-x-0">
+          <div className="stat place-items-center">
+            <div className="stat-title">我参与本行动的代币</div>
+            <div className="stat-value text-2xl">
+              {isPendingJoinedAmount ? (
+                <LoadingIcon />
+              ) : (
+                formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0))
+              )}
+            </div>
+          </div>
+          <div className="stat place-items-center">
+            <div className="stat-title">所占比例</div>
+            <div className="stat-value text-2xl">{participationRatio}</div>
           </div>
         </div>
-        <div className="stat place-items-center">
-          <div className="stat-title">所占比例</div>
-          <div className="stat-value text-2xl">{participationRatio}</div>
-        </div>
-      </div>
+      )}
 
       {!isJoined ? (
-        <Button variant="outline" className="w-full text-secondary border-secondary" asChild>
+        <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
           <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>参与行动</Link>
         </Button>
       ) : (
-        <div className="flex flex-col items-center">
-          <Button disabled className="w-full">
+        <>
+          <Button variant="outline" className="w-1/2 text-secondary border-secondary py-0" disabled>
             您已加入
           </Button>
-          <div className="mt-2 text-sm text-greyscale-600">
-            {isPendingVerificationInfo ? '加载中...' : `我的信息：${verificationInfo}`}
+          <div className="flex flex-col items-center mt-2">
+            <div className="text-sm text-greyscale-600">
+              {isPendingVerificationInfo ? '加载中...' : `我的信息：${verificationInfo}`}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
