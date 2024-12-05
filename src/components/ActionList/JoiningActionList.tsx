@@ -44,18 +44,6 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
     error: errorJoinedActions,
   } = useJoinedActions((token?.address as `0x${string}`) || '', accountAddress as `0x${string}`);
 
-  if (
-    isPendingJoinableActions ||
-    (actionIds && actionIds.length > 0 && isPendingActionInfosByIds) ||
-    isPendingJoinedActions
-  ) {
-    return (
-      <div className="p-4 flex justify-center items-center">
-        <LoadingIcon />
-      </div>
-    );
-  }
-
   if (errorJoinableActions || errorActionInfosByIds || errorJoinedActions) {
     console.error('errorJoinableActions', errorJoinableActions);
     console.error('errorActionInfosByIds', errorActionInfosByIds);
@@ -63,12 +51,18 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
     return <div>加载出错，请稍后再试。</div>;
   }
 
+  const isLoading = isPendingJoinableActions || isPendingActionInfosByIds || isPendingJoinedActions;
+
   return (
     <div className="p-6">
       <LeftTitle title="进行中的行动" />
-      {!actionIds?.length ? (
-        <div className="text-sm text-greyscale-500 text-center">没有行动</div>
-      ) : (
+      {isLoading && (
+        <div className="p-4 flex justify-center items-center">
+          <LoadingIcon />
+        </div>
+      )}
+      {!isLoading && !actionIds?.length && <div className="text-sm text-greyscale-500 text-center">没有行动</div>}
+      {!isLoading && actionIds?.length && (
         <div className="mt-4 space-y-4">
           {actionInfos?.map((action: ActionInfo, index: number) => {
             const isJoined = joinedActions?.some((joinedAction) => joinedAction.actionId === BigInt(action.head.id));

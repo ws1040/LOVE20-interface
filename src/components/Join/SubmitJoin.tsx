@@ -11,6 +11,7 @@ import { useApprove, useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
 import { formatTokenAmount, parseUnits } from '@/src/lib/format';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
+import { checkWalletConnection } from '@/src/utils/web3';
 
 interface SubmitJoinProps {
   actionInfo: ActionInfo;
@@ -20,7 +21,7 @@ interface SubmitJoinProps {
 const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => {
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
+  const { address: accountAddress, chain: accountChain } = useAccount();
 
   // 表单状态管理
   const [additionalStakeAmount, setAdditionalStakeAmount] = useState('');
@@ -42,6 +43,9 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     writeError: errApproveToken,
   } = useApprove(token?.address as `0x${string}`);
   const handleApprove = async () => {
+    if (!checkWalletConnection(accountChain)) {
+      return;
+    }
     if (stakedAmount && parseUnits(additionalStakeAmount) + stakedAmount > BigInt(actionInfo.body.maxStake)) {
       toast.error('增加的代币数不能超过最大参与代币数');
       return;
@@ -71,6 +75,9 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     error: errorJoin,
   } = useJoin();
   const handleJoin = async () => {
+    if (!checkWalletConnection(accountChain)) {
+      return;
+    }
     try {
       await join(
         token?.address as `0x${string}`,

@@ -33,6 +33,9 @@ export const useBalanceOf = (token: `0x${string}`, account: `0x${string}`) => {
     abi: LOVE20TokenAbi,
     functionName: 'balanceOf',
     args: [account],
+    query: {
+      enabled: !!token && !!account,
+    },
   });
 
   return { balance: data as bigint | undefined, isPending, error };
