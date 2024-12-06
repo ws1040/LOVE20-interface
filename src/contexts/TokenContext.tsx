@@ -35,6 +35,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   const [token, setToken] = useState<Token | null>(null);
   const [currentTokenSymbol, setCurrentTokenSymbol] = useState<string | undefined>(undefined);
 
+  // [todo] 每次都从合约获取 token 信息，应该优化
   // 从合约获取 token 信息
   const {
     token: tokenInfoBySymbol,
@@ -66,15 +67,16 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
   // 根据 symbol 设置 token
   const setTokenBySymbol = (tokenSymbol: string) => {
-    if (typeof window === 'undefined') {
-      return;
-    }
+    console.log('------setTokenBySymbol------', tokenSymbol);
+    console.log('typeof window', typeof window);
     // symbol是首字母是大写，所以小写字母开头是path或page名称
     const ifNoSymbol = !tokenSymbol || tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase();
 
     try {
       // 从 Local Storage 加载 token
       const storedToken = localStorage.getItem('currentToken');
+      console.log('storedToken', storedToken);
+
       if (storedToken && JSON.parse(storedToken)) {
         const _token = JSON.parse(storedToken);
         if (ifNoSymbol || tokenSymbol === _token.symbol) {
@@ -96,9 +98,6 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
   // [方式1]:Github Pages只支持静态导出部署，所以动态路由有问题，所以从 window.location 加载 symbol
   useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
     if (!process.env.NEXT_PUBLIC_BASE_PATH || typeof window == 'undefined') {
       return;
     }
@@ -114,17 +113,11 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     if (process.env.NEXT_PUBLIC_BASE_PATH || !router.isReady) {
       return;
     }
-    if (typeof window === 'undefined') {
-      return;
-    }
     setTokenBySymbol(router.query.symbol as string);
   }, [router.isReady, router.query.symbol]);
 
   // 当 token 变化时，更新 Local Storage
   useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
     try {
       if (token) {
         localStorage.setItem('currentToken', JSON.stringify(token));
@@ -136,9 +129,6 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
   // 监听 storage 事件以同步多个标签页
   useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'currentToken') {
         if (event.newValue) {
