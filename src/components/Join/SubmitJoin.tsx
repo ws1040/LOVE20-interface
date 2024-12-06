@@ -151,7 +151,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
 
         <div className="flex justify-center space-x-4">
           <Button
-            className={`w-1/2`}
+            className={`w-1/2 bg-[#1e293b]`}
             disabled={isPendingApproveToken || isConfirmingApproveToken || isConfirmedApproveToken}
             onClick={handleApprove}
           >
@@ -162,7 +162,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
               : '1.授权'}
           </Button>
           <Button
-            className={`w-1/2`}
+            className={`w-1/2 bg-[#1e293b]`}
             disabled={!isConfirmedApproveToken || isPendingJoin || isConfirmingJoin}
             onClick={handleJoin}
           >

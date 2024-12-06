@@ -74,11 +74,11 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
         {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
           <LoadingIcon />
         ) : validGovVotes > votesNumByAccount ? (
-          <Button className="w-1/2">
+          <Button className="w-1/2 bg-[#1e293b]">
             <Link href={`/vote?symbol=${token.symbol}`}>去投票</Link>
           </Button>
         ) : (
-          <Button disabled className="w-1/2">
+          <Button disabled className="w-1/2 bg-[#1e293b]">
             {validGovVotes > 0 ? '已投票' : '无治理票，不能投票'}
           </Button>
         )}

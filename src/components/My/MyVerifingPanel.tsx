@@ -67,11 +67,11 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
           {isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
             <LoadingIcon />
           ) : votesNumByAccount > scoreByVerifier ? (
-            <Button className="w-1/2">
+            <Button className="w-1/2 bg-[#1e293b]">
               <Link href={`/verify?symbol=${token.symbol}`}>去验证</Link>
             </Button>
           ) : (
-            <Button disabled className="w-1/2">
+            <Button disabled className="w-1/2 bg-[#1e293b]">
               {scoreByVerifier > 0 ? '已验证' : '未投票，无需验证'}
             </Button>
           )}
