@@ -47,6 +47,8 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
       console.error('useTokenDetailBySymbol error:', errorBySymbol);
     }
   }, [errorBySymbol]);
+  console.log('tokenInfoBySymbol', tokenInfoBySymbol);
+  console.log('launchInfoBySymbol', launchInfoBySymbol);
 
   // 根据合约返回结果，更新 token
   useEffect(() => {
@@ -68,7 +70,8 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   // 根据 symbol 设置 token
   const setTokenBySymbol = (tokenSymbol: string) => {
     console.log('------setTokenBySymbol------', tokenSymbol);
-    console.log('typeof window', typeof window);
+    console.log('typeof window');
+    console.log(typeof window);
     // symbol是首字母是大写，所以小写字母开头是path或page名称
     const ifNoSymbol = !tokenSymbol || tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase();
 
