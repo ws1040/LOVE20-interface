@@ -13,10 +13,11 @@ import { LaunchInfo } from '@/src/types/life20types';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
+import { checkWalletConnection } from '@/src/utils/web3';
 
 const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const [contributeAmount, setContributeAmount] = useState('');
-  const { address: account } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
 
   // 读取信息hooks
   const {
@@ -30,6 +31,18 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
     error: contributedError,
   } = useContributed(token?.address as `0x${string}`, account as `0x${string}`);
 
+  // 检查输入
+  const checkInput = () => {
+    if (!checkWalletConnection(accountChain)) {
+      return false;
+    }
+    if (parseUnits(contributeAmount) <= 0n) {
+      toast.error('申购数量不能为0');
+      return false;
+    }
+    return true;
+  };
+
   // 授权
   const {
     approve: approveParentToken,
@@ -39,8 +52,14 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
     writeError: errApproveParentToken,
   } = useApprove(token?.parentTokenAddress as `0x${string}`);
   const handleApprove = async () => {
+    if (!checkInput()) {
+      return;
+    }
     try {
-      await approveParentToken(token?.parentTokenAddress as `0x${string}`, parseUnits(contributeAmount));
+      await approveParentToken(
+        process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x${string}`,
+        parseUnits(contributeAmount),
+      );
     } catch (error) {
       console.error(error);
     }
@@ -51,8 +70,6 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
     }
   }, [isConfirmedApproveParentToken]);
 
-  console.log('parseUnits(contributeAmount)', parseUnits(contributeAmount));
-
   // 申购
   const {
     contribute,
@@ -62,6 +79,9 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
     writeError: errContributeToken,
   } = useContribute();
   const handleContribute = async () => {
+    if (!checkInput()) {
+      return;
+    }
     try {
       await contribute(token?.address as `0x${string}`, parseUnits(contributeAmount));
     } catch (error) {

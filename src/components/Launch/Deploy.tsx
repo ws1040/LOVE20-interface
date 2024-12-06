@@ -8,8 +8,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/router';
 
-import { useDeployToken } from '@/src/hooks/contracts/useLOVE20Launch';
+import { checkWalletConnection } from '@/src/utils/web3';
 import { TokenContext } from '@/src/contexts/TokenContext';
+import { useDeployToken } from '@/src/hooks/contracts/useLOVE20Launch';
 import LoadingIcon from '../Common/LoadingIcon';
 import LoadingOverlay from '../Common/LoadingOverlay';
 
@@ -21,7 +22,7 @@ export default function TokenDeployment() {
   const [error, setError] = useState('');
 
   // 检查连接钱包
-  const { isConnected } = useAccount();
+  const { isConnected, chain: accountChain } = useAccount();
 
   // 从hook获得部署token的函数
   const { deployToken, isWriting, writeError, isConfirming, isConfirmed, writeData } = useDeployToken();
@@ -47,6 +48,9 @@ export default function TokenDeployment() {
 
   // 检查输入是否合法
   const checkInput = () => {
+    if (!checkWalletConnection(accountChain)) {
+      return false;
+    }
     if (symbol.length > 6) {
       setError('字符串名称，仅限6个byte');
       return false;

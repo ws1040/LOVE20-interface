@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import useTokenContext from '@/src/hooks/context/useTokenContext';
-import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
+import { checkWalletConnection } from '@/src/utils/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
+import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import {
   useGetAmountsIn,
   useGetAmountsOut,
@@ -25,7 +26,7 @@ export interface TokenInfo {
 }
 
 const SwapPanel = () => {
-  const { address: account } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const { token } = useTokenContext();
   const [fromTokenInfo, setFromTokenInfo] = useState<TokenInfo>({
     symbol: '',
@@ -182,6 +183,9 @@ const SwapPanel = () => {
 
   // handleApprove 函数实现
   const handleApprove = async () => {
+    if (!checkInput()) {
+      return;
+    }
     try {
       const tx = token?.symbol === fromTokenInfo.symbol ? approveToken : approveParentToken;
       await tx(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_ROUTER as `0x${string}`, fromTokenInfo.amount);
@@ -199,6 +203,9 @@ const SwapPanel = () => {
 
   // handleSwap 函数实现
   const handleSwap = async () => {
+    if (!checkInput()) {
+      return;
+    }
     try {
       // 定义 deadline为当前时间后20分钟
       const deadline = BigInt(Math.floor(Date.now() / 1000) + 20 * 60);
@@ -236,6 +243,18 @@ const SwapPanel = () => {
       setFee('0');
     }
   }, [fromTokenInfo.amountShow]);
+
+  // 检查输入
+  const checkInput = () => {
+    if (!checkWalletConnection(accountChain)) {
+      return false;
+    }
+    if (fromTokenInfo.amount <= 0n) {
+      toast.error('兑换数量不能为0');
+      return false;
+    }
+    return true;
+  };
 
   return (
     <div className="p-6">

@@ -9,10 +9,11 @@ import { useDeposit } from '@/src/hooks/contracts/useWETH';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '../Common/LoadingOverlay';
+import { checkWalletConnection } from '@/src/utils/web3';
 
 const Deposit: React.FC = () => {
   const [depositAmount, setDepositAmount] = useState('');
-  const { address: account } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const router = useRouter();
   // 读取余额
   const {
@@ -24,6 +25,18 @@ const Deposit: React.FC = () => {
     address: account,
   });
 
+  // 检查输入
+  const checkInput = () => {
+    if (!checkWalletConnection(accountChain)) {
+      return false;
+    }
+    if (parseUnits(depositAmount) <= 0n) {
+      toast.error('兑换数量不能为0');
+      return false;
+    }
+    return true;
+  };
+
   // 兑换
   const {
     deposit,
@@ -33,6 +46,9 @@ const Deposit: React.FC = () => {
     error: errDeposit,
   } = useDeposit();
   const handleDeposit = async () => {
+    if (!checkInput()) {
+      return;
+    }
     try {
       await deposit(parseUnits(depositAmount));
     } catch (error) {

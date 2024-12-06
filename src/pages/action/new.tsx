@@ -1,3 +1,4 @@
+import { useAccount } from 'wagmi';
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Button } from '@/components/ui/button';
@@ -8,9 +9,11 @@ import { parseUnits } from '@/src/lib/format';
 import Header from '@/src/components/Header';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
+import { checkWalletConnection } from '@/src/utils/web3';
 
 const NewAction = () => {
   // hook
+  const { chain: accountChain } = useAccount();
   const router = useRouter();
   const {
     submitNewAction,
@@ -39,6 +42,9 @@ const NewAction = () => {
 
   // 提交表单
   const handleSubmit = async () => {
+    if (!checkWalletConnection(accountChain)) {
+      return;
+    }
     const actionBody = {
       maxStake: form.maxStake ? parseUnits(form.maxStake) : 0n,
       maxRandomAccounts: form.rewardAddressCount ? BigInt(form.rewardAddressCount) : 0n,

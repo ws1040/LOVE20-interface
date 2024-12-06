@@ -12,6 +12,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import { formatTokenAmount } from '@/src/lib/format';
+import { checkWalletConnection } from '@/src/utils/web3';
 
 interface MyJoinInfoOfActionPancelProps {
   actionId: bigint;
@@ -19,7 +20,7 @@ interface MyJoinInfoOfActionPancelProps {
 }
 
 const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ actionId, currentJoinRound }) => {
-  const { address: account } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const { token } = useContext(TokenContext) || {};
 
   // 获取我参与的代币数
@@ -54,6 +55,9 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
   } = useWithdraw();
 
   const handleWithdraw = async () => {
+    if (!checkWalletConnection(accountChain)) {
+      return;
+    }
     await withdraw((token?.address as `0x${string}`) || '', actionId);
   };
 

@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 
+import { checkWalletConnection } from '@/src/utils/web3';
 import { useStakeToken } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import { useTotalSupply } from '@/src/hooks/contracts/useLOVE20STToken';
@@ -16,7 +17,7 @@ interface StakeTokenPanelProps {
 }
 
 const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
-  const { address: accountAddress } = useAccount();
+  const { address: accountAddress, chain: accountChain } = useAccount();
   const { token } = useContext(TokenContext) || {};
 
   const { totalSupply: stTokenAmount, isPending: isPendingStTokenAmount } = useTotalSupply(
@@ -44,10 +45,21 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
   const [stakeTokenAmount, setStakeTokenAmount] = useState('');
   const [releasePeriod, setReleasePeriod] = useState('4'); // 将初始值从 '1' 改为 '4'
 
-  // 处理授权
-  const handleApprove = async () => {
+  // 检查输入
+  const checkInput = () => {
+    if (!checkWalletConnection(accountChain)) {
+      return false;
+    }
     if (BigInt(stakeTokenAmount) === 0n) {
       toast.error('请输入正确的数量');
+      return;
+    }
+    return true;
+  };
+
+  // 处理授权
+  const handleApprove = async () => {
+    if (!checkInput()) {
       return;
     }
     try {
@@ -65,8 +77,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
 
   // 处理质押
   const handleStake = async () => {
-    if (BigInt(stakeTokenAmount) === 0n) {
-      toast.error('请输入正确的数量');
+    if (!checkInput()) {
       return;
     }
     try {

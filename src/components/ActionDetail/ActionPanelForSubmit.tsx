@@ -1,9 +1,11 @@
 import React, { useEffect, useContext } from 'react';
 import { BaseError } from 'viem/_types/errors/base';
-import { useRouter } from 'next/router';
-import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/router';
+import { useAccount } from 'wagmi';
 
+import { checkWalletConnection } from '@/src/utils/web3';
 import { useCurrentRound, useSubmit } from '@/src/hooks/contracts/useLOVE20Submit';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
@@ -16,6 +18,7 @@ interface ActionPanelForJoinProps {
 
 const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, submitted, onRoundChange }) => {
   const { token } = useContext(TokenContext) || {};
+  const { chain: accountChain } = useAccount();
   const router = useRouter();
 
   // 获取当前轮次, 并设置状态给父组件
@@ -29,6 +32,9 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
   // 提交
   const { submit, isWriting, isConfirming, isConfirmed, writeError: errSubmit } = useSubmit();
   const handleSubmit = () => {
+    if (!checkWalletConnection(accountChain)) {
+      return;
+    }
     if (isWriting || isConfirming) {
       return;
     }

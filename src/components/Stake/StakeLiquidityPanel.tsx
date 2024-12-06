@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
-import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+import { checkWalletConnection } from '@/src/utils/web3';
 import { useStakeLiquidity } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import { TokenContext, Token } from '@/src/contexts/TokenContext';
@@ -23,7 +23,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
   parentTokenBalance,
   stakedTokenAmountOfLP,
 }) => {
-  const { address: accountAddress } = useAccount();
+  const { address: accountAddress, chain: accountChain } = useAccount();
   const { token } = useContext(TokenContext) || {};
 
   // 捕获表单状态
@@ -132,11 +132,10 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
 
   const handleApprove = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateInput(parentToken) || !validateInput(stakeToken)) {
-      toast.error('请输入有效的数量，最多支持12位小数');
+
+    if (!checkInput()) {
       return;
     }
-
     try {
       const stakeAmount = parseUnits(stakeToken);
       const parentAmount = parseUnits(parentToken);
@@ -169,6 +168,9 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!checkInput()) {
+      return;
+    }
 
     const bothApproved = isConfirmedApproveToken && isConfirmedApproveParentToken;
 
@@ -205,6 +207,22 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
       }, 2000);
     }
   }, [isConfirmedStakeLiquidity]);
+
+  // 检查输入
+  const checkInput = () => {
+    if (!checkWalletConnection(accountChain)) {
+      return false;
+    }
+    if (!validateInput(parentToken) || !validateInput(stakeToken)) {
+      toast.error('请输入有效的数量，最多支持12位小数');
+      return false;
+    }
+    if (parseUnits(stakeToken) <= 0n || parseUnits(parentToken) <= 0n) {
+      toast.error('质押数量不能为0');
+      return false;
+    }
+    return true;
+  };
 
   const isApproveLoading =
     isPendingApproveToken || isPendingApproveParentToken || isConfirmingApproveToken || isConfirmingApproveParentToken;

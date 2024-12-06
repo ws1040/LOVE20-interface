@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { toast } from 'react-hot-toast';
+import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
 
+import { Button } from '@/components/ui/button';
+import { checkWalletConnection } from '@/src/utils/web3';
+import { TokenContext } from '@/src/contexts/TokenContext';
 import { useVerificationInfosByAction } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useVerify } from '@/src/hooks/contracts/useLOVE20Verify';
-import { TokenContext } from '@/src/contexts/TokenContext';
-
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import { Button } from '@/components/ui/button';
 
 interface VerifyAddressesProps {
   currentRound: bigint;
@@ -18,6 +19,7 @@ interface VerifyAddressesProps {
 
 const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionId, remainingVotes }) => {
   const { token } = useContext(TokenContext) || {};
+  const { chain: accountChain } = useAccount();
   const router = useRouter();
 
   // 获取参与验证的地址
@@ -51,7 +53,16 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
 
   // 提交验证
   const { verify, isWriting, isConfirmed, writeError: submitError } = useVerify();
+  const checkInput = () => {
+    if (!checkWalletConnection(accountChain)) {
+      return false;
+    }
+    return true;
+  };
   const handleSubmit = () => {
+    if (!checkInput()) {
+      return;
+    }
     const scoresArray = accountsForVerify.map((addr) => {
       const percentage = parseInt(scores[addr] || '0');
       return (BigInt(percentage) * remainingVotes) / 100n;

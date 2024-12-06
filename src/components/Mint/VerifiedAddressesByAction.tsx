@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 
+import { checkWalletConnection } from '@/src/utils/web3';
 import { formatTokenAmount } from '@/src/lib/format';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { VerifiedAddress } from '@/src/types/life20types';
@@ -18,7 +19,7 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
   actionId,
 }) => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
+  const { address: accountAddress, chain: accountChain } = useAccount();
   const [selectedRound, setSelectedRound] = useState(0n);
   useEffect(() => {
     if (currentJoinRound >= 2n) {
@@ -48,6 +49,9 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
     writeError: mintError,
   } = useMintActionReward();
   const handleClaim = async (item: VerifiedAddress) => {
+    if (!checkWalletConnection(accountChain)) {
+      return;
+    }
     if (accountAddress && item.reward > 0) {
       await mintActionReward(token?.address as `0x${string}`, selectedRound, actionId);
     }

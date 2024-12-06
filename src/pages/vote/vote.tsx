@@ -5,8 +5,9 @@ import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-import { formatTokenAmount } from '@/src/lib/format';
 import { ActionInfo } from '@/src/types/life20types';
+import { checkWalletConnection } from '@/src/utils/web3';
+import { formatTokenAmount } from '@/src/lib/format';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
@@ -14,13 +15,11 @@ import { useCurrentRound, useVotesNumByAccount, useVote } from '@/src/hooks/cont
 
 import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import Round from '@/src/components/Common/Round';
-import LeftTitle from '@/src/components/Common/LeftTitle';
 
 const VotingSubmitPage = () => {
   const { token } = useContext(TokenContext) || {};
   const [percentages, setPercentages] = useState<{ [key: number]: number }>({});
-  const { address: accountAddress } = useAccount();
+  const { address: accountAddress, chain: accountChain } = useAccount();
   const { currentRound, isPending: isPendingCurrentRound, error: errCurrentRound } = useCurrentRound();
 
   const router = useRouter();
@@ -90,12 +89,23 @@ const VotingSubmitPage = () => {
   // 提交投票
   const { vote, isWriting, isConfirming, isConfirmed, writeError: submitError } = useVote();
 
-  // 提交投票
-  const handleSubmit = async () => {
+  // 检查输入
+  const checkInput = () => {
+    if (!checkWalletConnection(accountChain)) {
+      return false;
+    }
     // percentages 百分比之和必须为100
     const totalPercentage = Object.values(percentages).reduce((sum, percentage) => sum + percentage, 0);
     if (totalPercentage !== 100) {
       toast.error('百分比之和必须为100');
+      return false;
+    }
+    return true;
+  };
+
+  // 提交投票
+  const handleSubmit = async () => {
+    if (!checkInput()) {
       return;
     }
     // 计算每个action的投票数

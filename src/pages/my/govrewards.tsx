@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 
+import { checkWalletConnection } from '@/src/utils/web3';
 import { GovReward } from '@/src/types/life20types';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { useGovRewardsByAccountByRounds } from '@/src/hooks/contracts/useLOVE20DataViewer';
@@ -14,7 +15,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
+  const { address: accountAddress, chain: accountChain } = useAccount();
 
   const { currentRound } = useCurrentRound();
   const startRound = currentRound ? currentRound - 1n : 0n;
@@ -51,6 +52,9 @@ const GovRewardsPage: React.FC = () => {
   }, [isConfirmed]);
 
   const handleClaim = async (round: bigint) => {
+    if (!checkWalletConnection(accountChain)) {
+      return;
+    }
     if (token?.address && accountAddress) {
       setMintingRound(round);
       await mintGovReward(token.address, round);
