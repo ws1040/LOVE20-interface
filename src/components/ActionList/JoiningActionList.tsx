@@ -51,7 +51,10 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
     return <div>加载出错，请稍后再试。</div>;
   }
 
-  const isLoading = isPendingJoinableActions || isPendingActionInfosByIds || isPendingJoinedActions;
+  const isLoading =
+    isPendingJoinableActions ||
+    (joinableActions && joinableActions.length > 0 && isPendingActionInfosByIds) ||
+    isPendingJoinedActions;
 
   return (
     <div className="p-6">
@@ -61,8 +64,10 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
           <LoadingIcon />
         </div>
       )}
-      {!isLoading && !actionIds?.length && <div className="text-sm text-greyscale-500 text-center">没有行动</div>}
-      {!isLoading && actionIds?.length && (
+      {!isLoading && !actionIds?.length && (
+        <div className="text-sm mt-4 text-greyscale-500 text-center">本轮暂无行动</div>
+      )}
+      {!isLoading && actionIds && actionIds.length > 0 && (
         <div className="mt-4 space-y-4">
           {actionInfos?.map((action: ActionInfo, index: number) => {
             const isJoined = joinedActions?.some((joinedAction) => joinedAction.actionId === BigInt(action.head.id));
