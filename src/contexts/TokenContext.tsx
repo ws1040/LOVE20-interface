@@ -33,21 +33,65 @@ interface TokenProviderProps {
 export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   const router = useRouter();
   const [token, setToken] = useState<Token | null>(null);
-  const [currentTokenSymbol, setCurrentTokenSymbol] = useState<string | undefined>(undefined);
+  const [symbolToGetDetail, setSymbolToGetDetail] = useState<string | undefined>(undefined);
 
-  // 从合约获取 token 信息
+  // Step 1. 获取当前token symbol: 从动态路由获取 symbol
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_BASE_PATH || !router.isReady) {
+      return;
+    }
+    initTokenBySymbol(router.query.symbol as string);
+  }, [router.isReady, router.query.symbol]);
+
+  // 【仅供 Github Pages 静态路径路由. 暂未使用】
+  // Step 1. 获取当前token symbol: Github Pages只支持静态导出部署，所以从 window.location 获取 symbol
+  // useEffect(() => {
+  //   if (!process.env.NEXT_PUBLIC_BASE_PATH || typeof window == 'undefined') {
+  //     return;
+  //   }
+  //   const pathSegments = window.location.pathname.split('/');
+  //   const basePath = process.env.NEXT_PUBLIC_BASE_PATH.replace(/^\/|\/$/g, '');
+  //   const basePathIndex = pathSegments.indexOf(basePath);
+  //   const symbol = pathSegments[basePathIndex + 1];
+  //   initTokenBySymbol(symbol);
+  // }, []);
+
+  // Step 2. 根据 symbol 初始化 token
+  const initTokenBySymbol = (tokenSymbol: string) => {
+    // symbol是首字母是大写，所以小写字母开头是path或page名称
+    const ifNoSymbol = !tokenSymbol || tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase();
+
+    try {
+      // 从 Local Storage 加载 token
+      const storedToken = localStorage.getItem('currentToken');
+
+      if (storedToken && JSON.parse(storedToken)) {
+        const _token = JSON.parse(storedToken);
+        if (ifNoSymbol || tokenSymbol === _token.symbol) {
+          setToken(_token);
+          return;
+        }
+      }
+
+      // 从 路由symbol 加载 token
+      if (tokenSymbol && tokenSymbol.length > 0 && !ifNoSymbol) {
+        setSymbolToGetDetail(tokenSymbol as string);
+      } else {
+        setSymbolToGetDetail(process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || '');
+      }
+    } catch (error) {
+      console.error('Failed to load token from localStorage:', error);
+    }
+  };
+
+  // Step 3. 如果localstorage没有token缓存，则从合约获取 token 信息
   const {
     token: tokenInfoBySymbol,
     launchInfo: launchInfoBySymbol,
     error: errorBySymbol,
-  } = useTokenDetailBySymbol(currentTokenSymbol as string);
-  useEffect(() => {
-    if (errorBySymbol) {
-      console.error('useTokenDetailBySymbol error:', errorBySymbol);
-    }
-  }, [errorBySymbol]);
+  } = useTokenDetailBySymbol(symbolToGetDetail as string);
 
-  // 根据合约返回结果，更新 token
+  // 合约返回成功，更新 token
   useEffect(() => {
     if (tokenInfoBySymbol && launchInfoBySymbol) {
       setToken({
@@ -64,54 +108,14 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     }
   }, [tokenInfoBySymbol, launchInfoBySymbol]);
 
-  // 根据 symbol 设置 token
-  const setTokenBySymbol = (tokenSymbol: string) => {
-    // symbol是首字母是大写，所以小写字母开头是path或page名称
-    const ifNoSymbol = !tokenSymbol || tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase();
-
-    try {
-      // 从 Local Storage 加载 token
-      const storedToken = localStorage.getItem('currentToken');
-      if (storedToken && JSON.parse(storedToken)) {
-        const _token = JSON.parse(storedToken);
-        if (ifNoSymbol || tokenSymbol === _token.symbol) {
-          setToken(_token);
-          return;
-        }
-      }
-
-      // 从 路由symbol 加载 token
-      if (tokenSymbol.length > 0 && !ifNoSymbol) {
-        setCurrentTokenSymbol(tokenSymbol as string);
-      } else {
-        setCurrentTokenSymbol(process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || '');
-      }
-    } catch (error) {
-      console.error('Failed to load token from localStorage:', error);
-    }
-  };
-
-  // [方式1]:Github Pages只支持静态导出部署，所以动态路由有问题，所以从 window.location 加载 symbol
+  // 合约返回错误
   useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_BASE_PATH || typeof window == 'undefined') {
-      return;
+    if (errorBySymbol) {
+      console.error('useTokenDetailBySymbol error:', errorBySymbol);
     }
-    const pathSegments = window.location.pathname.split('/');
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH.replace(/^\/|\/$/g, '');
-    const basePathIndex = pathSegments.indexOf(basePath);
-    const symbol = pathSegments[basePathIndex + 1];
-    setTokenBySymbol(symbol);
-  }, []);
+  }, [errorBySymbol]);
 
-  // [方式2]:从动态路由加载 symbol
-  useEffect(() => {
-    if (process.env.NEXT_PUBLIC_BASE_PATH || !router.isReady) {
-      return;
-    }
-    setTokenBySymbol(router.query.symbol as string);
-  }, [router.isReady, router.query.symbol]);
-
-  // 当 token 变化时，更新 Local Storage
+  // Step 4. 当 token 变化时，更新 Local Storage
   useEffect(() => {
     try {
       if (token) {
