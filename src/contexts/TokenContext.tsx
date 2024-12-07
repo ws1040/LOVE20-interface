@@ -58,14 +58,12 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
   // Step 2. 根据 symbol 初始化 token
   const initTokenBySymbol = (tokenSymbol: string) => {
-    console.log('------initTokenBySymbol------', tokenSymbol);
     // symbol是首字母是大写，所以小写字母开头是path或page名称
     const ifNoSymbol = !tokenSymbol || tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase();
 
     try {
       // 从 Local Storage 加载 token
       const storedToken = localStorage.getItem('currentToken');
-      console.log('storedToken', storedToken);
 
       if (storedToken && JSON.parse(storedToken)) {
         const _token = JSON.parse(storedToken);
