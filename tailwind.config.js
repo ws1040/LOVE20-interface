@@ -1,5 +1,6 @@
 // tailwind.config.js
 
+const colors = require('tailwindcss/colors');
 const { fontFamily } = require('tailwindcss/defaultTheme');
 
 /** @type {import('tailwindcss').Config} */
@@ -80,6 +81,7 @@ module.exports = {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        gray: colors.slate,
       },
       borderRadius: {
         lg: 'var(--radius)',
