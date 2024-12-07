@@ -35,6 +35,10 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   const [token, setToken] = useState<Token | null>(null);
   const [symbolToGetDetail, setSymbolToGetDetail] = useState<string | undefined>(undefined);
 
+  console.log('router.isReady', router.isReady);
+  console.log('router.query.symbol', router.query.symbol);
+  console.log('window.location.pathname', window.location.pathname);
+
   // Step 1. 获取当前token symbol: 从动态路由获取 symbol
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_BASE_PATH || !router.isReady) {
