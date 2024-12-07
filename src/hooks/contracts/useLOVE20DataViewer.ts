@@ -145,12 +145,6 @@ export const useTokenDetailBySymbol = (symbol: string) => {
       enabled: !!symbol,
     },
   });
-  console.log('***useTokenDetailBySymbol***');
-  console.log('CONTRACT_ADDRESS', CONTRACT_ADDRESS);
-  console.log('symbol', symbol);
-  console.log('data', data);
-  console.log('isPending', isPending);
-  console.log('error', error);
   return {
     token: data?.[0] as TokenInfo | undefined,
     launchInfo: data?.[1] as LaunchInfo | undefined,
