@@ -41,7 +41,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
   // Step 1. 获取当前token symbol: 从动态路由获取 symbol
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_BASE_PATH || !router.isReady) {
+    if (!router.isReady) {
       return;
     }
     initTokenBySymbol(router.query.symbol as string);
