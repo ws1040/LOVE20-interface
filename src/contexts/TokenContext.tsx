@@ -33,45 +33,32 @@ interface TokenProviderProps {
 export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   const router = useRouter();
   const [token, setToken] = useState<Token | null>(null);
-  const [currentTokenSymbol, setCurrentTokenSymbol] = useState<string | undefined>(undefined);
+  const [symbolToGetDetail, setSymbolToGetDetail] = useState<string | undefined>(undefined);
 
-  // [todo] 每次都从合约获取 token 信息，应该优化
-  // 从合约获取 token 信息
-  const {
-    token: tokenInfoBySymbol,
-    launchInfo: launchInfoBySymbol,
-    error: errorBySymbol,
-  } = useTokenDetailBySymbol(currentTokenSymbol as string);
+  // Step 1. 获取当前token symbol: 从动态路由获取 symbol
   useEffect(() => {
-    if (errorBySymbol) {
-      console.error('useTokenDetailBySymbol error:', errorBySymbol);
+    if (process.env.NEXT_PUBLIC_BASE_PATH || !router.isReady) {
+      return;
     }
-  }, [errorBySymbol]);
-  console.log('tokenInfoBySymbol', tokenInfoBySymbol);
-  console.log('launchInfoBySymbol', launchInfoBySymbol);
+    initTokenBySymbol(router.query.symbol as string);
+  }, [router.isReady, router.query.symbol]);
 
-  // 根据合约返回结果，更新 token
-  useEffect(() => {
-    if (tokenInfoBySymbol && launchInfoBySymbol) {
-      setToken({
-        name: tokenInfoBySymbol.name,
-        symbol: tokenInfoBySymbol.symbol,
-        address: tokenInfoBySymbol.tokenAddress,
-        decimals: Number(tokenInfoBySymbol.decimals),
-        hasEnded: launchInfoBySymbol.hasEnded,
-        parentTokenAddress: launchInfoBySymbol.parentTokenAddress,
-        parentTokenSymbol: tokenInfoBySymbol.parentTokenSymbol,
-        slTokenAddress: tokenInfoBySymbol.slAddress,
-        stTokenAddress: tokenInfoBySymbol.stAddress,
-      });
-    }
-  }, [tokenInfoBySymbol, launchInfoBySymbol]);
+  // 【仅供 Github Pages 静态路径路由. 暂未使用】
+  // Step 1. 获取当前token symbol: Github Pages只支持静态导出部署，所以从 window.location 获取 symbol
+  // useEffect(() => {
+  //   if (!process.env.NEXT_PUBLIC_BASE_PATH || typeof window == 'undefined') {
+  //     return;
+  //   }
+  //   const pathSegments = window.location.pathname.split('/');
+  //   const basePath = process.env.NEXT_PUBLIC_BASE_PATH.replace(/^\/|\/$/g, '');
+  //   const basePathIndex = pathSegments.indexOf(basePath);
+  //   const symbol = pathSegments[basePathIndex + 1];
+  //   initTokenBySymbol(symbol);
+  // }, []);
 
-  // 根据 symbol 设置 token
-  const setTokenBySymbol = (tokenSymbol: string) => {
-    console.log('------setTokenBySymbol------', tokenSymbol);
-    console.log('typeof window');
-    console.log(typeof window);
+  // Step 2. 根据 symbol 初始化 token
+  const initTokenBySymbol = (tokenSymbol: string) => {
+    console.log('------initTokenBySymbol------', tokenSymbol);
     // symbol是首字母是大写，所以小写字母开头是path或page名称
     const ifNoSymbol = !tokenSymbol || tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase();
 
@@ -89,37 +76,48 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
       }
 
       // 从 路由symbol 加载 token
-      if (tokenSymbol.length > 0 && !ifNoSymbol) {
-        setCurrentTokenSymbol(tokenSymbol as string);
+      if (tokenSymbol && tokenSymbol.length > 0 && !ifNoSymbol) {
+        setSymbolToGetDetail(tokenSymbol as string);
       } else {
-        setCurrentTokenSymbol(process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || '');
+        setSymbolToGetDetail(process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || '');
       }
     } catch (error) {
       console.error('Failed to load token from localStorage:', error);
     }
   };
 
-  // [方式1]:Github Pages只支持静态导出部署，所以动态路由有问题，所以从 window.location 加载 symbol
-  useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_BASE_PATH || typeof window == 'undefined') {
-      return;
-    }
-    const pathSegments = window.location.pathname.split('/');
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH.replace(/^\/|\/$/g, '');
-    const basePathIndex = pathSegments.indexOf(basePath);
-    const symbol = pathSegments[basePathIndex + 1];
-    setTokenBySymbol(symbol);
-  }, []);
+  // Step 3. 如果localstorage没有token缓存，则从合约获取 token 信息
+  const {
+    token: tokenInfoBySymbol,
+    launchInfo: launchInfoBySymbol,
+    error: errorBySymbol,
+  } = useTokenDetailBySymbol(symbolToGetDetail as string);
 
-  // [方式2]:从动态路由加载 symbol
+  // 合约返回成功，更新 token
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_BASE_PATH || !router.isReady) {
-      return;
+    if (tokenInfoBySymbol && launchInfoBySymbol) {
+      setToken({
+        name: tokenInfoBySymbol.name,
+        symbol: tokenInfoBySymbol.symbol,
+        address: tokenInfoBySymbol.tokenAddress,
+        decimals: Number(tokenInfoBySymbol.decimals),
+        hasEnded: launchInfoBySymbol.hasEnded,
+        parentTokenAddress: launchInfoBySymbol.parentTokenAddress,
+        parentTokenSymbol: tokenInfoBySymbol.parentTokenSymbol,
+        slTokenAddress: tokenInfoBySymbol.slAddress,
+        stTokenAddress: tokenInfoBySymbol.stAddress,
+      });
     }
-    setTokenBySymbol(router.query.symbol as string);
-  }, [router.isReady, router.query.symbol]);
+  }, [tokenInfoBySymbol, launchInfoBySymbol]);
 
-  // 当 token 变化时，更新 Local Storage
+  // 合约返回错误
+  useEffect(() => {
+    if (errorBySymbol) {
+      console.error('useTokenDetailBySymbol error:', errorBySymbol);
+    }
+  }, [errorBySymbol]);
+
+  // Step 4. 当 token 变化时，更新 Local Storage
   useEffect(() => {
     try {
       if (token) {
