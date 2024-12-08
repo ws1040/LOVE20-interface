@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import Link from 'next/link';
 import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useContribute, useContributed } from '@/src/hooks/contracts/useLOVE20Launch';
@@ -18,7 +19,7 @@ import { checkWalletConnection } from '@/src/utils/web3';
 const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const [contributeAmount, setContributeAmount] = useState('');
   const { address: account, chain: accountChain } = useAccount();
-
+  const router = useRouter();
   // 读取信息hooks
   const {
     balance: balanceOfParentToken,
@@ -91,9 +92,9 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
   useEffect(() => {
     if (isConfirmedContributeToken) {
       toast.success('申购成功');
-      // 2秒后刷新
+      // 2秒后跳转到发射页面
       setTimeout(() => {
-        window.location.reload();
+        router.push(`/launch?symbol=${token?.symbol}`);
       }, 2000);
     }
   }, [isConfirmedContributeToken]);

@@ -200,12 +200,15 @@ export const useChildTokensByParent = (parentAddress: `0x${string}`, index: bigi
 /**
  * Hook for claimed
  */
-export const useClaimed = (address1: `0x${string}`, address2: `0x${string}`) => {
+export const useClaimed = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
     functionName: 'claimed',
-    args: [address1, address2],
+    args: [tokenAddress, accountAddress],
+    query: {
+      enabled: !!tokenAddress && !!accountAddress,
+    },
   });
 
   return { claimed: data as boolean | undefined, isPending, error };
@@ -214,12 +217,15 @@ export const useClaimed = (address1: `0x${string}`, address2: `0x${string}`) => 
 /**
  * Hook for contributed
  */
-export const useContributed = (address1: `0x${string}`, address2: `0x${string}`) => {
+export const useContributed = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
     functionName: 'contributed',
-    args: [address1, address2],
+    args: [tokenAddress, accountAddress],
+    query: {
+      enabled: !!tokenAddress && !!accountAddress,
+    },
   });
 
   return { contributed: data as bigint | undefined, isPending, error };
@@ -228,12 +234,15 @@ export const useContributed = (address1: `0x${string}`, address2: `0x${string}`)
 /**
  * Hook for extraRefunded
  */
-export const useExtraRefunded = (address1: `0x${string}`, address2: `0x${string}`) => {
+export const useExtraRefunded = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
     functionName: 'extraRefunded',
-    args: [address1, address2],
+    args: [tokenAddress, accountAddress],
+    query: {
+      enabled: !!tokenAddress && !!accountAddress,
+    },
   });
 
   return { extraRefunded: data as bigint | undefined, isPending, error };

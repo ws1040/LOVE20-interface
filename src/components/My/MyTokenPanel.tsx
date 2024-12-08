@@ -38,6 +38,16 @@ const MyTokenPanel = () => {
   if (!token) {
     return <LoadingIcon />;
   }
+  if (!accountAddress) {
+    return (
+      <>
+        <div className="flex-col items-center px-6 py-2">
+          <LeftTitle title="我的代币" />
+          <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <div className="flex-col items-center px-6 py-2">

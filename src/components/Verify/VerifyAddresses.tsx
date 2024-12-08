@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
@@ -52,7 +53,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
   };
 
   // 提交验证
-  const { verify, isWriting, isConfirmed, writeError: submitError } = useVerify();
+  const { verify, isWriting, isConfirming, isConfirmed, writeError: submitError } = useVerify();
   const checkInput = () => {
     if (!checkWalletConnection(accountChain)) {
       return false;
@@ -139,8 +140,12 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       </div>
 
       {remainingVotes > 0 && (
-        <Button onClick={handleSubmit} disabled={isWriting || isConfirmed} className="mt-6 w-1/2">
-          {isConfirmed ? '已提交' : '提交验证'}
+        <Button onClick={handleSubmit} disabled={isWriting || isConfirming || isConfirmed} className="mt-6 w-1/2">
+          {!isWriting && !isConfirming && !isConfirmed && '提交验证'}
+          {(isWriting || isConfirming) && <Loader2 className="animate-spin" />}
+          {isWriting && '提交中'}
+          {isConfirming && '确认中'}
+          {isConfirmed && '已验证'}
         </Button>
       )}
       {!remainingVotes && (

@@ -12,6 +12,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
   const leftBlocks = blockNumber ? launchInfo.secondHalfMinBlocks - (blockNumber - launchInfo.secondHalfStartBlock) : 0;
   const timeLeft = leftBlocks > 0 ? Number(leftBlocks) * Number(process.env.NEXT_PUBLIC_BLOCK_TIME) : 0;
   const ratio = Number(launchInfo.totalContributed) / Number(launchInfo.parentTokenFundraisingGoal);
+  const ratioPercent = (ratio * 100).toFixed(1);
 
   if (!launchInfo) {
     return <div className="text-red-500">找不到发射信息</div>;
@@ -52,8 +53,8 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
           </div>
           <div className="stat-desc pt-2">
             {launchInfo.hasEnded && `超出筹集目标的 ${token.parentTokenSymbol} 在申领时退还`}
-            {!launchInfo.hasEnded && ratio < 0.5 && '筹集达到 50% 开始倒计时'}
-            {!launchInfo.hasEnded && ratio >= 0.5 && leftBlocks <= 0 && '筹集达到 100% 即结束发射'}
+            {!launchInfo.hasEnded && ratio < 0.5 && `已筹集${ratioPercent}%，达到 50% 开始倒计时`}
+            {!launchInfo.hasEnded && ratio >= 0.5 && leftBlocks <= 0 && `已筹集${ratioPercent}%，达到 100% 即结束发射`}
             {!launchInfo.hasEnded && ratio >= 0.5 && leftBlocks > 0 && (
               <>
                 {ratio < 1 ? '发射结束至少要' : '距离发射结束'}：<LeftTime initialTimeLeft={timeLeft} />

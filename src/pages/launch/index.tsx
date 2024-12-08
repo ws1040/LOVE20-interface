@@ -1,6 +1,6 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 
-import { TokenContext } from '@/src/contexts/TokenContext';
+import { Token, TokenContext } from '@/src/contexts/TokenContext';
 import { useLaunches } from '@/src/hooks/contracts/useLOVE20Launch';
 
 import Header from '@/src/components/Header';
@@ -13,12 +13,21 @@ import Todeploy from '@/src/components/Launch/Todeploy';
 
 export default function TokenFairLaunch() {
   const tokenContext = useContext(TokenContext);
-  const { token } = tokenContext || { token: null };
+  const { token, setToken } = tokenContext || { token: null, setToken: null };
+
+  // 获取发射信息
   const {
     launchInfo,
     isPending: isLaunchInfoPending,
     error: launchInfoError,
   } = useLaunches(token ? token.address : '0x0');
+
+  // 如果发射已结束，检查更新 token 的 hasEnded 状态
+  useEffect(() => {
+    if (launchInfo && token && launchInfo.hasEnded && !token.hasEnded && setToken) {
+      setToken({ ...token, hasEnded: true } as Token);
+    }
+  }, [launchInfo, token, setToken]);
 
   if (isLaunchInfoPending) {
     return <LoadingIcon />;

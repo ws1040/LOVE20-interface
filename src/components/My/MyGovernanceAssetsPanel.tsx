@@ -27,6 +27,16 @@ const MyGovernanceAssetsPanel = () => {
   if (!token) {
     return <LoadingIcon />;
   }
+  if (!accountAddress) {
+    return (
+      <>
+        <div className="flex-col items-center px-6 pt-6 pb-2">
+          <LeftTitle title="参与治理的资产" />
+          <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

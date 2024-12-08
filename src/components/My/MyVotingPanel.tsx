@@ -39,7 +39,16 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
   if (!token) {
     return '';
   }
-
+  if (!accountAddress) {
+    return (
+      <>
+        <div className="flex-col items-center px-6 py-2">
+          <LeftTitle title="我的投票" />
+          <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
+        </div>
+      </>
+    );
+  }
   if (errorValidGovVotes) {
     console.log('errorValidGovVotes', errorValidGovVotes);
   }

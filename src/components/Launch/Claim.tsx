@@ -73,6 +73,9 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
     }
   }, [isClaimConfirmed, claimError]);
 
+  if (!account) {
+    return '';
+  }
   if (isClaimedPending) {
     return <LoadingIcon />;
   }

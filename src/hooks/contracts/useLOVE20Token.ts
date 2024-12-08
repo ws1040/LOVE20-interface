@@ -18,6 +18,9 @@ export const useAllowance = (token: `0x${string}`, owner: `0x${string}`, spender
     abi: LOVE20TokenAbi,
     functionName: 'allowance',
     args: [owner, spender],
+    query: {
+      enabled: !!token && !!owner && !!spender,
+    },
   });
 
   return { allowance: data as bigint | undefined, isPending, error };

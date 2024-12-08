@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { BaseError } from 'viem/_types/errors/base';
 import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
@@ -8,7 +9,6 @@ import { useAccount } from 'wagmi';
 import { checkWalletConnection } from '@/src/utils/web3';
 import { useCurrentRound, useSubmit } from '@/src/hooks/contracts/useLOVE20Submit';
 import { TokenContext } from '@/src/contexts/TokenContext';
-import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 interface ActionPanelForJoinProps {
   actionId: bigint;
@@ -58,8 +58,11 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
           已推举
         </Button>
       ) : (
-        <Button onClick={handleSubmit} className="w-1/2">
-          {isWriting || isConfirming ? <LoadingIcon /> : '推举本行动'}
+        <Button onClick={handleSubmit} className="w-1/2" disabled={isWriting || isConfirming}>
+          {(isWriting || isConfirming) && <Loader2 className="animate-spin" />}
+          {isWriting && '提交中'}
+          {isConfirming && '确认中'}
+          {!isWriting && !isConfirming && '推举本行动'}
         </Button>
       )}
 

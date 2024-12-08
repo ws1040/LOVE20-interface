@@ -1,17 +1,18 @@
-import { useContext, useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
-import { useRouter } from 'next/router';
-import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import { useAccount } from 'wagmi';
+import { useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
-import { TokenContext } from '@/src/contexts/TokenContext';
 import { ActionInfo } from '@/src/types/life20types';
+import { checkWalletConnection } from '@/src/utils/web3';
+import { formatTokenAmount, parseUnits } from '@/src/lib/format';
+import { TokenContext } from '@/src/contexts/TokenContext';
 import { useJoin } from '@/src/hooks/contracts/useLOVE20Join';
 import { useApprove, useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
-import { formatTokenAmount, parseUnits } from '@/src/lib/format';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
-import { checkWalletConnection } from '@/src/utils/web3';
 
 interface SubmitJoinProps {
   actionInfo: ActionInfo;
@@ -37,10 +38,10 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
   // 授权(approve)
   const {
     approve: approveToken,
-    isWriting: isPendingApproveToken,
-    isConfirming: isConfirmingApproveToken,
-    isConfirmed: isConfirmedApproveToken,
-    writeError: errApproveToken,
+    isWriting: isPendingApprove,
+    isConfirming: isConfirmingApprove,
+    isConfirmed: isConfirmedApprove,
+    writeError: errApprove,
   } = useApprove(token?.address as `0x${string}`);
   const handleApprove = async () => {
     if (!checkWalletConnection(accountChain)) {
@@ -152,30 +153,32 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
         <div className="flex justify-center space-x-4">
           <Button
             className={`w-1/2`}
-            disabled={isPendingApproveToken || isConfirmingApproveToken || isConfirmedApproveToken}
+            disabled={isPendingApprove || isConfirmingApprove || isConfirmedApprove}
             onClick={handleApprove}
           >
-            {isPendingApproveToken || isConfirmingApproveToken
-              ? '1.授权中...'
-              : isConfirmedApproveToken
+            {(isPendingApprove || isConfirmingApprove) && <Loader2 className="animate-spin" />}
+            {isPendingApprove
+              ? '1.授权中'
+              : isConfirmingApprove
+              ? '1.确认中'
+              : isConfirmedApprove
               ? '1.已授权'
               : '1.授权'}
           </Button>
           <Button
             className={`w-1/2`}
-            disabled={!isConfirmedApproveToken || isPendingJoin || isConfirmingJoin}
+            disabled={!isConfirmedApprove || isPendingJoin || isConfirmingJoin}
             onClick={handleJoin}
           >
-            {isPendingJoin || isConfirmingJoin ? '2.加入中...' : isConfirmedJoin ? '2.已加入' : '2.加入'}
+            {(isPendingJoin || isConfirmingJoin) && <Loader2 className="animate-spin" />}
+            {isPendingJoin ? '2.加入中...' : isConfirmingJoin ? '2.确认中' : isConfirmedJoin ? '2.已加入' : '2.加入'}
           </Button>
         </div>
         {errorTokenBalance && <div className="text-red-500 text-center">{errorTokenBalance.message}</div>}
-        {errApproveToken && <div className="text-red-500 text-center">{errApproveToken.message}</div>}
+        {errApprove && <div className="text-red-500 text-center">{errApprove.message}</div>}
         {errorJoin && <div className="text-red-500 text-center">{errorJoin.message}</div>}
       </div>
-      <LoadingOverlay
-        isLoading={isPendingApproveToken || isConfirmingApproveToken || isPendingJoin || isConfirmingJoin}
-      />
+      <LoadingOverlay isLoading={isPendingApprove || isConfirmingApprove || isPendingJoin || isConfirmingJoin} />
     </>
   );
 };
