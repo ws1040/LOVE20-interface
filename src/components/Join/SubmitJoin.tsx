@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useAccount } from 'wagmi';
 import { useContext, useEffect, useState } from 'react';
@@ -108,21 +107,22 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
   }, [isConfirmedJoin]);
 
   const maxStake = BigInt(actionInfo.body.maxStake) - (stakedAmount || 0n);
-
+  const ifCanSubmitAndNotNeedApprove = !!stakedAmount && !additionalStakeAmount && !!rounds && !!verificationInfo;
+  console.log('ifCanSubmitAndNotNeedApprove', ifCanSubmitAndNotNeedApprove);
   return (
     <>
       <div className="px-6 pt-0 pb-2">
         <LeftTitle title="加入行动" />
         <div className="my-4">
           <label className="block text-left mb-1 text-sm text-greyscale-500">
-            增加参与代币: (当前持有：{formatTokenAmount(tokenBalance || 0n)} {token?.symbol})
+            {stakedAmount ? '增加' : ''}参与代币: (当前持有：{formatTokenAmount(tokenBalance || 0n)} {token?.symbol})
           </label>
           <input
             type="number"
             disabled={maxStake <= 0n}
             placeholder={
               maxStake > 0n
-                ? `${token?.symbol} 数量，不能超过 ${formatTokenAmount(maxStake)}`
+                ? `${stakedAmount ? '可填 0 不追加。如需追加' : ''}不能超过 ${formatTokenAmount(maxStake)}`
                 : `已到最大${formatTokenAmount(BigInt(actionInfo.body.maxStake))}，不能再追加`
             }
             value={additionalStakeAmount}
@@ -153,25 +153,34 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
         <div className="flex justify-center space-x-4">
           <Button
             className={`w-1/2`}
-            disabled={isPendingApprove || isConfirmingApprove || isConfirmedApprove}
+            disabled={
+              isPendingApprove ||
+              isConfirmingApprove ||
+              isConfirmedApprove ||
+              ifCanSubmitAndNotNeedApprove ||
+              isConfirmedJoin
+            }
             onClick={handleApprove}
           >
-            {(isPendingApprove || isConfirmingApprove) && <Loader2 className="animate-spin" />}
             {isPendingApprove
-              ? '1.授权中'
+              ? '1.授权中...'
               : isConfirmingApprove
-              ? '1.确认中'
+              ? '1.确认中...'
               : isConfirmedApprove
               ? '1.已授权'
+              : ifCanSubmitAndNotNeedApprove
+              ? '1.无需授权'
               : '1.授权'}
           </Button>
           <Button
             className={`w-1/2`}
-            disabled={!isConfirmedApprove || isPendingJoin || isConfirmingJoin}
+            disabled={
+              (!isConfirmedApprove || isPendingJoin || isConfirmingJoin || isConfirmedJoin) &&
+              !ifCanSubmitAndNotNeedApprove
+            }
             onClick={handleJoin}
           >
-            {(isPendingJoin || isConfirmingJoin) && <Loader2 className="animate-spin" />}
-            {isPendingJoin ? '2.加入中...' : isConfirmingJoin ? '2.确认中' : isConfirmedJoin ? '2.已加入' : '2.加入'}
+            {isPendingJoin ? '2.加入中...' : isConfirmingJoin ? '2.确认中...' : isConfirmedJoin ? '2.已加入' : '2.加入'}
           </Button>
         </div>
         {errorTokenBalance && <div className="text-red-500 text-center">{errorTokenBalance.message}</div>}

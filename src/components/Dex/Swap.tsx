@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
-import { ArrowDownIcon, Loader2 } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { ArrowDownIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'react-hot-toast';
+import { useAccount } from 'wagmi';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
-import useTokenContext from '@/src/hooks/context/useTokenContext';
 import { checkWalletConnection } from '@/src/utils/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
@@ -16,6 +16,8 @@ import {
   useSwapExactTokensForTokens,
 } from '@/src/hooks/contracts/useUniswapV2Router';
 import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
+import useTokenContext from '@/src/hooks/context/useTokenContext';
 
 export interface TokenInfo {
   symbol: string;
@@ -28,6 +30,7 @@ export interface TokenInfo {
 const SwapPanel = () => {
   const { address: account, chain: accountChain } = useAccount();
   const { token } = useTokenContext();
+  const router = useRouter();
   const [fromTokenInfo, setFromTokenInfo] = useState<TokenInfo>({
     symbol: '',
     address: '0x0',
@@ -45,12 +48,14 @@ const SwapPanel = () => {
   const {
     approve: approveToken,
     isWriting: isPendingApproveToken,
+    isConfirming: isConfirmingApproveToken,
     isConfirmed: isConfirmedApproveToken,
     writeError: errApproveToken,
   } = useApprove(token?.address as `0x${string}`);
   const {
     approve: approveParentToken,
     isWriting: isPendingApproveParentToken,
+    isConfirming: isConfirmingApproveParentToken,
     isConfirmed: isConfirmedApproveParentToken,
     writeError: errApproveParentToken,
   } = useApprove(token?.parentTokenAddress as `0x${string}`);
@@ -62,8 +67,10 @@ const SwapPanel = () => {
     isConfirmed: isConfirmedSwap,
   } = useSwapExactTokensForTokens();
 
-  // 状态：是否已授权
-  const [isApproved, setIsApproved] = useState(false);
+  // 状态：是否正在授权或已授权
+  const isApproving =
+    isPendingApproveToken || isPendingApproveParentToken || isConfirmingApproveToken || isConfirmingApproveParentToken;
+  const isApproved = isConfirmedApproveToken || isConfirmedApproveParentToken;
 
   // 初始化当前代币信息
   useEffect(() => {
@@ -194,12 +201,6 @@ const SwapPanel = () => {
       toast.error(error?.message || '授权失败');
     }
   };
-  useEffect(() => {
-    if (isConfirmedApproveToken || isConfirmedApproveParentToken) {
-      toast.success('授权成功');
-      setIsApproved(true);
-    }
-  }, [isConfirmedApproveToken, isConfirmedApproveParentToken]);
 
   // handleSwap 函数实现
   const handleSwap = async () => {
@@ -226,7 +227,8 @@ const SwapPanel = () => {
     if (isConfirmedSwap) {
       toast.success('兑换成功');
       setTimeout(() => {
-        window.location.reload();
+        // 跳到我的首页
+        router.push(`/my/?symbol=${token?.symbol}`);
       }, 2000);
     }
   }, [isConfirmedSwap]);
@@ -269,18 +271,12 @@ const SwapPanel = () => {
               className="flex-grow"
               value={fromTokenInfo.amountShow}
               onChange={handleFromTokenAmountChange}
-              disabled={
-                isPendingBalanceOfToken ||
-                isPendingBalanceOfParentToken ||
-                isPendingApproveToken ||
-                isPendingApproveParentToken ||
-                isApproved ||
-                isSwapping
-              }
+              disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
             />
             <Select
               value={fromTokenInfo.address}
               onValueChange={(value) => setFromTokenInfo({ ...fromTokenInfo, address: value as `0x${string}` })}
+              disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
             >
               <SelectTrigger className="w-[120px]">
                 <SelectValue placeholder="选择代币" />
@@ -294,7 +290,13 @@ const SwapPanel = () => {
             <span className="text-greyscale-400">
               {formatTokenAmount(fromTokenInfo.balance || 0n)} {fromTokenInfo.symbol}
             </span>
-            <Button variant="link" size="sm" className="text-secondary" onClick={setMaxAmount}>
+            <Button
+              variant="link"
+              size="sm"
+              className="text-secondary"
+              onClick={setMaxAmount}
+              disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
+            >
               最高
             </Button>
           </div>
@@ -302,7 +304,13 @@ const SwapPanel = () => {
 
         {/* Arrow */}
         <div className="flex justify-center my-4">
-          <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100" onClick={handleSwapUI}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full hover:bg-gray-100"
+            onClick={handleSwapUI}
+            disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
+          >
             <ArrowDownIcon className="h-6 w-6" />
           </Button>
         </div>
@@ -338,28 +346,21 @@ const SwapPanel = () => {
         </div>
 
         <div className="flex flex-row gap-2">
-          <Button
-            className={`w-1/2`}
-            onClick={handleApprove}
-            disabled={isPendingApproveToken || isPendingApproveParentToken || isApproved}
-          >
-            {(isPendingApproveToken || isPendingApproveParentToken) && <Loader2 className="animate-spin" />}
-            {isApproved ? '1.已授权' : '1.授权'}
+          <Button className={`w-1/2`} onClick={handleApprove} disabled={isApproving || isApproved}>
+            {isPendingApproveToken || isPendingApproveParentToken
+              ? '1.授权中...'
+              : isConfirmingApproveToken || isConfirmingApproveParentToken
+              ? '1.确认中...'
+              : isApproved
+              ? '1.已授权'
+              : '1.授权'}
           </Button>
           <Button
             className={`w-1/2`}
             onClick={handleSwap}
-            disabled={
-              !isApproved ||
-              isPendingApproveToken ||
-              isPendingApproveParentToken ||
-              isSwapping ||
-              isConfirmingSwap ||
-              isConfirmedSwap
-            }
+            disabled={!isApproved || isApproving || isSwapping || isConfirmingSwap || isConfirmedSwap}
           >
-            {(isSwapping || isConfirmingSwap) && <Loader2 className="animate-spin" />}
-            {isSwapping || isConfirmingSwap ? '2.兑换中' : '2.兑换'}
+            {isSwapping ? '2.兑换中...' : isConfirmingSwap ? '2.确认中...' : isConfirmedSwap ? '2.已兑换' : '2.兑换'}
           </Button>
         </div>
         {amountsOutError && <div className="text-red-500">{amountsOutError.message}</div>}
@@ -383,6 +384,7 @@ const SwapPanel = () => {
           </div>
         )}
       </div>
+      <LoadingOverlay isLoading={isApproving || isSwapping || isConfirmingSwap} />
     </div>
   );
 };

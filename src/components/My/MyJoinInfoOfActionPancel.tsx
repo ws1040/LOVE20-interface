@@ -71,7 +71,12 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
   }, [isConfirmedWithdraw]);
 
   if (isPendingStakedAmountByAccountByActionId || isPendingLastJoinedRound) {
-    return <LoadingIcon />;
+    return (
+      <div className="px-6 pt-4 pb-2">
+        <LeftTitle title="我的参与" />
+        <LoadingIcon />
+      </div>
+    );
   }
 
   if (errorStakedAmountByAccountByActionId || errorLastJoinedRound) {

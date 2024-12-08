@@ -5,6 +5,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
 import { useTokenAmounts } from '@/src/hooks/contracts/useLOVE20SLToken';
 import Header from '@/src/components/Header';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import StakeTokenPanel from '@/src/components/Stake/StakeTokenPanel';
 
 const StakePage = () => {
@@ -26,6 +27,7 @@ const StakePage = () => {
     <>
       <Header title="质押" />
       <main className="flex-grow">
+        {isPendingStakedTokenAmount && <LoadingIcon />}
         {stakedTokenAmount && <StakeTokenPanel tokenBalance={tokenBalance || 0n} />}
         <div className="flex flex-col w-full p-6 mt-4">
           <div className="text-base font-bold text-greyscale-700 pb-2">规则说明：</div>
