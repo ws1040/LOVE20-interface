@@ -8,11 +8,12 @@ import {
   useLastJoinedRoundByAccountByActionId,
   useWithdraw,
 } from '@/src/hooks/contracts/useLOVE20Join';
+import { checkWalletConnection } from '@/src/utils/web3';
+import { formatTokenAmount } from '@/src/lib/format';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import { formatTokenAmount } from '@/src/lib/format';
-import { checkWalletConnection } from '@/src/utils/web3';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 interface MyJoinInfoOfActionPancelProps {
   actionId: bigint;
@@ -104,7 +105,13 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
           </Button>
         ) : lastJoinedRound && Number(lastJoinedRound) + 1 < Number(currentJoinRound) ? (
           <Button className="w-1/2" onClick={handleWithdraw} disabled={isPendingWithdraw || isConfirmingWithdraw}>
-            {isPendingWithdraw || isConfirmingWithdraw ? <LoadingIcon /> : '取回代币'}
+            {isPendingWithdraw
+              ? '提交中'
+              : isConfirmingWithdraw
+              ? '确认中'
+              : isConfirmedWithdraw
+              ? '已取回'
+              : '取回代币'}
           </Button>
         ) : (
           <Button className="w-1/2" disabled>
@@ -112,6 +119,7 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
           </Button>
         )}
       </div>
+      <LoadingOverlay isLoading={isPendingWithdraw || isConfirmingWithdraw} />
     </div>
   );
 };
