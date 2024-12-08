@@ -145,8 +145,12 @@ const NewAction = () => {
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
             />
           </div>
-          <Button onClick={handleSubmit} disabled={isSubmitting || isConfirming} className={`mt-4 w-full`}>
-            {isSubmitting || isConfirming ? '提交中...' : '提交'}
+          <Button
+            onClick={handleSubmit}
+            disabled={isSubmitting || isConfirming || isSubmitted}
+            className={`mt-4 w-full`}
+          >
+            {isSubmitting ? '提交中...' : isConfirming ? '确认中...' : isSubmitted ? '已提交' : '提交'}
           </Button>
           <p className="text-greyscale-500 text-sm">
             发起后，会自动推举该行动到当前投票轮的行动列表 / 本轮已推举或提交过

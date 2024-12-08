@@ -126,8 +126,12 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
           </Button>
         )}
         {Number(contributed) > 0 && !claimed && (
-          <Button className="w-1/2" onClick={handleClaim} disabled={isClaiming || isClaimConfirming}>
-            {isClaiming || isClaimConfirming ? '领取中...' : '领取'}
+          <Button
+            className="w-1/2"
+            onClick={handleClaim}
+            disabled={isClaiming || isClaimConfirming || isClaimConfirmed}
+          >
+            {isClaiming ? '领取中...' : isClaimConfirming ? '确认中...' : isClaimConfirmed ? '已领取' : '领取'}
           </Button>
         )}
         {Number(contributed) > 0 && claimed && (

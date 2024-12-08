@@ -22,7 +22,7 @@ export default function TokenDeployment() {
   const [error, setError] = useState('');
 
   // 检查连接钱包
-  const { isConnected, chain: accountChain } = useAccount();
+  const { chain: accountChain } = useAccount();
 
   // 从hook获得部署token的函数
   const { deployToken, isWriting, writeError, isConfirming, isConfirmed, writeData } = useDeployToken();
@@ -69,10 +69,6 @@ export default function TokenDeployment() {
   // 部署子币
   const handleDeploy = async () => {
     setError('');
-    if (!isConnected) {
-      setError('请先连接钱包');
-      return;
-    }
     if (!symbol) {
       setError('请输入代币符号');
       return;
@@ -89,49 +85,51 @@ export default function TokenDeployment() {
   };
 
   const isLoading = isWriting || isConfirming;
-  const isSuccess = isConfirmed;
 
   return (
-    <Card className="w-full border-none shadow-none rounded-none">
+    <>
+      <Card className="w-full border-none shadow-none rounded-none">
+        <LoadingOverlay isLoading={isLoading} />
+
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">部署子币</CardTitle>
+          <CardDescription className="text-center">
+            创建 <span className="text-secondary">{token.symbol}</span> 的子币
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="symbol">子币符号</Label>
+            <Input
+              id="symbol"
+              placeholder="大写字母A~Z和数字0~9，6个字符，例如: LIFE20"
+              value={symbol}
+              onChange={(e) => setSymbol(e.target.value)}
+            />
+          </div>
+
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>错误</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          {isConfirmed && (
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>成功</AlertTitle>
+              <AlertDescription>代币部署成功！</AlertDescription>
+            </Alert>
+          )}
+        </CardContent>
+        <CardFooter>
+          <Button className="w-full" onClick={handleDeploy} disabled={isLoading || isConfirmed}>
+            {isWriting ? '提交中...' : isConfirming ? '确认中...' : isConfirmed ? '提交成功' : '提交'}
+          </Button>
+        </CardFooter>
+      </Card>
       <LoadingOverlay isLoading={isLoading} />
-
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center">部署子币</CardTitle>
-        <CardDescription className="text-center">
-          创建 <span className="text-secondary">{token.symbol}</span> 的子币
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="symbol">子币符号</Label>
-          <Input
-            id="symbol"
-            placeholder="大写字母A~Z和数字0~9，6个字符，例如: LIFE20"
-            value={symbol}
-            onChange={(e) => setSymbol(e.target.value)}
-          />
-        </div>
-
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>错误</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-        {isSuccess && (
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>成功</AlertTitle>
-            <AlertDescription>代币部署成功！</AlertDescription>
-          </Alert>
-        )}
-      </CardContent>
-      <CardFooter>
-        <Button className="w-full" onClick={handleDeploy} disabled={isLoading || !isConnected || isSuccess}>
-          {isLoading ? <>部署中...</> : '提交'}
-        </Button>
-      </CardFooter>
-    </Card>
+    </>
   );
 }

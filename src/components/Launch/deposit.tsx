@@ -118,7 +118,13 @@ const Deposit: React.FC = () => {
             onClick={handleDeposit}
             disabled={isPendingDeposit || isConfirmingDeposit || isConfirmedDeposit}
           >
-            {isPendingDeposit || isConfirmingDeposit ? '兑换中...' : isConfirmedDeposit ? '兑换成功' : '兑换'}
+            {isPendingDeposit
+              ? '兑换中...'
+              : isConfirmingDeposit
+              ? '确认中...'
+              : isConfirmedDeposit
+              ? '兑换成功'
+              : '兑换'}
           </Button>
         </div>
         {errBalance && <div className="text-red-500">{errBalance.message}</div>}

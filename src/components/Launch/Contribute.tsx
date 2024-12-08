@@ -159,11 +159,13 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
 
           <div className="flex flex-row gap-2">
             <Button className="w-1/2" onClick={handleApprove} disabled={hasStartedApproving}>
-              {!hasStartedApproving
-                ? isPendingApproveParentToken || isConfirmingApproveParentToken
-                  ? '授权中...'
-                  : '1.授权'
-                : '1.已授权'}
+              {isPendingApproveParentToken
+                ? '1.授权中...'
+                : isConfirmingApproveParentToken
+                ? '1.确认中...'
+                : isConfirmedApproveParentToken
+                ? '1.已授权'
+                : '1.授权'}
             </Button>
             <Button
               className={`w-1/2 text-white py-2 rounded-lg`}
@@ -175,8 +177,10 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
                 isConfirmedContributeToken
               }
             >
-              {isPendingContributeToken || isConfirmingContributeToken
-                ? '申购中...'
+              {isPendingContributeToken
+                ? '2.申购中...'
+                : isConfirmingContributeToken
+                ? '2.确认中...'
                 : isConfirmedContributeToken
                 ? '2.申购成功'
                 : '2.申购'}
