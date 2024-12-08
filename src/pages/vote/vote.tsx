@@ -15,6 +15,7 @@ import { useCurrentRound, useVotesNumByAccount, useVote } from '@/src/hooks/cont
 
 import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 const VotingSubmitPage = () => {
   const { token } = useContext(TokenContext) || {};
@@ -203,6 +204,7 @@ const VotingSubmitPage = () => {
             <div className="text-red-500">Error: {(submitError as BaseError).shortMessage || submitError.message}</div>
           ) : null}
         </div>
+        <LoadingOverlay isLoading={isWriting || isConfirming} />
       </main>
     </>
   );

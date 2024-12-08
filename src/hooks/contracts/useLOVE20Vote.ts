@@ -1,6 +1,5 @@
 // hooks/contracts/useLOVE20Vote.ts
 
-import { useEffect, useState } from 'react';
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { LOVE20VoteAbi } from '@/src/abis/LOVE20Vote';
 

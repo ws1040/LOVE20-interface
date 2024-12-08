@@ -2,7 +2,6 @@
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { LOVE20VerifyAbi } from '@/src/abis/LOVE20Verify';
-import { Abi } from 'abitype';
 
 // 定义合约地址，请根据实际情况设置
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_VERIFY as `0x${string}`;

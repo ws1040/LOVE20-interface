@@ -1,7 +1,8 @@
 // src/contexts/TokenContext.tsx
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { useTokenDetailBySymbol } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useRouter } from 'next/router';
+import { useTokenDetailBySymbol } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useOriginBlocks } from '@/src/hooks/contracts/useLOVE20Vote';
 
 // 定义 Token 类型
 export interface Token {
@@ -14,6 +15,7 @@ export interface Token {
   parentTokenSymbol: string;
   slTokenAddress: `0x${string}`;
   stTokenAddress: `0x${string}`;
+  voteOriginBlocks: number;
 }
 
 // 定义 Context 的类型
@@ -94,17 +96,22 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   // 合约返回成功，更新 token
   useEffect(() => {
     if (tokenInfoBySymbol && launchInfoBySymbol) {
-      setToken({
-        name: tokenInfoBySymbol.name,
-        symbol: tokenInfoBySymbol.symbol,
-        address: tokenInfoBySymbol.tokenAddress,
-        decimals: Number(tokenInfoBySymbol.decimals),
-        hasEnded: launchInfoBySymbol.hasEnded,
-        parentTokenAddress: launchInfoBySymbol.parentTokenAddress,
-        parentTokenSymbol: tokenInfoBySymbol.parentTokenSymbol,
-        slTokenAddress: tokenInfoBySymbol.slAddress,
-        stTokenAddress: tokenInfoBySymbol.stAddress,
-      });
+      setToken(
+        (prevToken) =>
+          ({
+            ...(prevToken || {}),
+            name: tokenInfoBySymbol.name,
+            symbol: tokenInfoBySymbol.symbol,
+            address: tokenInfoBySymbol.tokenAddress,
+            decimals: Number(tokenInfoBySymbol.decimals),
+            hasEnded: launchInfoBySymbol.hasEnded,
+            parentTokenAddress: launchInfoBySymbol.parentTokenAddress,
+            parentTokenSymbol: tokenInfoBySymbol.parentTokenSymbol,
+            slTokenAddress: tokenInfoBySymbol.slAddress,
+            stTokenAddress: tokenInfoBySymbol.stAddress,
+            voteOriginBlocks: prevToken === null ? 0 : prevToken.voteOriginBlocks,
+          } as Token),
+      );
     }
   }, [tokenInfoBySymbol, launchInfoBySymbol]);
 
@@ -115,7 +122,21 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     }
   }, [errorBySymbol]);
 
-  // Step 4. 当 token 变化时，更新 Local Storage
+  // Step 4. 获取投票轮开始区块
+  const { originBlocks } = useOriginBlocks();
+  useEffect(() => {
+    if (originBlocks) {
+      setToken(
+        (prevToken) =>
+          ({
+            ...(prevToken || {}),
+            voteOriginBlocks: originBlocks ? Number(originBlocks) : 0,
+          } as Token),
+      );
+    }
+  }, [originBlocks]);
+
+  // Step 5. 当 token 变化时，更新 Local Storage
   useEffect(() => {
     try {
       if (token) {
