@@ -22,6 +22,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
   const { token } = useContext(TokenContext) || {};
   const { chain: accountChain } = useAccount();
   const router = useRouter();
+  const { auto: autoQuery } = router.query;
 
   // 获取参与验证的地址
   const {
@@ -80,7 +81,11 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
         duration: 2000, // 2秒
       });
       setTimeout(() => {
-        router.push(`/verify?symbol=${token?.symbol}`);
+        if (!autoQuery) {
+          router.push(`/verify?symbol=${token?.symbol}`);
+        } else {
+          router.push(`/gov?symbol=${token?.symbol}`); //仅有1个行动需要验证时，自动跳转到gov页面
+        }
       }, 2000);
     }
   }, [isConfirmed, submitError]);

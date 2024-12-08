@@ -41,7 +41,7 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
   if (actionInfos && actionInfos.length === 1) {
     // 直接跳转到行动详情页
     const actionId = actionInfos[0].head.id;
-    router.push(`/verify/${actionId}?symbol=${token?.symbol}`);
+    router.push(`/verify/${actionId}?symbol=${token?.symbol}&auto=true`);
     return null;
   }
 
