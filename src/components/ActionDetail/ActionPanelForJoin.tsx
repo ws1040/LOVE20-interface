@@ -23,7 +23,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
   const { token } = useContext(TokenContext) || {};
 
   // 获取当前轮次, 并设置状态给父组件
-  const { currentRound, isPending: isPendingCurrentRound, error: errCurrentRound } = useCurrentRound();
+  const { currentRound } = useCurrentRound();
   useEffect(() => {
     if (onRoundChange && typeof onRoundChange === 'function') {
       onRoundChange(currentRound);
@@ -81,6 +81,10 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
   if (errorVerificationInfo) {
     console.error('errorVerificationInfo', errorVerificationInfo);
     return <div>发生错误: {errorVerificationInfo.message}</div>;
+  }
+
+  if (isPendingJoinedAmountByAccount || isPendingJoinedAmount) {
+    return '';
   }
 
   return (
