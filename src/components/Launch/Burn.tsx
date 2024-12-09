@@ -6,7 +6,7 @@ import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
 
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
-import { useBurn } from '@/src/hooks/contracts/useLOVE20Token';
+import { useBurnForParentToken } from '@/src/hooks/contracts/useLOVE20Token';
 import { useBalanceOf, useApprove, useTotalSupply } from '@/src/hooks/contracts/useLOVE20Token';
 import { Token } from '@/src/contexts/TokenContext';
 import { LaunchInfo } from '@/src/types/life20types';
@@ -90,19 +90,19 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
 
   // 销毁
   const {
-    burn,
+    burnForParentToken,
     isPending: isPendingBurn,
     isConfirming: isConfirmingBurn,
     isConfirmed: isConfirmedBurn,
     writeError: errBurn,
-  } = useBurn(token?.address as `0x${string}`);
+  } = useBurnForParentToken(token?.address as `0x${string}`);
 
   const handleContribute = async () => {
     if (!checkInput()) {
       return;
     }
     try {
-      await burn(parseUnits(burnAmount));
+      await burnForParentToken(parseUnits(burnAmount));
     } catch (error) {
       console.error(error);
     }

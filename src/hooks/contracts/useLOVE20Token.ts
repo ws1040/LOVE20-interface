@@ -246,7 +246,7 @@ export function useBurn(token: `0x${string}`) {
  * useBurnForParentToken Hook
  */
 export function useBurnForParentToken(token: `0x${string}`) {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const { writeContract, isPending, data: writeData, error: writeError } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
@@ -265,7 +265,7 @@ export function useBurnForParentToken(token: `0x${string}`) {
     }
   };
 
-  return { burnForParentToken, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { burnForParentToken, writeData, isPending, writeError, isConfirming, isConfirmed };
 }
 
 /**
