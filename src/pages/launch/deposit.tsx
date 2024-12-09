@@ -6,7 +6,7 @@ const Deposit = dynamic(() => import('@/src/components/Launch/deposit'), { ssr: 
 export default function DepositPage() {
   return (
     <>
-      <Header title="Launch" />
+      <Header title="兑换" />
       <main className="flex-grow">
         <Deposit />
       </main>

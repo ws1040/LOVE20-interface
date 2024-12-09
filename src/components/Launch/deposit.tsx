@@ -10,6 +10,8 @@ import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '../Common/LoadingOverlay';
 import { checkWalletConnection } from '@/src/utils/web3';
+import LeftTitle from '../Common/LeftTitle';
+import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
 
 const Deposit: React.FC = () => {
   const [depositAmount, setDepositAmount] = useState('');
@@ -24,6 +26,16 @@ const Deposit: React.FC = () => {
   } = useBalance({
     address: account,
   });
+
+  // 读取我的代币余额
+  const {
+    balance: balanceOfERC20Token,
+    isPending: isPendingBalanceOfERC20Token,
+    error: errorBalanceOfERC20Token,
+  } = useBalanceOf(
+    process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN as `0x${string}`,
+    account as `0x${string}`,
+  );
 
   // 检查输入
   const checkInput = () => {
@@ -79,9 +91,17 @@ const Deposit: React.FC = () => {
 
   return (
     <>
-      <div className="p-6 shadow-sm space-y-6">
+      <div className="p-6 shadow-sm">
+        <LeftTitle title={`换得 ${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`} />
+        <div className="stats w-full">
+          <div className="stat place-items-center">
+            <div className="stat-title text-sm">我的{process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}</div>
+            <div className="stat-value text-secondary mt-2">{formatTokenAmount(balanceOfERC20Token || 0n)}</div>
+            <div className="stat-desc text-sm mt-2"></div>
+          </div>
+        </div>
         <div className="flex items-center mb-2">
-          <h3 className="text-base font-medium">兑换{process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}</h3>
+          <span className="text-sm">用 {balance?.symbol} 兑换</span>
           <span className="text-secondary text-sm ml-2">
             (1{balance?.symbol} = 1{process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL})
           </span>

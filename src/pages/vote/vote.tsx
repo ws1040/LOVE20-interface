@@ -141,7 +141,7 @@ const VotingSubmitPage = () => {
 
   return (
     <>
-      <Header title="执行投票页" />
+      <Header title="投票" />
       <main className="flex-grow">
         <div className="flex flex-col items-center space-y-4 p-6">
           <div className="text-base text-greyscale-500">

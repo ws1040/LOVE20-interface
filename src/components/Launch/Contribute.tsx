@@ -157,7 +157,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
             </Link>
           </div>
 
-          <div className="flex flex-row gap-2">
+          <div className="flex justify-center space-x-4">
             <Button className="w-1/2" onClick={handleApprove} disabled={hasStartedApproving}>
               {isPendingApproveParentToken
                 ? '1.授权中...'

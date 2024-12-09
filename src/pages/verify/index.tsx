@@ -10,7 +10,7 @@ const VerifyPage = () => {
 
   return (
     <>
-      <Header title="社区首页" />
+      <Header title="验证" />
       <main className="flex-grow">
         <MyVerifingPanel currentRound={currentRound} showBtn={false} />
         <VerifingActionList currentRound={currentRound} />

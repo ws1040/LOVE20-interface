@@ -40,7 +40,7 @@ export default function TokenFairLaunch() {
 
   return (
     <>
-      <Header title="Launch" />
+      <Header title="公平发射" />
       <main className="flex-grow">
         <TokenTab />
         <LaunchStatus token={token} launchInfo={launchInfo} />

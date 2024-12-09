@@ -23,11 +23,15 @@ const StakePage = () => {
     feeParentTokenAmount: stakedFeeParentTokenAmount,
     isPending: isPendingStakedTokenAmount,
   } = useTokenAmounts(token?.slTokenAddress as `0x${string}`);
+
   return (
     <>
-      <Header title="质押" />
+      <Header title="质押代币" />
       <main className="flex-grow">
         {isPendingStakedTokenAmount && <LoadingIcon />}
+        {!isPendingStakedTokenAmount && !stakedTokenAmount && (
+          <div className="flex justify-center items-center mt-10">需要先质押流动性LP，才可以质押代币</div>
+        )}
         {stakedTokenAmount && <StakeTokenPanel tokenBalance={tokenBalance || 0n} />}
         <div className="flex flex-col w-full p-6 mt-4">
           <div className="text-base font-bold text-greyscale-700 pb-2">规则说明：</div>

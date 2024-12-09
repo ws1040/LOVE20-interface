@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { useLaunches } from '@/src/hooks/contracts/useLOVE20Launch';
+import Burn from '@/src/components/Launch/Burn';
 import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
@@ -27,9 +28,9 @@ export default function ContributePage() {
   }
   return (
     <>
-      <Header title="申购" />
+      <Header title="底池销毁" />
       <main className="flex-grow">
-        <Contribute token={token} launchInfo={launchInfo} />
+        <Burn token={token} launchInfo={launchInfo} />
       </main>
     </>
   );

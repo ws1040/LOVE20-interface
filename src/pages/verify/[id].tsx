@@ -23,7 +23,7 @@ const VerifyPage = () => {
 
   return (
     <>
-      <Header title="验证页面" />
+      <Header title="验证" />
       <main className="flex-grow">
         <div className="flex flex-col items-center p-4 border-t border-gray-200 mb-4">
           <MyActionVerifingPanel
