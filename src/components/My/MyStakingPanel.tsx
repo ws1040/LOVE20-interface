@@ -48,8 +48,8 @@ const MyStakingPanel: React.FC = () => {
           <div className="stat-value text-xl">
             {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0))}
           </div>
-          <div className="stat-actions">
-            <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
+          <div className="stat-actions w-full">
+            <Button variant="outline" size="sm" className="w-full text-secondary border-secondary" asChild>
               <Link href={`/gov/stakelp?symbol=${token.symbol}`}>去获取</Link>
             </Button>
           </div>
@@ -59,8 +59,8 @@ const MyStakingPanel: React.FC = () => {
           <div className="stat-value text-xl">
             {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || BigInt(0))}
           </div>
-          <div className="stat-actions">
-            <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
+          <div className="stat-actions w-full">
+            <Button variant="outline" size="sm" className="w-full text-secondary border-secondary" asChild>
               <Link href={`/gov/staketoken?symbol=${token.symbol}`}>去质押</Link>
             </Button>
           </div>
