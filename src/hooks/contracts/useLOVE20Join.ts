@@ -263,6 +263,9 @@ export const useStakedAmountByAccount = (tokenAddress: `0x${string}`, account: `
     abi: LOVE20JoinAbi,
     functionName: 'stakedAmountByAccount',
     args: [tokenAddress, account],
+    query: {
+      enabled: !!tokenAddress && !!account,
+    },
   });
 
   return { stakedAmount: data as bigint, isPending, error };

@@ -11,17 +11,28 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const MyStakingPanel: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
-  const { address } = useAccount();
+  const { address: accountAddress } = useAccount();
 
   const {
     govVotes,
     stAmount,
     isPending: isPendingAccountStakeStatus,
     error: errorAccountStakeStatus,
-  } = useAccountStakeStatus((token?.address as `0x${string}`) || '', (address as `0x${string}`) || '');
+  } = useAccountStakeStatus((token?.address as `0x${string}`) || '', (accountAddress as `0x${string}`) || '');
 
   if (!token) {
     return '';
+  }
+
+  if (!accountAddress) {
+    return (
+      <>
+        <div className="flex-col items-center px-6 py-2">
+          <LeftTitle title="我的质押" />
+          <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
+        </div>
+      </>
+    );
   }
 
   if (errorAccountStakeStatus) {
@@ -38,7 +49,7 @@ const MyStakingPanel: React.FC = () => {
             {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0))}
           </div>
           <div className="stat-actions">
-            <Button variant="outline" size="sm" className="text-secondary border-secondary">
+            <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
               <Link href={`/gov/stakelp?symbol=${token.symbol}`}>去获取</Link>
             </Button>
           </div>
@@ -49,7 +60,7 @@ const MyStakingPanel: React.FC = () => {
             {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || BigInt(0))}
           </div>
           <div className="stat-actions">
-            <Button variant="outline" size="sm" className="text-secondary border-secondary">
+            <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
               <Link href={`/gov/staketoken?symbol=${token.symbol}`}>去质押</Link>
             </Button>
           </div>

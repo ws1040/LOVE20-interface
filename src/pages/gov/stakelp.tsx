@@ -4,8 +4,9 @@ import { useAccount } from 'wagmi';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
 import { useTokenAmounts } from '@/src/hooks/contracts/useLOVE20SLToken';
-import StakeLiquidityPanel from '@/src/components/Stake/StakeLiquidityPanel';
 import Header from '@/src/components/Header';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import StakeLiquidityPanel from '@/src/components/Stake/StakeLiquidityPanel';
 
 const StakePage = () => {
   const { token } = useContext(TokenContext) || {};
@@ -26,9 +27,14 @@ const StakePage = () => {
 
   return (
     <>
-      <Header title="质押" />
+      <Header title="质押LP" />
       <main className="flex-grow">
-        {stakedTokenAmount && (
+        {isPendingStakedTokenAmount && (
+          <div className="flex justify-center items-center mt-10">
+            <LoadingIcon />
+          </div>
+        )}
+        {!isPendingStakedTokenAmount && (
           <StakeLiquidityPanel
             tokenBalance={tokenBalance || 0n}
             parentTokenBalance={parentTokenBalance || 0n}

@@ -18,6 +18,9 @@ export const useAllowance = (token: `0x${string}`, owner: `0x${string}`, spender
     abi: LOVE20TokenAbi,
     functionName: 'allowance',
     args: [owner, spender],
+    query: {
+      enabled: !!token && !!owner && !!spender,
+    },
   });
 
   return { allowance: data as bigint | undefined, isPending, error };
@@ -217,7 +220,7 @@ export function useApprove(token: `0x${string}`) {
  * useBurn Hook
  */
 export function useBurn(token: `0x${string}`) {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const { writeContract, isPending, data: writeData, error: writeError } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
@@ -236,14 +239,14 @@ export function useBurn(token: `0x${string}`) {
     }
   };
 
-  return { burn, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { burn, writeData, isPending, writeError, isConfirming, isConfirmed };
 }
 
 /**
  * useBurnForParentToken Hook
  */
 export function useBurnForParentToken(token: `0x${string}`) {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const { writeContract, isPending, data: writeData, error: writeError } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: writeData,
@@ -262,7 +265,7 @@ export function useBurnForParentToken(token: `0x${string}`) {
     }
   };
 
-  return { burnForParentToken, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { burnForParentToken, writeData, isPending, writeError, isConfirming, isConfirmed };
 }
 
 /**

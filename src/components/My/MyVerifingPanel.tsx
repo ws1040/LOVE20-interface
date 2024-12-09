@@ -40,6 +40,16 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
   if (!token) {
     return '';
   }
+  if (!accountAddress) {
+    return (
+      <>
+        <div className="flex-col items-center px-6 pt-6 pb-2">
+          <LeftTitle title="我的验证" />
+          <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <div className="flex-col items-center px-6 pt-6 pb-2">
@@ -67,11 +77,11 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
           {isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
             <LoadingIcon />
           ) : votesNumByAccount > scoreByVerifier ? (
-            <Button className="w-1/2 bg-[#1e293b]">
+            <Button className="w-1/2" asChild>
               <Link href={`/verify?symbol=${token.symbol}`}>去验证</Link>
             </Button>
           ) : (
-            <Button disabled className="w-1/2 bg-[#1e293b]">
+            <Button disabled className="w-1/2">
               {scoreByVerifier > 0 ? '已验证' : '未投票，无需验证'}
             </Button>
           )}

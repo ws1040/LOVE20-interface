@@ -39,7 +39,16 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
   if (!token) {
     return '';
   }
-
+  if (!accountAddress) {
+    return (
+      <>
+        <div className="flex-col items-center px-6 py-2">
+          <LeftTitle title="我的投票" />
+          <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
+        </div>
+      </>
+    );
+  }
   if (errorValidGovVotes) {
     console.log('errorValidGovVotes', errorValidGovVotes);
   }
@@ -74,7 +83,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
         {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
           <LoadingIcon />
         ) : validGovVotes > votesNumByAccount ? (
-          <Button className="w-1/2">
+          <Button className="w-1/2" asChild>
             <Link href={`/vote?symbol=${token.symbol}`}>去投票</Link>
           </Button>
         ) : (

@@ -8,11 +8,12 @@ import {
   useLastJoinedRoundByAccountByActionId,
   useWithdraw,
 } from '@/src/hooks/contracts/useLOVE20Join';
+import { checkWalletConnection } from '@/src/utils/web3';
+import { formatTokenAmount } from '@/src/lib/format';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import { formatTokenAmount } from '@/src/lib/format';
-import { checkWalletConnection } from '@/src/utils/web3';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 interface MyJoinInfoOfActionPancelProps {
   actionId: bigint;
@@ -71,7 +72,12 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
   }, [isConfirmedWithdraw]);
 
   if (isPendingStakedAmountByAccountByActionId || isPendingLastJoinedRound) {
-    return <LoadingIcon />;
+    return (
+      <div className="px-6 pt-4 pb-2">
+        <LeftTitle title="我的参与" />
+        <LoadingIcon />
+      </div>
+    );
   }
 
   if (errorStakedAmountByAccountByActionId || errorLastJoinedRound) {
@@ -97,16 +103,27 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
           <Button className="w-1/2" disabled>
             已取回
           </Button>
-        ) : lastJoinedRound && Number(lastJoinedRound) + 1 < Number(currentJoinRound) ? (
-          <Button className="w-1/2" onClick={handleWithdraw} disabled={isPendingWithdraw || isConfirmingWithdraw}>
-            {isPendingWithdraw || isConfirmingWithdraw ? <LoadingIcon /> : '取回代币'}
+        ) : lastJoinedRound && Number(lastJoinedRound) + 1 <= Number(currentJoinRound) ? (
+          <Button
+            className="w-1/2"
+            onClick={handleWithdraw}
+            disabled={isPendingWithdraw || isConfirmingWithdraw || isConfirmedWithdraw}
+          >
+            {isPendingWithdraw
+              ? '提交中'
+              : isConfirmingWithdraw
+              ? '确认中'
+              : isConfirmedWithdraw
+              ? '已取回'
+              : '取回代币'}
           </Button>
         ) : (
           <Button className="w-1/2" disabled>
-            到第 {(1 + Number(lastJoinedRound)).toString()} 轮后可取回
+            第 {(1 + Number(lastJoinedRound)).toString()} 轮后可取回
           </Button>
         )}
       </div>
+      <LoadingOverlay isLoading={isPendingWithdraw || isConfirmingWithdraw} />
     </div>
   );
 };

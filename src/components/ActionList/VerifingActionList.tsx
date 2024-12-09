@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 import { ActionInfo } from '@/src/types/life20types';
@@ -14,11 +15,10 @@ interface VerifingActionListProps {
 }
 const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
-
+  const router = useRouter();
   // 获取投票id列表、投票数
   const {
     actionIds,
-    votes,
     isPending: isPendingVotesNums,
     error: errorVotesNums,
   } = useVotesNums((token?.address as `0x${string}`) || '', currentRound);
@@ -30,7 +30,7 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
     error: errorActionInfosByIds,
   } = useActionInfosByIds((token?.address as `0x${string}`) || '', actionIds || []);
 
-  if (isPendingVotesNums || (actionIds && actionIds.length > 0 && isPendingActionInfosByIds)) {
+  if (!token || isPendingVotesNums || (actionIds && actionIds.length > 0 && isPendingActionInfosByIds)) {
     return (
       <div className="p-6 flex justify-center items-center">
         <LoadingIcon />
@@ -38,14 +38,17 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
     );
   }
 
+  if (actionInfos && actionInfos.length === 1) {
+    // 直接跳转到行动详情页
+    const actionId = actionInfos[0].head.id;
+    router.push(`/verify/${actionId}?symbol=${token?.symbol}&auto=true`);
+    return null;
+  }
+
   if (errorVotesNums || errorActionInfosByIds) {
     console.log('errorVotesNums', errorVotesNums);
     console.log('errorActionInfosByIds', errorActionInfosByIds);
     return <div>加载出错，请稍后再试。</div>;
-  }
-
-  if (!token) {
-    return <LoadingIcon />;
   }
 
   return (

@@ -66,7 +66,7 @@ const GovRewardsPage: React.FC = () => {
 
   return (
     <>
-      <Header title="行动详情" />
+      <Header title="治理激励" />
       <main className="flex-grow">
         <div className="flex flex-col space-y-6 p-6">
           <LeftTitle title="铸造治理奖励" />

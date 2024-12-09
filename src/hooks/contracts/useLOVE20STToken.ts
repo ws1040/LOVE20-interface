@@ -1,4 +1,4 @@
-import { useReadContract } from 'wagmi';
+import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { LOVE20STTokenAbi } from '@/src/abis/LOVE20STToken';
 
 /**
@@ -11,7 +11,7 @@ export const useAllowance = (address: `0x${string}`, owner: `0x${string}`, spend
     functionName: 'allowance',
     args: [owner, spender],
     query: {
-      enabled: !!owner && !!spender,
+      enabled: !!address && !!owner && !!spender,
     },
   });
 
@@ -164,4 +164,34 @@ export const useTotalSupply = (address: `0x${string}`) => {
     isPending,
     error,
   };
+};
+
+// =====================
+// === 写入 Hook ===
+// =====================
+
+/**
+ * Hook for approve
+ */
+export const useApprove = (address: `0x${string}`) => {
+  const { writeContract, data: writeData, isPending, error } = useWriteContract();
+
+  const approve = async (spender: `0x${string}`, value: bigint) => {
+    try {
+      await writeContract({
+        address,
+        abi: LOVE20STTokenAbi,
+        functionName: 'approve',
+        args: [spender, value],
+      });
+    } catch (err) {
+      console.error('Approve failed:', err);
+    }
+  };
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash: writeData,
+  });
+
+  return { approve, writeData, isPending, error, isConfirming, isConfirmed };
 };

@@ -1,18 +1,21 @@
-import React, { useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
+import React from 'react';
 
 import { formatTokenAmount } from '@/src/lib/format';
 import { JoinedAction } from '@/src/types/life20types';
-import { TokenContext } from '@/src/contexts/TokenContext';
+import { Token } from '@/src/contexts/TokenContext';
 import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useJoinedActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
-const MyStakedActionList: React.FC = () => {
-  const { token } = useContext(TokenContext) || {};
+interface MyStakedActionListProps {
+  token: Token | null | undefined;
+}
+
+const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
   const { address: accountAddress } = useAccount();
   const {
     joinedActions,
@@ -29,10 +32,28 @@ const MyStakedActionList: React.FC = () => {
     joinedActions?.map((action) => action.actionId) || [],
   );
 
-  if (isPendingJoinedActions || (joinedActions && joinedActions.length > 0 && isPendingActionInfosByIds)) {
-    return <LoadingIcon />;
+  if (!accountAddress) {
+    return (
+      <>
+        <div className="p-6">
+          <LeftTitle title="我参与的行动" />
+          <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
+        </div>
+      </>
+    );
   }
-
+  if (isPendingJoinedActions || (joinedActions && joinedActions.length > 0 && isPendingActionInfosByIds)) {
+    return (
+      <>
+        <div className="p-6">
+          <LeftTitle title="我参与的行动" />
+          <div className="text-sm mt-4 text-greyscale-500 text-center">
+            <LoadingIcon />
+          </div>
+        </div>
+      </>
+    );
+  }
   if (errorJoinedActions) {
     return <div>加载出错，请稍后再试。</div>;
   }

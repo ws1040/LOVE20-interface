@@ -4,7 +4,7 @@ import TokenDeployment from '@/src/components/Launch/Deploy';
 export default function Deploy() {
   return (
     <>
-      <Header title="Launch" />
+      <Header title="部署代币" />
       <main className="flex-grow">
         <TokenDeployment />
       </main>

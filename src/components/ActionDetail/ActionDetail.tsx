@@ -37,6 +37,10 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
   const submitter =
     actionSubmits?.find((submit: ActionSubmit) => submit.actionId == Number(actionId))?.submitter || 'N/A';
 
+  if (isPendingActionInfo) {
+    return <LoadingIcon />;
+  }
+
   return (
     <>
       <div className="max-w-4xl mx-auto p-6 pt-4 pb-2 border-t border-greyscale-100">
@@ -53,7 +57,12 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
           </div>
           {showSubmitter && (
             <div className="flex items-center">
-              推举人 <AddressWithCopyButton address={submitter as `0x${string}`} />
+              推举人{' '}
+              {isPendingActionSubmits ? (
+                <LoadingIcon />
+              ) : (
+                <AddressWithCopyButton address={submitter as `0x${string}`} />
+              )}
             </div>
           )}
         </div>
@@ -93,8 +102,6 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
             </p>
           </div>
         </div>
-
-        {(isPendingActionInfo || (showSubmitter && isPendingActionSubmits)) && <LoadingIcon />}
 
         {(errorActionInfo || (showSubmitter && errorActionSubmits)) && (
           <div className="text-center text-sm text-red-500">

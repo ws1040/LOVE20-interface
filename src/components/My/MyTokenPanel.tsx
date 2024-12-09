@@ -1,23 +1,24 @@
 import { useAccount } from 'wagmi';
-import { useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-import { TokenContext } from '@/src/contexts/TokenContext';
+import { Token } from '@/src/contexts/TokenContext';
 import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
 import { useStakedAmountByAccount } from '@/src/hooks/contracts/useLOVE20Join';
 import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 
-const MyTokenPanel = () => {
-  const { token } = useContext(TokenContext) || {};
+const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) => {
   const { address: accountAddress } = useAccount();
+
+  // 获取代币余额
   const {
     balance,
     isPending: isPendingBalance,
     error: errorBalance,
   } = useBalanceOf(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+
   // 获取行动锁定代币总量
   const {
     stakedAmount,
@@ -37,6 +38,16 @@ const MyTokenPanel = () => {
 
   if (!token) {
     return <LoadingIcon />;
+  }
+  if (!accountAddress) {
+    return (
+      <>
+        <div className="flex-col items-center px-6 py-2">
+          <LeftTitle title="我的代币" />
+          <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
+        </div>
+      </>
+    );
   }
 
   return (

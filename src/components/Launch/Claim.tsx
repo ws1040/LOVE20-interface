@@ -1,20 +1,20 @@
 import { useContext, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import toast from 'react-hot-toast';
 
 import { formatTokenAmount } from '@/src/lib/format';
+import { LaunchInfo } from '@/src/types/life20types';
 import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
 import { Token, TokenContext } from '@/src/contexts/TokenContext';
-import { LaunchInfo } from '@/src/types/life20types';
 import { useContributed, useClaimed, useExtraRefunded, useClaim } from '@/src/hooks/contracts/useLOVE20Launch';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import LeftTitle from '../Common/LeftTitle';
 
 const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const { address: account } = useAccount();
-  const context = useContext(TokenContext);
-  const { setToken } = context || {};
+  const { setToken } = useContext(TokenContext) || {};
 
   // 读取数据的hooks
   const {
@@ -73,6 +73,9 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
     }
   }, [isClaimConfirmed, claimError]);
 
+  if (!account) {
+    return '';
+  }
   if (isClaimedPending) {
     return <LoadingIcon />;
   }
@@ -116,23 +119,38 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
         </div>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center space-x-4">
         {Number(contributed) <= 0 && (
-          <Button className="w-1/2" disabled>
-            未申购
-          </Button>
+          <>
+            <Button className="w-1/2" disabled>
+              未申购
+            </Button>
+            <Button className="w-1/2" asChild>
+              <Link href={`/launch/burn?symbol=${token?.symbol}`}>底池销毁</Link>
+            </Button>
+          </>
         )}
         {Number(contributed) > 0 && !claimed && (
-          <Button className="w-1/2" onClick={handleClaim} disabled={isClaiming || isClaimConfirming}>
-            {isClaiming || isClaimConfirming ? '领取中...' : '领取'}
+          <Button
+            className="w-1/2"
+            onClick={handleClaim}
+            disabled={isClaiming || isClaimConfirming || isClaimConfirmed}
+          >
+            {isClaiming ? '领取中...' : isClaimConfirming ? '确认中...' : isClaimConfirmed ? '已领取' : '领取'}
           </Button>
         )}
         {Number(contributed) > 0 && claimed && (
-          <Button className="w-1/2" disabled>
-            已领取
-          </Button>
+          <>
+            <Button className="w-1/2" disabled>
+              已领取
+            </Button>
+            <Button className="w-1/2" asChild>
+              <Link href={`/launch/burn?symbol=${token?.symbol}`}>底池销毁</Link>
+            </Button>
+          </>
         )}
       </div>
+
       {claimError && <div className="text-red-500">{claimError.message}</div>}
       {contributedError && <div className="text-red-500">{contributedError.message}</div>}
       {extraRefundedError && <div className="text-red-500">{extraRefundedError.message}</div>}

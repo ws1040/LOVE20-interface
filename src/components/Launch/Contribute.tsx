@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import Link from 'next/link';
 import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useContribute, useContributed } from '@/src/hooks/contracts/useLOVE20Launch';
@@ -15,10 +16,10 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 import { checkWalletConnection } from '@/src/utils/web3';
 
-const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
+const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const [contributeAmount, setContributeAmount] = useState('');
   const { address: account, chain: accountChain } = useAccount();
-
+  const router = useRouter();
   // 读取信息hooks
   const {
     balance: balanceOfParentToken,
@@ -91,9 +92,9 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
   useEffect(() => {
     if (isConfirmedContributeToken) {
       toast.success('申购成功');
-      // 2秒后刷新
+      // 2秒后跳转到发射页面
       setTimeout(() => {
-        window.location.reload();
+        router.push(`/launch?symbol=${token?.symbol}`);
       }, 2000);
     }
   }, [isConfirmedContributeToken]);
@@ -156,13 +157,15 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
             </Link>
           </div>
 
-          <div className="flex flex-row gap-2">
+          <div className="flex justify-center space-x-4">
             <Button className="w-1/2" onClick={handleApprove} disabled={hasStartedApproving}>
-              {!hasStartedApproving
-                ? isPendingApproveParentToken || isConfirmingApproveParentToken
-                  ? '授权中...'
-                  : '1.授权'
-                : '1.已授权'}
+              {isPendingApproveParentToken
+                ? '1.授权中...'
+                : isConfirmingApproveParentToken
+                ? '1.确认中...'
+                : isConfirmedApproveParentToken
+                ? '1.已授权'
+                : '1.授权'}
             </Button>
             <Button
               className={`w-1/2 text-white py-2 rounded-lg`}
@@ -174,8 +177,10 @@ const Contribute: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({
                 isConfirmedContributeToken
               }
             >
-              {isPendingContributeToken || isConfirmingContributeToken
-                ? '申购中...'
+              {isPendingContributeToken
+                ? '2.申购中...'
+                : isConfirmingContributeToken
+                ? '2.确认中...'
                 : isConfirmedContributeToken
                 ? '2.申购成功'
                 : '2.申购'}

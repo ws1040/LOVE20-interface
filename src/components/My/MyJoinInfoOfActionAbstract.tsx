@@ -41,9 +41,10 @@ const MyJoinInfoOfActionAbstract: React.FC<MyJoinInfoOfActionAbstractProps> = ({
 
   return (
     <div className="px-6 pt-1 pb-4">
+      <LeftTitle title="上次参与" />
       <div className="stats w-full divide-x-0">
         <div className="stat place-items-center">
-          <div className="stat-title">未取回代币</div>
+          <div className="stat-title">已结束, 未取回的代币</div>
           <div className="stat-value text-2xl text-secondary">
             {isPendingStakedAmountByAccountByActionId ? (
               <LoadingIcon />
@@ -51,7 +52,9 @@ const MyJoinInfoOfActionAbstract: React.FC<MyJoinInfoOfActionAbstractProps> = ({
               formatTokenAmount(stakedAmountByAccountByActionId || BigInt(0))
             )}
           </div>
-          <div className="stat-desc text-xs text-greyscale-400">之前未取回的代币，再次加入时默认直接参与</div>
+          <div className="stat-desc text-xs text-greyscale-400">
+            <span className="text-secondary">提示：</span>未取回的代币，再加入时默认直接参与
+          </div>
         </div>
       </div>
     </div>

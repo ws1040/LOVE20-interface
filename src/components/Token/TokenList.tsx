@@ -16,8 +16,7 @@ const PAGE_SIZE = 10;
 
 export default function TokenList() {
   const router = useRouter();
-  const context = useContext(TokenContext);
-  const { setToken } = context || {};
+  const { token: currentToken, setToken } = useContext(TokenContext) || {};
 
   const [start, setStart] = useState<bigint>(0n);
   const [end, setEnd] = useState<bigint>(BigInt(PAGE_SIZE));
@@ -53,6 +52,7 @@ export default function TokenList() {
         slTokenAddress: token.slAddress,
         stTokenAddress: token.stAddress,
         hasEnded: launchInfos[index].hasEnded,
+        voteOriginBlocks: currentToken?.voteOriginBlocks ?? 0,
       }));
       setAllTokens((prev) => {
         // 过滤掉已存在的symbol，避免重复

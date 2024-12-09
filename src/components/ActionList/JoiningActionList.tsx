@@ -59,7 +59,8 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   return (
     <div className="p-6">
       <LeftTitle title="进行中的行动" />
-      {isLoading && (
+      {!accountAddress && <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>}
+      {accountAddress && isLoading && (
         <div className="p-4 flex justify-center items-center">
           <LoadingIcon />
         </div>

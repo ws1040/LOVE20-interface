@@ -29,7 +29,7 @@ const ActRewardsPage = () => {
 
   return (
     <>
-      <Header title="行动详情" />
+      <Header title="行动激励" />
       <main className="flex-grow">
         <MyJoinInfoOfActionPancel actionId={BigInt(actId || 0)} currentJoinRound={currentJoinRound} />
         <VerifiedAddressesByAction currentJoinRound={currentJoinRound} actionId={BigInt(actId || 0)} />

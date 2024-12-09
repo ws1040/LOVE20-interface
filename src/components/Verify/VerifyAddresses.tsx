@@ -10,6 +10,7 @@ import { useVerificationInfosByAction } from '@/src/hooks/contracts/useLOVE20Dat
 import { useVerify } from '@/src/hooks/contracts/useLOVE20Verify';
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 interface VerifyAddressesProps {
   currentRound: bigint;
@@ -21,6 +22,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
   const { token } = useContext(TokenContext) || {};
   const { chain: accountChain } = useAccount();
   const router = useRouter();
+  const { auto: autoQuery } = router.query;
 
   // 获取参与验证的地址
   const {
@@ -52,7 +54,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
   };
 
   // 提交验证
-  const { verify, isWriting, isConfirmed, writeError: submitError } = useVerify();
+  const { verify, isWriting, isConfirming, isConfirmed, writeError: submitError } = useVerify();
   const checkInput = () => {
     if (!checkWalletConnection(accountChain)) {
       return false;
@@ -79,7 +81,11 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
         duration: 2000, // 2秒
       });
       setTimeout(() => {
-        router.push(`/verify?symbol=${token?.symbol}`);
+        if (!autoQuery) {
+          router.push(`/verify?symbol=${token?.symbol}`);
+        } else {
+          router.push(`/gov?symbol=${token?.symbol}`); //仅有1个行动需要验证时，自动跳转到gov页面
+        }
       }, 2000);
     }
   }, [isConfirmed, submitError]);
@@ -139,8 +145,11 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       </div>
 
       {remainingVotes > 0 && (
-        <Button onClick={handleSubmit} disabled={isWriting || isConfirmed} className="mt-6 w-1/2">
-          {isConfirmed ? '已提交' : '提交验证'}
+        <Button onClick={handleSubmit} disabled={isWriting || isConfirming || isConfirmed} className="mt-6 w-1/2">
+          {!isWriting && !isConfirming && !isConfirmed && '提交验证'}
+          {isWriting && '提交中...'}
+          {isConfirming && '确认中...'}
+          {isConfirmed && '已验证'}
         </Button>
       )}
       {!remainingVotes && (
@@ -149,6 +158,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
         </Button>
       )}
       {submitError && <div className="text-red-500 text-center">{submitError.message}</div>}
+      <LoadingOverlay isLoading={isWriting || isConfirming} />
     </>
   );
 };

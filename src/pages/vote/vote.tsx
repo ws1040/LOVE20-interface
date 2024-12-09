@@ -15,6 +15,7 @@ import { useCurrentRound, useVotesNumByAccount, useVote } from '@/src/hooks/cont
 
 import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 const VotingSubmitPage = () => {
   const { token } = useContext(TokenContext) || {};
@@ -140,7 +141,7 @@ const VotingSubmitPage = () => {
 
   return (
     <>
-      <Header title="执行投票页" />
+      <Header title="投票" />
       <main className="flex-grow">
         <div className="flex flex-col items-center space-y-4 p-6">
           <div className="text-base text-greyscale-500">
@@ -196,13 +197,14 @@ const VotingSubmitPage = () => {
           </div>
           <div className="flex justify-center mt-4">
             <Button className="w-1/2" onClick={handleSubmit} disabled={isWriting || isConfirming || isConfirmed}>
-              {isWriting || isConfirming ? '提交中...' : isConfirmed ? '已提交' : '提交投票'}
+              {isWriting ? '提交中...' : isConfirming ? '确认中...' : isConfirmed ? '已提交' : '提交投票'}
             </Button>
           </div>
           {submitError ? (
             <div className="text-red-500">Error: {(submitError as BaseError).shortMessage || submitError.message}</div>
           ) : null}
         </div>
+        <LoadingOverlay isLoading={isWriting || isConfirming} />
       </main>
     </>
   );

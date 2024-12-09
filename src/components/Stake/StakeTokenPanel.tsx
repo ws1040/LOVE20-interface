@@ -153,8 +153,10 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
               disabled={isPendingApproveToken || isConfirmingApproveToken || isConfirmedApproveToken}
               onClick={handleApprove}
             >
-              {isPendingApproveToken || isConfirmingApproveToken
+              {isPendingApproveToken
                 ? '1.授权中...'
+                : isConfirmingApproveToken
+                ? '1.确认中...'
                 : isConfirmedApproveToken
                 ? '1.已授权'
                 : '1.授权'}
@@ -166,8 +168,10 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
               }
               onClick={handleStake}
             >
-              {isPendingStakeToken || isConfirmingStakeToken
+              {isPendingStakeToken
                 ? '2.质押中...'
+                : isConfirmingStakeToken
+                ? '2.确认中...'
                 : isConfirmedStakeToken
                 ? '2.已质押'
                 : '2.质押'}

@@ -16,9 +16,7 @@ import {
 
 // 修改后的 AppSidebar 组件
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [isOpen, setIsOpen] = useState(false);
-  const tokenContext = useContext(TokenContext);
-  const { token } = tokenContext || {};
+  const { token } = useContext(TokenContext) || {};
   if (!token) {
     return null;
   }

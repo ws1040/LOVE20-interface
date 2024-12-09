@@ -66,10 +66,6 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
     setSelectedRound(BigInt(round));
   };
 
-  if (isPendingVerifiedAddresses) {
-    return <LoadingIcon />;
-  }
-
   if (errorVerifiedAddresses) {
     console.error(errorVerifiedAddresses);
     return <div>发生错误: {errorVerifiedAddresses.message}</div>;
@@ -87,7 +83,9 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
           handleChangedRound={handleChangedRound}
         />
       </div>
-      {addresses.length === 0 ? (
+      {isPendingVerifiedAddresses ? (
+        ''
+      ) : addresses.length === 0 ? (
         <div className="text-center text-sm text-greyscale-400 p-4">没有地址参与行动</div>
       ) : (
         <table className="table w-full">

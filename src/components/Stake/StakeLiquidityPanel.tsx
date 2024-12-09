@@ -130,9 +130,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     writeError: errApproveParentToken,
   } = useApprove(token?.parentTokenAddress as `0x${string}`);
 
-  const handleApprove = async (e: React.FormEvent) => {
+  const handleApprove = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-
     if (!checkInput()) {
       return;
     }
@@ -166,7 +165,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     writeError: errStakeLiquidity,
   } = useStakeLiquidity();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!checkInput()) {
       return;
@@ -224,15 +223,16 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     return true;
   };
 
-  const isApproveLoading =
-    isPendingApproveToken || isPendingApproveParentToken || isConfirmingApproveToken || isConfirmingApproveParentToken;
-  const hadStartedApprove = isApproveLoading || isConfirmedApproveToken || isConfirmedApproveParentToken;
+  const isApproving = isPendingApproveToken || isPendingApproveParentToken;
+  const isApproveConfirming = isConfirmingApproveToken || isConfirmingApproveParentToken;
+  const isApproveConfirmed = isConfirmedApproveToken && isConfirmedApproveParentToken;
+  const hadStartedApprove = isApproving || isApproveConfirming || isApproveConfirmed;
 
   return (
     <>
       <div className="w-full flex-col items-center p-6 mt-1">
         <LeftTitle title="质押获取治理票" />
-        <form onSubmit={handleSubmit} className="w-full max-w-md mt-4">
+        <form className="w-full max-w-md mt-4">
           <div className="mb-4">
             <label className="block text-left mb-1 text-sm text-greyscale-500">
               质押父币数 (当前持有：
@@ -287,21 +287,28 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
           </div>
           <div className="flex justify-center space-x-4">
             <Button className={`w-1/2 `} disabled={hadStartedApprove} onClick={handleApprove}>
-              {isApproveLoading ? '1.授权中...' : isConfirmedApproveToken ? '1.已授权' : '1.授权'}
+              {isApproving
+                ? '1.授权中...'
+                : isApproveConfirming
+                ? '1.确认中'
+                : isApproveConfirmed
+                ? '1.已授权'
+                : '1.授权'}
             </Button>
             <Button
-              type="submit"
               className={`w-1/2`}
+              onClick={handleSubmit}
               disabled={
-                !isConfirmedApproveToken ||
-                !isConfirmedApproveParentToken ||
+                !isApproveConfirmed ||
                 isPendingStakeLiquidity ||
                 isConfirmingStakeLiquidity ||
                 isConfirmedStakeLiquidity
               }
             >
-              {isPendingStakeLiquidity || isConfirmingStakeLiquidity
+              {isPendingStakeLiquidity
                 ? '2.质押中...'
+                : isConfirmingStakeLiquidity
+                ? '2.确认中...'
                 : isConfirmedStakeLiquidity
                 ? '2.已质押'
                 : '2.质押'}
@@ -311,7 +318,9 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
         {errStakeLiquidity && <div className="text-red-500">{errStakeLiquidity.message}</div>}
         {errApproveToken && <div className="text-red-500">{errApproveToken.message}</div>}
         {errApproveParentToken && <div className="text-red-500">{errApproveParentToken.message}</div>}
-        <LoadingOverlay isLoading={isApproveLoading || isPendingStakeLiquidity || isConfirmingStakeLiquidity} />
+        <LoadingOverlay
+          isLoading={isApproving || isApproveConfirming || isPendingStakeLiquidity || isConfirmingStakeLiquidity}
+        />
       </div>
     </>
   );
