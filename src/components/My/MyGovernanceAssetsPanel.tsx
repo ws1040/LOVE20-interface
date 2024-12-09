@@ -270,13 +270,17 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         </>
       )}
       {!enableWithdraw && (
-        <div className="flex justify-center space-x-8">
-          <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
-            <Link href={`/gov/unstake?symbol=${token.symbol}`}>取消质押</Link>
-          </Button>
-          <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
-            <Link href={`/my/govrewards?symbol=${token.symbol}`}>查看奖励</Link>
-          </Button>
+        <div className="grid grid-cols-2 justify-items-center">
+          <div>
+            <Button variant="outline" className="text-secondary border-secondary" asChild>
+              <Link href={`/gov/unstake?symbol=${token.symbol}`}>取消质押</Link>
+            </Button>
+          </div>
+          <div>
+            <Button variant="outline" className="text-secondary border-secondary" asChild>
+              <Link href={`/my/govrewards?symbol=${token.symbol}`}>查看奖励</Link>
+            </Button>
+          </div>
         </div>
       )}
     </>
