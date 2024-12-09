@@ -13,8 +13,7 @@ import LeftTitle from '../Common/LeftTitle';
 
 const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const { address: account } = useAccount();
-  const context = useContext(TokenContext);
-  const { setToken } = context || {};
+  const { setToken } = useContext(TokenContext) || {};
 
   // 读取数据的hooks
   const {

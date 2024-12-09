@@ -11,8 +11,7 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 interface TokenLabelProps {}
 
 const TokenLabel: React.FC<TokenLabelProps> = ({}) => {
-  const tokenContext = useContext(TokenContext);
-  const { token } = tokenContext || {};
+  const { token } = useContext(TokenContext) || {};
   if (!token) {
     return <LoadingIcon />;
   }

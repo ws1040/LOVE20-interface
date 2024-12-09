@@ -7,8 +7,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 
 const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const tokenContext = useContext(TokenContext);
-  const { token } = tokenContext || {};
+  const { token } = useContext(TokenContext) || {};
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);

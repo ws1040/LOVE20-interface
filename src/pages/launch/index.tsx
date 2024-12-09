@@ -12,8 +12,7 @@ import TokenTab from '@/src/components/Token/TokenTab';
 import Todeploy from '@/src/components/Launch/Todeploy';
 
 export default function TokenFairLaunch() {
-  const tokenContext = useContext(TokenContext);
-  const { token, setToken } = tokenContext || { token: null, setToken: null };
+  const { token, setToken } = useContext(TokenContext) || { token: null, setToken: null };
 
   // 获取发射信息
   const {

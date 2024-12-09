@@ -115,12 +115,15 @@ export const useCumulatedTokenAmountByAccount = (
 /**
  * 获取当前轮次
  */
-export const useCurrentRound = () => {
+export const useCurrentRound = (enabled: boolean = true) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20StakeAbi,
     functionName: 'currentRound',
     args: [],
+    query: {
+      enabled,
+    },
   });
 
   return { currentRound: data as bigint, isPending, error };
@@ -414,10 +417,6 @@ export const useStakeToken = () => {
 export const useUnstake = () => {
   const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
 
-  /**
-   * 调用合约的 unstake 函数
-   * @param tokenAddress 代币地址
-   */
   const unstake = async (tokenAddress: `0x${string}`) => {
     try {
       await writeContract({

@@ -40,8 +40,7 @@ export default function TokenDeployment() {
   }, [isConfirmed]);
 
   // 当前token
-  const tokenContext = useContext(TokenContext);
-  const { token } = tokenContext || {};
+  const { token } = useContext(TokenContext) || {};
   if (!token) {
     return <LoadingIcon />;
   }

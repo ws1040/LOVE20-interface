@@ -9,8 +9,7 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 const Contribute = dynamic(() => import('@/src/components/Launch/Contribute'), { ssr: false });
 
 export default function ContributePage() {
-  const tokenContext = useContext(TokenContext);
-  const { token } = tokenContext || { token: null };
+  const { token } = useContext(TokenContext) || {};
   const {
     launchInfo,
     isPending: isLaunchInfoPending,

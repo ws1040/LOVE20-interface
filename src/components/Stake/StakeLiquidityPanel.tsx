@@ -130,9 +130,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     writeError: errApproveParentToken,
   } = useApprove(token?.parentTokenAddress as `0x${string}`);
 
-  const handleApprove = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleApprove = async () => {
     if (!checkInput()) {
       return;
     }
@@ -166,8 +164,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     writeError: errStakeLiquidity,
   } = useStakeLiquidity();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!checkInput()) {
       return;
     }

@@ -104,7 +104,11 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
             已取回
           </Button>
         ) : lastJoinedRound && Number(lastJoinedRound) + 1 <= Number(currentJoinRound) ? (
-          <Button className="w-1/2" onClick={handleWithdraw} disabled={isPendingWithdraw || isConfirmingWithdraw}>
+          <Button
+            className="w-1/2"
+            onClick={handleWithdraw}
+            disabled={isPendingWithdraw || isConfirmingWithdraw || isConfirmedWithdraw}
+          >
             {isPendingWithdraw
               ? '提交中'
               : isConfirmingWithdraw
@@ -115,7 +119,7 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
           </Button>
         ) : (
           <Button className="w-1/2" disabled>
-            到第 {(1 + Number(lastJoinedRound)).toString()} 轮后可取回
+            第 {(1 + Number(lastJoinedRound)).toString()} 轮后可取回
           </Button>
         )}
       </div>
