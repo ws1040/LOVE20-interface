@@ -119,11 +119,16 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
         </div>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center space-x-4">
         {Number(contributed) <= 0 && (
-          <Button className="w-1/2" disabled>
-            未申购
-          </Button>
+          <>
+            <Button className="w-1/2" disabled>
+              未申购
+            </Button>
+            <Button className="w-1/2" asChild>
+              <Link href={`/launch/burn?symbol=${token?.symbol}`}>底池销毁</Link>
+            </Button>
+          </>
         )}
         {Number(contributed) > 0 && !claimed && (
           <Button
@@ -134,17 +139,18 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
             {isClaiming ? '领取中...' : isClaimConfirming ? '确认中...' : isClaimConfirmed ? '已领取' : '领取'}
           </Button>
         )}
+        {Number(contributed) > 0 && claimed && (
+          <>
+            <Button className="w-1/2" disabled>
+              已领取
+            </Button>
+            <Button className="w-1/2" asChild>
+              <Link href={`/launch/burn?symbol=${token?.symbol}`}>底池销毁</Link>
+            </Button>
+          </>
+        )}
       </div>
-      {Number(contributed) > 0 && claimed && (
-        <div className="flex justify-center space-x-4">
-          <Button className="w-1/2" disabled>
-            已领取
-          </Button>
-          <Button className="w-1/2" asChild>
-            <Link href={`/launch/burn?symbol=${token?.symbol}`}>底池销毁</Link>
-          </Button>
-        </div>
-      )}
+
       {claimError && <div className="text-red-500">{claimError.message}</div>}
       {contributedError && <div className="text-red-500">{contributedError.message}</div>}
       {extraRefundedError && <div className="text-red-500">{extraRefundedError.message}</div>}

@@ -130,7 +130,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     writeError: errApproveParentToken,
   } = useApprove(token?.parentTokenAddress as `0x${string}`);
 
-  const handleApprove = async () => {
+  const handleApprove = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (!checkInput()) {
       return;
     }
@@ -164,7 +165,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     writeError: errStakeLiquidity,
   } = useStakeLiquidity();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (!checkInput()) {
       return;
     }
@@ -230,7 +232,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     <>
       <div className="w-full flex-col items-center p-6 mt-1">
         <LeftTitle title="质押获取治理票" />
-        <form onSubmit={handleSubmit} className="w-full max-w-md mt-4">
+        <form className="w-full max-w-md mt-4">
           <div className="mb-4">
             <label className="block text-left mb-1 text-sm text-greyscale-500">
               质押父币数 (当前持有：
@@ -294,8 +296,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
                 : '1.授权'}
             </Button>
             <Button
-              type="submit"
               className={`w-1/2`}
+              onClick={handleSubmit}
               disabled={
                 !isApproveConfirmed ||
                 isPendingStakeLiquidity ||

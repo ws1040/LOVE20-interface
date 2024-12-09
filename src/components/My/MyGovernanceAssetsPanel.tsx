@@ -221,7 +221,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
                     ? '1.确认中...'
                     : isApproveConfirmed
                     ? '1.已授权'
-                    : '1.授权'}
+                    : 'Step1. 授权'}
                 </Button>
                 <Button
                   className="w-1/2"
@@ -234,7 +234,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
                     ? '2.确认中'
                     : isConfirmedUnstake
                     ? '2.已取消质押'
-                    : '2.取消质押'}
+                    : 'Step2. 取消质押'}
                 </Button>
               </div>
               <div className="text-center mt-2 text-sm text-greyscale-600">
