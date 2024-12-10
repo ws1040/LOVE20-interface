@@ -100,7 +100,8 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
       setReleasePeriod('');
       // 2秒后刷新页面
       setTimeout(() => {
-        window.location.reload();
+        // 跳转到治理首页
+        window.location.href = `/gov?symbol=${token?.symbol}`;
       }, 2000);
     }
   }, [isConfirmedStakeToken]);

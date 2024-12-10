@@ -196,13 +196,13 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         </div>
       </div>
       <div className="stats w-full grid grid-cols-2 divide-x-0">
-        <div className="stat place-items-center">
-          <div className="stat-title text-sm">承诺释放间隔轮次</div>
+        <div className="stat place-items-center pt-0">
+          <div className="stat-title text-sm">承诺释放间隔轮数</div>
           <div className="stat-value text-xl">
             {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingRounds || BigInt(0)}`}
           </div>
         </div>
-        <div className="stat place-items-center">
+        <div className="stat place-items-center pt-0">
           <div className="stat-title text-sm">治理票数</div>
           <div className="stat-value text-xl">
             {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0))}
@@ -213,7 +213,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         <>
           {!requestedUnstakeRound && (
             <>
-              <div className="flex justify-center space-x-4">
+              <div className="flex justify-center space-x-4 mt-2">
                 <Button className="w-1/2" onClick={handleApprove} disabled={hadStartedApprove}>
                   {isApproving
                     ? '1.授权中...'
@@ -270,17 +270,10 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         </>
       )}
       {!enableWithdraw && (
-        <div className="grid grid-cols-2 justify-items-center">
-          <div>
-            <Button variant="outline" className="text-secondary border-secondary" asChild>
-              <Link href={`/gov/unstake?symbol=${token.symbol}`}>取消质押</Link>
-            </Button>
-          </div>
-          <div>
-            <Button variant="outline" className="text-secondary border-secondary" asChild>
-              <Link href={`/my/govrewards?symbol=${token.symbol}`}>查看奖励</Link>
-            </Button>
-          </div>
+        <div className="flex justify-center">
+          <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
+            <Link href={`/my/govrewards?symbol=${token.symbol}`}>查看奖励</Link>
+          </Button>
         </div>
       )}
     </>
