@@ -1,62 +1,115 @@
+import { Button } from '@/components/ui/button';
+import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
+import {
+  DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTrigger,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { Info } from 'lucide-react';
+import { useMediaQuery } from '@mui/material';
 import React, { useContext, useState } from 'react';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { Tooltip } from '@mui/material';
 
 import { formatTokenAmount } from '@/src/lib/format';
+import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { useTotalSupply } from '@/src/hooks/contracts/useLOVE20Token';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import TokenLabel from './TokenLabel';
+import TokenLabel from '@/src/components/Token/TokenLabel';
 
 export default function TokenTab() {
   const { token } = useContext(TokenContext) || {};
+
+  // 获取已铸币量
   const {
     totalSupply,
     isPending: isTotalSupplyPending,
     error: totalSupplyError,
   } = useTotalSupply((token?.address as `0x${string}`) || '');
 
-  // 控制 Tooltip 的显隐 begin
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const handleTooltipToggle = () => {
-    setTooltipOpen((prev) => !prev);
-  };
-  const handleTooltipClose = () => {
-    setTooltipOpen(false);
-  };
-  // 控制 Tooltip 的显隐 end
+  // 控制 Drawer 的显隐
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const [isOpen, setIsOpen] = useState(false);
 
   if (!token?.address) {
     return <LoadingIcon />;
   }
 
   return (
-    <div className="px-6 pt-2 pb-6">
-      <TokenLabel />
-
-      {false && (
-        <div className="flex items-center">
-          <div className="mr-2">
-            <span className="text-sm text-greyscale-500">已铸币量: </span>
-            <span className="text-lg font-semibold text-orange-400">
-              {isTotalSupplyPending ? <LoadingIcon /> : formatTokenAmount(totalSupply || 0n)}
-            </span>
-          </div>
-          <Tooltip
-            // 1e10
-            title={`铸币上限 ${(1e10).toLocaleString()}`}
-            open={tooltipOpen}
-            onClose={handleTooltipClose}
-            disableHoverListener
-            disableFocusListener
-            disableTouchListener
-            // 可以根据需要添加 TransitionComponent 等属性
-          >
-            <button className="btn btn-circle btn-ghost btn-xs text-greyscale-400" onClick={handleTooltipToggle}>
-              <HelpOutlineIcon />
-            </button>
-          </Tooltip>
+    <div className="px-4 pt-0 pb-6">
+      <div className="bg-gray-100 rounded-lg p-4 text-sm mt-4">
+        <TokenLabel />
+        <div className="mt-1 flex items-center" onClick={() => setIsOpen(true)}>
+          <Info className="w-4 h-4 mr-1 text-greyscale-500 cursor-pointer" />
+          <span className="text-sm text-greyscale-500">已铸币量: </span>
+          <span className="text-sm text-secondary">
+            {isTotalSupplyPending ? <LoadingIcon /> : formatTokenAmount(totalSupply || 0n)}
+          </span>
         </div>
+      </div>
+
+      {isDesktop && (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger asChild> </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogTitle>经济模型</DialogTitle>
+            <div className="px-12 pt-2 pb-4 text-gray-800">
+              <p className="font-bold text-large mb-2">
+                代币总量：
+                <span>{formatTokenAmount(BigInt(TOKEN_CONFIG.totalSupply))}</span>
+              </p>
+              <p>
+                - 公平发射：
+                <span className="text-secondary">{formatTokenAmount(BigInt(TOKEN_CONFIG.fairLaunch))}</span> (10%)
+              </p>
+              <p>
+                - 治理激励：
+                <span className="text-secondary">{formatTokenAmount(BigInt(TOKEN_CONFIG.govRewards))}</span> (45%)
+              </p>
+              <p>
+                - 行动激励：
+                <span className="text-secondary">{formatTokenAmount(BigInt(TOKEN_CONFIG.actionRewards))}</span> (45%)
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+      {!isDesktop && (
+        <Drawer open={isOpen} onOpenChange={setIsOpen}>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>经济模型</DrawerTitle>
+              <DrawerClose />
+            </DrawerHeader>
+            <div className="px-12 pt-2 pb-4 text-gray-800 text-lg">
+              <p className="font-bold text-xl mb-2">
+                代币总量：
+                <span>{formatTokenAmount(BigInt(TOKEN_CONFIG.totalSupply))}</span>
+              </p>
+              <p>
+                - 公平发射：
+                <span className="text-secondary">{formatTokenAmount(BigInt(TOKEN_CONFIG.fairLaunch))}</span> (10%)
+              </p>
+              <p>
+                - 治理激励：
+                <span className="text-secondary">{formatTokenAmount(BigInt(TOKEN_CONFIG.govRewards))}</span> (45%)
+              </p>
+              <p>
+                - 行动激励：
+                <span className="text-secondary">{formatTokenAmount(BigInt(TOKEN_CONFIG.actionRewards))}</span> (45%)
+              </p>
+            </div>
+            <DrawerFooter>
+              <DrawerClose asChild>
+                <Button variant="outline" className="w-1/2 mx-auto text-secondary border-secondary">
+                  关闭
+                </Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
       )}
     </div>
   );

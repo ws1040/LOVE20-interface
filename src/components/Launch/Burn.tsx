@@ -168,7 +168,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
               disabled={hasStartedApproving || (balanceOfToken || 0n) <= 0n}
               className="text-secondary"
             >
-              全部销毁
+              全选
             </Button>
           </div>
 

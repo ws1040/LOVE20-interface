@@ -52,25 +52,27 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
 
   return (
     <div className="flex-col items-center px-6 py-2">
-      <LeftTitle title="我的代币" />
+      <div className="flex justify-between items-center">
+        <LeftTitle title="我的代币" />
+        <Button variant="link" className="text-secondary border-secondary" asChild>
+          <Link href={`/dex/swap?symbol=${token.symbol}`}>交易代币</Link>
+        </Button>
+      </div>
       <div className="stats w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center">
-          <div className="stat-title text-sm">所有 {token?.symbol}</div>
+          <div className="stat-title text-sm mb-1">持有 {token?.symbol}</div>
           <div className="stat-value text-xl">
             {isPendingBalance ? <LoadingIcon /> : formatTokenAmount(balance || BigInt(0))}
           </div>
+          <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light">不含质押、锁定</div>
         </div>
         <div className="stat place-items-center">
           <div className="stat-title text-sm">行动锁定 {token?.symbol}</div>
           <div className="stat-value text-xl">
             {isPendingStakedAmount ? <LoadingIcon /> : formatTokenAmount(stakedAmount || BigInt(0))}
           </div>
+          <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light">行动结束可取回</div>
         </div>
-      </div>
-      <div className="flex justify-center">
-        <Button variant="outline" size="sm" className="mt-2 w-1/2 text-secondary border-secondary" asChild>
-          <Link href={`/dex/swap?symbol=${token.symbol}`}>去交易</Link>
-        </Button>
       </div>
     </div>
   );

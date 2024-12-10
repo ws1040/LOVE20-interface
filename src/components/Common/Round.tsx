@@ -22,7 +22,7 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundName }) => {
   const initialTimeLeft = leftBlocks > 0 ? leftBlocks * BLOCK_TIME : 0;
 
   return (
-    <div className="flex justify-between items-center mb-4">
+    <div className="flex justify-between items-center mb-2">
       <h1 className="text-lg font-bold">
         {roundName} 第 <span className="text-secondary">{Number(currentRound ?? 0n)}</span> 轮
       </h1>

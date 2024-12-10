@@ -40,7 +40,7 @@ const MyStakingPanel: React.FC = () => {
   }
 
   return (
-    <div className="flex-col items-center px-6 py-2">
+    <div className="flex-col items-center px-6 pt-2 pb-0">
       <LeftTitle title="我的质押" />
       <div className="stats w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center">
@@ -48,8 +48,8 @@ const MyStakingPanel: React.FC = () => {
           <div className="stat-value text-xl">
             {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0))}
           </div>
-          <div className="stat-actions w-full">
-            <Button variant="outline" size="sm" className="w-full text-secondary border-secondary" asChild>
+          <div className="stat-actions w-full my-0">
+            <Button variant="link" size="sm" className="w-full text-secondary" asChild>
               <Link href={`/gov/stakelp?symbol=${token.symbol}`}>去获取</Link>
             </Button>
           </div>
@@ -59,8 +59,8 @@ const MyStakingPanel: React.FC = () => {
           <div className="stat-value text-xl">
             {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || BigInt(0))}
           </div>
-          <div className="stat-actions w-full">
-            <Button variant="outline" size="sm" className="w-full text-secondary border-secondary" asChild>
+          <div className="stat-actions w-full my-0">
+            <Button variant="link" size="sm" className="w-full text-secondary" asChild>
               <Link href={`/gov/staketoken?symbol=${token.symbol}`}>去质押</Link>
             </Button>
           </div>

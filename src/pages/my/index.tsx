@@ -1,4 +1,6 @@
+import { Button } from '@/components/ui/button';
 import { useContext } from 'react';
+import Link from 'next/link';
 
 import { TokenContext } from '@/src/contexts/TokenContext';
 import Header from '@/src/components/Header';
@@ -15,8 +17,13 @@ const MyPage = () => {
       <Header title="我的" />
       <main className="flex-grow">
         <MyTokenPanel token={token} />
-        <div className="flex-col items-center px-6 pt-6 pb-2">
-          <LeftTitle title="参与治理的资产" />
+        <div className="flex-col items-center px-6 pt-0 pb-2">
+          <div className="flex justify-between items-center">
+            <LeftTitle title="治理资产" />
+            <Button variant="link" className="text-secondary border-secondary" asChild>
+              <Link href={`/gov/unstake?symbol=${token?.symbol}`}>取消质押</Link>
+            </Button>
+          </div>
           <MyGovernanceAssetsPanel token={token} />
         </div>
         <MyStakedActionList token={token} />

@@ -1,20 +1,16 @@
-import React, { useContext, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import React, { useContext } from 'react';
 
-import { useTokenAmounts } from '@/src/hooks/contracts/useLOVE20SLToken';
-import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
-
+import { TokenContext } from '@/src/contexts/TokenContext';
+import { useTokenAmounts } from '@/src/hooks/contracts/useLOVE20SLToken';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
-interface StakedLiquidDataPanelProps {
-  showStakeToken?: boolean;
-  onTokenAmountChange?: (tokenAmount: bigint) => void;
-}
+interface StakedLiquidDataPanelProps {}
 
-const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({
-  showStakeToken = true,
-  onTokenAmountChange,
-}) => {
+const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({}) => {
   const { token } = useContext(TokenContext) || {};
 
   const {
@@ -25,53 +21,40 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({
     isPending: isPendingTokenAmount,
   } = useTokenAmounts(token?.slTokenAddress as `0x${string}`);
 
-  useEffect(() => {
-    if (onTokenAmountChange && !isPendingTokenAmount) {
-      onTokenAmountChange(tokenAmount || BigInt(0)); // 当 tokenAmount 变化时调用回调函数
-    }
-  }, [tokenAmount, isPendingTokenAmount]);
+  if (isPendingTokenAmount) {
+    return <LoadingIcon />;
+  }
 
   return (
-    <>
-      {isPendingTokenAmount ? (
-        <LoadingIcon />
-      ) : (
-        <>
-          <div className="text-sm text-greyscale-500 font-bold">流动性质押总量</div>
-          <div className="flex w-full justify-center space-x-10">
-            <span className="flex flex-col items-center">
-              <span className="text-sm text-greyscale-500 mr-2">${token?.symbol}</span>
-              <span className="text-2xl font-bold text-orange-400">{formatTokenAmount(tokenAmount || BigInt(0))}</span>
-            </span>
-            <span className="flex flex-col items-center">
-              <span className="text-sm text-greyscale-500 mr-2">${token?.parentTokenSymbol}</span>
-              <span className="text-2xl font-bold text-orange-400">
-                {formatTokenAmount(parentTokenAmount || BigInt(0))}
-              </span>
-            </span>
-          </div>
-          {showStakeToken && (
-            <>
-              <div className="text-sm text-greyscale-500 font-bold">手续费待分配收益</div>
-              <div className="flex w-full justify-center space-x-10">
-                <span className="flex flex-col items-center">
-                  <span className="text-sm text-greyscale-500 mr-2">${token?.symbol}</span>
-                  <span className="text-2xl font-bold text-orange-400">
-                    {formatTokenAmount(feeTokenAmount || BigInt(0))}
-                  </span>
-                </span>
-                <span className="flex flex-col items-center">
-                  <span className="text-sm text-greyscale-500 mr-2">${token?.parentTokenSymbol}</span>
-                  <span className="text-2xl font-bold text-orange-400">
-                    {formatTokenAmount(feeParentTokenAmount || BigInt(0))}
-                  </span>
-                </span>
-              </div>
-            </>
-          )}
-        </>
-      )}
-    </>
+    <div className="flex-col items-center px-6">
+      <LeftTitle title="流动性质押详情" />
+      <div className="stats border rounded-lg w-full grid grid-cols-2 divide-x-0 mt-2 mb-6">
+        <div className="stat place-items-center pt-3 ">
+          <div className="stat-title">{token?.symbol}</div>
+          <div className="stat-value text-xl">{formatTokenAmount(tokenAmount || BigInt(0))}</div>
+        </div>
+        <div className="stat place-items-center pt-3 ">
+          <div className="stat-title">{token?.parentTokenSymbol}</div>
+          <div className="stat-value text-xl">{formatTokenAmount(parentTokenAmount || BigInt(0))}</div>
+        </div>
+      </div>
+      <LeftTitle title="待分配手续费" />
+      <div className="stats border rounded-lg w-full grid grid-cols-2 divide-x-0 mt-2 mb-6">
+        <div className="stat place-items-center pt-3">
+          <div className="stat-title">{token?.symbol}</div>
+          <div className="stat-value text-xl">{formatTokenAmount(feeTokenAmount || BigInt(0))}</div>
+        </div>
+        <div className="stat place-items-center pt-3">
+          <div className="stat-title">{token?.parentTokenSymbol}</div>
+          <div className="stat-value text-xl">{formatTokenAmount(feeParentTokenAmount || BigInt(0))}</div>
+        </div>
+      </div>
+      <div className="flex justify-center">
+        <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
+          <Link href={`/gov/stakelp?symbol=${token?.symbol}`}>质押获取治理票</Link>
+        </Button>
+      </div>
+    </div>
   );
 };
 
