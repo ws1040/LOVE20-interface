@@ -123,7 +123,10 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
           </Button>
         )}
       </div>
-      <LoadingOverlay isLoading={isPendingWithdraw || isConfirmingWithdraw} />
+      <LoadingOverlay
+        isLoading={isPendingWithdraw || isConfirmingWithdraw}
+        text={isPendingWithdraw ? '提交交易...' : '确认交易...'}
+      />
     </div>
   );
 };

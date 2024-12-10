@@ -384,7 +384,10 @@ const SwapPanel = () => {
           </div>
         )}
       </div>
-      <LoadingOverlay isLoading={isApproving || isSwapping || isConfirmingSwap} />
+      <LoadingOverlay
+        isLoading={isApproving || isSwapping || isConfirmingSwap}
+        text={isPendingApproveToken || isPendingApproveParentToken || isSwapping ? '提交交易...' : '确认交易...'}
+      />
     </div>
   );
 };

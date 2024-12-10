@@ -197,6 +197,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
           isPendingContributeToken ||
           isConfirmingContributeToken
         }
+        text={isPendingApproveParentToken || isPendingContributeToken ? '提交交易...' : '确认交易...'}
       />
     </>
   );

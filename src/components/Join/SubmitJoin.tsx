@@ -187,7 +187,10 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
         {errApprove && <div className="text-red-500 text-center">{errApprove.message}</div>}
         {errorJoin && <div className="text-red-500 text-center">{errorJoin.message}</div>}
       </div>
-      <LoadingOverlay isLoading={isPendingApprove || isConfirmingApprove || isPendingJoin || isConfirmingJoin} />
+      <LoadingOverlay
+        isLoading={isPendingApprove || isConfirmingApprove || isPendingJoin || isConfirmingJoin}
+        text={isPendingApprove || isPendingJoin ? '提交交易...' : '确认交易...'}
+      />
     </>
   );
 };

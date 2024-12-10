@@ -150,7 +150,10 @@ const Deposit: React.FC = () => {
         {errBalance && <div className="text-red-500">{errBalance.message}</div>}
         {errDeposit && <div className="text-red-500">{errDeposit.message}</div>}
       </div>
-      <LoadingOverlay isLoading={isPendingDeposit || isConfirmingDeposit} />
+      <LoadingOverlay
+        isLoading={isPendingDeposit || isConfirmingDeposit}
+        text={isPendingDeposit ? '提交交易...' : '确认交易...'}
+      />
     </>
   );
 };

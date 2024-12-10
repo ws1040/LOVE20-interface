@@ -35,7 +35,7 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
   if (!accountAddress) {
     return (
       <>
-        <div className="p-6">
+        <div className="pt-4 px-6">
           <LeftTitle title="我参与的行动" />
           <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
         </div>
@@ -45,7 +45,7 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
   if (isPendingJoinedActions || (joinedActions && joinedActions.length > 0 && isPendingActionInfosByIds)) {
     return (
       <>
-        <div className="p-6">
+        <div className="pt-4 px-6">
           <LeftTitle title="我参与的行动" />
           <div className="text-sm mt-4 text-greyscale-500 text-center">
             <LoadingIcon />
@@ -59,7 +59,7 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
   }
 
   return (
-    <div className="p-6">
+    <div className="pt-4 px-6">
       <LeftTitle title="我参与的行动" />
       {!joinedActions?.length ? (
         <div className="text-sm text-greyscale-500 text-center">没有行动</div>

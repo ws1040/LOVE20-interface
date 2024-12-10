@@ -320,6 +320,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
         {errApproveParentToken && <div className="text-red-500">{errApproveParentToken.message}</div>}
         <LoadingOverlay
           isLoading={isApproving || isApproveConfirming || isPendingStakeLiquidity || isConfirmingStakeLiquidity}
+          text={isApproving || isPendingStakeLiquidity ? '提交交易...' : '确认交易...'}
         />
       </div>
     </>

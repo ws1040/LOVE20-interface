@@ -11,6 +11,7 @@ import { Token, TokenContext } from '@/src/contexts/TokenContext';
 import { useContributed, useClaimed, useExtraRefunded, useClaim } from '@/src/hooks/contracts/useLOVE20Launch';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const { address: account } = useAccount();
@@ -155,6 +156,7 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
       {contributedError && <div className="text-red-500">{contributedError.message}</div>}
       {extraRefundedError && <div className="text-red-500">{extraRefundedError.message}</div>}
       {claimedError && <div className="text-red-500">{claimedError.message}</div>}
+      <LoadingOverlay isLoading={isClaiming || isClaimConfirming} text={isClaiming ? '提交交易...' : '确认交易...'} />
     </div>
   );
 };

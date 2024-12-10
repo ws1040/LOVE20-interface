@@ -62,7 +62,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             isActive: false,
           },
           {
-            title: '兑换',
+            title: `兑换${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`,
             url: `${basePath}/launch/deposit?symbol=${token.symbol}`,
             isActive: false,
           },

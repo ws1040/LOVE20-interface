@@ -18,7 +18,7 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
   );
 
   return (
-    <div className="px-6 pb-2">
+    <div className="px-6 pb-4">
       <Round currentRound={currentRound} roundName="投票轮" />
 
       <div className="border rounded-lg p-0">
@@ -37,8 +37,8 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
           </div>
         </div>
         <div className="w-full flex items-center py-0 mt-0 mb-0">
-          <Button variant="link" size="sm" className="w-full text-secondary" asChild>
-            <Link href={`/gov/liquid?symbol=${token?.symbol}`}>流动性质押数据</Link>
+          <Button variant="link" size="sm" className="w-full text-gray-400" asChild>
+            <Link href={`/gov/liquid?symbol=${token?.symbol}`}>流动性质押数据&gt;&gt;</Link>
           </Button>
         </div>
       </div>

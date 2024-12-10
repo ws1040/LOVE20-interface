@@ -132,7 +132,7 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
       )}
       {mintError && <div className="text-red-500">{mintError.message}</div>}
 
-      <LoadingOverlay isLoading={isMinting || isConfirmingMint} />
+      <LoadingOverlay isLoading={isMinting || isConfirmingMint} text={isMinting ? '提交交易...' : '确认交易...'} />
     </div>
   );
 };

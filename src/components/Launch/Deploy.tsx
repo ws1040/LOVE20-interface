@@ -128,7 +128,7 @@ export default function TokenDeployment() {
           </Button>
         </CardFooter>
       </Card>
-      <LoadingOverlay isLoading={isLoading} />
+      <LoadingOverlay isLoading={isLoading} text={isWriting ? '提交交易...' : '确认交易...'} />
     </>
   );
 }
