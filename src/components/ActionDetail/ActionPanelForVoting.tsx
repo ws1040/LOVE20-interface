@@ -9,6 +9,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import Round from '@/src/components/Common/Round';
+import LoadingOverlay from '../Common/LoadingOverlay';
 
 interface ActionPanelForVoteProps {
   actionId: bigint;
@@ -43,64 +44,70 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
   // 投票
   const {
     vote,
-    isWriting,
+    isWriting: isWritingVote,
     isConfirming: isConfirmingVote,
     isConfirmed: isConfirmedVote,
     writeError: errorVote,
   } = useVote();
   const handleSubmit = () => {
-    if (isWriting || isConfirmingVote) {
+    if (isWritingVote || isConfirmingVote) {
       return;
     }
     vote(token?.address as `0x${string}`, [actionId], [validGovVotes]);
   };
 
   return (
-    <div className="flex flex-col items-center space-y-6 p-6 mb-4">
-      <div className="stats w-full border grid grid-cols-2 divide-x-0">
-        <div className="stat place-items-center">
-          <div className="stat-title">我的已投票数</div>
-          <div className="stat-value text-2xl">
-            {isPendingVotesNumByAccountByActionId ? (
-              <LoadingIcon />
-            ) : (
-              formatTokenAmount(votesNumByAccountByActionId / 10000n)
-            )}
+    <>
+      <div className="flex flex-col items-center space-y-6 p-6 mb-4">
+        <div className="stats w-full border grid grid-cols-2 divide-x-0">
+          <div className="stat place-items-center">
+            <div className="stat-title">我的已投票数</div>
+            <div className="stat-value text-2xl">
+              {isPendingVotesNumByAccountByActionId ? (
+                <LoadingIcon />
+              ) : (
+                formatTokenAmount(votesNumByAccountByActionId / 10000n)
+              )}
+            </div>
+          </div>
+          <div className="stat place-items-center">
+            <div className="stat-title">我的剩余票数</div>
+            <div className="stat-value text-2xl">
+              {isPendingValidGovVotes || isPendingVotesNumByAccountByActionId ? (
+                <LoadingIcon />
+              ) : (
+                formatTokenAmount(validGovVotes - votesNumByAccountByActionId)
+              )}
+            </div>
           </div>
         </div>
-        <div className="stat place-items-center">
-          <div className="stat-title">我的剩余票数</div>
-          <div className="stat-value text-2xl">
-            {isPendingValidGovVotes || isPendingVotesNumByAccountByActionId ? (
-              <LoadingIcon />
-            ) : (
-              formatTokenAmount(validGovVotes - votesNumByAccountByActionId)
-            )}
-          </div>
-        </div>
+
+        {!isPendingVotesNumByAccountByActionId && !votesNumByAccountByActionId ? (
+          <Button className="w-1/2" onClick={handleSubmit} disabled={isWritingVote || isConfirmingVote}>
+            {isWritingVote || isConfirmingVote ? <LoadingIcon /> : '将100%票投给此行动'}
+          </Button>
+        ) : (
+          <Button className="w-1/2" disabled>
+            您已投票
+          </Button>
+        )}
+
+        {errVotesNumByAccountByActionId ? (
+          <p className="text-red-500">
+            Error:
+            {(errVotesNumByAccountByActionId as unknown as BaseError).shortMessage ||
+              errVotesNumByAccountByActionId.message}
+          </p>
+        ) : null}
+        {errorVote ? (
+          <p className="text-red-500">Error: {(errorVote as BaseError).shortMessage || errorVote.message}</p>
+        ) : null}
       </div>
-
-      {!isPendingVotesNumByAccountByActionId && !votesNumByAccountByActionId ? (
-        <Button className="w-1/2" onClick={handleSubmit} disabled={isWriting || isConfirmingVote}>
-          {isWriting || isConfirmingVote ? <LoadingIcon /> : '将100%票投给此行动'}
-        </Button>
-      ) : (
-        <Button className="w-1/2" disabled>
-          您已投票
-        </Button>
-      )}
-
-      {errVotesNumByAccountByActionId ? (
-        <p className="text-red-500">
-          Error:
-          {(errVotesNumByAccountByActionId as unknown as BaseError).shortMessage ||
-            errVotesNumByAccountByActionId.message}
-        </p>
-      ) : null}
-      {errorVote ? (
-        <p className="text-red-500">Error: {(errorVote as BaseError).shortMessage || errorVote.message}</p>
-      ) : null}
-    </div>
+      <LoadingOverlay
+        isLoading={isWritingVote || isConfirmingVote}
+        text={isWritingVote ? '提交交易...' : '确认交易...'}
+      />
+    </>
   );
 };
 

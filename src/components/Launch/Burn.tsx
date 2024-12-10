@@ -227,6 +227,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
       </div>
       <LoadingOverlay
         isLoading={isPendingApproveParentToken || isConfirmingApproveParentToken || isPendingBurn || isConfirmingBurn}
+        text={isPendingApproveParentToken || isPendingBurn ? '提交交易...' : '确认交易...'}
       />
     </>
   );

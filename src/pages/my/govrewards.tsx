@@ -107,7 +107,7 @@ const GovRewardsPage: React.FC = () => {
           </table>
           {writeError && <div className="text-red-500 mt-2">领取失败: {writeError.message}</div>}
         </div>
-        <LoadingOverlay isLoading={isWriting || isConfirming} />
+        <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
       </main>
     </>
   );

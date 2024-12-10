@@ -204,7 +204,7 @@ const VotingSubmitPage = () => {
             <div className="text-red-500">Error: {(submitError as BaseError).shortMessage || submitError.message}</div>
           ) : null}
         </div>
-        <LoadingOverlay isLoading={isWriting || isConfirming} />
+        <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
       </main>
     </>
   );

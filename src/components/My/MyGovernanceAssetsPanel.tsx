@@ -166,7 +166,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
   return (
     <>
       <div className="stats w-full grid grid-cols-2 divide-x-0">
-        <div className="stat place-items-center">
+        <div className="stat place-items-center pt-2">
           <div className="stat-title text-sm flex items-center">
             流动性质押
             <AddressWithCopyButton address={token.slTokenAddress as `0x${string}`} showAddress={false} />
@@ -180,7 +180,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || BigInt(0))}
           </div>
         </div>
-        <div className="stat place-items-center">
+        <div className="stat place-items-center pt-2">
           <div className="stat-title text-sm flex items-center">
             质押代币
             <AddressWithCopyButton address={token.stTokenAddress as `0x${string}`} showAddress={false} />

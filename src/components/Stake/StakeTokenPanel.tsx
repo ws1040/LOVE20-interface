@@ -183,6 +183,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
         {errApproveToken && <div className="text-red-500">{errApproveToken.message}</div>}
         <LoadingOverlay
           isLoading={isPendingApproveToken || isConfirmingApproveToken || isPendingStakeToken || isConfirmingStakeToken}
+          text={isPendingApproveToken || isPendingStakeToken ? '提交交易...' : '确认交易...'}
         />
       </div>
     </>

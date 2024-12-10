@@ -158,7 +158,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
         </Button>
       )}
       {submitError && <div className="text-red-500 text-center">{submitError.message}</div>}
-      <LoadingOverlay isLoading={isWriting || isConfirming} />
+      <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
     </>
   );
 };

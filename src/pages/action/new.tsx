@@ -158,7 +158,7 @@ const NewAction = () => {
         </div>
         {submitError && <div className="text-red-500 text-center">{submitError.message}</div>}
       </div>
-      <LoadingOverlay isLoading={isSubmitting || isConfirming} />
+      <LoadingOverlay isLoading={isSubmitting || isConfirming} text={isSubmitting ? '提交交易...' : '确认交易...'} />
     </>
   );
 };
