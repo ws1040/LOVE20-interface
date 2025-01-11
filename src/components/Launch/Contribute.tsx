@@ -84,7 +84,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
       return;
     }
     try {
-      await contribute(token?.address as `0x${string}`, parseUnits(contributeAmount));
+      await contribute(token?.address as `0x${string}`, parseUnits(contributeAmount), account as `0x${string}`);
     } catch (error) {
       console.error(error);
     }

@@ -8,7 +8,6 @@ import { useCurrentRound, useVotesNumByAccountByActionId, useVote } from '@/src/
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import Round from '@/src/components/Common/Round';
 import LoadingOverlay from '../Common/LoadingOverlay';
 
 interface ActionPanelForVoteProps {

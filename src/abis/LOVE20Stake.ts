@@ -6,11 +6,6 @@ export const LOVE20StakeAbi = [
     "type": "constructor",
     "inputs": [
       {
-        "name": "uniswapV2Factory_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
         "name": "originBlocks",
         "type": "uint256",
         "internalType": "uint256"
@@ -64,41 +59,48 @@ export const LOVE20StakeAbi = [
     "name": "accountStakeStatus",
     "inputs": [
       {
-        "name": "",
+        "name": "tokenAddress",
         "type": "address",
         "internalType": "address"
       },
       {
-        "name": "",
+        "name": "accountAddress",
         "type": "address",
         "internalType": "address"
       }
     ],
     "outputs": [
       {
-        "name": "slAmount",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "stAmount",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "promisedWaitingRounds",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "requestedUnstakeRound",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "govVotes",
-        "type": "uint256",
-        "internalType": "uint256"
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct AccountStakeStatus",
+        "components": [
+          {
+            "name": "slAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "stAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "promisedWaitingRounds",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "requestedUnstakeRound",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "govVotes",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
       }
     ],
     "stateMutability": "view"
@@ -214,16 +216,22 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "function",
-    "name": "initToken",
+    "name": "initialStakeRound",
     "inputs": [
       {
-        "name": "tokenAddress",
+        "name": "",
         "type": "address",
         "internalType": "address"
       }
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -402,57 +410,6 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "function",
-    "name": "stakedLiquidityAddress",
-    "inputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "stakedTokenAddress",
-    "inputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "uniswapV2Factory",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "unstake",
     "inputs": [
       {
@@ -500,5 +457,247 @@ export const LOVE20StakeAbi = [
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "StakeLiquidity",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "tokenAmountForLP",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "parentTokenAmountForLP",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "promisedWaitingRounds",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "govVotes",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "slAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "StakeToken",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "tokenAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "promisedWaitingRounds",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Unstake",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "slAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "stAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Withdraw",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "slAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "stAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AlreadyUnstaked",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidToAddress",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NoStakedLiquidity",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NoStakedLiquidityOrToken",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotAllowedToStakeAtRoundZero",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotEnoughWaitingRounds",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "PromisedWaitingRoundsMustBeGreaterOrEqualThanBefore",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "PromisedWaitingRoundsOutOfRange",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ReleaseAlreadyRequested",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "RoundHasNotStartedYet",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "RoundNotStarted",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "StakeAmountMustBeSet",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TokenAmountNotEnough",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TransferParentTokenAmountForLPFailed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TransferParentTokenFailed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TransferSLTokenFailed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TransferSTTokenFailed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TransferTokenAmountFailed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TransferTokenAmountForLPFailed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "UnableToUnstakeAtRoundZero",
+    "inputs": []
   }
 ] as const satisfies Abi;

@@ -55,6 +55,7 @@ export interface TokenInfo {
   parentTokenSymbol: string;
   slAddress: `0x${string}`;
   stAddress: `0x${string}`;
+  initialStakeRound: number;
 }
 
 export interface LaunchInfo {

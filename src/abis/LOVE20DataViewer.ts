@@ -294,6 +294,11 @@ export const LOVE20DataViewerAbi = [
             "name": "stAddress",
             "type": "address",
             "internalType": "address"
+          },
+          {
+            "name": "initialStakeRound",
+            "type": "uint256",
+            "internalType": "uint256"
           }
         ]
       },
@@ -407,6 +412,11 @@ export const LOVE20DataViewerAbi = [
             "name": "stAddress",
             "type": "address",
             "internalType": "address"
+          },
+          {
+            "name": "initialStakeRound",
+            "type": "uint256",
+            "internalType": "uint256"
           }
         ]
       },
@@ -520,6 +530,11 @@ export const LOVE20DataViewerAbi = [
             "name": "stAddress",
             "type": "address",
             "internalType": "address"
+          },
+          {
+            "name": "initialStakeRound",
+            "type": "uint256",
+            "internalType": "uint256"
           }
         ]
       },

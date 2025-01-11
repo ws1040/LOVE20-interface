@@ -198,7 +198,7 @@ export const LOVE20TokenAbi = [
     "name": "initialize",
     "inputs": [
       {
-        "name": "mintableAddress_",
+        "name": "minter_",
         "type": "address",
         "internalType": "address"
       },
@@ -267,7 +267,7 @@ export const LOVE20TokenAbi = [
   },
   {
     "type": "function",
-    "name": "mintableAddress",
+    "name": "minter",
     "inputs": [],
     "outputs": [
       {
@@ -313,19 +313,6 @@ export const LOVE20TokenAbi = [
         "name": "",
         "type": "address",
         "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "reentrant",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
       }
     ],
     "stateMutability": "view"
@@ -462,6 +449,62 @@ export const LOVE20TokenAbi = [
   },
   {
     "type": "event",
+    "name": "BurnForParentToken",
+    "inputs": [
+      {
+        "name": "burner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "burnAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "parentTokenAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "TokenInitialize",
+    "inputs": [
+      {
+        "name": "minter",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "parentTokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "slAddress",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "stAddress",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "Transfer",
     "inputs": [
       {
@@ -484,5 +527,40 @@ export const LOVE20TokenAbi = [
       }
     ],
     "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AlreadyInitialized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ExceedsMaxSupply",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InsufficientBalance",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidAddress",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidSupply",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotEligibleToMint",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TransferFailed",
+    "inputs": []
   }
 ] as const satisfies Abi;

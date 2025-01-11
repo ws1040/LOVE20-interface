@@ -19,7 +19,7 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
 
   return (
     <div className="px-6 pb-4">
-      <Round currentRound={currentRound} roundName="投票轮" />
+      <Round currentRound={currentRound} roundType="vote" />
 
       <div className="border rounded-lg p-0">
         <div className="stats  w-full grid grid-cols-2 divide-x-0">

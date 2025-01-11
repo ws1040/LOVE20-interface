@@ -25,20 +25,6 @@ export const useFirstParentTokenFundraisingGoal = () => {
 };
 
 /**
- * Hook for LAUNCH_AMOUNT
- */
-export const useLaunchAmount = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'LAUNCH_AMOUNT',
-    args: [],
-  });
-
-  return { launchAmount: data as bigint | undefined, isPending, error };
-};
-
-/**
  * Hook for PARENT_TOKEN_FUNDRAISING_GOAL
  */
 export const useParentTokenFundraisingGoal = () => {
@@ -78,48 +64,6 @@ export const useTokenSymbolLength = () => {
   });
 
   return { tokenSymbolLength: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook for TOTAL_SUPPLY
- */
-export const useTotalSupply = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'TOTAL_SUPPLY',
-    args: [],
-  });
-
-  return { totalSupply: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook for _launchedChildTokens
- */
-export const useLaunchedChildTokens = (parentAddress: `0x${string}`, index: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: '_launchedChildTokens',
-    args: [parentAddress, index],
-  });
-
-  return { launchedChildToken: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * Hook for _launchingChildTokens
- */
-export const useLaunchingChildTokens = (parentAddress: `0x${string}`, index: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: '_launchingChildTokens',
-    args: [parentAddress, index],
-  });
-
-  return { launchingChildToken: data as `0x${string}` | undefined, isPending, error };
 };
 
 /**
@@ -364,18 +308,19 @@ export const useLaunches = (address: `0x${string}`) => {
       enabled: !!address,
     },
   });
+
   const launchInfo: LaunchInfo | undefined = data
     ? {
-        parentTokenAddress: data[0],
-        parentTokenFundraisingGoal: data[1],
-        secondHalfMinBlocks: data[2],
-        launchAmount: data[3],
-        startBlock: data[4],
-        secondHalfStartBlock: data[5],
-        hasEnded: data[6],
-        participantCount: data[7],
-        totalContributed: data[8],
-        totalExtraRefunded: data[9],
+        parentTokenAddress: data.parentTokenAddress as `0x${string}`,
+        parentTokenFundraisingGoal: data.parentTokenFundraisingGoal as bigint,
+        secondHalfMinBlocks: data.secondHalfMinBlocks as bigint,
+        launchAmount: data.launchAmount as bigint,
+        startBlock: data.startBlock as bigint,
+        secondHalfStartBlock: data.secondHalfStartBlock as bigint,
+        hasEnded: data.hasEnded as boolean,
+        participantCount: data.participantCount as bigint,
+        totalContributed: data.totalContributed as bigint,
+        totalExtraRefunded: data.totalExtraRefunded as bigint,
       }
     : undefined;
 
@@ -638,13 +583,13 @@ export function useClaim() {
 export function useContribute() {
   const { writeContract, isPending, data: writeData, error: writeError } = useWriteContract();
 
-  const contribute = async (tokenAddress: `0x${string}`, parentTokenAmount: bigint) => {
+  const contribute = async (tokenAddress: `0x${string}`, parentTokenAmount: bigint, to: `0x${string}`) => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
         abi: LOVE20LaunchAbi,
         functionName: 'contribute',
-        args: [tokenAddress, parentTokenAmount],
+        args: [tokenAddress, parentTokenAmount, to],
       });
     } catch (err) {
       console.error('Contribute failed:', err);

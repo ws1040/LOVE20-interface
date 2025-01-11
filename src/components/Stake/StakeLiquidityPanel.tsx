@@ -4,11 +4,12 @@ import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 
 import { checkWalletConnection } from '@/src/utils/web3';
-import { useStakeLiquidity } from '@/src/hooks/contracts/useLOVE20Stake';
-import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
-import { TokenContext, Token } from '@/src/contexts/TokenContext';
+import { extractErrorMessage } from '@/src/lib/utils';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
+import { TokenContext, Token } from '@/src/contexts/TokenContext';
+import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import { useGetAmountsIn, useGetAmountsOut } from '@/src/components/Stake/getAmountHooks';
+import { useStakeLiquidity, useInitialStakeRound } from '@/src/hooks/contracts/useLOVE20Stake';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
@@ -24,7 +25,18 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
   stakedTokenAmountOfLP,
 }) => {
   const { address: accountAddress, chain: accountChain } = useAccount();
-  const { token } = useContext(TokenContext) || {};
+  const context = useContext(TokenContext);
+  if (!context) {
+    throw new Error('TokenContext 必须在 TokenProvider 内使用');
+  }
+  const { token, setToken } = context;
+
+  const [updateInitialStakeRound, setUpdateInitialStakeRound] = useState(false);
+  const {
+    initialStakeRound,
+    isPending: isPendingInitialStakeRound,
+    error: errorInitialStakeRound,
+  } = useInitialStakeRound(token?.address as `0x${string}`, updateInitialStakeRound);
 
   // 捕获表单状态
   const [parentToken, setParentToken] = useState('');
@@ -189,23 +201,47 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
         BigInt(releasePeriod),
         accountAddress as `0x${string}`,
       ).catch((error) => {
+        const errorMessage = extractErrorMessage(error);
+        if (errorMessage.includes('NotAllowedToStakeAtRoundZero')) {
+          toast.error('当前回合不能进行质押操作');
+        } else {
+          toast.error(errorMessage || '质押失败，请重试');
+        }
         console.error('Stake failed', error);
       });
     } else {
       toast.error('请先完成授权');
     }
   };
+
   // 如果质押成功，则用toast显示质押成功并重新加载数据
+  function handleStakeSuccess() {
+    toast.success('质押成功');
+    setTimeout(() => {
+      // 跳转到治理首页
+      window.location.href = `/gov?symbol=${token?.symbol}`;
+    }, 2000);
+  }
+
   useEffect(() => {
     if (isConfirmedStakeLiquidity) {
-      toast.success('质押成功');
-      // 2秒后刷新页面
-      setTimeout(() => {
-        // 跳转到治理首页
-        window.location.href = `/gov?symbol=${token?.symbol}`;
-      }, 2000);
+      if (token?.initialStakeRound && token.initialStakeRound > 0) {
+        // 本次质押非首次
+        handleStakeSuccess();
+      } else {
+        // 本次质押是首次，则更新token的initialStakeRound
+        setUpdateInitialStakeRound(true);
+      }
     }
   }, [isConfirmedStakeLiquidity]);
+
+  // ----------------- 4. 如果是第1次质押，则更新token的initialStakeRound -----------------
+  useEffect(() => {
+    if (updateInitialStakeRound && !isPendingInitialStakeRound && initialStakeRound && initialStakeRound > 0) {
+      setToken({ ...token, initialStakeRound: Number(initialStakeRound) } as Token);
+      handleStakeSuccess();
+    }
+  }, [updateInitialStakeRound, isPendingInitialStakeRound, initialStakeRound]);
 
   // 检查输入
   const checkInput = () => {
@@ -319,7 +355,13 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
         {errApproveToken && <div className="text-red-500">{errApproveToken.message}</div>}
         {errApproveParentToken && <div className="text-red-500">{errApproveParentToken.message}</div>}
         <LoadingOverlay
-          isLoading={isApproving || isApproveConfirming || isPendingStakeLiquidity || isConfirmingStakeLiquidity}
+          isLoading={
+            isApproving ||
+            isApproveConfirming ||
+            isPendingStakeLiquidity ||
+            isConfirmingStakeLiquidity ||
+            isPendingInitialStakeRound
+          }
           text={isApproving || isPendingStakeLiquidity ? '提交交易...' : '确认交易...'}
         />
       </div>

@@ -27,7 +27,7 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
 
   return (
     <div className="px-6">
-      <Round currentRound={currentRound} roundName="行动轮" />
+      <Round currentRound={currentRound} roundType="act" />
 
       <div className="stats w-full border grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center">

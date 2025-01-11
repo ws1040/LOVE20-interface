@@ -51,6 +51,7 @@ export default function TokenList() {
         parentTokenSymbol: token.parentTokenSymbol,
         slTokenAddress: token.slAddress,
         stTokenAddress: token.stAddress,
+        initialStakeRound: token.initialStakeRound,
         hasEnded: launchInfos[index].hasEnded,
         voteOriginBlocks: currentToken?.voteOriginBlocks ?? 0,
       }));

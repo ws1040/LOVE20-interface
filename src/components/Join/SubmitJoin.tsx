@@ -85,6 +85,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
         parseUnits(additionalStakeAmount),
         verificationInfo,
         BigInt(rounds),
+        accountAddress as `0x${string}`,
       );
     } catch (error) {
       console.error('Join failed', error);

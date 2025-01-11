@@ -617,5 +617,83 @@ export const LOVE20VerifyAbi = [
       }
     ],
     "stateMutability": "view"
+  },
+  {
+    "type": "event",
+    "name": "Verify",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "verifier",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "abstentionScore",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "scores",
+        "type": "uint256[]",
+        "indexed": false,
+        "internalType": "uint256[]"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AddressCannotBeZero",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "AlreadyInitialized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "FirstTokenAddressCannotBeZero",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "RandomAddressCannotBeZero",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "RoundNotStarted",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ScoresAndAccountsLengthMismatch",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ScoresExceedVotesNum",
+    "inputs": []
   }
 ] as const satisfies Abi;

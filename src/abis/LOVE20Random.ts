@@ -33,6 +33,19 @@ export const LOVE20RandomAbi = [
   },
   {
     "type": "function",
+    "name": "initialize",
+    "inputs": [
+      {
+        "name": "modifierAddress_",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "modifierAddress",
     "inputs": [],
     "outputs": [
@@ -47,6 +60,19 @@ export const LOVE20RandomAbi = [
   {
     "type": "function",
     "name": "originBlocks",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "prevRandomSeed",
     "inputs": [],
     "outputs": [
       {
@@ -134,21 +160,14 @@ export const LOVE20RandomAbi = [
   },
   {
     "type": "function",
-    "name": "setModifierAddress",
+    "name": "updateRandomSeed",
     "inputs": [
       {
-        "name": "modifierAddress_",
+        "name": "verifierAddress",
         "type": "address",
         "internalType": "address"
       }
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "updateRandomSeed",
-    "inputs": [],
     "outputs": [
       {
         "name": "newRandomSeed",
@@ -157,5 +176,62 @@ export const LOVE20RandomAbi = [
       }
     ],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "RandomSeedUpdate",
+    "inputs": [
+      {
+        "name": "round",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "newRandomSeed",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "prevRandomSeed",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "modifierAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "blockNumber",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AlreadyInitialized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ModifierAddressCannotBeZero",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotEligible2UpdateRandomSeed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "RoundNotStarted",
+    "inputs": []
   }
 ] as const satisfies Abi;

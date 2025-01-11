@@ -49,11 +49,11 @@ export const useAccountStakeStatus = (token: `0x${string}`, account: `0x${string
   });
 
   return {
-    slAmount: data?.[0] as bigint | undefined,
-    stAmount: data?.[1] as bigint | undefined,
-    promisedWaitingRounds: data?.[2] as bigint | undefined,
-    requestedUnstakeRound: data?.[3] as bigint | undefined,
-    govVotes: data?.[4] as bigint | undefined,
+    slAmount: data?.slAmount as bigint | undefined,
+    stAmount: data?.stAmount as bigint | undefined,
+    promisedWaitingRounds: data?.promisedWaitingRounds as bigint | undefined,
+    requestedUnstakeRound: data?.requestedUnstakeRound as bigint | undefined,
+    govVotes: data?.govVotes as bigint | undefined,
     isPending,
     error,
   };
@@ -127,6 +127,24 @@ export const useCurrentRound = (enabled: boolean = true) => {
   });
 
   return { currentRound: data as bigint, isPending, error };
+};
+
+/**
+ * 获取代币的初始质押轮次
+ * @param token 代币地址
+ */
+export const useInitialStakeRound = (tokenAddress: `0x${string}`, flag: boolean) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20StakeAbi,
+    functionName: 'initialStakeRound',
+    args: [tokenAddress],
+    query: {
+      enabled: flag,
+    },
+  });
+
+  return { initialStakeRound: data as bigint | undefined, isPending, error };
 };
 
 /**
@@ -231,50 +249,6 @@ export const useStakeUpdateRoundsByPage = (
 };
 
 /**
- * 获取质押的流动性地址
- * @param account 账户地址
- */
-export const useStakedLiquidityAddress = (account: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20StakeAbi,
-    functionName: 'stakedLiquidityAddress',
-    args: [account],
-  });
-
-  return { stakedLiquidityAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * 获取质押的代币地址
- * @param account 账户地址
- */
-export const useStakedTokenAddress = (account: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20StakeAbi,
-    functionName: 'stakedTokenAddress',
-    args: [account],
-  });
-
-  return { stakedTokenAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * 获取 Uniswap V2 工厂地址
- */
-export const useUniswapV2Factory = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20StakeAbi,
-    functionName: 'uniswapV2Factory',
-    args: [],
-  });
-
-  return { uniswapV2Factory: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
  * 获取有效的治理投票数
  * @param tokenAddress 代币地址
  * @param accountAddress 账户地址
@@ -296,36 +270,6 @@ export const useValidGovVotes = (tokenAddress: `0x${string}`, accountAddress: `0
 // =======================
 // ===== 写入 Hooks ======
 // =======================
-
-/**
- * 初始化代币
- */
-export const useInitToken = () => {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
-
-  /**
-   * 调用合约的 initToken 函数
-   * @param tokenAddress 代币地址
-   */
-  const initToken = async (tokenAddress: `0x${string}`) => {
-    try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20StakeAbi,
-        functionName: 'initToken',
-        args: [tokenAddress],
-      });
-    } catch (err) {
-      console.error('InitToken failed:', err);
-    }
-  };
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
-
-  return { initToken, writeData, isWriting, writeError, isConfirming, isConfirmed };
-};
 
 /**
  * 质押流动性
