@@ -1,12 +1,18 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
-import { ActionInfo } from '@/src/types/life20types';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
-import { TokenContext } from '@/src/contexts/TokenContext';
+// my hooks
 import { useVotesNums } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my contexts
+import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
+import { ActionInfo } from '@/src/types/life20types';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
@@ -32,27 +38,32 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
 
   if (!token || isPendingVotesNums || (actionIds && actionIds.length > 0 && isPendingActionInfosByIds)) {
     return (
-      <div className="p-6 flex justify-center items-center">
+      <div className="p-4 flex justify-center items-center">
         <LoadingIcon />
       </div>
     );
   }
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorVotesNums) {
+      handleContractError(errorVotesNums, 'vote');
+    }
+    if (errorActionInfosByIds) {
+      handleContractError(errorActionInfosByIds, 'submit');
+    }
+  }, [errorVotesNums, errorActionInfosByIds]);
+
+  // 如果只有1个行动，直接跳转到行动详情页
   if (actionInfos && actionInfos.length === 1) {
-    // 直接跳转到行动详情页
     const actionId = actionInfos[0].head.id;
     router.push(`/verify/${actionId}?symbol=${token?.symbol}&auto=true`);
     return null;
   }
 
-  if (errorVotesNums || errorActionInfosByIds) {
-    console.log('errorVotesNums', errorVotesNums);
-    console.log('errorActionInfosByIds', errorActionInfosByIds);
-    return <div>加载出错，请稍后再试。</div>;
-  }
-
   return (
-    <div className="p-6">
+    <div className="p-4">
       <LeftTitle title="待验证行动" />
       <div className="mt-4 space-y-4">
         {actionInfos?.map((action: ActionInfo, index: number) => (

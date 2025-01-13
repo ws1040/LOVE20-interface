@@ -31,7 +31,7 @@ const MyPage = () => {
       <Header title="我的" />
       <main className="flex-grow">
         <MyTokenPanel token={token} />
-        <div className="flex-col items-center px-6 pt-2 pb-2">
+        <div className="flex-col items-center px-4 pt-2 pb-2">
           <div className="flex justify-between items-center">
             <LeftTitle title="治理资产" />
             <Button variant="link" className="text-secondary border-secondary" asChild>

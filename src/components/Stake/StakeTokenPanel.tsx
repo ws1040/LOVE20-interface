@@ -3,12 +3,19 @@ import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 
-import { checkWalletConnection } from '@/src/utils/web3';
+// my funcs
+import { checkWalletConnection } from '@/src/lib/web3';
+import { formatTokenAmount, parseUnits } from '@/src/lib/format';
+
+// my hooks
 import { useStakeToken } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
-import { useTotalSupply } from '@/src/hooks/contracts/useLOVE20STToken';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
-import { formatTokenAmount, parseUnits } from '@/src/lib/format';
+
+// my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
@@ -19,10 +26,6 @@ interface StakeTokenPanelProps {
 const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
   const { address: accountAddress, chain: accountChain } = useAccount();
   const { token } = useContext(TokenContext) || {};
-
-  const { totalSupply: stTokenAmount, isPending: isPendingStTokenAmount } = useTotalSupply(
-    token?.stTokenAddress as `0x${string}`,
-  );
 
   // Hooks: 授权(approve)、质押(stakeToken)
   const {
@@ -106,9 +109,20 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     }
   }, [isConfirmedStakeToken]);
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errStakeToken) {
+      handleContractError(errStakeToken, 'stake');
+    }
+    if (errApproveToken) {
+      handleContractError(errApproveToken, 'token');
+    }
+  }, [errStakeToken, errApproveToken]);
+
   return (
     <>
-      <div className="w-full flex flex-col items-center p-6 mt-1">
+      <div className="w-full flex flex-col items-center p-4 mt-1">
         <div className="w-full text-left mb-4">
           <LeftTitle title="质押增加治理收益" />
         </div>

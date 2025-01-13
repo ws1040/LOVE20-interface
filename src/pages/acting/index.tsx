@@ -12,11 +12,20 @@ import TokenTab from '@/src/components/Token/TokenTab';
 
 // my hooks
 import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Join';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 
 const ActingPage = () => {
   const router = useRouter();
-  const { currentRound } = useCurrentRound();
+  const { currentRound, error: errorCurrentRound } = useCurrentRound();
   const { token: currentToken } = useContext(TokenContext) || {};
+
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorCurrentRound) {
+      handleContractError(errorCurrentRound, 'join');
+    }
+  }, [errorCurrentRound]);
 
   // 如果还没有人质押，跳转到质押页面
   useEffect(() => {

@@ -1,7 +1,11 @@
 import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
+
+// my components
 import Header from '@/src/components/Header';
 import SwapPanel from '@/src/components/Dex/Swap';
+
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 export default function SwapPage() {

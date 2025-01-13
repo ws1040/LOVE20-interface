@@ -1,13 +1,18 @@
 import React, { useEffect, useContext } from 'react';
-import { BaseError } from 'viem/_types/errors/base';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 
-import { checkWalletConnection } from '@/src/utils/web3';
+// my hooks
+import { checkWalletConnection } from '@/src/lib/web3';
 import { useCurrentRound, useSubmit } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 interface ActionPanelForJoinProps {
@@ -50,10 +55,18 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
       }, 2000);
     }
   }, [isConfirmed, errSubmit]);
-  console.log('isWriting', isWriting);
-  console.log('isConfirming', isConfirming);
-  console.log('isConfirmed', isConfirmed);
-  console.log('errSubmit', errSubmit);
+
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errSubmit) {
+      handleContractError(errSubmit, 'submit');
+    }
+    if (errCurrentRound) {
+      handleContractError(errCurrentRound, 'submit');
+    }
+  }, [errSubmit, errCurrentRound]);
+
   return (
     <>
       <div className="flex flex-col items-center my-4">
@@ -68,10 +81,6 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
             {!isWriting && !isConfirming && '推举本行动'}
           </Button>
         )}
-
-        {errSubmit ? (
-          <p className="text-red-500">Error: {(errSubmit as BaseError).shortMessage || errSubmit.message}</p>
-        ) : null}
       </div>
       <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
     </>

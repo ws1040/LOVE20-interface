@@ -1,13 +1,21 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
+import React, { useState, useEffect, useContext } from 'react';
 
-import { Button } from '@/components/ui/button';
-import { checkWalletConnection } from '@/src/utils/web3';
+// my funcs
+import { checkWalletConnection } from '@/src/lib/web3';
+
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my hooks
 import { useVerificationInfosByAction } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useVerify } from '@/src/hooks/contracts/useLOVE20Verify';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my components
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
@@ -90,6 +98,17 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     }
   }, [isConfirmed, submitError]);
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (submitError) {
+      handleContractError(submitError, 'verify');
+    }
+    if (errorVerificationInfosByAction) {
+      handleContractError(errorVerificationInfosByAction, 'dataViewer');
+    }
+  }, [submitError, errorVerificationInfosByAction]);
+
   return (
     <>
       <div className="w-full max-w-2xl">
@@ -157,7 +176,6 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
           已验证
         </Button>
       )}
-      {submitError && <div className="text-red-500 text-center">{submitError.message}</div>}
       <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
     </>
   );

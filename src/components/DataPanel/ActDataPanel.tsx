@@ -1,8 +1,14 @@
-import React, { useContext } from 'react';
-import { useRewardAvailable } from '@/src/hooks/contracts/useLOVE20Mint';
-import { useJoinedAmount } from '@/src/hooks/contracts/useLOVE20Join';
+import React, { useContext, useEffect } from 'react';
 
+// my hooks
+import { useHandleContractError } from '@/src/lib/errorUtils';
+import { useJoinedAmount } from '@/src/hooks/contracts/useLOVE20Join';
+import { useRewardAvailable } from '@/src/hooks/contracts/useLOVE20Mint';
+
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
 import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import Round from '@/src/components/Common/Round';
@@ -14,6 +20,7 @@ interface ActDataPanelProps {
 const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
 
+  // 获取数据
   const {
     rewardAvailable,
     isPending: isPendingRewardAvailable,
@@ -25,8 +32,19 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
     error: errorJoinedAmount,
   } = useJoinedAmount((token?.address as `0x${string}`) || '', currentRound);
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorJoinedAmount) {
+      handleContractError(errorJoinedAmount, 'join');
+    }
+    if (errorRewardAvailable) {
+      handleContractError(errorRewardAvailable, 'mint');
+    }
+  }, [errorJoinedAmount, errorRewardAvailable]);
+
   return (
-    <div className="px-6">
+    <div className="px-4">
       <Round currentRound={currentRound} roundType="act" />
 
       <div className="stats w-full border grid grid-cols-2 divide-x-0">

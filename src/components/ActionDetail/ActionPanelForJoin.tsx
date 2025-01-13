@@ -3,13 +3,19 @@ import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
+// my hooks
 import {
   useCurrentRound,
   useJoinedAmountByActionIdByAccount,
   useJoinedAmountByActionId,
   useVerificationInfo,
 } from '@/src/hooks/contracts/useLOVE20Join';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
 import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
@@ -23,7 +29,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
   const { token } = useContext(TokenContext) || {};
 
   // 获取当前轮次, 并设置状态给父组件
-  const { currentRound } = useCurrentRound();
+  const { currentRound, error: errCurrentRound } = useCurrentRound();
   useEffect(() => {
     if (onRoundChange && typeof onRoundChange === 'function') {
       onRoundChange(currentRound);
@@ -70,25 +76,29 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
     isJoined as boolean,
   );
 
-  if (errorJoinedAmountByAccount) {
-    console.error('errorJoinedAmountByAccount', errorJoinedAmountByAccount);
-    return <div>发生错误: {errorJoinedAmountByAccount.message}</div>;
-  }
-  if (errorJoinedAmount) {
-    console.error('errorJoinedAmount', errorJoinedAmount);
-    return <div>发生错误: {errorJoinedAmount.message}</div>;
-  }
-  if (errorVerificationInfo) {
-    console.error('errorVerificationInfo', errorVerificationInfo);
-    return <div>发生错误: {errorVerificationInfo.message}</div>;
-  }
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorJoinedAmountByAccount) {
+      handleContractError(errorJoinedAmountByAccount, 'join');
+    }
+    if (errorJoinedAmount) {
+      handleContractError(errorJoinedAmount, 'join');
+    }
+    if (errorVerificationInfo) {
+      handleContractError(errorVerificationInfo, 'join');
+    }
+    if (errCurrentRound) {
+      handleContractError(errCurrentRound, 'join');
+    }
+  }, [errorJoinedAmountByAccount, errorJoinedAmount, errorVerificationInfo, errCurrentRound]);
 
   if (isPendingJoinedAmountByAccount || isPendingJoinedAmount) {
     return '';
   }
 
   return (
-    <div className="flex flex-col items-center px-6 pt-1 pb-4">
+    <div className="flex flex-col items-center px-4 pt-1 pb-4">
       {isJoined && (
         <div className="stats w-full grid grid-cols-2 divide-x-0">
           <div className="stat place-items-center">

@@ -8,7 +8,7 @@ import LeftTitle from '../Common/LeftTitle';
 
 const Todeploy: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   return (
-    <div className="p-6">
+    <div className="p-4">
       <LeftTitle title="部署子币" />
       <div className="w-full text-center">
         <Button variant="outline" size="sm" className="mt-2 w-1/2 text-secondary border-secondary" asChild>

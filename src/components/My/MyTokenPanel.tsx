@@ -1,11 +1,20 @@
 import { useAccount } from 'wagmi';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
+// my funcs
+import { formatTokenAmount } from '@/src/lib/format';
+
+// my contexts
 import { Token } from '@/src/contexts/TokenContext';
+
+// my hooks
 import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
 import { useStakedAmountByAccount } from '@/src/hooks/contracts/useLOVE20Join';
-import { formatTokenAmount } from '@/src/lib/format';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 
@@ -26,15 +35,16 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
     error: errorStakedAmount,
   } = useStakedAmountByAccount(token?.address as `0x${string}`, accountAddress as `0x${string}`);
 
-  if (errorBalance) {
-    console.log('errorBalance', errorBalance);
-    return <div>错误: {errorBalance.message}</div>;
-  }
-
-  if (errorStakedAmount) {
-    console.log('errorStakedAmount', errorStakedAmount);
-    return <div>错误: {errorStakedAmount.message}</div>;
-  }
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorBalance) {
+      handleContractError(errorBalance, 'token');
+    }
+    if (errorStakedAmount) {
+      handleContractError(errorStakedAmount, 'join');
+    }
+  }, [errorBalance, errorStakedAmount]);
 
   if (!token) {
     return <LoadingIcon />;
@@ -42,7 +52,7 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
   if (!accountAddress) {
     return (
       <>
-        <div className="flex-col items-center px-6 py-2">
+        <div className="flex-col items-center px-4 py-2">
           <LeftTitle title="我的代币" />
           <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
         </div>
@@ -51,7 +61,7 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
   }
 
   return (
-    <div className="flex-col items-center px-6 py-2">
+    <div className="flex-col items-center px-4 py-2">
       <div className="flex justify-between items-center">
         <LeftTitle title="我的代币" />
         <Button variant="link" className="text-secondary border-secondary" asChild>

@@ -7,17 +7,23 @@ import { useAccount } from 'wagmi';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
-import { checkWalletConnection } from '@/src/utils/web3';
+// my hooks
+import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import {
   useGetAmountsIn,
   useGetAmountsOut,
   useSwapExactTokensForTokens,
 } from '@/src/hooks/contracts/useUniswapV2Router';
+
+// my contexts
+import useTokenContext from '@/src/hooks/context/useTokenContext';
+
+// my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
-import useTokenContext from '@/src/hooks/context/useTokenContext';
 
 export interface TokenInfo {
   symbol: string;
@@ -156,7 +162,6 @@ const SwapPanel = () => {
       ...fromTokenInfo,
       amountShow: input,
     });
-    const floatValue = input === '' ? 0 : parseFloat(input);
     if (!input.endsWith('.')) {
       setFromTokenInfo({
         ...fromTokenInfo,
@@ -258,8 +263,25 @@ const SwapPanel = () => {
     return true;
   };
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errApproveToken) {
+      handleContractError(errApproveToken, 'token');
+    }
+    if (errApproveParentToken) {
+      handleContractError(errApproveParentToken, 'token');
+    }
+    if (amountsOutError) {
+      handleContractError(amountsOutError, 'swap');
+    }
+    if (swapError) {
+      handleContractError(swapError, 'swap');
+    }
+  }, [errApproveToken, errApproveParentToken, amountsOutError, swapError]);
+
   return (
-    <div className="p-6">
+    <div className="p-4">
       <LeftTitle title="兑换" />
       <div className="w-full max-w-md mt-4">
         {/* From Token Block */}
@@ -363,10 +385,6 @@ const SwapPanel = () => {
             {isSwapping ? '2.兑换中...' : isConfirmingSwap ? '2.确认中...' : isConfirmedSwap ? '2.已兑换' : '2.兑换'}
           </Button>
         </div>
-        {amountsOutError && <div className="text-red-500">{amountsOutError.message}</div>}
-        {swapError && <div className="text-red-500">{swapError.message}</div>}
-        {errApproveToken && <div className="text-red-500">{errApproveToken.message}</div>}
-        {errApproveParentToken && <div className="text-red-500">{errApproveParentToken.message}</div>}
 
         {/* 新增的手续费和滑点提示 */}
         {fromTokenInfo.amount > 0n && (

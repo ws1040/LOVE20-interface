@@ -10,12 +10,20 @@ import {
 } from '@/components/ui/dialog';
 import { Info } from 'lucide-react';
 import { useMediaQuery } from '@mui/material';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
+// my funcs
 import { formatTokenAmount } from '@/src/lib/format';
 import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
+
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my hooks
 import { useTotalSupply } from '@/src/hooks/contracts/useLOVE20Token';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import TokenLabel from '@/src/components/Token/TokenLabel';
 
@@ -32,6 +40,14 @@ export default function TokenTab() {
   // 控制 Drawer 的显隐
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [isOpen, setIsOpen] = useState(false);
+
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (totalSupplyError) {
+      handleContractError(totalSupplyError, 'token');
+    }
+  }, [totalSupplyError]);
 
   if (!token?.address) {
     return <LoadingIcon />;

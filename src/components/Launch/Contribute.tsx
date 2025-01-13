@@ -6,20 +6,27 @@ import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
+// my hooks
+import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+import { LaunchInfo } from '@/src/types/life20types';
 import { useContribute, useContributed } from '@/src/hooks/contracts/useLOVE20Launch';
 import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
+
+// my context
 import { Token } from '@/src/contexts/TokenContext';
-import { LaunchInfo } from '@/src/types/life20types';
+
+// my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
-import { checkWalletConnection } from '@/src/utils/web3';
 
 const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const [contributeAmount, setContributeAmount] = useState('');
   const { address: account, chain: accountChain } = useAccount();
   const router = useRouter();
+
   // 读取信息hooks
   const {
     balance: balanceOfParentToken,
@@ -104,6 +111,23 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     setContributeAmount(formatUnits(balanceOfParentToken || 0n));
   };
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errContributeToken) {
+      handleContractError(errContributeToken, 'launch');
+    }
+    if (contributedError) {
+      handleContractError(contributedError, 'launch');
+    }
+    if (errApproveParentToken) {
+      handleContractError(errApproveParentToken, 'token');
+    }
+    if (errorBalanceOfParentToken) {
+      handleContractError(errorBalanceOfParentToken, 'token');
+    }
+  }, [errApproveParentToken, errContributeToken, errorBalanceOfParentToken, contributedError]);
+
   const hasStartedApproving =
     isPendingApproveParentToken || isConfirmingApproveParentToken || isConfirmedApproveParentToken;
 
@@ -113,7 +137,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
 
   return (
     <>
-      <div className="p-6">
+      <div className="p-4">
         <LeftTitle title="参与申购" />
         <div className="stats w-full">
           <div className="stat place-items-center">
@@ -187,8 +211,6 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
             </Button>
           </div>
         </div>
-        {errApproveParentToken && <div className="text-red-500">{errApproveParentToken.message}</div>}
-        {errContributeToken && <div className="text-red-500">{errContributeToken.message}</div>}
       </div>
       <LoadingOverlay
         isLoading={

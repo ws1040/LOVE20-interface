@@ -69,7 +69,6 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     try {
       // 从 Local Storage 加载 token
       const storedToken = localStorage.getItem('currentToken');
-
       if (storedToken && JSON.parse(storedToken)) {
         const _token = JSON.parse(storedToken);
         if (ifNoSymbol || tokenSymbol === _token.symbol) {
@@ -112,7 +111,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
             parentTokenSymbol: tokenInfoBySymbol.parentTokenSymbol,
             slTokenAddress: tokenInfoBySymbol.slAddress,
             stTokenAddress: tokenInfoBySymbol.stAddress,
-            initialStakeRound: tokenInfoBySymbol.initialStakeRound,
+            initialStakeRound: Number(tokenInfoBySymbol.initialStakeRound),
             voteOriginBlocks: prevToken === null ? 0 : prevToken.voteOriginBlocks,
           } as Token),
       );
@@ -127,7 +126,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   }, [errorBySymbol]);
 
   // Step 4. 获取投票轮开始区块
-  const { originBlocks } = useOriginBlocks();
+  const { originBlocks } = useOriginBlocks(!!token && !token.voteOriginBlocks);
   useEffect(() => {
     if (originBlocks) {
       setToken(
@@ -138,7 +137,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
           } as Token),
       );
     }
-  }, [originBlocks]);
+  }, [originBlocks, token]);
 
   // Step 5. 当 token 变化时，更新 Local Storage
   useEffect(() => {

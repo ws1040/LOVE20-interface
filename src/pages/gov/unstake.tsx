@@ -12,7 +12,7 @@ const UnstakePage = () => {
     <>
       <Header title="取消质押" />
       <main className="flex-grow">
-        <div className="flex-col items-center px-6 pt-6 pb-2">
+        <div className="flex-col items-center px-4 pt-6 pb-2">
           <LeftTitle title="取消质押" />
           <MyGovernanceAssetsPanel token={token} enableWithdraw={true} />
         </div>

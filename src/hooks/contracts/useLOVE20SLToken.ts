@@ -58,23 +58,6 @@ export const useDecimals = (address: `0x${string}`) => {
 };
 
 /**
- * Hook for mintableAddress
- */
-export const useMintableAddress = (address: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address,
-    abi: LOVE20SLTokenAbi,
-    functionName: 'mintableAddress',
-    args: [],
-    query: {
-      enabled: !!address,
-    },
-  });
-
-  return { mintableAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
  * Hook for name
  */
 export const useName = (address: `0x${string}`) => {
@@ -145,29 +128,16 @@ export const useTokenAddress = (address: `0x${string}`) => {
 /**
  * Hook for tokenAmounts
  */
-export const useTokenAmounts = (address: `0x${string}`) => {
-  const [refreshKey, setRefreshKey] = useState(0);
-
+export const useTokenAmounts = (address: `0x${string}`, flag: boolean = true) => {
   const { data, isPending, error, refetch } = useReadContract({
     address,
     abi: LOVE20SLTokenAbi,
     functionName: 'tokenAmounts',
     args: [],
     query: {
-      enabled: !!address,
+      enabled: !!address && !!flag,
     },
   });
-
-  useEffect(() => {
-    if (address) {
-      refetch();
-    }
-  }, [address, refreshKey, refetch]);
-
-  // 提供一个方法来手动刷新数据
-  const refreshData = () => {
-    setRefreshKey((prevKey) => prevKey + 1);
-  };
 
   return {
     tokenAmount: data?.[0],
@@ -176,7 +146,6 @@ export const useTokenAmounts = (address: `0x${string}`) => {
     feeParentTokenAmount: data?.[3],
     isPending,
     error,
-    refreshData, // 返回刷新数据的方法
   };
 };
 

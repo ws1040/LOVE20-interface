@@ -1,18 +1,26 @@
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
 import { useAccount } from 'wagmi';
+import { useEffect } from 'react';
 import Link from 'next/link';
 
-import { checkWalletConnection } from '@/src/utils/web3';
+// my funcs
+import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount } from '@/src/lib/format';
-import { Token } from '@/src/contexts/TokenContext';
+
+// my hooks
+import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useAccountStakeStatus, useUnstake, useWithdraw, useCurrentRound } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useApprove as useApproveST } from '@/src/hooks/contracts/useLOVE20STToken';
 import { useApprove as useApproveSL } from '@/src/hooks/contracts/useLOVE20SLToken';
+
+// my contexts
+import { Token } from '@/src/contexts/TokenContext';
+
+// my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import AddToMetamask from '@/src/components/Common/AddToMetamask';
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
-import { useEffect } from 'react';
 
 interface MyGovernanceAssetsPanelProps {
   token: Token | null | undefined;
@@ -23,7 +31,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
   const { address: accountAddress, chain: accountChain } = useAccount();
 
   // Hook: 获取当前轮次
-  const { currentRound, isPending: isPendingCurrentRound } = useCurrentRound(enableWithdraw);
+  const { currentRound, isPending: isPendingCurrentRound, error: errorCurrentRound } = useCurrentRound(enableWithdraw);
 
   // Hook: 获取质押状态
   const {
@@ -112,6 +120,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     isWriting: isPendingWithdraw,
     isConfirming: isConfirmingWithdraw,
     isConfirmed: isConfirmedWithdraw,
+    writeError: withdrawWriteError,
     withdraw,
   } = useWithdraw();
   const handleWithdraw = async () => {
@@ -132,6 +141,36 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     }
   }, [isConfirmedWithdraw]);
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorAccountStakeStatus) {
+      handleContractError(errorAccountStakeStatus, 'stake');
+    }
+    if (approveSTWriteError) {
+      handleContractError(approveSTWriteError, 'stToken');
+    }
+    if (approveSLWriteError) {
+      handleContractError(approveSLWriteError, 'slToken');
+    }
+    if (unstakeWriteError) {
+      handleContractError(unstakeWriteError, 'stake');
+    }
+    if (withdrawWriteError) {
+      handleContractError(withdrawWriteError, 'stake');
+    }
+    if (errorCurrentRound) {
+      handleContractError(errorCurrentRound, 'stake');
+    }
+  }, [
+    errorAccountStakeStatus,
+    approveSTWriteError,
+    approveSLWriteError,
+    unstakeWriteError,
+    withdrawWriteError,
+    errorCurrentRound,
+  ]);
+
   if (!accountAddress) {
     return <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>;
   }
@@ -140,16 +179,6 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
   }
   if (!isPendingAccountStakeStatus && !slAmount) {
     return <div className="text-sm mt-4 text-greyscale-500 text-center">您没有质押</div>;
-  }
-  if (errorAccountStakeStatus) {
-    toast.error('获取数据失败');
-    console.error(errorAccountStakeStatus);
-  }
-  if (approveSTWriteError || approveSLWriteError || unstakeWriteError) {
-    toast.error('交易失败');
-    console.error(approveSTWriteError);
-    console.error(approveSLWriteError);
-    console.error(unstakeWriteError);
   }
 
   // 中间状态

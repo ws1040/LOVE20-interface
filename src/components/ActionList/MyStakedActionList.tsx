@@ -3,11 +3,19 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
 import React from 'react';
 
-import { formatTokenAmount } from '@/src/lib/format';
-import { JoinedAction } from '@/src/types/life20types';
-import { Token } from '@/src/contexts/TokenContext';
+// my hooks
 import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useJoinedActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my contexts
+import { Token } from '@/src/contexts/TokenContext';
+
+// my types & funcs
+import { JoinedAction } from '@/src/types/life20types';
+import { formatTokenAmount } from '@/src/lib/format';
+
+// my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
@@ -32,20 +40,19 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
     joinedActions?.map((action) => action.actionId) || [],
   );
 
-  if (!accountAddress) {
-    return (
-      <>
-        <div className="pt-4 px-6">
-          <LeftTitle title="我参与的行动" />
-          <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
-        </div>
-      </>
-    );
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  if (errorJoinedActions) {
+    handleContractError(errorJoinedActions, 'dataViewer');
   }
+  if (errorActionInfosByIds) {
+    handleContractError(errorActionInfosByIds, 'submit');
+  }
+
   if (isPendingJoinedActions || (joinedActions && joinedActions.length > 0 && isPendingActionInfosByIds)) {
     return (
       <>
-        <div className="pt-4 px-6">
+        <div className="pt-4 px-4">
           <LeftTitle title="我参与的行动" />
           <div className="text-sm mt-4 text-greyscale-500 text-center">
             <LoadingIcon />
@@ -54,12 +61,9 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
       </>
     );
   }
-  if (errorJoinedActions) {
-    return <div>加载出错，请稍后再试。</div>;
-  }
 
   return (
-    <div className="pt-4 px-6">
+    <div className="pt-4 px-4">
       <LeftTitle title="我参与的行动" />
       {!joinedActions?.length ? (
         <div className="text-sm text-greyscale-500 text-center">没有行动</div>
@@ -91,8 +95,6 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
           ))}
         </div>
       )}
-      {errorJoinedActions && <div>{(errorJoinedActions as Error).message}</div>}
-      {errorActionInfosByIds && <div>{(errorActionInfosByIds as Error).message}</div>}
     </div>
   );
 };

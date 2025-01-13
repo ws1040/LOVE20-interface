@@ -21,14 +21,6 @@ export const useGetAmountsOut = (
 
   // 使用 useMemo 进行计算
   const { data, error, isLoading } = useMemo(() => {
-    // console.log('------------useGetAmountsOut-------------');
-    // console.log('amountIn', amountIn);
-    // console.log('path', path);
-    // console.log('token', token);
-    // console.log('pairExists', pairExists);
-    // console.log('isEnabled', isEnabled);
-    // console.log('_data', _data);
-
     if (!isEnabled || pairExists) {
       return { data: _data, error: _error, isLoading: _isLoading };
     } else {
@@ -78,14 +70,6 @@ export const useGetAmountsIn = (
 
   // 使用 useMemo 进行计算
   const { data, error, isLoading } = useMemo(() => {
-    // console.log('------------useGetAmountsIn-------------');
-    // console.log('amountOut', amountOut);
-    // console.log('path', path);
-    // console.log('token', token);
-    // console.log('pairExists', pairExists);
-    // console.log('isEnabled', isEnabled);
-    // console.log('_data', _data);
-
     if (!isEnabled || pairExists) {
       return { data: _data, error: _error, isLoading: _isLoading };
     } else {

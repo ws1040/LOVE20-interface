@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
 
@@ -6,11 +6,11 @@ import { ActionInfo } from '@/src/types/life20types';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { formatTokenAmount } from '@/src/lib/format';
 import { TokenContext } from '@/src/contexts/TokenContext';
-import { useJoinableActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
-import { useJoinedActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useJoinableActions, useJoinedActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 
 interface JoiningActionListProps {
   currentRound: bigint;
@@ -44,12 +44,19 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
     error: errorJoinedActions,
   } = useJoinedActions((token?.address as `0x${string}`) || '', accountAddress as `0x${string}`);
 
-  if (errorJoinableActions || errorActionInfosByIds || errorJoinedActions) {
-    console.error('errorJoinableActions', errorJoinableActions);
-    console.error('errorActionInfosByIds', errorActionInfosByIds);
-    console.error('errorJoinedActions', errorJoinedActions);
-    return <div>加载出错，请稍后再试。</div>;
-  }
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorActionInfosByIds) {
+      handleContractError(errorActionInfosByIds, 'submit');
+    }
+    if (errorJoinableActions) {
+      handleContractError(errorJoinableActions, 'dataViewer');
+    }
+    if (errorJoinedActions) {
+      handleContractError(errorJoinedActions, 'dataViewer');
+    }
+  }, [errorJoinableActions, errorActionInfosByIds, errorJoinedActions]);
 
   const isLoading =
     isPendingJoinableActions ||
@@ -57,7 +64,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
     isPendingJoinedActions;
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       <LeftTitle title="进行中的行动" />
       {!accountAddress && <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>}
       {accountAddress && isLoading && (

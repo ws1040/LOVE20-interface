@@ -4,12 +4,18 @@ import { useAccount } from 'wagmi';
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
+// my hooks
 import { ActionInfo } from '@/src/types/life20types';
-import { checkWalletConnection } from '@/src/utils/web3';
+import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount, parseUnits } from '@/src/lib/format';
-import { TokenContext } from '@/src/contexts/TokenContext';
-import { useJoin } from '@/src/hooks/contracts/useLOVE20Join';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useApprove, useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
+import { useJoin } from '@/src/hooks/contracts/useLOVE20Join';
+
+// my contexts
+import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
@@ -107,12 +113,27 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     }
   }, [isConfirmedJoin]);
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorTokenBalance) {
+      handleContractError(errorTokenBalance, 'token');
+    }
+    if (errApprove) {
+      handleContractError(errApprove, 'token');
+    }
+    if (errorJoin) {
+      handleContractError(errorJoin, 'join');
+    }
+  }, [errorTokenBalance, errApprove, errorJoin]);
+
+  // 参数
   const maxStake = BigInt(actionInfo.body.maxStake) - (stakedAmount || 0n);
   const ifCanSubmitAndNotNeedApprove = !!stakedAmount && !additionalStakeAmount && !!rounds && !!verificationInfo;
-  console.log('ifCanSubmitAndNotNeedApprove', ifCanSubmitAndNotNeedApprove);
+
   return (
     <>
-      <div className="px-6 pt-0 pb-2">
+      <div className="px-4 pt-0 pb-2">
         <LeftTitle title="加入行动" />
         <div className="my-4">
           <label className="block text-left mb-1 text-sm text-greyscale-500">
@@ -184,9 +205,6 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
             {isPendingJoin ? '2.加入中...' : isConfirmingJoin ? '2.确认中...' : isConfirmedJoin ? '2.已加入' : '2.加入'}
           </Button>
         </div>
-        {errorTokenBalance && <div className="text-red-500 text-center">{errorTokenBalance.message}</div>}
-        {errApprove && <div className="text-red-500 text-center">{errApprove.message}</div>}
-        {errorJoin && <div className="text-red-500 text-center">{errorJoin.message}</div>}
       </div>
       <LoadingOverlay
         isLoading={isPendingApprove || isConfirmingApprove || isPendingJoin || isConfirmingJoin}

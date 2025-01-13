@@ -1,5 +1,6 @@
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { LOVE20StakeAbi } from '@/src/abis/LOVE20Stake';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`;
 

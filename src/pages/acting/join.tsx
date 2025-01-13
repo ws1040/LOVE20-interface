@@ -1,16 +1,20 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
+// my hooks
 import { useActionInfo } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Join';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
 
+// my components
+import ActionDetail from '@/src/components/ActionDetail/ActionDetail';
 import Header from '@/src/components/Header';
-import ActionAbstract from '@/src/components/ActionDetail/ActionAbstract';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import MyJoinInfoOfActionAbstract from '@/src/components/My/MyJoinInfoOfActionAbstract';
 import SubmitJoin from '@/src/components/Join/SubmitJoin';
-import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import ActionDetail from '@/src/components/ActionDetail/ActionDetail';
 
 const JoinPage = () => {
   const router = useRouter();
@@ -31,6 +35,18 @@ const JoinPage = () => {
     error: errorActionInfo,
   } = useActionInfo(token?.address as `0x${string}`, actionId === undefined ? undefined : BigInt(actionId));
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorCurrentRound) {
+      handleContractError(errorCurrentRound, 'join');
+    }
+    if (errorActionInfo) {
+      handleContractError(errorActionInfo, 'submit');
+    }
+  }, [errorCurrentRound, errorActionInfo]);
+
+  // 加载中
   if (!id || Array.isArray(id)) {
     return <LoadingIcon />;
   }

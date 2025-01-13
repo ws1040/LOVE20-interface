@@ -5,24 +5,30 @@ import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 
-import { useDeposit } from '@/src/hooks/contracts/useWETH';
+// my funcs
+import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
+
+// my hooks
+import { useDeposit } from '@/src/hooks/contracts/useWETH';
+import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '../Common/LoadingOverlay';
-import { checkWalletConnection } from '@/src/utils/web3';
 import LeftTitle from '../Common/LeftTitle';
-import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
 
 const Deposit: React.FC = () => {
   const [depositAmount, setDepositAmount] = useState('');
   const { address: account, chain: accountChain } = useAccount();
   const router = useRouter();
+
   // 读取余额
   const {
     data: balance,
     error: errBalance,
     isLoading: isLoadingBalance,
-    refetch,
   } = useBalance({
     address: account,
   });
@@ -83,15 +89,23 @@ const Deposit: React.FC = () => {
     setDepositAmount(formatUnits(balance?.value || 0n));
   };
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
   useEffect(() => {
     if (errBalance) {
-      toast.error(errBalance.message);
+      handleContractError(errBalance, 'token');
     }
-  }, [errBalance]);
+    if (errorBalanceOfERC20Token) {
+      handleContractError(errorBalanceOfERC20Token, 'token');
+    }
+    if (errDeposit) {
+      handleContractError(errDeposit, 'token');
+    }
+  }, [errBalance, errorBalanceOfERC20Token, errDeposit]);
 
   return (
     <>
-      <div className="p-6 shadow-sm">
+      <div className="p-4 shadow-sm">
         <LeftTitle title={`换得 ${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`} />
         <div className="stats w-full">
           <div className="stat place-items-center">
@@ -147,8 +161,6 @@ const Deposit: React.FC = () => {
               : '兑换'}
           </Button>
         </div>
-        {errBalance && <div className="text-red-500">{errBalance.message}</div>}
-        {errDeposit && <div className="text-red-500">{errDeposit.message}</div>}
       </div>
       <LoadingOverlay
         isLoading={isPendingDeposit || isConfirmingDeposit}

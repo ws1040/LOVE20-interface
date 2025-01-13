@@ -5,15 +5,20 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
 
+// my hooks
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
-import { useBurnForParentToken } from '@/src/hooks/contracts/useLOVE20Token';
-import { useBalanceOf, useApprove, useTotalSupply } from '@/src/hooks/contracts/useLOVE20Token';
-import { Token } from '@/src/contexts/TokenContext';
+import { checkWalletConnection } from '@/src/lib/web3';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 import { LaunchInfo } from '@/src/types/life20types';
+import { useApprove, useBalanceOf, useBurnForParentToken, useTotalSupply } from '@/src/hooks/contracts/useLOVE20Token';
+
+// my contexts
+import { Token } from '@/src/contexts/TokenContext';
+
+// my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
-import { checkWalletConnection } from '@/src/utils/web3';
 
 const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const [burnAmount, setBurnAmount] = useState('');
@@ -122,6 +127,26 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
     setBurnAmount(formatUnits(balanceOfToken || 0n));
   };
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorBalanceOfToken) {
+      handleContractError(errorBalanceOfToken, 'token');
+    }
+    if (errorBalanceOfParentToken) {
+      handleContractError(errorBalanceOfParentToken, 'token');
+    }
+    if (errorTotalSupplyOfToken) {
+      handleContractError(errorTotalSupplyOfToken, 'token');
+    }
+    if (errApproveParentToken) {
+      handleContractError(errApproveParentToken, 'token');
+    }
+    if (errBurn) {
+      handleContractError(errBurn, 'token');
+    }
+  }, [errorBalanceOfToken, errorBalanceOfParentToken, errorTotalSupplyOfToken, errApproveParentToken, errBurn]);
+
   const hasStartedApproving =
     isPendingApproveParentToken || isConfirmingApproveParentToken || isConfirmedApproveParentToken;
 
@@ -129,19 +154,9 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
     return <LoadingIcon />;
   }
 
-  if (errorBalanceOfToken || errorBalanceOfParentToken || errorTotalSupplyOfToken) {
-    console.error(errorBalanceOfToken);
-    console.error(errorBalanceOfParentToken);
-    console.error(errorTotalSupplyOfToken);
-    return <div className="text-red-500">加载数据失败</div>;
-  }
-  if (errBurn) {
-    console.error(errBurn);
-  }
-
   return (
     <>
-      <div className="p-6">
+      <div className="p-4">
         <LeftTitle title="底池销毁" />
         <div className="stats w-full">
           <div className="stat place-items-center">
@@ -222,8 +237,6 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
             {token.symbol}总发行量)
           </p>
         </div>
-        {errApproveParentToken && <div className="text-red-500">{errApproveParentToken.message}</div>}
-        {errBurn && <div className="text-red-500">{errBurn.message}</div>}
       </div>
       <LoadingOverlay
         isLoading={isPendingApproveParentToken || isConfirmingApproveParentToken || isPendingBurn || isConfirmingBurn}

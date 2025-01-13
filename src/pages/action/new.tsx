@@ -3,13 +3,21 @@ import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Button } from '@/components/ui/button';
 
+// my hooks
 import { useSubmitNewAction } from '@/src/hooks/contracts/useLOVE20Submit';
-import { TokenContext } from '@/src/contexts/TokenContext';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my funcs
+import { checkWalletConnection } from '@/src/lib/web3';
 import { parseUnits } from '@/src/lib/format';
+
+// my contexts
+import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
 import Header from '@/src/components/Header';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
-import { checkWalletConnection } from '@/src/utils/web3';
 
 const NewAction = () => {
   // hook
@@ -24,6 +32,14 @@ const NewAction = () => {
     writeData,
   } = useSubmitNewAction();
   const { token } = useContext(TokenContext) || {};
+
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (submitError) {
+      handleContractError(submitError, 'submit');
+    }
+  }, [submitError]);
 
   // 表单数据
   const [form, setForm] = useState({
@@ -156,7 +172,6 @@ const NewAction = () => {
             发起后，会自动推举该行动到当前投票轮的行动列表 / 本轮已推举或提交过
           </p>
         </div>
-        {submitError && <div className="text-red-500 text-center">{submitError.message}</div>}
       </div>
       <LoadingOverlay isLoading={isSubmitting || isConfirming} text={isSubmitting ? '提交交易...' : '确认交易...'} />
     </>

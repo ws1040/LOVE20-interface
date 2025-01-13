@@ -1,12 +1,20 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
+// my funcs
 import { formatTokenAmount } from '@/src/lib/format';
+
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my hooks
 import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useVotesNumByAccount } from '@/src/hooks/contracts/useLOVE20Vote';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 
@@ -36,28 +44,33 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
     (accountAddress as `0x${string}`) || '',
   );
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorVotesNumByAccount) {
+      handleContractError(errorVotesNumByAccount, 'vote');
+    }
+    if (errorValidGovVotes) {
+      handleContractError(errorValidGovVotes, 'stake');
+    }
+  }, [errorVotesNumByAccount, errorValidGovVotes]);
+
   if (!token) {
     return '';
   }
   if (!accountAddress) {
     return (
       <>
-        <div className="flex-col items-center px-6 py-2">
+        <div className="flex-col items-center px-4 py-2">
           <LeftTitle title="我的投票" />
           <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
         </div>
       </>
     );
   }
-  if (errorValidGovVotes) {
-    console.log('errorValidGovVotes', errorValidGovVotes);
-  }
-  if (errorVotesNumByAccount) {
-    console.log('errorVotesNumByAccount', errorVotesNumByAccount);
-  }
 
   return (
-    <div className="flex-col items-center px-6 py-0">
+    <div className="flex-col items-center px-4 py-0">
       <LeftTitle title="我的投票" />
       <div className="stats w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center pt-1 pb-2">

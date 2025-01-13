@@ -1,9 +1,14 @@
-import { formatSeconds, formatTokenAmount } from '@/src/lib/format';
+import { formatTokenAmount } from '@/src/lib/format';
 import { useBlockNumber } from 'wagmi';
 
-import { Token } from '@/src/contexts/TokenContext';
+// my contexts
 import { LaunchInfo } from '@/src/types/life20types';
 import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
+
+// my contexts
+import { Token } from '@/src/contexts/TokenContext';
+
+// my components
 import LeftTime from '@/src/components/Common/LeftTime';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
@@ -22,7 +27,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
   }
 
   return (
-    <div className="flex-col items-center px-6">
+    <div className="flex-col items-center px-4">
       <div className="stats w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center">
           <div className="stat-title text-sm">
@@ -63,7 +68,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
           </div>
         </div>
       </div>
-      <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 mt-2 text-sm">
+      <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 mt-4 text-sm">
         <p className="mb-1 font-medium">经济模型：</p>
         <p>1. 代币总量：{formatTokenAmount(BigInt(TOKEN_CONFIG.totalSupply))}</p>
         <p>2. 发射数量：{formatTokenAmount(BigInt(TOKEN_CONFIG.fairLaunch))} (10%)</p>

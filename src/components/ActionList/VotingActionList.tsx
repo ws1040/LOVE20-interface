@@ -1,17 +1,23 @@
-import React, { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-
-import { ActionInfo, ActionSubmit } from '@/src/types/life20types';
-import { TokenContext } from '@/src/contexts/TokenContext';
-import { useActionSubmits, useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
-import { useVotesNums } from '@/src/hooks/contracts/useLOVE20Vote';
 import Link from 'next/link';
-import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import React, { useContext, useEffect, useState } from 'react';
+
+// my hooks
+import { ActionInfo, ActionSubmit } from '@/src/types/life20types';
+import { useActionSubmits, useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+import { useVotesNums } from '@/src/hooks/contracts/useLOVE20Vote';
+
+// my contexts
+import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
-import LeftTitle from '../Common/LeftTitle';
+import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 interface VotingActionListProps {
   currentRound: bigint;
@@ -72,6 +78,17 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
     router.push(`/vote/vote?ids=${selectedIds}&symbol=${token?.symbol}`);
   };
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorVotesNums) {
+      handleContractError(errorVotesNums, 'vote');
+    }
+    if (errorActionInfosByIds) {
+      handleContractError(errorActionInfosByIds, 'submit');
+    }
+  }, [errorVotesNums, errorActionInfosByIds]);
+
   // 加载中
   if (
     isPendingVotesNums ||
@@ -85,11 +102,6 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
     );
   }
 
-  // 加载失败
-  if (errorActionSubmits || errorActionInfosByIds) {
-    return <div>加载出错，请稍后再试。</div>;
-  }
-
   if (!token) {
     return <LoadingIcon />;
   }
@@ -101,7 +113,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
 
   return (
     uniqueActionIds.length !== 1 && (
-      <div className="p-6">
+      <div className="p-4">
         <div className="flex justify-between items-center mb-4">
           <LeftTitle title="投票中的行动" />
           {token && (

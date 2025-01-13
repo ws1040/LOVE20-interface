@@ -59,24 +59,6 @@ export const useDecimals = (address: `0x${string}`) => {
 };
 
 /**
- * Hook for mintableAddress
- */
-export const useMintableAddress = (address: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address,
-    abi: LOVE20STTokenAbi,
-    functionName: 'mintableAddress',
-    args: [],
-  });
-
-  return {
-    mintableAddress: data as `0x${string}` | undefined,
-    isPending,
-    error,
-  };
-};
-
-/**
  * Hook for name
  */
 export const useName = (address: `0x${string}`) => {

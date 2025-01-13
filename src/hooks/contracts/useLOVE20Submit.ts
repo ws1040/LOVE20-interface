@@ -53,20 +53,6 @@ export const useActionInfo = (tokenAddress: `0x${string}`, actionId: bigint | un
 };
 
 /**
- * Hook for actionInfos
- */
-export const useActionInfos = (tokenAddress: `0x${string}`, index: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20SubmitAbi,
-    functionName: 'actionInfos',
-    args: [tokenAddress, index],
-  });
-
-  return { actionInfo: data as any | undefined, isPending, error };
-};
-
-/**
  * Hook for actionInfosByIds
  */
 export const useActionInfosByIds = (tokenAddress: `0x${string}`, actionIds: bigint[]) => {
@@ -129,20 +115,6 @@ export const useActionSubmits = (tokenAddress: `0x${string}`, round: bigint) => 
   });
 
   return { actionSubmits: data as any[] | undefined, isPending, error };
-};
-
-/**
- * Hook for authorActionIds
- */
-export const useAuthorActionIds = (address1: `0x${string}`, address2: `0x${string}`, index: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20SubmitAbi,
-    functionName: 'authorActionIds',
-    args: [address1, address2, index],
-  });
-
-  return { authorActionId: data as bigint | undefined, isPending, error };
 };
 
 /**

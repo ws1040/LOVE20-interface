@@ -1,17 +1,28 @@
 import { useContext, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
+import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 
-import { checkWalletConnection } from '@/src/utils/web3';
+// my funcs
+import { checkWalletConnection } from '@/src/lib/web3';
 import { extractErrorMessage } from '@/src/lib/utils';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
+
+// my contexts
 import { TokenContext, Token } from '@/src/contexts/TokenContext';
+
+// my hooks
 import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import { useGetAmountsIn, useGetAmountsOut } from '@/src/components/Stake/getAmountHooks';
 import { useStakeLiquidity, useInitialStakeRound } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 interface StakeLiquidityPanelProps {
   tokenBalance: bigint;
@@ -31,6 +42,10 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
   }
   const { token, setToken } = context;
 
+  // 获取参数first
+  const { first: isFirstTimeStake } = useRouter().query;
+
+  // 是否是首次质押
   const [updateInitialStakeRound, setUpdateInitialStakeRound] = useState(false);
   const {
     initialStakeRound,
@@ -202,11 +217,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
         accountAddress as `0x${string}`,
       ).catch((error) => {
         const errorMessage = extractErrorMessage(error);
-        if (errorMessage.includes('NotAllowedToStakeAtRoundZero')) {
-          toast.error('当前回合不能进行质押操作');
-        } else {
-          toast.error(errorMessage || '质押失败，请重试');
-        }
+        toast.error(errorMessage || '质押失败，请重试');
         console.error('Stake failed', error);
       });
     } else {
@@ -219,7 +230,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     toast.success('质押成功');
     setTimeout(() => {
       // 跳转到治理首页
-      window.location.href = `/gov?symbol=${token?.symbol}`;
+      window.location.href = `/gov/?symbol=${token?.symbol}`;
     }, 2000);
   }
 
@@ -259,6 +270,36 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     return true;
   };
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errApproveToken) {
+      handleContractError(errApproveToken, 'stake');
+    }
+    if (errApproveParentToken) {
+      handleContractError(errApproveParentToken, 'stake');
+    }
+    if (errStakeLiquidity) {
+      handleContractError(errStakeLiquidity, 'stake');
+    }
+    if (errorInitialStakeRound) {
+      handleContractError(errorInitialStakeRound, 'stake');
+    }
+    if (amountsOutError) {
+      handleContractError(amountsOutError, 'uniswap');
+    }
+    if (amountsInError) {
+      handleContractError(amountsInError, 'uniswap');
+    }
+  }, [
+    errApproveToken,
+    errApproveParentToken,
+    errStakeLiquidity,
+    errorInitialStakeRound,
+    amountsOutError,
+    amountsInError,
+  ]);
+
   const isApproving = isPendingApproveToken || isPendingApproveParentToken;
   const isApproveConfirming = isConfirmingApproveToken || isConfirmingApproveParentToken;
   const isApproveConfirmed = isConfirmedApproveToken && isConfirmedApproveParentToken;
@@ -266,7 +307,16 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
 
   return (
     <>
-      <div className="w-full flex-col items-center p-6 mt-1">
+      {isFirstTimeStake === 'true' && !hadStartedApprove && (
+        <div className="px-4">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>操作提示：</AlertTitle>
+            <AlertDescription>部署新代币后，先质押获取治理票，才能进行后续操作</AlertDescription>
+          </Alert>
+        </div>
+      )}
+      <div className="w-full flex-col items-center p-4 mt-1">
         <LeftTitle title="质押获取治理票" />
         <form className="w-full max-w-md mt-4">
           <div className="mb-4">
@@ -351,16 +401,13 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
             </Button>
           </div>
         </form>
-        {errStakeLiquidity && <div className="text-red-500">{errStakeLiquidity.message}</div>}
-        {errApproveToken && <div className="text-red-500">{errApproveToken.message}</div>}
-        {errApproveParentToken && <div className="text-red-500">{errApproveParentToken.message}</div>}
         <LoadingOverlay
           isLoading={
             isApproving ||
             isApproveConfirming ||
             isPendingStakeLiquidity ||
             isConfirmingStakeLiquidity ||
-            isPendingInitialStakeRound
+            (isPendingInitialStakeRound && updateInitialStakeRound)
           }
           text={isApproving || isPendingStakeLiquidity ? '提交交易...' : '确认交易...'}
         />
