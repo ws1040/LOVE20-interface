@@ -133,7 +133,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
 
   return (
     <>
-      <div className="px-4 pt-0 pb-2">
+      <div className="px-6 pt-0 pb-2">
         <LeftTitle title="加入行动" />
         <div className="my-4">
           <label className="block text-left mb-1 text-sm text-greyscale-500">

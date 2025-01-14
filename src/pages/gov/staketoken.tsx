@@ -51,7 +51,7 @@ const StakePage = () => {
           <div className="flex justify-center items-center mt-10">需要先质押流动性LP，才可以质押代币</div>
         )}
         {stakedTokenAmount && <StakeTokenPanel tokenBalance={tokenBalance || 0n} />}
-        <div className="flex flex-col w-full p-4 mt-4">
+        <div className="flex flex-col w-full p-6 mt-4">
           <div className="text-base font-bold text-greyscale-700 pb-2">规则说明：</div>
           <div className="text-sm text-greyscale-500 mb-2">
             1、单独质押代币可获得激励提升（最高不超过 2 倍的验证激励），同时获得 st类代币作为质押的凭证；

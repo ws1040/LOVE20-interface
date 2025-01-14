@@ -42,7 +42,7 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({}) => {
   }
 
   return (
-    <div className="flex-col items-center px-4">
+    <div className="flex-col items-center px-6">
       <LeftTitle title="流动性质押详情" />
       <div className="stats border rounded-lg w-full grid grid-cols-2 divide-x-0 mt-2 mb-6">
         <div className="stat place-items-center pt-3 ">

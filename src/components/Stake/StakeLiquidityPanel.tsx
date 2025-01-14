@@ -11,6 +11,7 @@ import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 
 // my contexts
 import { TokenContext, Token } from '@/src/contexts/TokenContext';
+import { useError } from '@/src/contexts/ErrorContext';
 
 // my hooks
 import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
@@ -41,9 +42,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     throw new Error('TokenContext 必须在 TokenProvider 内使用');
   }
   const { token, setToken } = context;
-
-  // 获取参数first
-  const { first: isFirstTimeStake } = useRouter().query;
 
   // 是否是首次质押
   const [updateInitialStakeRound, setUpdateInitialStakeRound] = useState(false);
@@ -305,18 +303,21 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
   const isApproveConfirmed = isConfirmedApproveToken && isConfirmedApproveParentToken;
   const hadStartedApprove = isApproving || isApproveConfirming || isApproveConfirmed;
 
+  // 初始状态提示
+  const { first: isFirstTimeStake } = useRouter().query;
+  const { setError } = useError();
+  useEffect(() => {
+    if (isFirstTimeStake === 'true' && !hadStartedApprove) {
+      setError({
+        name: '首次质押',
+        message: '部署新代币后，先质押获取治理票，才能进行后续操作',
+      });
+    }
+  }, [isFirstTimeStake, hadStartedApprove]);
+
   return (
     <>
-      {isFirstTimeStake === 'true' && !hadStartedApprove && (
-        <div className="px-4">
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>操作提示：</AlertTitle>
-            <AlertDescription>部署新代币后，先质押获取治理票，才能进行后续操作</AlertDescription>
-          </Alert>
-        </div>
-      )}
-      <div className="w-full flex-col items-center p-4 mt-1">
+      <div className="w-full flex-col items-center p-6 mt-1">
         <LeftTitle title="质押获取治理票" />
         <form className="w-full max-w-md mt-4">
           <div className="mb-4">

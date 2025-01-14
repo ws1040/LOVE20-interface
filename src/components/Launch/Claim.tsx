@@ -105,7 +105,7 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
   }
 
   return (
-    <div className="p-4">
+    <div className="p-6">
       <LeftTitle title="我的领取" />
 
       <div className="stats w-full border mt-4">

@@ -82,7 +82,7 @@ const NewAction = () => {
   return (
     <>
       <Header title="创建新行动" />
-      <div className="max-w-xl mx-auto p-4">
+      <div className="max-w-xl mx-auto p-6">
         <LeftTitle title="创建新行动" />
         <div className="mt-4 space-y-4">
           <div>

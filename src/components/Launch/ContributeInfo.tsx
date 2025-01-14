@@ -39,7 +39,7 @@ const ContributeInfo: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> 
   }, [contributedError]);
 
   return (
-    <div className="p-4">
+    <div className="p-6">
       <LeftTitle title="参与申购" />
       <div className="stats w-full">
         <div className="stat place-items-center">

@@ -156,7 +156,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
 
   return (
     <>
-      <div className="p-4">
+      <div className="p-6">
         <LeftTitle title="底池销毁" />
         <div className="stats w-full">
           <div className="stat place-items-center">

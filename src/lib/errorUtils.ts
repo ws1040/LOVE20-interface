@@ -120,6 +120,7 @@ export const useHandleContractError = () => {
    * @param context 错误上下文，例如 'stake' 或 'uniswap'
    */
   const handleContractError = (error: any, context: string) => {
+    console.log('context', context);
     console.log('error', error);
     const errorMessage = getReadableRevertErrMsg(error.message, context);
     setError(errorMessage);

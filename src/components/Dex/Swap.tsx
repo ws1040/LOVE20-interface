@@ -281,7 +281,7 @@ const SwapPanel = () => {
   }, [errApproveToken, errApproveParentToken, amountsOutError, swapError]);
 
   return (
-    <div className="p-4">
+    <div className="p-6">
       <LeftTitle title="兑换" />
       <div className="w-full max-w-md mt-4">
         {/* From Token Block */}

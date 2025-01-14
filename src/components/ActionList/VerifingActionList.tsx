@@ -36,14 +36,6 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
     error: errorActionInfosByIds,
   } = useActionInfosByIds((token?.address as `0x${string}`) || '', actionIds || []);
 
-  if (!token || isPendingVotesNums || (actionIds && actionIds.length > 0 && isPendingActionInfosByIds)) {
-    return (
-      <div className="p-4 flex justify-center items-center">
-        <LoadingIcon />
-      </div>
-    );
-  }
-
   // 错误处理
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
@@ -60,6 +52,14 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
     const actionId = actionInfos[0].head.id;
     router.push(`/verify/${actionId}?symbol=${token?.symbol}&auto=true`);
     return null;
+  }
+
+  if (!token || isPendingVotesNums || (actionIds && actionIds.length > 0 && isPendingActionInfosByIds)) {
+    return (
+      <div className="p-4 flex justify-center items-center">
+        <LoadingIcon />
+      </div>
+    );
   }
 
   return (

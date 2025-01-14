@@ -66,7 +66,7 @@ const JoinPage = () => {
       <main className="flex-grow">
         <MyJoinInfoOfActionAbstract actionId={BigInt(actionId)} onStakedAmountChange={onStakedAmountChange} />
         <SubmitJoin actionInfo={actionInfo} stakedAmount={stakedAmount} />
-        <div className="flex flex-col w-full rounded p-4">
+        <div className="flex flex-col w-full rounded p-6">
           <div className="text-base font-bold text-greyscale-700 pb-2">规则说明：</div>
           <div className="text-sm text-greyscale-500">1、参与代币越多，被选中验证并获得奖励的概率越大</div>
           <div className="text-sm text-greyscale-500">
