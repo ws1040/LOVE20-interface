@@ -9,6 +9,7 @@ import { LOVE20SLTokenErrorsMap } from './Love20SLTokenErrorsMap';
 import { LOVE20STTokenErrorsMap } from './Love20STTokenErrorsMap';
 import { LOVE20VerifyErrorsMap } from './Love20VerifyErrorsMap';
 import { LOVE20VoteErrorsMap } from './Love20VoteErrorsMap';
+import { UniswapV2RouterErrorsMap } from './UniswapV2RouterErrorsMap';
 
 /**
  * 全部合约错误映射的“总汇”。
@@ -24,4 +25,5 @@ export const ContractErrorsMaps: Record<string, Record<string, string>> = {
   stToken: LOVE20STTokenErrorsMap,
   verify: LOVE20VerifyErrorsMap,
   vote: LOVE20VoteErrorsMap,
+  uniswapV2Router: UniswapV2RouterErrorsMap,
 };

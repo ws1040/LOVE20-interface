@@ -1,30 +1,57 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { toast } from 'react-hot-toast';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useAccount } from 'wagmi';
+import { useForm } from 'react-hook-form';
+
+// UI components
 import { ArrowDownIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'react-hot-toast';
-import { useAccount } from 'wagmi';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form';
 
-// my hooks
+// my hooks & funcs
 import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
-import {
-  useGetAmountsIn,
-  useGetAmountsOut,
-  useSwapExactTokensForTokens,
-} from '@/src/hooks/contracts/useUniswapV2Router';
+import { useGetAmountsOut, useSwapExactTokensForTokens } from '@/src/hooks/contracts/useUniswapV2Router';
 
-// my contexts
+// my context
 import useTokenContext from '@/src/hooks/context/useTokenContext';
 
 // my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
+// -------------------------------------
+// 1. 定义 zod Schema
+// -------------------------------------
+const SwapFormSchema = z.object({
+  fromTokenAddress: z.string().regex(/^0x[0-9a-fA-F]{40}$/, '无效合约地址'), // 简单示例：检测是否0x开头+40位hex
+  toTokenAddress: z.string().regex(/^0x[0-9a-fA-F]{40}$/, '无效合约地址'),
+  fromTokenAmount: z
+    .string()
+    .nonempty('请输入兑换数量')
+    .refine((val) => {
+      try {
+        return parseUnits(val) > 0n;
+      } catch {
+        return false;
+      }
+    }, '兑换数量必须大于0'),
+});
+
+type SwapFormValues = z.infer<typeof SwapFormSchema>;
+
+// -------------------------------------
+// 主组件
+// -------------------------------------
 export interface TokenInfo {
   symbol: string;
   address: `0x${string}`;
@@ -34,9 +61,10 @@ export interface TokenInfo {
 }
 
 const SwapPanel = () => {
+  const router = useRouter();
   const { address: account, chain: accountChain } = useAccount();
   const { token } = useTokenContext();
-  const router = useRouter();
+
   const [fromTokenInfo, setFromTokenInfo] = useState<TokenInfo>({
     symbol: '',
     address: '0x0',
@@ -51,6 +79,139 @@ const SwapPanel = () => {
     amountShow: '0',
     balance: 0n,
   });
+
+  // -------------------------------------
+  // 2. 初始化/更新token信息
+  // -------------------------------------
+  useEffect(() => {
+    if (token) {
+      setFromTokenInfo((prev) => ({
+        ...prev,
+        address: token.parentTokenAddress,
+        symbol: token.parentTokenSymbol,
+      }));
+      setToTokenInfo((prev) => ({
+        ...prev,
+        address: token.address,
+        symbol: token.symbol,
+      }));
+    }
+  }, [token]);
+
+  // -------------------------------------
+  // 3. 创建表单
+  //    注意：defaultValues要与State保持同步
+  // -------------------------------------
+  const form = useForm<SwapFormValues>({
+    resolver: zodResolver(SwapFormSchema),
+    defaultValues: {
+      fromTokenAddress: token?.parentTokenAddress || '0x0',
+      toTokenAddress: token?.address || '0x0',
+      fromTokenAmount: '0',
+    },
+    mode: 'onChange',
+  });
+
+  // 当 fromTokenInfo 或 toTokenInfo 的地址发生变化后
+  // 可以通过 setValue 来同步给表单
+  useEffect(() => {
+    form.setValue('fromTokenAddress', fromTokenInfo.address);
+    form.setValue('toTokenAddress', toTokenInfo.address);
+  }, [fromTokenInfo.address, toTokenInfo.address, form]);
+
+  // -------------------------------------
+  // 4. 监听 fromTokenAmount
+  //    以便更新 fromTokenInfo.amountShow & .amount
+  // -------------------------------------
+  const watchFromAmount = form.watch('fromTokenAmount');
+  useEffect(() => {
+    // 更新 state，用于后续 计算 amountsOut / 手续费 / ...
+    setFromTokenInfo((prev) => {
+      let amountBigInt = 0n;
+      try {
+        amountBigInt = parseUnits(watchFromAmount || '0');
+      } catch {}
+      return {
+        ...prev,
+        amount: amountBigInt,
+        amountShow: watchFromAmount || '0',
+      };
+    });
+  }, [watchFromAmount]);
+
+  // -------------------------------------
+  // 5. 读取余额
+  // -------------------------------------
+  const {
+    balance: balanceOfFromToken,
+    error: errorBalanceOfToken,
+    isPending: isPendingBalanceOfToken,
+  } = useBalanceOf(fromTokenInfo.address as `0x${string}`, account as `0x${string}`);
+  const {
+    balance: balanceOfToToken,
+    error: errorBalanceOfParentToken,
+    isPending: isPendingBalanceOfParentToken,
+  } = useBalanceOf(toTokenInfo.address as `0x${string}`, account as `0x${string}`);
+
+  // 更新各自余额
+  useEffect(() => {
+    if (balanceOfFromToken) {
+      setFromTokenInfo((prev) => ({ ...prev, balance: balanceOfFromToken }));
+    }
+    if (balanceOfToToken) {
+      setToTokenInfo((prev) => ({ ...prev, balance: balanceOfToToken }));
+    }
+  }, [balanceOfFromToken, balanceOfToToken]);
+
+  // -------------------------------------
+  // 6. 获取兑换结果 amountsOut
+  //    并更新 toTokenInfo.amount & amountShow
+  // -------------------------------------
+  const {
+    data: amountsOut,
+    error: amountsOutError,
+    isLoading: isAmountsOutLoading,
+  } = useGetAmountsOut(fromTokenInfo.amount, [fromTokenInfo.address, toTokenInfo.address]);
+
+  useEffect(() => {
+    if (amountsOut && amountsOut.length > 1) {
+      const amountOut = BigInt(amountsOut[1]);
+      setToTokenInfo((prev) => ({
+        ...prev,
+        amount: amountOut,
+        amountShow: formatUnits(amountOut),
+      }));
+    }
+  }, [amountsOut]);
+
+  // -------------------------------------
+  // 7. Max 按钮：设置最大数量
+  // -------------------------------------
+  const setMaxAmount = () => {
+    const maxStr = formatUnits(fromTokenInfo.balance);
+    form.setValue('fromTokenAmount', maxStr);
+  };
+
+  // -------------------------------------
+  // 8. 切换 fromToken 和 toToken
+  // -------------------------------------
+  const handleSwapUI = () => {
+    // 先保存当前值
+    const tempFrom = { ...fromTokenInfo };
+    const tempTo = { ...toTokenInfo };
+
+    // 确保两个地址都有效再进行切换
+    if (tempFrom.address !== '0x0' && tempTo.address !== '0x0') {
+      // 将 fromToken, toToken 互换
+      setFromTokenInfo(tempTo);
+      setToTokenInfo(tempFrom);
+      form.setValue('fromTokenAmount', '0');
+    }
+  };
+
+  // -------------------------------------
+  // 授权 & 兑换逻辑
+  // -------------------------------------
   const {
     approve: approveToken,
     isWriting: isPendingApproveToken,
@@ -65,203 +226,82 @@ const SwapPanel = () => {
     isConfirmed: isConfirmedApproveParentToken,
     writeError: errApproveParentToken,
   } = useApprove(token?.parentTokenAddress as `0x${string}`);
+
   const {
     swap,
     isWriting: isSwapping,
-    writeError: swapError,
     isConfirming: isConfirmingSwap,
     isConfirmed: isConfirmedSwap,
+    writeError: swapError,
   } = useSwapExactTokensForTokens();
 
-  // 状态：是否正在授权或已授权
+  // 是否处于 Approve 流程中
   const isApproving =
     isPendingApproveToken || isPendingApproveParentToken || isConfirmingApproveToken || isConfirmingApproveParentToken;
+
+  // 是否 Approve 完成
   const isApproved = isConfirmedApproveToken || isConfirmedApproveParentToken;
 
-  // 初始化当前代币信息
-  useEffect(() => {
-    if (token) {
-      setFromTokenInfo({
-        address: token.parentTokenAddress,
-        amount: 0n,
-        amountShow: '0',
-        balance: 0n,
-        symbol: token.parentTokenSymbol,
-      });
-      setToTokenInfo({
-        address: token.address,
-        amount: 0n,
-        amountShow: '0',
-        balance: 0n,
-        symbol: token.symbol,
-      });
-    }
-  }, [token]);
-
-  // 获取并设置代币余额
-  const {
-    balance: balanceOfToken,
-    isPending: isPendingBalanceOfToken,
-    error: errorBalanceOfToken,
-  } = useBalanceOf(fromTokenInfo.address as `0x${string}`, account as `0x${string}`);
-  const {
-    balance: balanceOfParentToken,
-    isPending: isPendingBalanceOfParentToken,
-    error: errorBalanceOfParentToken,
-  } = useBalanceOf(toTokenInfo.address as `0x${string}`, account as `0x${string}`);
-
-  useEffect(() => {
-    if (balanceOfToken) {
-      setFromTokenInfo((prev) => ({ ...prev, balance: balanceOfToken }));
-    }
-    if (balanceOfParentToken) {
-      setToTokenInfo((prev) => ({ ...prev, balance: balanceOfParentToken }));
-    }
-  }, [balanceOfToken, balanceOfParentToken]);
-
-  // 计算兑换数量
-  const {
-    data: amountsOut,
-    error: amountsOutError,
-    isLoading: isAmountsOutLoading,
-  } = useGetAmountsOut(fromTokenInfo.amount, [fromTokenInfo.address, toTokenInfo.address]);
-  // const {
-  //   data: amountsIn,
-  //   error: amountsInError,
-  //   isLoading: isAmountsInLoading,
-  // } = useGetAmountsIn(toTokenInfo.amount, [fromTokenInfo.address, toTokenInfo.address]);
-  // console.log('--------------------------------');
-  // console.log('fromTokenInfo.amount', fromTokenInfo.amount);
-  // console.log('amountsOutError', amountsOutError);
-  // console.log('amountsOut', amountsOut);
-  // console.log('isAmountsOutLoading', isAmountsOutLoading);
-
-  // 监听授权交易
-  useEffect(() => {
-    if (errorBalanceOfToken || errorBalanceOfParentToken) {
-      toast.error('授权失败');
-    }
-  }, [errorBalanceOfToken, errorBalanceOfParentToken]);
-
-  // 设置 ToToken 的金额
-  useEffect(() => {
-    if (amountsOut && amountsOut.length > 1) {
-      const amountOut = BigInt(amountsOut[1]);
-      setToTokenInfo((prev) => ({
-        ...prev,
-        amount: amountOut,
-        amountShow: formatUnits(amountOut),
-      }));
-    }
-  }, [amountsOut]);
-
-  // 设置 FromToken 的金额
-  const handleFromTokenAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    setFromTokenInfo({
-      ...fromTokenInfo,
-      amountShow: input,
-    });
-    if (!input.endsWith('.')) {
-      setFromTokenInfo({
-        ...fromTokenInfo,
-        amount: parseUnits(input),
-        amountShow: input,
-      });
-    }
-  };
-
-  // 设置最大金额
-  const setMaxAmount = () => {
-    setFromTokenInfo((prev) => ({
-      ...prev,
-      amount: prev.balance,
-      amountShow: formatUnits(prev.balance),
-    }));
-  };
-
-  // 交换代币（界面上交换）
-  const handleSwapUI = () => {
-    const tempFromTokenInfo = toTokenInfo;
-    const tempToTokenInfo = fromTokenInfo;
-    tempFromTokenInfo.amount = fromTokenInfo.amount;
-    tempFromTokenInfo.amountShow = fromTokenInfo.amountShow;
-    tempToTokenInfo.amount = 0n;
-    tempToTokenInfo.amountShow = '0';
-
-    setFromTokenInfo(tempFromTokenInfo);
-    setToTokenInfo(tempToTokenInfo);
-  };
-
-  // handleApprove 函数实现
-  const handleApprove = async () => {
-    if (!checkInput()) {
+  // 处理授权
+  const handleApprove = form.handleSubmit(async (data) => {
+    // 在这里再次做网络连接检查
+    if (!checkWalletConnection(accountChain)) {
       return;
     }
+    // data.fromTokenAddress / data.fromTokenAmount 都已通过 zod 校验
     try {
       const tx = token?.symbol === fromTokenInfo.symbol ? approveToken : approveParentToken;
+      // 将 fromTokenInfo.amount 作为授权额度
       await tx(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_ROUTER as `0x${string}`, fromTokenInfo.amount);
     } catch (error: any) {
       console.error(error);
       toast.error(error?.message || '授权失败');
     }
-  };
+  });
 
-  // handleSwap 函数实现
-  const handleSwap = async () => {
-    if (!checkInput()) {
+  // 处理兑换
+  const handleSwap = form.handleSubmit(async (data) => {
+    if (!checkWalletConnection(accountChain)) {
       return;
     }
     try {
       // 定义 deadline为当前时间后20分钟
       const deadline = BigInt(Math.floor(Date.now() / 1000) + 20 * 60);
-      const tx = await swap(
+      await swap(
         fromTokenInfo.amount,
-        (fromTokenInfo.amount / 1055n) * 1000n,
+        (toTokenInfo.amount / 1000n) * 995n,
         [fromTokenInfo.address, toTokenInfo.address],
         account as `0x${string}`,
         deadline,
       );
-      // 兑换后可以根据需要重置状态
     } catch (error: any) {
       console.error(error);
       toast.error(error?.message || '兑换失败');
     }
-  };
+  });
+
+  // 兑换确认后
   useEffect(() => {
     if (isConfirmedSwap) {
       toast.success('兑换成功');
       setTimeout(() => {
-        // 跳到我的首页
         router.push(`/my/?symbol=${token?.symbol}`);
       }, 2000);
     }
-  }, [isConfirmedSwap]);
+  }, [isConfirmedSwap, router, token?.symbol]);
 
-  // 计算手续费
+  // 手续费计算 (示例：0.3%)
   const feePercentage = 0.3;
   const [fee, setFee] = useState<string>('0');
-
   useEffect(() => {
     if (fromTokenInfo.amountShow) {
-      const calculatedFee = (parseFloat(fromTokenInfo.amountShow) * feePercentage) / 100;
-      setFee(calculatedFee.toFixed(4)); // 保留4位小数
+      const val = parseFloat(fromTokenInfo.amountShow) || 0;
+      const calculatedFee = (val * feePercentage) / 100;
+      setFee(calculatedFee.toFixed(4));
     } else {
       setFee('0');
     }
   }, [fromTokenInfo.amountShow]);
-
-  // 检查输入
-  const checkInput = () => {
-    if (!checkWalletConnection(accountChain)) {
-      return false;
-    }
-    if (fromTokenInfo.amount <= 0n) {
-      toast.error('兑换数量不能为0');
-      return false;
-    }
-    return true;
-  };
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -273,120 +313,197 @@ const SwapPanel = () => {
       handleContractError(errApproveParentToken, 'token');
     }
     if (amountsOutError) {
-      handleContractError(amountsOutError, 'swap');
+      handleContractError(amountsOutError, 'uniswapV2Router');
     }
     if (swapError) {
-      handleContractError(swapError, 'swap');
+      handleContractError(swapError, 'uniswapV2Router');
     }
-  }, [errApproveToken, errApproveParentToken, amountsOutError, swapError]);
+    if (errorBalanceOfParentToken) {
+      handleContractError(errorBalanceOfParentToken, 'token');
+    }
+    if (errorBalanceOfToken) {
+      handleContractError(errorBalanceOfToken, 'token');
+    }
+  }, [
+    errApproveToken,
+    errApproveParentToken,
+    amountsOutError,
+    swapError,
+    errorBalanceOfParentToken,
+    errorBalanceOfToken,
+  ]);
+
+  // 如果还没有 token 信息
+  if (!token) {
+    return <div>Loading...</div>;
+  }
+
+  // 加载状态
+  const isLoadingOverlay = isApproving || isSwapping || isConfirmingSwap;
 
   return (
     <div className="p-6">
       <LeftTitle title="兑换" />
       <div className="w-full max-w-md mt-4">
-        {/* From Token Block */}
-        <div className="mb-4">
-          <div className="flex items-center space-x-2 mb-2">
-            <Input
-              type="number"
-              placeholder="0.0"
-              className="flex-grow"
-              value={fromTokenInfo.amountShow}
-              onChange={handleFromTokenAmountChange}
-              disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
-            />
-            <Select
-              value={fromTokenInfo.address}
-              onValueChange={(value) => setFromTokenInfo({ ...fromTokenInfo, address: value as `0x${string}` })}
-              disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
-            >
-              <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="选择代币" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={fromTokenInfo.address}>{fromTokenInfo.symbol}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-center text-sm">
-            <span className="text-greyscale-400">
-              {formatTokenAmount(fromTokenInfo.balance || 0n)} {fromTokenInfo.symbol}
-            </span>
-            <Button
-              variant="link"
-              size="sm"
-              className="text-secondary"
-              onClick={setMaxAmount}
-              disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
-            >
-              最高
-            </Button>
-          </div>
-        </div>
+        <Form {...form}>
+          <form>
+            <div className="mb-4 flex flex-col">
+              <div className="flex space-x-4">
+                <FormField
+                  control={form.control}
+                  name="fromTokenAmount"
+                  render={({ field }) => (
+                    <FormItem className="w-2/3">
+                      <FormControl>
+                        <Input
+                          placeholder="0.0"
+                          type="number"
+                          className="w-full !ring-secondary-foreground"
+                          disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="fromTokenAddress"
+                  render={({ field }) => (
+                    <FormItem className="w-1/3">
+                      <FormControl>
+                        <Select
+                          value={field.value}
+                          onValueChange={(val) => {
+                            field.onChange(val);
+                            // 同步到 state
+                            setFromTokenInfo((prev) => ({
+                              ...prev,
+                              address: val as `0x${string}`,
+                            }));
+                          }}
+                          disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="选择代币" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={fromTokenInfo.address}>{fromTokenInfo.symbol}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-        {/* Arrow */}
-        <div className="flex justify-center my-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full hover:bg-gray-100"
-            onClick={handleSwapUI}
-            disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
-          >
-            <ArrowDownIcon className="h-6 w-6" />
-          </Button>
-        </div>
+              <div className="flex items-center text-sm mt-2">
+                <span className="text-greyscale-400">
+                  {formatTokenAmount(fromTokenInfo.balance || 0n)} {fromTokenInfo.symbol}
+                </span>
+                <Button
+                  variant="link"
+                  type="button"
+                  size="sm"
+                  className="text-secondary ml-2"
+                  onClick={setMaxAmount}
+                  disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
+                >
+                  最高
+                </Button>
+              </div>
+            </div>
 
-        {/* To Token Block */}
-        <div className="mb-6">
-          <div className="flex items-center space-x-2 mb-2">
-            <Input
-              type="text"
-              disabled
-              placeholder="0.0"
-              className="flex-grow"
-              value={toTokenInfo.amountShow}
-              readOnly
-            />
-            <Select
-              value={toTokenInfo.address}
-              onValueChange={(value) => setToTokenInfo({ ...toTokenInfo, address: value as `0x${string}` })}
-            >
-              <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="选择代币" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={toTokenInfo.address}>{toTokenInfo.symbol}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-greyscale-400">
-              {formatTokenAmount(toTokenInfo.balance || 0n)} {toTokenInfo.symbol}
-            </span>
-          </div>
-        </div>
+            <div className="flex justify-center my-4">
+              <Button
+                variant="ghost"
+                type="button"
+                size="icon"
+                className="rounded-full hover:bg-gray-100"
+                onClick={handleSwapUI}
+                disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
+              >
+                <ArrowDownIcon className="h-6 w-6" />
+              </Button>
+            </div>
 
-        <div className="flex flex-row gap-2">
-          <Button className={`w-1/2`} onClick={handleApprove} disabled={isApproving || isApproved}>
-            {isPendingApproveToken || isPendingApproveParentToken
-              ? '1.授权中...'
-              : isConfirmingApproveToken || isConfirmingApproveParentToken
-              ? '1.确认中...'
-              : isApproved
-              ? '1.已授权'
-              : '1.授权'}
-          </Button>
-          <Button
-            className={`w-1/2`}
-            onClick={handleSwap}
-            disabled={!isApproved || isApproving || isSwapping || isConfirmingSwap || isConfirmedSwap}
-          >
-            {isSwapping ? '2.兑换中...' : isConfirmingSwap ? '2.确认中...' : isConfirmedSwap ? '2.已兑换' : '2.兑换'}
-          </Button>
-        </div>
+            <div className="mb-6">
+              <div className="flex space-x-4">
+                <Input
+                  type="text"
+                  disabled
+                  placeholder="0.0"
+                  className="flex-grow w-2/3 !ring-secondary-foreground"
+                  value={toTokenInfo.amountShow}
+                  readOnly
+                />
+                <FormField
+                  control={form.control}
+                  name="toTokenAddress"
+                  render={({ field }) => (
+                    <FormItem className="w-1/3">
+                      <FormControl>
+                        <Select
+                          value={field.value}
+                          onValueChange={(val) => {
+                            field.onChange(val);
+                            setToTokenInfo((prev) => ({
+                              ...prev,
+                              address: val as `0x${string}`,
+                            }));
+                          }}
+                          disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="选择代币" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={toTokenInfo.address}>{toTokenInfo.symbol}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex justify-between items-center text-sm mt-2">
+                <span className="text-greyscale-400">
+                  {formatTokenAmount(toTokenInfo.balance || 0n)} {toTokenInfo.symbol}
+                </span>
+              </div>
+            </div>
 
-        {/* 新增的手续费和滑点提示 */}
+            <div className="flex flex-row gap-2">
+              <Button className="w-1/2" onClick={handleApprove} disabled={isApproving || isApproved}>
+                {isPendingApproveToken || isPendingApproveParentToken
+                  ? '1.授权中...'
+                  : isConfirmingApproveToken || isConfirmingApproveParentToken
+                  ? '1.确认中...'
+                  : isApproved
+                  ? '1.已授权'
+                  : '1.授权'}
+              </Button>
+              <Button
+                className="w-1/2"
+                onClick={handleSwap}
+                disabled={!isApproved || isApproving || isSwapping || isConfirmingSwap || isConfirmedSwap}
+              >
+                {isSwapping
+                  ? '2.兑换中...'
+                  : isConfirmingSwap
+                  ? '2.确认中...'
+                  : isConfirmedSwap
+                  ? '2.已兑换'
+                  : '2.兑换'}
+              </Button>
+            </div>
+          </form>
+        </Form>
+
+        {/* 手续费和滑点提示 */}
         {fromTokenInfo.amount > 0n && (
           <div className="mt-4 p-4 bg-gray-50 rounded-md">
             <div className="flex justify-between text-sm">
@@ -402,8 +519,9 @@ const SwapPanel = () => {
           </div>
         )}
       </div>
+
       <LoadingOverlay
-        isLoading={isApproving || isSwapping || isConfirmingSwap}
+        isLoading={isLoadingOverlay}
         text={isPendingApproveToken || isPendingApproveParentToken || isSwapping ? '提交交易...' : '确认交易...'}
       />
     </div>

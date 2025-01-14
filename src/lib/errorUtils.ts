@@ -3,6 +3,7 @@
 import { ContractErrorsMaps } from '@/src/errors';
 import { ErrorInfo } from '@/src/contexts/ErrorContext';
 import { useError } from '@/src/contexts/ErrorContext';
+import { useCallback } from 'react';
 /**
  * 从 Solidity 合约调用错误信息中解析核心的错误原因
  *
@@ -119,12 +120,15 @@ export const useHandleContractError = () => {
    * @param error 捕获到的错误对象
    * @param context 错误上下文，例如 'stake' 或 'uniswap'
    */
-  const handleContractError = (error: any, context: string) => {
-    console.log('context', context);
-    console.log('error', error);
-    const errorMessage = getReadableRevertErrMsg(error.message, context);
-    setError(errorMessage);
-  };
+  const handleContractError = useCallback(
+    (error: any, context: string) => {
+      console.log('context', context);
+      console.log('error', error);
+      const errorMessage = getReadableRevertErrMsg(error.message, context);
+      setError(errorMessage);
+    },
+    [setError],
+  );
 
-  return { handleContractError: handleContractError };
+  return { handleContractError };
 };
