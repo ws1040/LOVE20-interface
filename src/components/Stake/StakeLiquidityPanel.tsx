@@ -11,6 +11,7 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 
 import { checkWalletConnection } from '@/src/lib/web3';
@@ -430,20 +431,24 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
               <FormItem>
                 <FormLabel>释放期</FormLabel>
                 <FormControl>
-                  <select
-                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
+                  <Select
                     disabled={hadStartedApprove}
-                    onChange={(e) => field.onChange(e.target.value)}
+                    onValueChange={(value) => field.onChange(value)}
                     value={field.value}
                   >
-                    {Array.from({ length: 9 }, (_, i) => (
-                      <option key={i + 4} value={String(i + 4)}>
-                        {i + 4}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full !ring-secondary-foreground">
+                      <SelectValue placeholder="选择释放期" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 9 }, (_, i) => (
+                        <SelectItem key={i + 4} value={String(i + 4)}>
+                          {i + 4}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </FormControl>
-                <FormDescription>选择释放期长短</FormDescription>
+                <FormDescription>释放期：申请解锁后，几轮之后可以领取。</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

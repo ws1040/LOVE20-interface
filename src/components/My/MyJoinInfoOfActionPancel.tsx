@@ -109,11 +109,13 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
       <div className="stats w-full border grid grid-cols-2 divide-x-0 mt-2">
         <div className="stat place-items-center">
           <div className="stat-title">我参与的代币数</div>
-          <div className="stat-value text-2xl">{formatTokenAmount(stakedAmountByAccountByActionId || BigInt(0))}</div>
+          <div className="stat-value text-2xl text-secondary">
+            {formatTokenAmount(stakedAmountByAccountByActionId || BigInt(0))}
+          </div>
         </div>
         <div className="stat place-items-center">
           <div className="stat-title">参加到第几轮</div>
-          <div className="stat-value text-2xl">{lastJoinedRound?.toString()}</div>
+          <div className="stat-value text-2xl text-secondary">{lastJoinedRound?.toString()}</div>
         </div>
       </div>
       <div className="flex justify-center mt-2">

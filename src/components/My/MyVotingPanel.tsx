@@ -55,9 +55,6 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
     }
   }, [errorVotesNumByAccount, errorValidGovVotes]);
 
-  console.log('validGovVotes', validGovVotes);
-  console.log('votesNumByAccount', votesNumByAccount);
-
   if (!token) {
     return '';
   }

@@ -178,7 +178,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
               </div>
             </>
           ) : (
-            <div className="text-sm text-greyscale-500 text-center">没有行动</div>
+            <div className="text-sm text-greyscale-500 text-center mt-8">本轮没有行动，请先推举</div>
           )}
         </div>
       </div>

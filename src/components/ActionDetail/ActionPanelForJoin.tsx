@@ -102,18 +102,20 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
       {isJoined && (
         <div className="stats w-full grid grid-cols-2 divide-x-0">
           <div className="stat place-items-center">
-            <div className="stat-title">我参与本行动的代币</div>
-            <div className="stat-value text-2xl">
+            <div className="stat-title">我的参与</div>
+            <div className="stat-value text-2xl text-secondary">
               {isPendingJoinedAmount ? (
                 <LoadingIcon />
               ) : (
                 formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0))
               )}
             </div>
+            <div className="stat-desc text-sm mt-2">我参与本行动的代币数</div>
           </div>
           <div className="stat place-items-center">
-            <div className="stat-title">所占比例</div>
-            <div className="stat-value text-2xl">{participationRatio}</div>
+            <div className="stat-title">我的占比</div>
+            <div className="stat-value text-2xl text-secondary">{participationRatio}</div>
+            <div className="stat-desc text-sm mt-2">占本行动总代币的比例</div>
           </div>
         </div>
       )}

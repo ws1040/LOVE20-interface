@@ -68,22 +68,29 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
   }, [errSubmit, errCurrentRound]);
 
   return (
-    <>
-      <div className="flex flex-col items-center my-4">
-        {submitted || isConfirmed ? (
-          <Button className="w-1/2" disabled>
-            已推举
-          </Button>
-        ) : (
-          <Button onClick={handleSubmit} className="w-1/2" disabled={isWriting || isConfirming}>
-            {isWriting && '提交中...'}
-            {isConfirming && '确认中...'}
-            {!isWriting && !isConfirming && '推举本行动'}
-          </Button>
-        )}
+    <div>
+      <div className="flex flex-col m-4">
+        <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mb-4 w-full">
+          <p className="mb-1">说明：</p>
+          <p>1. 有效治理票数 ≥ 总治理票的0.5%，才能推举；</p>
+          <p>2. 每轮次，1个地址最多可 创建/推举 1 个行动；</p>
+        </div>
+        <div className="flex justify-center">
+          {submitted || isConfirmed ? (
+            <Button className="w-1/2" disabled>
+              已推举
+            </Button>
+          ) : (
+            <Button onClick={handleSubmit} className="w-1/2" disabled={isWriting || isConfirming}>
+              {isWriting && '提交中...'}
+              {isConfirming && '确认中...'}
+              {!isWriting && !isConfirming && '推举本行动'}
+            </Button>
+          )}
+        </div>
       </div>
       <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
-    </>
+    </div>
   );
 };
 

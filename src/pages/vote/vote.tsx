@@ -180,16 +180,22 @@ const VotingSubmitPage = () => {
     <>
       <Header title="投票" />
       <main className="flex-grow">
-        <div className="flex flex-col items-center space-y-4 p-4">
-          <div className="text-base text-greyscale-500">
-            <span>我的剩余票数：</span>
-            <span className="text-secondary">
+        <div className="stats w-full">
+          <div className="stat place-items-center">
+            <div className="stat-title text-sm">我的剩余票数</div>
+            <div className="stat-value text-secondary mt-2">
               {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
                 <LoadingIcon />
               ) : (
                 formatTokenAmount(validGovVotes - votesNumByAccount || BigInt(0))
               )}
-            </span>
+            </div>
+            <div className="stat-desc text-sm mt-2">
+              如需更多票数，请先{' '}
+              <Link href={`/gov/stakelp?symbol=${token?.symbol}`} className="text-secondary">
+                获取治理票
+              </Link>
+            </div>
           </div>
         </div>
 

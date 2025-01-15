@@ -41,6 +41,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             isActive: false,
           },
           {
+            title: '推举行动',
+            url: `${basePath}/vote/actions4submit?symbol=${token.symbol}`,
+            isActive: false,
+          },
+          {
             title: '交易代币',
             url: `${basePath}/dex/swap?symbol=${token.symbol}`,
             isActive: false,
@@ -86,7 +91,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar {...props}>
       <SidebarHeader></SidebarHeader>
       <SidebarContent>
-        {/* 为每个父项创建一个 SidebarGroup */}
         {data.navMain.map((item) => (
           <SidebarGroup key={item.title}>
             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>

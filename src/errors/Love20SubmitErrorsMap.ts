@@ -10,5 +10,5 @@ export const LOVE20SubmitErrorsMap: Record<string, string> = {
   MaxStakeZero: '最大质押数量必须大于0',
   MaxRandomAccountsZero: '最大随机账户数量必须大于0',
   AlreadySubmitted: '该提案已提交，请勿重复提交',
-  OnlyOneSubmitPerRound: '每轮只能提交一次',
+  OnlyOneSubmitPerRound: '每个轮次，1个地址只能提交1个行动',
 };

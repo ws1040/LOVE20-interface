@@ -4,6 +4,26 @@ import { ContractErrorsMaps } from '@/src/errors';
 import { ErrorInfo } from '@/src/contexts/ErrorContext';
 import { useError } from '@/src/contexts/ErrorContext';
 import { useCallback } from 'react';
+
+/**
+ * 从 MetaMask 错误信息中解析核心的错误原因
+ *
+ * @param error 错误信息
+ * @returns 解析出的核心错误信息
+ */
+function _parseMetaMaskError(error: string): string {
+  /***
+   * 示例错误日志：
+     error TransactionExecutionError: User rejected the request.
+      Details: MetaMask Tx Signature: User denied transaction signature.
+   */
+  const errorMatch = error.match(/User denied transaction signature/);
+  if (errorMatch) {
+    return '用户取消了交易';
+  }
+  return '';
+}
+
 /**
  * 从 Solidity 合约调用错误信息中解析核心的错误原因
  *
@@ -94,7 +114,13 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
     return { name: '交易错误', message: errorMap[errorName] };
   }
 
-  // 3.如果找不到对应的错误文案，则返回默认的错误文案
+  // 3.解析 MetaMask 错误
+  const metaMaskError = _parseMetaMaskError(rawMessage);
+  if (metaMaskError) {
+    return { name: '交易提示', message: metaMaskError };
+  }
+
+  // 4.如果找不到对应的错误文案，则返回默认的错误文案
   const originalRevertError = _parseOriginalRevertMessage(rawMessage);
   if (originalRevertError) {
     return { name: '交易错误', message: originalRevertError };

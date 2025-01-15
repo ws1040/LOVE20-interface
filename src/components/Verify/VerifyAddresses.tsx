@@ -67,6 +67,10 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     if (!checkWalletConnection(accountChain)) {
       return false;
     }
+    if (remainingVotes <= 2n) {
+      toast.error('剩余票数不足，无法验证');
+      return false;
+    }
     return true;
   };
   const handleSubmit = () => {

@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 // my funcs
 import { checkWalletConnection } from '@/src/lib/web3';
@@ -194,14 +195,18 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
               <FormItem>
                 <FormLabel className="text-sm text-greyscale-500">释放期</FormLabel>
                 <FormControl>
-                  {/* 注意：shadcn 并没有封装 select，需要你自行实现或自定义组件 */}
-                  <select className="w-full px-3 py-2 border rounded focus:outline-none focus:ring" {...field}>
-                    {Array.from({ length: 9 }, (_, i) => i + 4).map((val) => (
-                      <option key={val} value={val}>
-                        {val}
-                      </option>
-                    ))}
-                  </select>
+                  <Select value={field.value} onValueChange={(val) => field.onChange(val)}>
+                    <SelectTrigger className="w-full !ring-secondary-foreground">
+                      <SelectValue placeholder="请选择释放期" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 9 }, (_, i) => i + 4).map((val) => (
+                        <SelectItem key={val} value={val.toString()}>
+                          {val}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormDescription />
                 <FormMessage />

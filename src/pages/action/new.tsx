@@ -111,7 +111,7 @@ const NewAction = () => {
   return (
     <>
       <Header title="创建新行动" />
-      <div className="max-w-xl mx-auto p-4">
+      <div className="max-w-xl p-4">
         <LeftTitle title="创建新行动" />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 space-y-4">
@@ -228,11 +228,13 @@ const NewAction = () => {
             <Button type="submit" disabled={isSubmitting || isConfirming || isSubmitted} className="mt-4 w-full">
               {isSubmitting ? '提交中...' : isConfirming ? '确认中...' : isSubmitted ? '已提交' : '提交'}
             </Button>
-            <p className="text-greyscale-500 text-sm">
-              发起后，会自动推举该行动到当前投票轮的行动列表 / 本轮已推举或提交过
-            </p>
           </form>
         </Form>
+        <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mt-4">
+          <p className="mb-1">说明：</p>
+          <p>1. 每个轮次，1个地址最多可以 创建/推举 1 个行动；</p>
+          <p>2. 创建后，会自动推举该行动；</p>
+        </div>
       </div>
       <LoadingOverlay isLoading={isSubmitting || isConfirming} text={isSubmitting ? '提交交易...' : '确认交易...'} />
     </>

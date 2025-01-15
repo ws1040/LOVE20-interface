@@ -241,7 +241,8 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
                     />
                   </FormControl>
                   <FormDescription>
-                    当前持有：{formatTokenAmount(tokenBalance || 0n)} {token?.symbol}
+                    当前持有：<span className="text-secondary">{formatTokenAmount(tokenBalance || 0n)}</span>{' '}
+                    {token?.symbol}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -284,30 +285,29 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
 
             {/* 操作按钮 */}
             <div className="flex justify-center space-x-4 pt-2">
-              <Button
-                className="w-1/2"
-                disabled={
-                  maxStake <= 0n || isPendingApprove || isConfirmingApprove || isConfirmedApprove || isConfirmedJoin
-                }
-                type="button"
-                onClick={() => {
-                  form.handleSubmit((values) => handleApprove(values))();
-                }}
-              >
-                {isPendingApprove
-                  ? '1.授权中...'
-                  : isConfirmingApprove
-                  ? '1.确认中...'
-                  : isConfirmedApprove
-                  ? '1.已授权'
-                  : '1.授权'}
-              </Button>
+              {maxStake > 2n && (
+                <Button
+                  className="w-1/2"
+                  disabled={isPendingApprove || isConfirmingApprove || isConfirmedApprove || isConfirmedJoin}
+                  type="button"
+                  onClick={() => {
+                    form.handleSubmit((values) => handleApprove(values))();
+                  }}
+                >
+                  {isPendingApprove
+                    ? '1.授权中...'
+                    : isConfirmingApprove
+                    ? '1.确认中...'
+                    : isConfirmedApprove
+                    ? '1.已授权'
+                    : '1.授权'}
+                </Button>
+              )}
 
               <Button
                 className="w-1/2"
-                // 将“加入”按钮的禁用逻辑基于 needsAuthorization
                 disabled={
-                  maxStake > 0n
+                  maxStake > 2n
                     ? (!isConfirmedApprove && stakedAmount !== 0n) ||
                       isPendingJoin ||
                       isConfirmingJoin ||
@@ -320,12 +320,20 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
                 }}
               >
                 {isPendingJoin
-                  ? '2.加入中...'
+                  ? maxStake > 2n
+                    ? '2.加入中...'
+                    : '加入中...'
                   : isConfirmingJoin
-                  ? '2.确认中...'
+                  ? maxStake > 2n
+                    ? '2.确认中...'
+                    : '确认中...'
                   : isConfirmedJoin
-                  ? '2.已加入'
-                  : '2.加入'}
+                  ? maxStake > 2n
+                    ? '2.已加入'
+                    : '已加入'
+                  : maxStake > 2n
+                  ? '2.加入'
+                  : '加入'}
               </Button>
             </div>
           </form>

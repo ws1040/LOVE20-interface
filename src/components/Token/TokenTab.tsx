@@ -69,8 +69,8 @@ export default function TokenTab() {
       {isDesktop && (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild> </DialogTrigger>
+          <DialogTitle>经济模型</DialogTitle>
           <DialogContent className="sm:max-w-[425px]">
-            <DialogTitle>经济模型</DialogTitle>
             <div className="px-12 pt-2 pb-4 text-gray-800">
               <p className="font-bold text-large mb-2">
                 代币总量：

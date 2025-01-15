@@ -50,7 +50,7 @@ const MyJoinInfoOfActionAbstract: React.FC<MyJoinInfoOfActionAbstractProps> = ({
     }
   }, [errorStakedAmountByAccountByActionId]);
 
-  return (
+  return stakedAmountByAccountByActionId > 0n ? (
     <div className="px-6 py-4">
       <LeftTitle title="上次参与" />
       <div className="stats w-full divide-x-0">
@@ -69,7 +69,7 @@ const MyJoinInfoOfActionAbstract: React.FC<MyJoinInfoOfActionAbstractProps> = ({
         </div>
       </div>
     </div>
-  );
+  ) : null;
 };
 
 export default MyJoinInfoOfActionAbstract;

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
+import { ChevronRight } from 'lucide-react';
 
 import { ActionInfo } from '@/src/types/life20types';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
@@ -86,8 +87,8 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
 
             return (
               <Card key={action.head.id} className="shadow-none">
-                <Link href={href}>
-                  <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
+                <Link href={href} className="relative block">
+                  <CardHeader className="px-3 pt-2 pb-1 flex-row items-baseline">
                     <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
                     <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
                   </CardHeader>
@@ -108,6 +109,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                       </span>
                     </div>
                   </CardContent>
+                  <ChevronRight className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-greyscale-400 pointer-events-none" />
                 </Link>
               </Card>
             );
