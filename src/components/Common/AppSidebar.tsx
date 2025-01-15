@@ -40,6 +40,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             url: `${basePath}/gov?symbol=${token.symbol}`,
             isActive: false,
           },
+          {
+            title: '交易代币',
+            url: `${basePath}/dex/swap?symbol=${token.symbol}`,
+            isActive: false,
+          },
         ],
       },
       {
@@ -54,11 +59,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {
             title: '所有代币',
             url: `${basePath}/tokens?symbol=${token.symbol}`,
-            isActive: false,
-          },
-          {
-            title: '交易代币',
-            url: `${basePath}/dex/swap?symbol=${token.symbol}`,
             isActive: false,
           },
           {

@@ -51,7 +51,7 @@ const MyJoinInfoOfActionAbstract: React.FC<MyJoinInfoOfActionAbstractProps> = ({
   }, [errorStakedAmountByAccountByActionId]);
 
   return (
-    <div className="px-4 pt-1 pb-4">
+    <div className="px-6 py-4">
       <LeftTitle title="上次参与" />
       <div className="stats w-full divide-x-0">
         <div className="stat place-items-center">

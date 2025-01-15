@@ -62,7 +62,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
     return (
       <>
         <div className="flex-col items-center px-4 pt-6 pb-2">
-          <LeftTitle title="我的验证" />
+          <LeftTitle title="行动验证" />
           <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
         </div>
       </>
@@ -71,7 +71,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
 
   return (
     <div className="flex-col items-center px-4 pt-3 pb-2">
-      <LeftTitle title="我的验证" />
+      <LeftTitle title="行动验证" />
       <div className="stats w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center pt-1 pb-2">
           <div className="stat-title text-sm">已验证票数</div>

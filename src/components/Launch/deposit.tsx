@@ -84,7 +84,7 @@ const Deposit: React.FC = () => {
 
   // 2. 创建 hook form 实例，并传入当前余额
   const form = useForm<DepositFormValues>({
-    resolver: zodResolver(getDepositFormSchema(balanceOfERC20Token || 0n)),
+    resolver: zodResolver(getDepositFormSchema(balance?.value || 0n)),
     defaultValues: {
       depositAmount: '',
     },

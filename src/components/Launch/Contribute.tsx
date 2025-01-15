@@ -192,6 +192,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
                       type="number"
                       placeholder={`请填写${token.parentTokenSymbol}数量`}
                       disabled={hasStartedApproving || (balanceOfParentToken || 0n) <= 0n}
+                      className="!ring-secondary-foreground"
                       {...field}
                     />
                   </FormControl>

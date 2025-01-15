@@ -1,6 +1,15 @@
-import { useContext, useEffect, useState } from 'react';
+'use client';
+
+import { useContext, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+// shadcn/ui
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 // my funcs
@@ -23,11 +32,31 @@ interface StakeTokenPanelProps {
   tokenBalance: bigint;
 }
 
+// 1. 定义 Zod 校验规则
+//   - 质押代币数不能为0
+//   - 质押代币数不能大于持有代币数
+//   - releasePeriod 默认 "4"
+function stakeSchemaFactory(tokenBalance: bigint) {
+  return z.object({
+    stakeTokenAmount: z
+      .string()
+      .refine((val) => val.trim() !== '', {
+        message: '请输入质押数量',
+      })
+      .refine((val) => Number(val) > 0, {
+        message: '质押代币数不能为0',
+      })
+      .refine((val) => parseUnits(val) <= tokenBalance, {
+        message: '质押代币数不能大于持有代币数',
+      }),
+    releasePeriod: z.string().default('4'),
+  });
+}
+
 const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
   const { address: accountAddress, chain: accountChain } = useAccount();
   const { token } = useContext(TokenContext) || {};
 
-  // Hooks: 授权(approve)、质押(stakeToken)
   const {
     approve: approveToken,
     isWriting: isPendingApproveToken,
@@ -44,70 +73,70 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     writeError: errStakeToken,
   } = useStakeToken();
 
-  // 捕获表单状态
-  const [stakeTokenAmount, setStakeTokenAmount] = useState('');
-  const [releasePeriod, setReleasePeriod] = useState('4'); // 将初始值从 '1' 改为 '4'
+  // 2. 初始化表单
+  const form = useForm<z.infer<ReturnType<typeof stakeSchemaFactory>>>({
+    resolver: zodResolver(stakeSchemaFactory(tokenBalance)),
+    defaultValues: {
+      stakeTokenAmount: '',
+      releasePeriod: '4',
+    },
+    mode: 'onChange',
+  });
 
-  // 检查输入
-  const checkInput = () => {
+  // 3. 授权按钮点击
+  const handleApprove = async (data: z.infer<ReturnType<typeof stakeSchemaFactory>>) => {
+    // 先检查钱包 & 链
     if (!checkWalletConnection(accountChain)) {
-      return false;
-    }
-    if (BigInt(stakeTokenAmount) === 0n) {
-      toast.error('请输入正确的数量');
-      return;
-    }
-    return true;
-  };
-
-  // 处理授权
-  const handleApprove = async () => {
-    if (!checkInput()) {
       return;
     }
     try {
-      await approveToken(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, parseUnits(stakeTokenAmount));
+      await approveToken(
+        process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
+        parseUnits(data.stakeTokenAmount),
+      );
     } catch (error: any) {
       toast.error(error?.message || '授权失败');
       console.error('Approve failed', error);
     }
   };
+
+  // 监听授权成功
   useEffect(() => {
     if (isConfirmedApproveToken) {
       toast.success('授权成功');
     }
   }, [isConfirmedApproveToken]);
 
-  // 处理质押
-  const handleStake = async () => {
-    if (!checkInput()) {
+  // 4. 质押按钮点击
+  const handleStake = async (data: z.infer<ReturnType<typeof stakeSchemaFactory>>) => {
+    // 先检查钱包 & 链
+    if (!checkWalletConnection(accountChain)) {
       return;
     }
     try {
       await stakeToken(
         token?.address as `0x${string}`,
-        parseUnits(stakeTokenAmount),
-        BigInt(releasePeriod),
+        parseUnits(data.stakeTokenAmount),
+        BigInt(data.releasePeriod),
         accountAddress as `0x${string}`,
       );
     } catch (error) {
       console.error('Stake failed', error);
     }
   };
-  // 监听质押交易的确认状态
+
+  // 监听质押成功
   useEffect(() => {
     if (isConfirmedStakeToken) {
       toast.success('质押成功');
       // 重置表单
-      setStakeTokenAmount('');
-      setReleasePeriod('');
-      // 2秒后刷新页面
+      form.reset();
+      // 2秒后刷新页面，跳转到治理首页
       setTimeout(() => {
-        // 跳转到治理首页
         window.location.href = `/gov?symbol=${token?.symbol}`;
       }, 2000);
     }
-  }, [isConfirmedStakeToken]);
+  }, [isConfirmedStakeToken, form, token?.symbol]);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -118,55 +147,74 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     if (errApproveToken) {
       handleContractError(errApproveToken, 'token');
     }
-  }, [errStakeToken, errApproveToken]);
+  }, [errStakeToken, errApproveToken, handleContractError]);
 
   return (
-    <>
-      <div className="w-full flex flex-col items-center p-6 mt-1">
-        <div className="w-full text-left mb-4">
-          <LeftTitle title="质押增加治理收益" />
-        </div>
-        <form className="w-full max-w-md" onSubmit={(e) => e.preventDefault()}>
-          <div className="mb-4">
-            <label className="block text-left mb-1 text-sm text-greyscale-500">
-              质押数 (当前持有数量：
-              <span className="text-secondary">
-                {formatTokenAmount(tokenBalance)} {token?.symbol}
-              </span>
-              )
-            </label>
-            <input
-              type="number"
-              placeholder={`输入 ${token?.symbol} 数量`}
-              value={stakeTokenAmount}
-              onChange={(e) => {
-                const stakeValue = e.target.value;
-                setStakeTokenAmount(stakeValue);
-              }}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-left mb-1 text-sm text-greyscale-500">释放期</label>
-            <select
-              value={releasePeriod}
-              onChange={(e) => setReleasePeriod(e.target.value)}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
-              required
-            >
-              {Array.from({ length: 9 }, (_, i) => (
-                <option key={i + 4} value={i + 4}>
-                  {i + 4}
-                </option>
-              ))}
-            </select>
-          </div>
+    <div className="w-full flex flex-col items-center p-6 mt-1">
+      <div className="w-full text-left mb-4">
+        <LeftTitle title="质押增加治理收益" />
+      </div>
+
+      {/* 5. 使用 shadcn/ui 的 Form 组件，结合 react-hook-form */}
+      <Form {...form}>
+        {/* 用于阻止默认提交，这里手动分别处理"授权"“质押” */}
+        <form onSubmit={(e) => e.preventDefault()} className="w-full max-w-md space-y-4">
+          {/* 质押数量 */}
+          <FormField
+            control={form.control}
+            name="stakeTokenAmount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm text-greyscale-500">
+                  质押数 (当前持有数量：
+                  <span className="text-secondary">
+                    {formatTokenAmount(tokenBalance)} {token?.symbol}
+                  </span>
+                  )
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder={`输入 ${token?.symbol} 数量`}
+                    className="!ring-secondary-foreground"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* 释放期 */}
+          <FormField
+            control={form.control}
+            name="releasePeriod"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm text-greyscale-500">释放期</FormLabel>
+                <FormControl>
+                  {/* 注意：shadcn 并没有封装 select，需要你自行实现或自定义组件 */}
+                  <select className="w-full px-3 py-2 border rounded focus:outline-none focus:ring" {...field}>
+                    {Array.from({ length: 9 }, (_, i) => i + 4).map((val) => (
+                      <option key={val} value={val}>
+                        {val}
+                      </option>
+                    ))}
+                  </select>
+                </FormControl>
+                <FormDescription />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* 按钮组：1.授权；2.质押 */}
           <div className="flex justify-center space-x-4">
             <Button
-              className={`w-1/2`}
+              className="w-1/2"
               disabled={isPendingApproveToken || isConfirmingApproveToken || isConfirmedApproveToken}
-              onClick={handleApprove}
+              onClick={() => form.handleSubmit(handleApprove)()}
             >
               {isPendingApproveToken
                 ? '1.授权中...'
@@ -177,11 +225,11 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
                 : '1.授权'}
             </Button>
             <Button
-              className={`w-1/2`}
+              className="w-1/2"
               disabled={
                 !isConfirmedApproveToken || isPendingStakeToken || isConfirmingStakeToken || isConfirmedStakeToken
               }
-              onClick={handleStake}
+              onClick={() => form.handleSubmit(handleStake)()}
             >
               {isPendingStakeToken
                 ? '2.质押中...'
@@ -193,14 +241,14 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
             </Button>
           </div>
         </form>
-        {errStakeToken && <div className="text-red-500">{errStakeToken.message}</div>}
-        {errApproveToken && <div className="text-red-500">{errApproveToken.message}</div>}
-        <LoadingOverlay
-          isLoading={isPendingApproveToken || isConfirmingApproveToken || isPendingStakeToken || isConfirmingStakeToken}
-          text={isPendingApproveToken || isPendingStakeToken ? '提交交易...' : '确认交易...'}
-        />
-      </div>
-    </>
+      </Form>
+
+      {/* Loading遮罩 */}
+      <LoadingOverlay
+        isLoading={isPendingApproveToken || isConfirmingApproveToken || isPendingStakeToken || isConfirmingStakeToken}
+        text={isPendingApproveToken || isPendingStakeToken ? '提交交易...' : '确认交易...'}
+      />
+    </div>
   );
 };
 

@@ -103,6 +103,13 @@ const VotingSubmitPage = () => {
     if (!checkWalletConnection(accountChain)) {
       return false;
     }
+
+    // 检查剩余票数
+    if (validGovVotes - votesNumByAccount < 2n) {
+      toast.error('剩余票数不足，不能投票');
+      return false;
+    }
+
     // percentages 百分比之和必须为100
     const totalPercentage = Object.values(percentages).reduce((sum, percentage) => sum + percentage, 0);
     if (totalPercentage !== 100) {

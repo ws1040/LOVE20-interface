@@ -137,7 +137,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
           } as Token),
       );
     }
-  }, [originBlocks, token]);
+  }, [originBlocks]);
 
   // Step 5. 当 token 变化时，更新 Local Storage
   useEffect(() => {

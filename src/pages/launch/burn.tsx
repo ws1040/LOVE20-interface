@@ -13,9 +13,7 @@ import Burn from '@/src/components/Launch/Burn';
 import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
-const Contribute = dynamic(() => import('@/src/components/Launch/Contribute'), { ssr: false });
-
-export default function ContributePage() {
+export default function BurnPage() {
   const { token } = useContext(TokenContext) || {};
   const {
     launchInfo,

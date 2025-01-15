@@ -55,6 +55,9 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
     }
   }, [errorVotesNumByAccount, errorValidGovVotes]);
 
+  console.log('validGovVotes', validGovVotes);
+  console.log('votesNumByAccount', votesNumByAccount);
+
   if (!token) {
     return '';
   }
@@ -62,7 +65,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
     return (
       <>
         <div className="flex-col items-center px-4 py-2">
-          <LeftTitle title="我的投票" />
+          <LeftTitle title="行动投票" />
           <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
         </div>
       </>
@@ -71,7 +74,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
 
   return (
     <div className="flex-col items-center px-4 py-0">
-      <LeftTitle title="我的投票" />
+      <LeftTitle title="行动投票" />
       <div className="stats w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center pt-1 pb-2">
           <div className="stat-title text-sm">我的已投票数</div>
@@ -95,7 +98,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
       <div className="flex justify-center">
         {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
           <LoadingIcon />
-        ) : validGovVotes > votesNumByAccount ? (
+        ) : validGovVotes > votesNumByAccount + 2n ? (
           <Button className="w-1/2" asChild>
             <Link href={`/vote?symbol=${token.symbol}`}>去投票</Link>
           </Button>
