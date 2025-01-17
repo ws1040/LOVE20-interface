@@ -62,7 +62,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
           // 若余额未知，暂不校验超限
           if (!balanceOfToken) return true;
           try {
-            return parseUnits(data.burnAmount) <= balanceOfToken;
+            return parseUnits(data.burnAmount) ? parseUnits(data.burnAmount) <= balanceOfToken : false;
           } catch {
             return false;
           }

@@ -40,7 +40,7 @@ const SwapFormSchema = z.object({
     .nonempty('请输入兑换数量')
     .refine((val) => {
       try {
-        return parseUnits(val) > 0n;
+        return (parseUnits(val) ?? 0n) > 0n;
       } catch {
         return false;
       }
@@ -129,7 +129,7 @@ const SwapPanel = () => {
     setFromTokenInfo((prev) => {
       let amountBigInt = 0n;
       try {
-        amountBigInt = parseUnits(watchFromAmount || '0');
+        amountBigInt = parseUnits(watchFromAmount || '0') ?? 0n;
       } catch {}
       return {
         ...prev,

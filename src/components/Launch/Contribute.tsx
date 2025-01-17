@@ -43,7 +43,7 @@ const getFormSchema = (balance: bigint) =>
       })
       .refine(
         (val) => {
-          const amount = parseUnits(val);
+          const amount = parseUnits(val) ?? 0n;
           return amount <= balance;
         },
         {
@@ -97,7 +97,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     }
     try {
       // parseUnits 用于将 string 转换为 BigInt
-      const amountBigInt = parseUnits(data.contributeAmount);
+      const amountBigInt = parseUnits(data.contributeAmount) ?? 0n;
       await approveParentToken(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x${string}`, amountBigInt);
     } catch (error) {
       console.error(error);
@@ -124,7 +124,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
       return;
     }
     try {
-      const amountBigInt = parseUnits(data.contributeAmount);
+      const amountBigInt = parseUnits(data.contributeAmount) ?? 0n;
       await contribute(token?.address as `0x${string}`, amountBigInt, account as `0x${string}`);
     } catch (error) {
       console.error(error);

@@ -18,13 +18,13 @@ export const formatTokenAmount = (balance: bigint): string => {
 };
 
 // to wei/BigInt
-export const parseUnits = (value: string): bigint | null => {
+export const parseUnits = (value: string): bigint => {
   const decimals = parseInt(process.env.NEXT_PUBLIC_TOKEN_DECIMALS || '18', 10);
   try {
     return viemParseUnits(value, decimals);
   } catch (error) {
     console.error('parseUnits error:', error);
-    return null;
+    return 0n;
   }
 };
 
