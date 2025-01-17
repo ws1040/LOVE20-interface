@@ -2,12 +2,20 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 
-import { checkWalletConnection } from '@/src/utils/web3';
+// my functions & types
+import { checkWalletConnection } from '@/src/lib/web3';
+import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 import { GovReward } from '@/src/types/life20types';
+
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my hooks
 import { useGovRewardsByAccountByRounds } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useMintGovReward, useCurrentRound } from '@/src/hooks/contracts/useLOVE20Mint';
-import { formatTokenAmount } from '@/src/lib/format';
+
+// my components
 import Header from '@/src/components/Header';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
@@ -17,9 +25,14 @@ const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress, chain: accountChain } = useAccount();
 
-  const { currentRound } = useCurrentRound();
-  const startRound = currentRound ? currentRound - 1n : 0n;
-  const endRound = startRound > 20n ? startRound - 20n : 0n;
+  const { currentRound, error: errorCurrentRound } = useCurrentRound();
+  const startRound = currentRound && token && currentRound - BigInt(token.initialStakeRound) >= 3n ? currentRound : 0n;
+  const endRound =
+    token && startRound - BigInt(token.initialStakeRound) >= 22n
+      ? startRound - 20n
+      : token
+      ? BigInt(token.initialStakeRound)
+      : startRound;
 
   // 获取治理奖励
   const {
@@ -41,7 +54,7 @@ const GovRewardsPage: React.FC = () => {
   }, [rewards]);
 
   // 铸造治理奖励
-  const { mintGovReward, isWriting, isConfirming, isConfirmed, writeError } = useMintGovReward();
+  const { mintGovReward, isWriting, isConfirming, isConfirmed, writeError: errorMintGovReward } = useMintGovReward();
   const [mintingRound, setMintingRound] = useState<bigint | null>(null);
   useEffect(() => {
     if (isConfirmed) {
@@ -61,14 +74,27 @@ const GovRewardsPage: React.FC = () => {
     }
   };
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorLoadingRewards) {
+      handleContractError(errorLoadingRewards, 'dataViewer');
+    }
+    if (errorCurrentRound) {
+      handleContractError(errorCurrentRound, 'mint');
+    }
+    if (errorMintGovReward) {
+      handleContractError(errorMintGovReward, 'mint');
+    }
+  }, [errorLoadingRewards, errorCurrentRound, errorMintGovReward]);
+
   if (isLoadingRewards) return <LoadingIcon />;
-  if (errorLoadingRewards) return <div className="text-red-500">发生错误: {errorLoadingRewards.message}</div>;
 
   return (
     <>
       <Header title="治理激励" />
       <main className="flex-grow">
-        <div className="flex flex-col space-y-6 p-6">
+        <div className="flex flex-col space-y-6 p-4">
           <LeftTitle title="铸造治理奖励" />
 
           <table className="table w-full table-auto">
@@ -82,7 +108,7 @@ const GovRewardsPage: React.FC = () => {
             <tbody>
               {rewardList.map((item) => (
                 <tr key={item.round.toString()} className="border-b border-gray-100">
-                  <td>{item.round.toString()}</td>
+                  <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
                   <td className="text-center">{formatTokenAmount(item.unminted)}</td>
                   <td className="text-center">
                     {item.unminted > 0n ? (
@@ -105,7 +131,6 @@ const GovRewardsPage: React.FC = () => {
               ))}
             </tbody>
           </table>
-          {writeError && <div className="text-red-500 mt-2">领取失败: {writeError.message}</div>}
         </div>
         <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
       </main>

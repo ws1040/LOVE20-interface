@@ -10,6 +10,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { TokenProvider } from '@/src/contexts/TokenContext';
 import { AppSidebar } from '@/src/components/Common/AppSidebar';
 import { config } from '@/src/wagmi';
+import { ErrorProvider } from '@/src/contexts/ErrorContext';
 import Footer from '@/src/components/Footer';
 import dynamic from 'next/dynamic';
 
@@ -28,22 +29,24 @@ function MyApp({ Component, pageProps }: AppProps) {
         <TokenProvider>
           <RainbowKitProvider>
             <SidebarProvider>
-              <AppSidebar />
-              <SidebarInset>
-                <div className="min-h-screen bg-background flex flex-col">
-                  <Toaster
-                    position="top-center"
-                    toastOptions={{
-                      style: {
-                        background: '#000000',
-                        color: '#FFFFFF',
-                      },
-                    }}
-                  />
-                  <Component {...pageProps} />
-                  <Footer />
-                </div>
-              </SidebarInset>
+              <ErrorProvider>
+                <AppSidebar />
+                <SidebarInset>
+                  <div className="min-h-screen bg-background flex flex-col">
+                    <Toaster
+                      position="top-center"
+                      toastOptions={{
+                        style: {
+                          background: '#000000',
+                          color: '#FFFFFF',
+                        },
+                      }}
+                    />
+                    <Component {...pageProps} />
+                    <Footer />
+                  </div>
+                </SidebarInset>
+              </ErrorProvider>
             </SidebarProvider>
           </RainbowKitProvider>
         </TokenProvider>

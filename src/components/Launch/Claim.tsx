@@ -4,11 +4,17 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 
+// my hooks
 import { formatTokenAmount } from '@/src/lib/format';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 import { LaunchInfo } from '@/src/types/life20types';
 import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
-import { Token, TokenContext } from '@/src/contexts/TokenContext';
 import { useContributed, useClaimed, useExtraRefunded, useClaim } from '@/src/hooks/contracts/useLOVE20Launch';
+
+// my context
+import { Token, TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
@@ -73,6 +79,23 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
       toast.error(`领取失败`);
     }
   }, [isClaimConfirmed, claimError]);
+
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (claimError) {
+      handleContractError(claimError, 'launch');
+    }
+    if (claimedError) {
+      handleContractError(claimedError, 'launch');
+    }
+    if (extraRefundedError) {
+      handleContractError(extraRefundedError, 'launch');
+    }
+    if (contributedError) {
+      handleContractError(contributedError, 'launch');
+    }
+  }, [claimError, claimedError, extraRefundedError, contributedError]);
 
   if (!account) {
     return '';
@@ -152,10 +175,6 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
         )}
       </div>
 
-      {claimError && <div className="text-red-500">{claimError.message}</div>}
-      {contributedError && <div className="text-red-500">{contributedError.message}</div>}
-      {extraRefundedError && <div className="text-red-500">{extraRefundedError.message}</div>}
-      {claimedError && <div className="text-red-500">{claimedError.message}</div>}
       <LoadingOverlay isLoading={isClaiming || isClaimConfirming} text={isClaiming ? '提交交易...' : '确认交易...'} />
     </div>
   );

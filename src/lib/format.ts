@@ -1,5 +1,5 @@
 import { parseUnits as viemParseUnits, formatUnits as viemFormatUnits } from 'viem';
-
+import { Token } from '@/src/contexts/TokenContext';
 // 地址缩写
 export const abbreviateAddress = (address: string): string => {
   if (!address) return '';
@@ -20,7 +20,12 @@ export const formatTokenAmount = (balance: bigint): string => {
 // to wei/BigInt
 export const parseUnits = (value: string): bigint => {
   const decimals = parseInt(process.env.NEXT_PUBLIC_TOKEN_DECIMALS || '18', 10);
-  return viemParseUnits(value, decimals);
+  try {
+    return viemParseUnits(value, decimals);
+  } catch (error) {
+    console.error('parseUnits error:', error);
+    return 0n;
+  }
 };
 
 // from wei/BigInt
@@ -48,4 +53,12 @@ export const formatSeconds = (seconds: number): string => {
   } else {
     return `${Math.floor(seconds / 60)}分${seconds % 60}秒`;
   }
+};
+
+// 格式化轮次
+export const formatRoundForDisplay = (round: bigint, token: Token): bigint => {
+  if (!round || !token) {
+    return 0n;
+  }
+  return round - BigInt(token.initialStakeRound) + 1n;
 };

@@ -3,14 +3,22 @@ import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 
+// my hooks
 import {
   useStakedAmountByAccountByActionId,
   useLastJoinedRoundByAccountByActionId,
   useWithdraw,
 } from '@/src/hooks/contracts/useLOVE20Join';
-import { checkWalletConnection } from '@/src/utils/web3';
-import { formatTokenAmount } from '@/src/lib/format';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my funcs
+import { checkWalletConnection } from '@/src/lib/web3';
+import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
+
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
@@ -71,31 +79,45 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
     }
   }, [isConfirmedWithdraw]);
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorStakedAmountByAccountByActionId) {
+      handleContractError(errorStakedAmountByAccountByActionId, 'join');
+    }
+    if (errorLastJoinedRound) {
+      handleContractError(errorLastJoinedRound, 'join');
+    }
+    if (errorWithdraw) {
+      handleContractError(errorWithdraw, 'join');
+    }
+  }, [errorStakedAmountByAccountByActionId, errorLastJoinedRound, errorWithdraw]);
+
+  // 加载中
   if (isPendingStakedAmountByAccountByActionId || isPendingLastJoinedRound) {
     return (
-      <div className="px-6 pt-4 pb-2">
+      <div className="px-4 pt-4 pb-2">
         <LeftTitle title="我的参与" />
         <LoadingIcon />
       </div>
     );
   }
 
-  if (errorStakedAmountByAccountByActionId || errorLastJoinedRound) {
-    console.error(errorStakedAmountByAccountByActionId, errorLastJoinedRound);
-    return <div className="text-red-500">加载失败</div>;
-  }
-
   return (
-    <div className="px-6 pt-4 pb-2">
+    <div className="px-4 pt-4 pb-2">
       <LeftTitle title="我的参与" />
       <div className="stats w-full border grid grid-cols-2 divide-x-0 mt-2">
         <div className="stat place-items-center">
           <div className="stat-title">我参与的代币数</div>
-          <div className="stat-value text-2xl">{formatTokenAmount(stakedAmountByAccountByActionId || BigInt(0))}</div>
+          <div className="stat-value text-2xl text-secondary">
+            {formatTokenAmount(stakedAmountByAccountByActionId || BigInt(0))}
+          </div>
         </div>
         <div className="stat place-items-center">
           <div className="stat-title">参加到第几轮</div>
-          <div className="stat-value text-2xl">{lastJoinedRound?.toString()}</div>
+          <div className="stat-value text-2xl text-secondary">
+            {token ? formatRoundForDisplay(lastJoinedRound || BigInt(0), token).toString() : '—'}
+          </div>
         </div>
       </div>
       <div className="flex justify-center mt-2">
@@ -119,7 +141,8 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
           </Button>
         ) : (
           <Button className="w-1/2" disabled>
-            第 {(1 + Number(lastJoinedRound)).toString()} 轮后可取回
+            第 {lastJoinedRound && token ? formatRoundForDisplay(1n + lastJoinedRound, token).toString() : '—'}{' '}
+            轮后可取回
           </Button>
         )}
       </div>

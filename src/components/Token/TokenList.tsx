@@ -6,10 +6,18 @@ import { toast } from 'react-hot-toast';
 import { useDebouncedCallback } from 'use-debounce';
 import { useRouter } from 'next/router';
 
+// my hooks
 import { useTokenDetails } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useTokensByPage } from '@/src/hooks/contracts/useLOVE20Launch';
-import { TokenInfo } from '@/src/types/life20types';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my contexts
 import { Token, TokenContext } from '@/src/contexts/TokenContext';
+
+// my types
+import { TokenInfo } from '@/src/types/life20types';
+
+// my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const PAGE_SIZE = 10;
@@ -51,6 +59,7 @@ export default function TokenList() {
         parentTokenSymbol: token.parentTokenSymbol,
         slTokenAddress: token.slAddress,
         stTokenAddress: token.stAddress,
+        initialStakeRound: Number(token.initialStakeRound),
         hasEnded: launchInfos[index].hasEnded,
         voteOriginBlocks: currentToken?.voteOriginBlocks ?? 0,
       }));
@@ -100,9 +109,16 @@ export default function TokenList() {
     }
   };
 
-  if (tokensError || detailsError) {
-    return <div className="text-red-500">加载错误，请稍后再试。</div>;
-  }
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (tokensError) {
+      handleContractError(tokensError, 'launch');
+    }
+    if (detailsError) {
+      handleContractError(detailsError, 'dataViewer');
+    }
+  }, [tokensError, detailsError]);
 
   return (
     <div className="space-y-4 m-4">

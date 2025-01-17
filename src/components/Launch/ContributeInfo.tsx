@@ -1,11 +1,20 @@
-import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
+import { useAccount } from 'wagmi';
+import { useEffect } from 'react';
 import Link from 'next/link';
 
-import { formatTokenAmount } from '@/src/lib/format';
+// my hooks
 import { useContributed } from '@/src/hooks/contracts/useLOVE20Launch';
-import { Token } from '@/src/contexts/TokenContext';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my types & funcs
+import { formatTokenAmount } from '@/src/lib/format';
 import { LaunchInfo } from '@/src/types/life20types';
+
+// my contexts
+import { Token } from '@/src/contexts/TokenContext';
+
+// my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 
 const ContributeInfo: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
@@ -20,6 +29,14 @@ const ContributeInfo: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> 
   if (!token) {
     return '';
   }
+
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (contributedError) {
+      handleContractError(contributedError, 'launch');
+    }
+  }, [contributedError]);
 
   return (
     <div className="p-6">

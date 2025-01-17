@@ -157,89 +157,6 @@ export const LOVE20SubmitAbi = [
   },
   {
     "type": "function",
-    "name": "actionInfos",
-    "inputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "head",
-        "type": "tuple",
-        "internalType": "struct ActionHead",
-        "components": [
-          {
-            "name": "id",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "author",
-            "type": "address",
-            "internalType": "address"
-          },
-          {
-            "name": "createAtBlock",
-            "type": "uint256",
-            "internalType": "uint256"
-          }
-        ]
-      },
-      {
-        "name": "body",
-        "type": "tuple",
-        "internalType": "struct ActionBody",
-        "components": [
-          {
-            "name": "maxStake",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "maxRandomAccounts",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "whiteList",
-            "type": "address[]",
-            "internalType": "address[]"
-          },
-          {
-            "name": "action",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "consensus",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "verificationRule",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "verificationInfoGuide",
-            "type": "string",
-            "internalType": "string"
-          }
-        ]
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "actionInfosByIds",
     "inputs": [
       {
@@ -466,7 +383,7 @@ export const LOVE20SubmitAbi = [
       {
         "name": "",
         "type": "tuple[]",
-        "internalType": "struct ActionSubmit[]",
+        "internalType": "struct ActionSubmitInfo[]",
         "components": [
           {
             "name": "submitter",
@@ -479,35 +396,6 @@ export const LOVE20SubmitAbi = [
             "internalType": "uint256"
           }
         ]
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "authorActionIds",
-    "inputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -738,5 +626,155 @@ export const LOVE20SubmitAbi = [
       }
     ],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "ActionCreate",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "author",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "actionBody",
+        "type": "tuple",
+        "indexed": false,
+        "internalType": "struct ActionBody",
+        "components": [
+          {
+            "name": "maxStake",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "maxRandomAccounts",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "whiteList",
+            "type": "address[]",
+            "internalType": "address[]"
+          },
+          {
+            "name": "action",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "consensus",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "verificationRule",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "verificationInfoGuide",
+            "type": "string",
+            "internalType": "string"
+          }
+        ]
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ActionSubmit",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "submitter",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "ActionIdNotExist",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "AlreadySubmitted",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "CannotSubmitAction",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "MaxRandomAccountsZero",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "MaxStakeZero",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "OnlyOneSubmitPerRound",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ProposalIndexOutOfRange",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "RoundNotStarted",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "StartGreaterThanEnd",
+    "inputs": []
   }
 ] as const satisfies Abi;

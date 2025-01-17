@@ -1,6 +1,11 @@
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
+// my hooks
 import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Join';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my components
 import ActionDetail from '@/src/components/ActionDetail/ActionDetail';
 import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
@@ -18,10 +23,13 @@ const ActRewardsPage = () => {
     error: errCurrentJoinRound,
   } = useCurrentRound();
 
-  if (errCurrentJoinRound) {
-    console.error(errCurrentJoinRound);
-    return <div>错误: {errCurrentJoinRound.message}</div>;
-  }
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errCurrentJoinRound) {
+      handleContractError(errCurrentJoinRound, 'join');
+    }
+  }, [errCurrentJoinRound]);
 
   if (isPendingCurrentJoinRound) {
     return <LoadingIcon />;

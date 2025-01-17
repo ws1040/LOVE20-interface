@@ -2,17 +2,26 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 
-import { checkWalletConnection } from '@/src/utils/web3';
-import { formatTokenAmount } from '@/src/lib/format';
-import { TokenContext } from '@/src/contexts/TokenContext';
-import { VerifiedAddress } from '@/src/types/life20types';
-import { useVerifiedAddressesByAction } from '@/src/hooks/contracts/useLOVE20DataViewer';
+// my hooks
+import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useMintActionReward } from '@/src/hooks/contracts/useLOVE20Mint';
+import { useVerifiedAddressesByAction } from '@/src/hooks/contracts/useLOVE20DataViewer';
+
+// my contexts
+import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my types
+import { VerifiedAddress } from '@/src/types/life20types';
+
+// my components
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 import ChangeRound from '@/src/components/Common/ChangeRound';
 import LeftTitle from '@/src/components/Common/LeftTitle';
-import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
+
+// my funcs
+import { checkWalletConnection } from '@/src/lib/web3';
+import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 
 const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: bigint }> = ({
   currentJoinRound,
@@ -21,18 +30,24 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress, chain: accountChain } = useAccount();
   const [selectedRound, setSelectedRound] = useState(0n);
+
   useEffect(() => {
-    if (currentJoinRound >= 2n) {
-      setSelectedRound(currentJoinRound - 2n);
+    if (token && currentJoinRound - BigInt(token.initialStakeRound) >= 3n) {
+      setSelectedRound(currentJoinRound - BigInt(token.initialStakeRound) - 1n);
     }
-  }, [currentJoinRound]);
+  }, [currentJoinRound, token]);
 
   // 读取验证地址
   const {
     verifiedAddresses,
     isPending: isPendingVerifiedAddresses,
     error: errorVerifiedAddresses,
-  } = useVerifiedAddressesByAction(token?.address as `0x${string}`, selectedRound, actionId);
+  } = useVerifiedAddressesByAction(
+    token?.address as `0x${string}`,
+    token && selectedRound ? selectedRound + BigInt(token.initialStakeRound) - 1n : 0n,
+    actionId,
+  );
+
   const [addresses, setAddresses] = useState<VerifiedAddress[]>([]);
   useEffect(() => {
     if (verifiedAddresses) {
@@ -52,8 +67,12 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
     if (!checkWalletConnection(accountChain)) {
       return;
     }
-    if (accountAddress && item.reward > 0) {
-      await mintActionReward(token?.address as `0x${string}`, selectedRound, actionId);
+    if (accountAddress && item.reward > 0 && token) {
+      await mintActionReward(
+        token?.address as `0x${string}`,
+        selectedRound + BigInt(token.initialStakeRound) - 1n,
+        actionId,
+      );
     }
   };
   useEffect(() => {
@@ -66,20 +85,26 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
     setSelectedRound(BigInt(round));
   };
 
-  if (errorVerifiedAddresses) {
-    console.error(errorVerifiedAddresses);
-    return <div>发生错误: {errorVerifiedAddresses.message}</div>;
-  }
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorVerifiedAddresses) {
+      handleContractError(errorVerifiedAddresses, 'dataViewer');
+    }
+    if (mintError) {
+      handleContractError(mintError, 'mint');
+    }
+  }, [errorVerifiedAddresses, mintError]);
 
   return (
-    <div className="relative px-6 py-4">
+    <div className="relative px-4 py-4">
       <div className="flex items-center">
         <LeftTitle title="验证结果" />
         <span className="text-sm text-greyscale-500 ml-2">行动轮第</span>
         <span className="text-sm text-secondary ml-1">{selectedRound.toString()}</span>
         <span className="text-sm text-greyscale-500 ml-1">轮</span>
         <ChangeRound
-          currentRound={currentJoinRound ? currentJoinRound - 1n : 0n}
+          currentRound={token && currentJoinRound ? formatRoundForDisplay(currentJoinRound - 2n, token) : 0n}
           handleChangedRound={handleChangedRound}
         />
       </div>
@@ -130,7 +155,6 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
           </tbody>
         </table>
       )}
-      {mintError && <div className="text-red-500">{mintError.message}</div>}
 
       <LoadingOverlay isLoading={isMinting || isConfirmingMint} text={isMinting ? '提交交易...' : '确认交易...'} />
     </div>

@@ -2,13 +2,17 @@ import React, { useEffect, useContext } from 'react';
 import { BaseError, useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 
+// my hooks
 import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useCurrentRound, useVotesNumByAccountByActionId, useVote } from '@/src/hooks/contracts/useLOVE20Vote';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
 import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import Round from '@/src/components/Common/Round';
 import LoadingOverlay from '../Common/LoadingOverlay';
 
 interface ActionPanelForVoteProps {
@@ -29,10 +33,11 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
   }, [currentRound, onRoundChange]);
 
   // 我的治理票&总有效票数
-  const { validGovVotes, isPending: isPendingValidGovVotes } = useValidGovVotes(
-    token?.address as `0x${string}`,
-    account as `0x${string}`,
-  );
+  const {
+    validGovVotes,
+    isPending: isPendingValidGovVotes,
+    error: errValidGovVotes,
+  } = useValidGovVotes(token?.address as `0x${string}`, account as `0x${string}`);
 
   // 获取我对actionId的投票数
   const {
@@ -49,16 +54,33 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
     isConfirmed: isConfirmedVote,
     writeError: errorVote,
   } = useVote();
-  const handleSubmit = () => {
+  const handleVote = () => {
     if (isWritingVote || isConfirmingVote) {
       return;
     }
     vote(token?.address as `0x${string}`, [actionId], [validGovVotes]);
   };
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorVote) {
+      handleContractError(errorVote, 'vote');
+    }
+    if (errCurrentRound) {
+      handleContractError(errCurrentRound, 'vote');
+    }
+    if (errVotesNumByAccountByActionId) {
+      handleContractError(errVotesNumByAccountByActionId, 'vote');
+    }
+    if (errValidGovVotes) {
+      handleContractError(errValidGovVotes, 'stake');
+    }
+  }, [errorVote, errCurrentRound, errVotesNumByAccountByActionId, errValidGovVotes]);
+
   return (
     <>
-      <div className="flex flex-col items-center space-y-6 p-6 mb-4">
+      <div className="flex flex-col items-center space-y-6 p-4 mb-4">
         <div className="stats w-full border grid grid-cols-2 divide-x-0">
           <div className="stat place-items-center">
             <div className="stat-title">我的已投票数</div>
@@ -83,7 +105,7 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
         </div>
 
         {!isPendingVotesNumByAccountByActionId && !votesNumByAccountByActionId ? (
-          <Button className="w-1/2" onClick={handleSubmit} disabled={isWritingVote || isConfirmingVote}>
+          <Button className="w-1/2" onClick={handleVote} disabled={isWritingVote || isConfirmingVote}>
             {isWritingVote || isConfirmingVote ? <LoadingIcon /> : '将100%票投给此行动'}
           </Button>
         ) : (
@@ -91,17 +113,6 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
             您已投票
           </Button>
         )}
-
-        {errVotesNumByAccountByActionId ? (
-          <p className="text-red-500">
-            Error:
-            {(errVotesNumByAccountByActionId as unknown as BaseError).shortMessage ||
-              errVotesNumByAccountByActionId.message}
-          </p>
-        ) : null}
-        {errorVote ? (
-          <p className="text-red-500">Error: {(errorVote as BaseError).shortMessage || errorVote.message}</p>
-        ) : null}
       </div>
       <LoadingOverlay
         isLoading={isWritingVote || isConfirmingVote}

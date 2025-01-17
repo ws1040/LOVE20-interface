@@ -1,25 +1,49 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
-import { TokenContext } from '@/src/contexts/TokenContext';
-import { formatTokenAmount } from '@/src/lib/format';
+// my hooks
 import { useGovVotesNum } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useTotalSupply } from '@/src/hooks/contracts/useLOVE20STToken';
+
+// my contexts
+import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
+import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import Round from '@/src/components/Common/Round';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 
 const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
 
-  const { govVotesNum, isPending: isPendingGovVotesNum } = useGovVotesNum(token?.address as `0x${string}`);
-  const { totalSupply: stTokenAmount, isPending: isPendingStTokenAmount } = useTotalSupply(
-    token?.stTokenAddress as `0x${string}`,
-  );
+  // 获取数据
+  const {
+    govVotesNum,
+    isPending: isPendingGovVotesNum,
+    error: errorGovVotesNum,
+  } = useGovVotesNum(token?.address as `0x${string}`);
+  const {
+    totalSupply: stTokenAmount,
+    isPending: isPendingStTokenAmount,
+    error: errorStTokenAmount,
+  } = useTotalSupply(token?.stTokenAddress as `0x${string}`);
+
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorGovVotesNum) {
+      handleContractError(errorGovVotesNum, 'stake');
+    }
+    if (errorStTokenAmount) {
+      handleContractError(errorStTokenAmount, 'stToken');
+    }
+  }, [errorGovVotesNum, errorStTokenAmount]);
 
   return (
-    <div className="px-6 pb-4">
-      <Round currentRound={currentRound} roundName="投票轮" />
+    <div className="px-4 pb-4">
+      <Round currentRound={currentRound} roundType="vote" />
 
       <div className="border rounded-lg p-0">
         <div className="stats  w-full grid grid-cols-2 divide-x-0">

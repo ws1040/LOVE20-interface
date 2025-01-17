@@ -82,12 +82,15 @@ export const useMaxVotesNum = (tokenAddress: `0x${string}`, accountAddress: `0x$
 /**
  * Hook to get the origin blocks.
  */
-export const useOriginBlocks = () => {
+export const useOriginBlocks = (flag: boolean) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20VoteAbi,
     functionName: 'originBlocks',
     args: [],
+    query: {
+      enabled: flag,
+    },
   });
 
   return { originBlocks: data as bigint | undefined, isPending, error };
@@ -166,39 +169,6 @@ export const useSubmitAddress = () => {
   });
 
   return { submitAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * Hook to get voted action IDs.
- */
-export const useVotedActionIds = (account: `0x${string}`, round: bigint, actionId: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VoteAbi,
-    functionName: 'votedActionIds',
-    args: [account, round, actionId],
-  });
-
-  return { votedActionIds: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook to get voted action IDs by account.
- */
-export const useVotedActionIdsByAccount = (
-  account: `0x${string}`,
-  round: bigint,
-  anotherAccount: `0x${string}`,
-  actionId: bigint,
-) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VoteAbi,
-    functionName: 'votedActionIdsByAccount',
-    args: [account, round, anotherAccount, actionId],
-  });
-
-  return { votedActionIdsByAccount: data as bigint, isPending, error };
 };
 
 /**

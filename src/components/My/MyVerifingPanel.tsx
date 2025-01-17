@@ -1,12 +1,19 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
+// my funcs
 import { formatTokenAmount } from '@/src/lib/format';
+
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my hooks
 import { useVotesNumByAccount } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useScoreByVerifier } from '@/src/hooks/contracts/useLOVE20Verify';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+// my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 
@@ -37,14 +44,25 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
   const remainingVotes =
     !isPendingVotesNumByAccount && !isPendingScoreByVerifier ? votesNumByAccount - scoreByVerifier : BigInt(0);
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (isVotesNumByAccountError) {
+      handleContractError(isVotesNumByAccountError, 'vote');
+    }
+    if (isScoreByVerifierError) {
+      handleContractError(isScoreByVerifierError, 'verify');
+    }
+  }, [isVotesNumByAccountError, isScoreByVerifierError]);
+
   if (!token) {
     return '';
   }
   if (!accountAddress) {
     return (
       <>
-        <div className="flex-col items-center px-6 pt-6 pb-2">
-          <LeftTitle title="我的验证" />
+        <div className="flex-col items-center px-4 pt-6 pb-2">
+          <LeftTitle title="行动验证" />
           <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>
         </div>
       </>
@@ -52,18 +70,18 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
   }
 
   return (
-    <div className="flex-col items-center px-6 pt-3 pb-2">
-      <LeftTitle title="我的验证" />
-      <div className="stats w-full grid grid-cols-2 divide-x-0">
+    <div className="flex-col items-center px-4 pt-3 pb-2">
+      <LeftTitle title="行动验证" />
+      <div className="stats w-full grid grid-cols-2 divide-x-0 mt-4">
         <div className="stat place-items-center pt-1 pb-2">
           <div className="stat-title text-sm">已验证票数</div>
-          <div className="stat-value text-xl">
+          <div className={`stat-value text-xl ${!showBtn ? 'text-secondary' : ''}`}>
             {isPendingVotesNumByAccount ? <LoadingIcon /> : formatTokenAmount(scoreByVerifier || BigInt(0))}
           </div>
         </div>
         <div className="stat place-items-center pt-1 pb-2">
           <div className="stat-title text-sm">未验证票数</div>
-          <div className="stat-value text-xl">
+          <div className={`stat-value text-xl ${!showBtn ? 'text-secondary' : ''}`}>
             {isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
               <LoadingIcon />
             ) : (

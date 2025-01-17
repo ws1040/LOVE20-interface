@@ -10,11 +10,12 @@ export interface Token {
   symbol: string;
   address: `0x${string}`;
   decimals: number;
-  hasEnded: boolean;
+  hasEnded: boolean; //发射是否结束
   parentTokenAddress: `0x${string}`;
   parentTokenSymbol: string;
   slTokenAddress: `0x${string}`;
   stTokenAddress: `0x${string}`;
+  initialStakeRound: number;
   voteOriginBlocks: number;
 }
 
@@ -58,7 +59,9 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   //   initTokenBySymbol(symbol);
   // }, []);
 
-  // Step 2. 根据 symbol 初始化 token
+  // Step 2. 根据 symbol 初始化 token，逻辑：
+  // (1)如果localstorage有该tokenSymbol缓存，直接从缓存中加载（不设置symbolToGetDetail）
+  // (2)否则设置symbolToGetDetail，用hook从合约获取token信息
   const initTokenBySymbol = (tokenSymbol: string) => {
     // symbol是首字母是大写，所以小写字母开头是path或page名称
     const ifNoSymbol = !tokenSymbol || tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase();
@@ -66,7 +69,6 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     try {
       // 从 Local Storage 加载 token
       const storedToken = localStorage.getItem('currentToken');
-
       if (storedToken && JSON.parse(storedToken)) {
         const _token = JSON.parse(storedToken);
         if (ifNoSymbol || tokenSymbol === _token.symbol) {
@@ -77,9 +79,9 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
       // 从 路由symbol 加载 token
       if (tokenSymbol && tokenSymbol.length > 0 && !ifNoSymbol) {
-        setSymbolToGetDetail(tokenSymbol as string);
+        setSymbolToGetDetail(tokenSymbol as string); //有指定token
       } else {
-        setSymbolToGetDetail(process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || '');
+        setSymbolToGetDetail(process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || ''); //没有指定token时,用默认token
       }
     } catch (error) {
       console.error('Failed to load token from localStorage:', error);
@@ -109,6 +111,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
             parentTokenSymbol: tokenInfoBySymbol.parentTokenSymbol,
             slTokenAddress: tokenInfoBySymbol.slAddress,
             stTokenAddress: tokenInfoBySymbol.stAddress,
+            initialStakeRound: Number(tokenInfoBySymbol.initialStakeRound),
             voteOriginBlocks: prevToken === null ? 0 : prevToken.voteOriginBlocks,
           } as Token),
       );
@@ -123,7 +126,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   }, [errorBySymbol]);
 
   // Step 4. 获取投票轮开始区块
-  const { originBlocks } = useOriginBlocks();
+  const { originBlocks } = useOriginBlocks(!!token && !token.voteOriginBlocks);
   useEffect(() => {
     if (originBlocks) {
       setToken(

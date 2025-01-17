@@ -1,50 +1,88 @@
-import { useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { toast } from 'react-hot-toast';
+'use client';
+
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import Link from 'next/link';
 
+import { useAccount } from 'wagmi';
+import { toast } from 'react-hot-toast';
+
+// UI & shadcn components
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+
+// my hooks
+import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+import { LaunchInfo } from '@/src/types/life20types';
 import { useContribute, useContributed } from '@/src/hooks/contracts/useLOVE20Launch';
 import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
+import { useError } from '@/src/contexts/ErrorContext';
+
+// my context
 import { Token } from '@/src/contexts/TokenContext';
-import { LaunchInfo } from '@/src/types/life20types';
+
+// my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
-import { checkWalletConnection } from '@/src/utils/web3';
+
+// 1. 定义带有动态验证的 FormSchema
+const getFormSchema = (balance: bigint) =>
+  z.object({
+    contributeAmount: z
+      .string()
+      .nonempty({ message: '请输入申购数量' })
+      .refine((val) => Number(val) > 0, {
+        message: '申购数量不能为 0',
+      })
+      .refine(
+        (val) => {
+          const amount = parseUnits(val) ?? 0n;
+          return amount <= balance;
+        },
+        {
+          message: `申购数量不能超过余额 (${formatUnits(balance)})`,
+        },
+      ),
+  });
 
 const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
-  const [contributeAmount, setContributeAmount] = useState('');
   const { address: account, chain: accountChain } = useAccount();
   const router = useRouter();
-  // 读取信息hooks
+
+  // 读取信息 hooks
   const {
     balance: balanceOfParentToken,
     isPending: isPendingBalanceOfParentToken,
     error: errorBalanceOfParentToken,
   } = useBalanceOf(token?.parentTokenAddress as `0x${string}`, account as `0x${string}`);
+
   const {
     contributed,
     isPending: isContributedPending,
     error: contributedError,
   } = useContributed(token?.address as `0x${string}`, account as `0x${string}`);
 
-  // 检查输入
-  const checkInput = () => {
-    if (!checkWalletConnection(accountChain)) {
-      return false;
-    }
-    if (parseUnits(contributeAmount) <= 0n) {
-      toast.error('申购数量不能为0');
-      return false;
-    }
-    return true;
+  // 2. 初始化 React Hook Form，传入动态的 FormSchema
+  const form = useForm<z.infer<ReturnType<typeof getFormSchema>>>({
+    resolver: zodResolver(getFormSchema(balanceOfParentToken || 0n)),
+    defaultValues: {
+      contributeAmount: '',
+    },
+  });
+
+  // 表单内点击“最高”时，设置最大值
+  const setMaxAmount = () => {
+    form.setValue('contributeAmount', formatUnits(balanceOfParentToken || 0n));
   };
 
-  // 授权
+  // 3. “授权”相关逻辑
   const {
     approve: approveParentToken,
     isWriting: isPendingApproveParentToken,
@@ -52,26 +90,27 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     isConfirmed: isConfirmedApproveParentToken,
     writeError: errApproveParentToken,
   } = useApprove(token?.parentTokenAddress as `0x${string}`);
-  const handleApprove = async () => {
-    if (!checkInput()) {
+
+  const onApprove = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
+    if (!checkWalletConnection(accountChain)) {
       return;
     }
     try {
-      await approveParentToken(
-        process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x${string}`,
-        parseUnits(contributeAmount),
-      );
+      // parseUnits 用于将 string 转换为 BigInt
+      const amountBigInt = parseUnits(data.contributeAmount) ?? 0n;
+      await approveParentToken(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x${string}`, amountBigInt);
     } catch (error) {
       console.error(error);
     }
   };
+
   useEffect(() => {
     if (isConfirmedApproveParentToken) {
       toast.success('授权成功');
     }
   }, [isConfirmedApproveParentToken]);
 
-  // 申购
+  // 4. “申购”相关逻辑
   const {
     contribute,
     isPending: isPendingContributeToken,
@@ -79,16 +118,19 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     isConfirmed: isConfirmedContributeToken,
     writeError: errContributeToken,
   } = useContribute();
-  const handleContribute = async () => {
-    if (!checkInput()) {
+
+  const onContribute = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
+    if (!checkWalletConnection(accountChain)) {
       return;
     }
     try {
-      await contribute(token?.address as `0x${string}`, parseUnits(contributeAmount));
+      const amountBigInt = parseUnits(data.contributeAmount) ?? 0n;
+      await contribute(token?.address as `0x${string}`, amountBigInt, account as `0x${string}`);
     } catch (error) {
       console.error(error);
     }
   };
+
   useEffect(() => {
     if (isConfirmedContributeToken) {
       toast.success('申购成功');
@@ -97,13 +139,37 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
         router.push(`/launch?symbol=${token?.symbol}`);
       }, 2000);
     }
-  }, [isConfirmedContributeToken]);
+  }, [isConfirmedContributeToken, router, token?.symbol]);
 
-  // 设置最大金额
-  const setMaxAmount = () => {
-    setContributeAmount(formatUnits(balanceOfParentToken || 0n));
-  };
+  // 5. 如果 balanceOfParentToken 为 0，则提示用户获取
+  const { setError } = useError();
+  useEffect(() => {
+    if (balanceOfParentToken !== undefined && balanceOfParentToken <= 0n) {
+      setError({
+        name: '余额不足',
+        message: `请先通过下方链接 获取 ${token?.parentTokenSymbol}，再来申购`,
+      });
+    }
+  }, [balanceOfParentToken, token]);
 
+  // 6. 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errContributeToken) {
+      handleContractError(errContributeToken, 'launch');
+    }
+    if (contributedError) {
+      handleContractError(contributedError, 'launch');
+    }
+    if (errApproveParentToken) {
+      handleContractError(errApproveParentToken, 'token');
+    }
+    if (errorBalanceOfParentToken) {
+      handleContractError(errorBalanceOfParentToken, 'token');
+    }
+  }, [errApproveParentToken, errContributeToken, errorBalanceOfParentToken, contributedError, handleContractError]);
+
+  // 控制按钮文案
   const hasStartedApproving =
     isPendingApproveParentToken || isConfirmingApproveParentToken || isConfirmedApproveParentToken;
 
@@ -125,71 +191,84 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
           </div>
         </div>
 
-        <div>
-          <div className="flex justify-between">
-            <Input
-              type="number"
-              placeholder={`增加申购数量(${token.parentTokenSymbol})`}
-              value={contributeAmount}
-              onChange={(e) => setContributeAmount(e.target.value)}
-              className="my-auto"
-              disabled={hasStartedApproving || (balanceOfParentToken || 0n) <= 0n}
+        <Form {...form}>
+          <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="contributeAmount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>申购数量：</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder={`请填写${token.parentTokenSymbol}数量`}
+                      disabled={hasStartedApproving || (balanceOfParentToken || 0n) <= 0n}
+                      className="!ring-secondary-foreground"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="flex items-center text-sm mb-4">
-            <span className="text-greyscale-400">
-              {formatTokenAmount(balanceOfParentToken || 0n)} {token.parentTokenSymbol}
-            </span>
-            <Button
-              variant="link"
-              size="sm"
-              onClick={setMaxAmount}
-              disabled={hasStartedApproving || (balanceOfParentToken || 0n) <= 0n}
-              className="text-secondary"
-            >
-              最高
-            </Button>
-            <Link href={`/launch/deposit?symbol=${token.symbol}`}>
-              <Button variant="link" size="sm" className="text-secondary">
-                获取{token.parentTokenSymbol}
+            <div className="flex items-center text-sm mb-4">
+              <span className="text-greyscale-400">
+                {formatTokenAmount(balanceOfParentToken || 0n)} {token.parentTokenSymbol}
+              </span>
+              <Button
+                variant="link"
+                size="sm"
+                onClick={setMaxAmount}
+                disabled={hasStartedApproving || (balanceOfParentToken || 0n) <= 0n}
+                className="text-secondary"
+              >
+                最高
               </Button>
-            </Link>
-          </div>
+              <Link href={`/launch/deposit?symbol=${token.symbol}`}>
+                <Button variant="link" size="sm" className="text-secondary">
+                  获取{token.parentTokenSymbol}
+                </Button>
+              </Link>
+            </div>
 
-          <div className="flex justify-center space-x-4">
-            <Button className="w-1/2" onClick={handleApprove} disabled={hasStartedApproving}>
-              {isPendingApproveParentToken
-                ? '1.授权中...'
-                : isConfirmingApproveParentToken
-                ? '1.确认中...'
-                : isConfirmedApproveParentToken
-                ? '1.已授权'
-                : '1.授权'}
-            </Button>
-            <Button
-              className={`w-1/2 text-white py-2 rounded-lg`}
-              onClick={handleContribute}
-              disabled={
-                !isConfirmedApproveParentToken ||
-                isPendingContributeToken ||
-                isConfirmingContributeToken ||
-                isConfirmedContributeToken
-              }
-            >
-              {isPendingContributeToken
-                ? '2.申购中...'
-                : isConfirmingContributeToken
-                ? '2.确认中...'
-                : isConfirmedContributeToken
-                ? '2.申购成功'
-                : '2.申购'}
-            </Button>
-          </div>
-        </div>
-        {errApproveParentToken && <div className="text-red-500">{errApproveParentToken.message}</div>}
-        {errContributeToken && <div className="text-red-500">{errContributeToken.message}</div>}
+            <div className="flex justify-center space-x-4">
+              {/* 先授权 */}
+              <Button className="w-1/2" onClick={form.handleSubmit(onApprove)} disabled={hasStartedApproving}>
+                {isPendingApproveParentToken
+                  ? '1.授权中...'
+                  : isConfirmingApproveParentToken
+                  ? '1.确认中...'
+                  : isConfirmedApproveParentToken
+                  ? '1.已授权'
+                  : '1.授权'}
+              </Button>
+
+              {/* 再申购，需要先完成授权 */}
+              <Button
+                className="w-1/2 text-white py-2 rounded-lg"
+                onClick={form.handleSubmit(onContribute)}
+                disabled={
+                  !isConfirmedApproveParentToken ||
+                  isPendingContributeToken ||
+                  isConfirmingContributeToken ||
+                  isConfirmedContributeToken
+                }
+              >
+                {isPendingContributeToken
+                  ? '2.申购中...'
+                  : isConfirmingContributeToken
+                  ? '2.确认中...'
+                  : isConfirmedContributeToken
+                  ? '2.申购成功'
+                  : '2.申购'}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
+
       <LoadingOverlay
         isLoading={
           isPendingApproveParentToken ||

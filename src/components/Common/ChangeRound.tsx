@@ -38,7 +38,7 @@ const ChangeRound: React.FC<{ currentRound: bigint; handleChangedRound: (round: 
         <div className="px-4">
           <div className="max-h-64 overflow-y-auto">
             {Array.from({ length: Number(currentRound) }, (_, i) => {
-              const round = Number(currentRound) - 1 - i;
+              const round = Number(currentRound) - i;
               return (
                 <div
                   key={round}

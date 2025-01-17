@@ -1,14 +1,19 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
 
+// my hooks
 import { useActionInfosByPage, useActionSubmits } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my context
 import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
 import { ActionInfo } from '@/src/types/life20types';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LeftTitle from '@/src/components/Common/LeftTitle';
-import { formatTokenAmount } from '@/src/lib/format';
 
 interface SubmitingActionListProps {
   currentRound: bigint;
@@ -29,20 +34,26 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
     error: errorActionSubmits,
   } = useActionSubmits((token?.address as `0x${string}`) || '', currentRound);
 
-  if (errorActionInfosByPage) {
-    console.error(errorActionInfosByPage);
-    return <div>加载出错，请稍后再试。</div>;
-  }
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorActionInfosByPage) {
+      handleContractError(errorActionInfosByPage, 'submit');
+    }
+    if (errorActionSubmits) {
+      handleContractError(errorActionSubmits, 'submit');
+    }
+  }, [errorActionInfosByPage, errorActionSubmits]);
 
   if (!token) {
     return <LoadingIcon />;
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <LeftTitle title="所有行动" />
-        <Button variant="outline" className="text-secondary border-secondary" asChild>
+        <Button variant="link" className="text-secondary border-secondary" asChild>
           <Link href={`/action/new`}>发起新行动</Link>
         </Button>
       </div>

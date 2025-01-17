@@ -87,20 +87,6 @@ export const useMaxSupply = (token: `0x${string}`) => {
 };
 
 /**
- * useMintableAddress Hook
- */
-export const useMintableAddress = (token: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: token,
-    abi: LOVE20TokenAbi,
-    functionName: 'mintableAddress',
-    args: [],
-  });
-
-  return { mintableAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
  * useName Hook
  */
 export const useName = (token: `0x${string}`) => {
@@ -140,20 +126,6 @@ export const useParentTokenAddress = (token: `0x${string}`) => {
   });
 
   return { parentTokenAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * useReentrant Hook
- */
-export const useReentrant = (token: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: token,
-    abi: LOVE20TokenAbi,
-    functionName: 'reentrant',
-    args: [],
-  });
-
-  return { reentrant: data as boolean | undefined, isPending, error };
 };
 
 /**

@@ -1,62 +1,107 @@
+'use client';
+
 import { useAccount } from 'wagmi';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
 import { Button } from '@/components/ui/button';
 
+// my hooks
 import { useSubmitNewAction } from '@/src/hooks/contracts/useLOVE20Submit';
-import { TokenContext } from '@/src/contexts/TokenContext';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my funcs
+import { checkWalletConnection } from '@/src/lib/web3';
 import { parseUnits } from '@/src/lib/format';
+
+// my contexts
+import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
 import Header from '@/src/components/Header';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
-import { checkWalletConnection } from '@/src/utils/web3';
+
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea'; // 假设你有这个组件
+
+// 定义表单校验规则
+const FormSchema = z.object({
+  actionName: z.string().min(1, { message: '行动名称不能为空' }),
+  consensus: z.string().min(1, { message: '行动共识不能为空' }),
+  verificationRule: z.string().min(1, { message: '验证规则不能为空' }),
+  verificationInfoGuide: z.string().min(1, { message: '验证提示不能为空' }),
+  rewardAddressCount: z
+    .string()
+    .min(1, { message: '奖励地址数不能为空' })
+    .refine((val) => Number(val) > 0, { message: '奖励地址数必须大于0' }),
+  maxStake: z
+    .string()
+    .min(1, { message: '最大质押不能为空' })
+    .refine((val) => Number(val) > 0, { message: '最大质押必须大于0' }),
+  whiteList: z.string().optional(),
+});
+
+type FormValues = z.infer<typeof FormSchema>;
 
 const NewAction = () => {
-  // hook
   const { chain: accountChain } = useAccount();
   const router = useRouter();
   const {
     submitNewAction,
     isWriting: isSubmitting,
-    isConfirming: isConfirming,
+    isConfirming,
     isConfirmed: isSubmitted,
     writeError: submitError,
     writeData,
   } = useSubmitNewAction();
   const { token } = useContext(TokenContext) || {};
 
-  // 表单数据
-  const [form, setForm] = useState({
-    actionName: '',
-    consensus: '',
-    verificationRule: '',
-    verificationInfoGuide: '',
-    rewardAddressCount: '',
-    maxStake: '',
-    whiteList: '',
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (submitError) {
+      handleContractError(submitError, 'submit');
+    }
+  }, [submitError]);
+
+  // 表单
+  const form = useForm<FormValues>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      actionName: '',
+      consensus: '',
+      verificationRule: '',
+      verificationInfoGuide: '',
+      rewardAddressCount: '',
+      maxStake: '',
+      whiteList: '',
+    },
+    mode: 'onChange',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
   // 提交表单
-  const handleSubmit = async () => {
+  const onSubmit = async (values: FormValues) => {
     if (!checkWalletConnection(accountChain)) {
       return;
     }
     const actionBody = {
-      maxStake: form.maxStake ? parseUnits(form.maxStake) : 0n,
-      maxRandomAccounts: form.rewardAddressCount ? BigInt(form.rewardAddressCount) : 0n,
-      whiteList: form.whiteList ? form.whiteList.split(',').map((addr) => addr.trim() as `0x${string}`) : [],
-      action: form.actionName,
-      consensus: form.consensus,
-      verificationRule: form.verificationRule,
-      verificationInfoGuide: form.verificationInfoGuide,
+      maxStake: values.maxStake ? parseUnits(values.maxStake) : 0n,
+      maxRandomAccounts: values.rewardAddressCount ? BigInt(values.rewardAddressCount) : 0n,
+      whiteList: values.whiteList ? values.whiteList.split(',').map((addr) => addr.trim() as `0x${string}`) : [],
+      action: values.actionName,
+      consensus: values.consensus,
+      verificationRule: values.verificationRule,
+      verificationInfoGuide: values.verificationInfoGuide,
     };
     await submitNewAction(token?.address as `0x${string}`, actionBody);
   };
 
+  // 提交后跳转
   useEffect(() => {
     if (isSubmitted) {
       router.push(`/vote/actions4submit?symbol=${token?.symbol}`);
@@ -66,97 +111,130 @@ const NewAction = () => {
   return (
     <>
       <Header title="创建新行动" />
-      <div className="max-w-xl mx-auto p-4">
+      <div className="max-w-xl p-4">
         <LeftTitle title="创建新行动" />
-        <div className="mt-4 space-y-4">
-          <div>
-            <label className="block text-left mb-1 text-sm text-greyscale-500">行动名称</label>
-            <input
-              type="text"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 space-y-4">
+            <FormField
+              control={form.control}
               name="actionName"
-              value={form.actionName}
-              placeholder="一句话说明行动"
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>行动名称</FormLabel>
+                  <FormControl>
+                    <Input placeholder="一句话说明行动" className="!ring-secondary-foreground" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <label className="block text-left mb-1 text-sm text-greyscale-500">行动共识</label>
-            <input
-              type="text"
+            <FormField
+              control={form.control}
               name="consensus"
-              value={form.consensus}
-              placeholder="描述行动所基于的共识"
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2 "
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>行动共识</FormLabel>
+                  <FormControl>
+                    <Input placeholder="描述行动所基于的共识" className="!ring-secondary-foreground" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <label className="block text-left mb-1 text-sm text-greyscale-500">验证规则</label>
-            <textarea
+            <FormField
+              control={form.control}
               name="verificationRule"
-              value={form.verificationRule}
-              placeholder="验证者验证的规则"
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>验证规则</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="验证者验证的规则" className="!ring-secondary-foreground" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <label className="block text-left mb-1 text-sm text-greyscale-500">验证提示</label>
-            <input
-              type="text"
+            <FormField
+              control={form.control}
               name="verificationInfoGuide"
-              value={form.verificationInfoGuide}
-              placeholder="提示给行动参与者，辅助参与者填写信息"
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>验证提示</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="提示给行动参与者，辅助参与者填写信息"
+                      className="!ring-secondary-foreground"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <label className="block text-left mb-1 text-sm text-greyscale-500">奖励地址数</label>
-            <input
-              type="number"
+            <FormField
+              control={form.control}
               name="rewardAddressCount"
-              value={form.rewardAddressCount}
-              placeholder="地址数必须大于0"
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2 "
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>奖励地址数</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="地址数必须大于0"
+                      className="!ring-secondary-foreground"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <label className="block text-left mb-1 text-sm text-greyscale-500">最大质押</label>
-            <input
-              type="number"
+            <FormField
+              control={form.control}
               name="maxStake"
-              value={form.maxStake}
-              onChange={handleChange}
-              placeholder="最大质押数必须大于0"
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2 "
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>最大质押</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="最大质押数必须大于0"
+                      className="!ring-secondary-foreground"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <label className="block text-left mb-1 text-sm text-greyscale-500">白名单</label>
-            <input
-              type="text"
+            <FormField
+              control={form.control}
               name="whiteList"
-              value={form.whiteList}
-              onChange={handleChange}
-              placeholder="不填为不限，或多个地址用逗号分隔"
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>白名单</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="不填为不限，或多个地址用逗号分隔"
+                      className="!ring-secondary-foreground"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>多个地址用逗号分隔</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <Button
-            onClick={handleSubmit}
-            disabled={isSubmitting || isConfirming || isSubmitted}
-            className={`mt-4 w-full`}
-          >
-            {isSubmitting ? '提交中...' : isConfirming ? '确认中...' : isSubmitted ? '已提交' : '提交'}
-          </Button>
-          <p className="text-greyscale-500 text-sm">
-            发起后，会自动推举该行动到当前投票轮的行动列表 / 本轮已推举或提交过
-          </p>
+            <Button type="submit" disabled={isSubmitting || isConfirming || isSubmitted} className="mt-4 w-full">
+              {isSubmitting ? '提交中...' : isConfirming ? '确认中...' : isSubmitted ? '已提交' : '提交'}
+            </Button>
+          </form>
+        </Form>
+        <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mt-4">
+          <p className="mb-1">说明：</p>
+          <p>1. 每个轮次，1个地址最多可以 创建/推举 1 个行动；</p>
+          <p>2. 创建后，会自动推举该行动；</p>
         </div>
-        {submitError && <div className="text-red-500 text-center">{submitError.message}</div>}
       </div>
       <LoadingOverlay isLoading={isSubmitting || isConfirming} text={isSubmitting ? '提交交易...' : '确认交易...'} />
     </>

@@ -26,10 +26,6 @@ const Home: NextPage = () => {
     }
   }, [token, router]);
 
-  if (!token) {
-    return <LoadingIcon />;
-  }
-
   return <LoadingIcon />;
 };
 

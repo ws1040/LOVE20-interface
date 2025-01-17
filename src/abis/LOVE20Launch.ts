@@ -17,19 +17,6 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "LAUNCH_AMOUNT",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "PARENT_TOKEN_FUNDRAISING_GOAL",
     "inputs": [],
     "outputs": [
@@ -69,20 +56,7 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "TOTAL_SUPPLY",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "WITHDRAW_FEE_RATE",
+    "name": "WITHDRAW_FEE_RATE_PERCENT",
     "inputs": [],
     "outputs": [
       {
@@ -102,54 +76,6 @@ export const LOVE20LaunchAbi = [
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "_launchedChildTokens",
-    "inputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "_launchingChildTokens",
-    "inputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
       }
     ],
     "stateMutability": "view"
@@ -340,6 +266,11 @@ export const LOVE20LaunchAbi = [
         "name": "parentTokenAmount",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "to",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "outputs": [],
@@ -422,6 +353,11 @@ export const LOVE20LaunchAbi = [
     "name": "initialize",
     "inputs": [
       {
+        "name": "tokenFactoryAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
         "name": "submitAddress_",
         "type": "address",
         "internalType": "address"
@@ -453,16 +389,6 @@ export const LOVE20LaunchAbi = [
       },
       {
         "name": "secondHalfMinBlocks",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "totalSupply",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "launchAmount",
         "type": "uint256",
         "internalType": "uint256"
       },
@@ -531,7 +457,7 @@ export const LOVE20LaunchAbi = [
       {
         "name": "launchInfos_",
         "type": "tuple[]",
-        "internalType": "struct LaunchInfo[]",
+        "internalType": "struct ILOVE20Launch.LaunchInfo[]",
         "components": [
           {
             "name": "parentTokenAddress",
@@ -707,61 +633,68 @@ export const LOVE20LaunchAbi = [
     "name": "launches",
     "inputs": [
       {
-        "name": "",
+        "name": "tokenAddress",
         "type": "address",
         "internalType": "address"
       }
     ],
     "outputs": [
       {
-        "name": "parentTokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "parentTokenFundraisingGoal",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "secondHalfMinBlocks",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "launchAmount",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "startBlock",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "secondHalfStartBlock",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "hasEnded",
-        "type": "bool",
-        "internalType": "bool"
-      },
-      {
-        "name": "participantCount",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "totalContributed",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "totalExtraRefunded",
-        "type": "uint256",
-        "internalType": "uint256"
+        "name": "launchInfo",
+        "type": "tuple",
+        "internalType": "struct ILOVE20Launch.LaunchInfo",
+        "components": [
+          {
+            "name": "parentTokenAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "parentTokenFundraisingGoal",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "secondHalfMinBlocks",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "launchAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "startBlock",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "secondHalfStartBlock",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "hasEnded",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "participantCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalContributed",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalExtraRefunded",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
       }
     ],
     "stateMutability": "view"
@@ -1036,6 +969,19 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
+    "name": "tokenFactoryAddress",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "tokenNum",
     "inputs": [],
     "outputs": [
@@ -1112,5 +1058,262 @@ export const LOVE20LaunchAbi = [
       }
     ],
     "stateMutability": "view"
+  },
+  {
+    "type": "event",
+    "name": "Claim",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "claimer",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "receivedTokenAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "extraRefund",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Contribute",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "contributor",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "totalContributed",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "participantCount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "DeployToken",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "tokenSymbol",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "parentTokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "deployer",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "LaunchEnd",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "totalContributed",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "participantCount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "endBlock",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SecondHalfStart",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "secondHalfStartBlock",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "totalContributed",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Withdraw",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "contributor",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "fee",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "received",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AlreadyInitialized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidParentToken",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidTokenSymbol",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "LaunchAlreadyEnded",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "LaunchAlreadyExists",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "LaunchNotEnded",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NoContribution",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotEligibleToDeployToken",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ParentTokenNotSet",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TokenSymbolExists",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TokensAlreadyClaimed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TransferFailed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ZeroContribution",
+    "inputs": []
   }
 ] as const satisfies Abi;

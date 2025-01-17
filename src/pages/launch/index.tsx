@@ -1,8 +1,15 @@
+'use client';
+
 import { useContext, useEffect } from 'react';
 
+// my contexts
 import { Token, TokenContext } from '@/src/contexts/TokenContext';
-import { useLaunches } from '@/src/hooks/contracts/useLOVE20Launch';
 
+// my hooks
+import { useLaunches } from '@/src/hooks/contracts/useLOVE20Launch';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my components
 import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LaunchStatus from '@/src/components/Launch/LaunchStatus';
@@ -21,6 +28,14 @@ export default function TokenFairLaunch() {
     error: launchInfoError,
   } = useLaunches(token ? token.address : '0x0');
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (launchInfoError) {
+      handleContractError(launchInfoError, 'launch');
+    }
+  }, [launchInfoError]);
+
   // 如果发射已结束，检查更新 token 的 hasEnded 状态
   useEffect(() => {
     if (launchInfo && token && launchInfo.hasEnded && !token.hasEnded && setToken) {
@@ -30,9 +45,6 @@ export default function TokenFairLaunch() {
 
   if (isLaunchInfoPending) {
     return <LoadingIcon />;
-  }
-  if (launchInfoError) {
-    return <div className="text-red-500">加载发射信息失败</div>;
   }
   if (!launchInfo) {
     return <div className="text-red-500">找不到发射信息</div>;

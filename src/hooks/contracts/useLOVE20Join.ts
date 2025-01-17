@@ -404,13 +404,14 @@ export const useJoin = () => {
     additionalStakeAmount: bigint,
     verificationInfo_: string,
     rounds: bigint,
+    to: `0x${string}`,
   ) => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
         abi: LOVE20JoinAbi,
         functionName: 'join',
-        args: [tokenAddress, actionId, additionalStakeAmount, verificationInfo_, rounds],
+        args: [tokenAddress, actionId, additionalStakeAmount, verificationInfo_, rounds, to],
       });
     } catch (err) {
       console.error('Join failed:', err);

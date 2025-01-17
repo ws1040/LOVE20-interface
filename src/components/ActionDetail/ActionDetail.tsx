@@ -1,14 +1,20 @@
 // components/ActivityDetail/ActivityDetail.tsx
 
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
-import { useActionInfo } from '@/src/hooks/contracts/useLOVE20Submit';
-import { useActionSubmits } from '@/src/hooks/contracts/useLOVE20Submit';
-import { ActionSubmit } from '@/src/types/life20types';
+// my hooks
+import { useActionInfo, useActionSubmits } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
+import { ActionSubmit } from '@/src/types/life20types';
 import { formatTokenAmount } from '@/src/lib/format';
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 interface ActivityDetailProps {
   actionId: bigint;
@@ -37,13 +43,27 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
   const submitter =
     actionSubmits?.find((submit: ActionSubmit) => submit.actionId == Number(actionId))?.submitter || 'N/A';
 
+  // 错误提示
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorActionInfo) {
+      handleContractError(errorActionInfo, 'submit');
+    }
+    if (errorActionSubmits) {
+      handleContractError(errorActionSubmits, 'submit');
+    }
+  }, [errorActionInfo, errorActionSubmits]);
+
   if (isPendingActionInfo) {
     return <LoadingIcon />;
   }
 
   return (
     <>
-      <div className="max-w-4xl mx-auto p-6 pt-4 pb-2 border-t border-greyscale-100">
+      <div className="mx-auto p-4 pb-2 border-t border-greyscale-100">
+        <LeftTitle title="行动详情" />
+      </div>
+      <div className="mx-auto p-4 pb-2 ">
         <div className="flex flex-col">
           <span className="text-sm text-greyscale-500">No.{actionInfo?.head.id.toString()}</span>
           <span className="text-xl font-bold text-black">{actionInfo?.body.action}</span>
@@ -67,7 +87,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
           )}
         </div>
       </div>
-      <div className="max-w-4xl mx-auto p-6 pt-4 pb-2">
+      <div className="mx-auto p-4 pb-2">
         <div className="mb-6">
           <div className="mb-4">
             <h3 className="text-sm font-bold">参与资产上限</h3>
@@ -102,12 +122,6 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
             </p>
           </div>
         </div>
-
-        {(errorActionInfo || (showSubmitter && errorActionSubmits)) && (
-          <div className="text-center text-sm text-red-500">
-            {errorActionInfo?.message || errorActionSubmits?.message}
-          </div>
-        )}
       </div>
     </>
   );

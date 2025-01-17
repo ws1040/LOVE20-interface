@@ -1,12 +1,12 @@
 // src/components/Header.tsx
 
 import Head from 'next/head';
-import React from 'react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
+import React, { useEffect } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { ErrorAlert } from '@/src/components/Common/ErrorAlert';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useAccount } from 'wagmi';
+import { useError } from '@/src/contexts/ErrorContext';
 
 interface HeaderProps {
   title: string;
@@ -15,6 +15,17 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ title }) => {
   const { address, chain } = useAccount();
   const chainName = process.env.NEXT_PUBLIC_CHAIN;
+
+  const { setError } = useError();
+
+  useEffect(() => {
+    if (address && !chain) {
+      setError({
+        name: address ? '钱包网络错误' : '未连接钱包',
+        message: address ? `请切换到 ${chainName} 网络` : '请先连接钱包，再进行操作',
+      });
+    }
+  }, [address, chain]);
 
   return (
     <>
@@ -28,15 +39,9 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
         <ConnectButton />
       </header>
 
-      {address && !chain && (
-        <div className="p-6">
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>{address ? '钱包网络错误' : '未连接钱包'}</AlertTitle>
-            <AlertDescription>{address ? `请切换到 ${chainName} 网络` : '请先连接钱包，再进行操作'}</AlertDescription>
-          </Alert>
-        </div>
-      )}
+      <div className="px-4">
+        <ErrorAlert />
+      </div>
     </>
   );
 };
