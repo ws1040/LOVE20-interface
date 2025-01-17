@@ -67,13 +67,18 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     const ifNoSymbol = !tokenSymbol || tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase();
 
     try {
-      // 从 Local Storage 加载 token
-      const storedToken = localStorage.getItem('currentToken');
-      if (storedToken && JSON.parse(storedToken)) {
-        const _token = JSON.parse(storedToken);
-        if (ifNoSymbol || tokenSymbol === _token.symbol) {
-          setToken(_token);
-          return;
+      if (ifNoSymbol) {
+        // 没有指定token时, 清掉 localStorage
+        localStorage.removeItem('currentToken');
+      } else {
+        // 从 Local Storage 加载 token
+        const storedToken = localStorage.getItem('currentToken');
+        if (storedToken && JSON.parse(storedToken)) {
+          const _token = JSON.parse(storedToken);
+          if (ifNoSymbol || tokenSymbol === _token.symbol) {
+            setToken(_token);
+            return;
+          }
         }
       }
 
