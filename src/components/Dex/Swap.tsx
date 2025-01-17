@@ -297,7 +297,8 @@ const SwapPanel = () => {
     if (fromTokenInfo.amountShow) {
       const val = parseFloat(fromTokenInfo.amountShow) || 0;
       const calculatedFee = (val * feePercentage) / 100;
-      setFee(calculatedFee.toFixed(4));
+      const feeValue = calculatedFee < 0.0001 ? calculatedFee.toExponential(2) : calculatedFee.toFixed(6);
+      setFee(feeValue);
     } else {
       setFee('0');
     }

@@ -54,7 +54,6 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
   const [selectedActions, setSelectedActions] = useState<Set<bigint>>(new Set());
   const handleCheckboxChange = (actionId: bigint) => {
     setSelectedActions((prevSelected) => {
-      console.log('prevSelected', prevSelected);
       const newSelected = new Set(prevSelected);
       if (newSelected.has(actionId)) {
         newSelected.delete(actionId);

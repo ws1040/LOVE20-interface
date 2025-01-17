@@ -14,6 +14,7 @@ import { ActionSubmit } from '@/src/types/life20types';
 import { formatTokenAmount } from '@/src/lib/format';
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 interface ActivityDetailProps {
   actionId: bigint;
@@ -59,7 +60,10 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
 
   return (
     <>
-      <div className="max-w-4xl mx-auto p-4 pb-2 border-t border-greyscale-100">
+      <div className="mx-auto p-4 pb-2 border-t border-greyscale-100">
+        <LeftTitle title="行动详情" />
+      </div>
+      <div className="mx-auto p-4 pb-2 ">
         <div className="flex flex-col">
           <span className="text-sm text-greyscale-500">No.{actionInfo?.head.id.toString()}</span>
           <span className="text-xl font-bold text-black">{actionInfo?.body.action}</span>
@@ -83,7 +87,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
           )}
         </div>
       </div>
-      <div className="max-w-4xl mx-auto p-4 pb-2">
+      <div className="mx-auto p-4 pb-2">
         <div className="mb-6">
           <div className="mb-4">
             <h3 className="text-sm font-bold">参与资产上限</h3>

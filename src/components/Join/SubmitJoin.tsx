@@ -81,8 +81,8 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
       .refine(
         (val) => {
           const inputVal = parseUnits(val);
-          // 不允许超过剩余可参与数
-          return inputVal <= maxStake;
+          // 确保 inputVal 不为 null 并且不超过剩余可参与数
+          return inputVal !== null && inputVal <= maxStake;
         },
         {
           message: '参与代币数不能超过活动最大限制',
@@ -91,8 +91,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
       .refine(
         (val) => {
           const inputVal = parseUnits(val);
-          // 不允许超过当前持有代币数
-          return tokenBalance ? inputVal <= tokenBalance : true;
+          return inputVal !== null && tokenBalance ? inputVal <= tokenBalance : true;
         },
         {
           message: '参与代币数不能超过持有代币数',
@@ -135,7 +134,9 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
       return;
     }
 
-    const newStake = parseUnits(values.additionalStakeAmount);
+    // 确保 newStake 始终为 bigint，避免 null
+    const newStake = parseUnits(values.additionalStakeAmount) ?? 0n;
+
     if (newStake === 0n && stakedAmount && stakedAmount > 0n) {
       toast.error('当前无需授权。');
       return;
@@ -167,7 +168,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
       await join(
         token?.address as `0x${string}`,
         BigInt(actionInfo.head.id),
-        parseUnits(values.additionalStakeAmount),
+        parseUnits(values.additionalStakeAmount) ?? 0n,
         values.verificationInfo,
         BigInt(values.rounds),
         accountAddress as `0x${string}`,
@@ -211,6 +212,10 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
   // ------------------------------
   //  组件渲染
   // ------------------------------
+  const additionalStakeAmount = form.watch('additionalStakeAmount');
+  const parsedStakeAmount = parseUnits(additionalStakeAmount || '0') ?? 0n;
+  const needsApproval = parsedStakeAmount > 0n;
+
   return (
     <>
       <div className="px-6 pt-0 pb-2">
@@ -285,7 +290,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
 
             {/* 操作按钮 */}
             <div className="flex justify-center space-x-4 pt-2">
-              {maxStake > 2n && (
+              {needsApproval && (
                 <Button
                   className="w-1/2"
                   disabled={isPendingApprove || isConfirmingApprove || isConfirmedApprove || isConfirmedJoin}
@@ -307,8 +312,8 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
               <Button
                 className="w-1/2"
                 disabled={
-                  maxStake > 2n
-                    ? (!isConfirmedApprove && stakedAmount !== 0n) ||
+                  needsApproval
+                    ? (!isConfirmedApprove && parsedStakeAmount !== 0n) ||
                       isPendingJoin ||
                       isConfirmingJoin ||
                       isConfirmedJoin
@@ -320,18 +325,18 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
                 }}
               >
                 {isPendingJoin
-                  ? maxStake > 2n
+                  ? needsApproval
                     ? '2.加入中...'
                     : '加入中...'
                   : isConfirmingJoin
-                  ? maxStake > 2n
+                  ? needsApproval
                     ? '2.确认中...'
                     : '确认中...'
                   : isConfirmedJoin
-                  ? maxStake > 2n
+                  ? needsApproval
                     ? '2.已加入'
                     : '已加入'
-                  : maxStake > 2n
+                  : needsApproval
                   ? '2.加入'
                   : '加入'}
               </Button>

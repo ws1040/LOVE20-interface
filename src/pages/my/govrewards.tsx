@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 
 // my functions & types
 import { checkWalletConnection } from '@/src/lib/web3';
-import { formatTokenAmount } from '@/src/lib/format';
+import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 import { GovReward } from '@/src/types/life20types';
 
 // my contexts
@@ -26,8 +26,13 @@ const GovRewardsPage: React.FC = () => {
   const { address: accountAddress, chain: accountChain } = useAccount();
 
   const { currentRound, error: errorCurrentRound } = useCurrentRound();
-  const startRound = currentRound ? currentRound - 1n : 0n;
-  const endRound = startRound > 20n ? startRound - 20n : 0n;
+  const startRound = currentRound && token && currentRound - BigInt(token.initialStakeRound) >= 3n ? currentRound : 0n;
+  const endRound =
+    token && startRound - BigInt(token.initialStakeRound) >= 22n
+      ? startRound - 20n
+      : token
+      ? BigInt(token.initialStakeRound)
+      : startRound;
 
   // 获取治理奖励
   const {
@@ -103,7 +108,7 @@ const GovRewardsPage: React.FC = () => {
             <tbody>
               {rewardList.map((item) => (
                 <tr key={item.round.toString()} className="border-b border-gray-100">
-                  <td>{item.round.toString()}</td>
+                  <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
                   <td className="text-center">{formatTokenAmount(item.unminted)}</td>
                   <td className="text-center">
                     {item.unminted > 0n ? (

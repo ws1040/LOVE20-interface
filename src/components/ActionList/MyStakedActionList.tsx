@@ -13,7 +13,7 @@ import { Token } from '@/src/contexts/TokenContext';
 
 // my types & funcs
 import { JoinedAction } from '@/src/types/life20types';
-import { formatTokenAmount } from '@/src/lib/format';
+import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 
 // my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
@@ -81,7 +81,9 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
                   <div className="flex justify-between mt-1 text-sm">
                     <span>
                       <span className="text-greyscale-400 mr-1">参与到第</span>
-                      <span className="text-secondary">{action.lastJoinedRound.toString()}</span>
+                      <span className="text-secondary">
+                        {token ? formatRoundForDisplay(action.lastJoinedRound, token).toString() : '—'}
+                      </span>
                       <span className="text-greyscale-400 ml-1">轮</span>
                     </span>
                     <span>

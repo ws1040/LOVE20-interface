@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 // my funcs
 import { checkWalletConnection } from '@/src/lib/web3';
-import { formatTokenAmount } from '@/src/lib/format';
+import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 
 // my hooks
 import { useHandleContractError } from '@/src/lib/errorUtils';
@@ -269,7 +269,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
               <div className="text-center mt-2 text-sm text-greyscale-600">
                 取消质押后，投票轮第
                 <span className="text-secondary mx-1">{`${
-                  currentRound + (promisedWaitingRounds || BigInt(0)) + 1n
+                  formatRoundForDisplay(currentRound, token) + (promisedWaitingRounds || BigInt(0)) + 1n
                 } `}</span>
                 轮才能取回代币
               </div>

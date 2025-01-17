@@ -148,8 +148,8 @@ export const useHandleContractError = () => {
    */
   const handleContractError = useCallback(
     (error: any, context: string) => {
-      console.log('context', context);
-      console.log('error', error);
+      console.error('context', context);
+      console.error('error', error);
       const errorMessage = getReadableRevertErrMsg(error.message, context);
       setError(errorMessage);
     },

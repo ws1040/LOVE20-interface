@@ -22,6 +22,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 import { LaunchInfo } from '@/src/types/life20types';
 import { useContribute, useContributed } from '@/src/hooks/contracts/useLOVE20Launch';
 import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
+import { useError } from '@/src/contexts/ErrorContext';
 
 // my context
 import { Token } from '@/src/contexts/TokenContext';
@@ -140,7 +141,18 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     }
   }, [isConfirmedContributeToken, router, token?.symbol]);
 
-  // 5. 错误处理
+  // 5. 如果 balanceOfParentToken 为 0，则提示用户获取
+  const { setError } = useError();
+  useEffect(() => {
+    if (balanceOfParentToken !== undefined && balanceOfParentToken <= 0n) {
+      setError({
+        name: '余额不足',
+        message: `请先通过下方链接 获取 ${token?.parentTokenSymbol}，再来申购`,
+      });
+    }
+  }, [balanceOfParentToken, token]);
+
+  // 6. 错误处理
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
     if (errContributeToken) {

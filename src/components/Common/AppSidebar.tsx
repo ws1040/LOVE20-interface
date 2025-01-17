@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react';
 import { TokenContext } from '@/src/contexts/TokenContext';
+import { SmilePlus, Home, Landmark, SatelliteDish, BadgeDollarSign, Rocket, List, TicketCheck } from 'lucide-react';
 
 import {
   Sidebar,
@@ -34,21 +35,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: '社区首页',
             url: `${basePath}/acting?symbol=${token.symbol}`,
             isActive: false,
+            icon: SmilePlus,
           },
           {
             title: '治理首页',
             url: `${basePath}/gov?symbol=${token.symbol}`,
             isActive: false,
+            icon: Landmark,
           },
           {
             title: '推举行动',
             url: `${basePath}/vote/actions4submit?symbol=${token.symbol}`,
             isActive: false,
+            icon: SatelliteDish,
           },
           {
             title: '交易代币',
             url: `${basePath}/dex/swap?symbol=${token.symbol}`,
             isActive: false,
+            icon: BadgeDollarSign,
           },
         ],
       },
@@ -60,16 +65,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: '发射平台',
             url: `${basePath}/launch?symbol=${token.symbol}`,
             isActive: false,
+            icon: Rocket,
           },
           {
-            title: '所有代币',
+            title: '代币列表',
             url: `${basePath}/tokens?symbol=${token.symbol}`,
             isActive: false,
+            icon: List,
           },
           {
             title: `兑换${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`,
             url: `${basePath}/launch/deposit?symbol=${token.symbol}`,
             isActive: false,
+            icon: TicketCheck,
           },
         ],
       },
@@ -81,6 +89,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: '我的首页',
             url: `${basePath}/my?symbol=${token.symbol}`,
             isActive: false,
+            icon: Home,
           },
         ],
       },
@@ -97,9 +106,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarGroupContent>
               <SidebarMenu>
                 {item.items.map((subItem) => (
-                  <SidebarMenuItem key={subItem.title}>
+                  <SidebarMenuItem key={subItem.title} className="flex items-center">
+                    {subItem.icon && <subItem.icon className="w-4 h-4" />}
                     <SidebarMenuButton asChild isActive={subItem.isActive || false}>
-                      <a href={subItem.url}>{subItem.title}</a>
+                      <a href={subItem.url}>
+                        <span className="text-base">{subItem.title}</span>
+                      </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}

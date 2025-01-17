@@ -13,7 +13,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my funcs
 import { checkWalletConnection } from '@/src/lib/web3';
-import { formatTokenAmount } from '@/src/lib/format';
+import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -115,7 +115,9 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
         </div>
         <div className="stat place-items-center">
           <div className="stat-title">参加到第几轮</div>
-          <div className="stat-value text-2xl text-secondary">{lastJoinedRound?.toString()}</div>
+          <div className="stat-value text-2xl text-secondary">
+            {token ? formatRoundForDisplay(lastJoinedRound || BigInt(0), token).toString() : '—'}
+          </div>
         </div>
       </div>
       <div className="flex justify-center mt-2">
@@ -139,7 +141,8 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
           </Button>
         ) : (
           <Button className="w-1/2" disabled>
-            第 {(1 + Number(lastJoinedRound)).toString()} 轮后可取回
+            第 {lastJoinedRound && token ? formatRoundForDisplay(1n + lastJoinedRound, token).toString() : '—'}{' '}
+            轮后可取回
           </Button>
         )}
       </div>

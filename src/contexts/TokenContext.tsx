@@ -10,7 +10,7 @@ export interface Token {
   symbol: string;
   address: `0x${string}`;
   decimals: number;
-  hasEnded: boolean;
+  hasEnded: boolean; //发射是否结束
   parentTokenAddress: `0x${string}`;
   parentTokenSymbol: string;
   slTokenAddress: `0x${string}`;

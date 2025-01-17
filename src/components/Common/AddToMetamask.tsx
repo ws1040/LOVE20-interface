@@ -43,10 +43,8 @@ export default function AddToMetamask({ tokenAddress, tokenSymbol, tokenDecimals
       });
 
       if (wasAdded) {
-        console.log('代币已添加到 MetaMask 钱包');
         toast.success('代币已成功添加到 MetaMask 钱包');
       } else {
-        console.log('用户拒绝添加代币');
         toast.error('用户拒绝添加代币');
       }
     } catch (error) {

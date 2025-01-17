@@ -21,7 +21,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // my funcs
 import { checkWalletConnection } from '@/src/lib/web3';
-import { formatTokenAmount } from '@/src/lib/format';
+import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 
 const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: bigint }> = ({
   currentJoinRound,
@@ -32,17 +32,22 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
   const [selectedRound, setSelectedRound] = useState(0n);
 
   useEffect(() => {
-    if (currentJoinRound >= 2n) {
-      setSelectedRound(currentJoinRound - 2n);
+    if (token && currentJoinRound - BigInt(token.initialStakeRound) >= 3n) {
+      setSelectedRound(currentJoinRound - BigInt(token.initialStakeRound) - 1n);
     }
-  }, [currentJoinRound]);
+  }, [currentJoinRound, token]);
 
   // 读取验证地址
   const {
     verifiedAddresses,
     isPending: isPendingVerifiedAddresses,
     error: errorVerifiedAddresses,
-  } = useVerifiedAddressesByAction(token?.address as `0x${string}`, selectedRound, actionId);
+  } = useVerifiedAddressesByAction(
+    token?.address as `0x${string}`,
+    token && selectedRound ? selectedRound + BigInt(token.initialStakeRound) - 1n : 0n,
+    actionId,
+  );
+
   const [addresses, setAddresses] = useState<VerifiedAddress[]>([]);
   useEffect(() => {
     if (verifiedAddresses) {
@@ -62,8 +67,12 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
     if (!checkWalletConnection(accountChain)) {
       return;
     }
-    if (accountAddress && item.reward > 0) {
-      await mintActionReward(token?.address as `0x${string}`, selectedRound, actionId);
+    if (accountAddress && item.reward > 0 && token) {
+      await mintActionReward(
+        token?.address as `0x${string}`,
+        selectedRound + BigInt(token.initialStakeRound) - 1n,
+        actionId,
+      );
     }
   };
   useEffect(() => {
@@ -95,7 +104,7 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
         <span className="text-sm text-secondary ml-1">{selectedRound.toString()}</span>
         <span className="text-sm text-greyscale-500 ml-1">轮</span>
         <ChangeRound
-          currentRound={currentJoinRound ? currentJoinRound - 1n : 0n}
+          currentRound={token && currentJoinRound ? formatRoundForDisplay(currentJoinRound - 2n, token) : 0n}
           handleChangedRound={handleChangedRound}
         />
       </div>

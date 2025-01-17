@@ -20,9 +20,13 @@ const MyPage = () => {
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
 
-  // 如果还没有人质押，跳转到质押页面
   useEffect(() => {
-    if (token && !token.initialStakeRound) {
+    if (token && !token.hasEnded) {
+      // 如果发射未结束，跳转到发射页面
+      router.push(`/launch?symbol=${token.symbol}`);
+    } else if (token && !token.initialStakeRound) {
+      //todo: 如果是第一个代币，initialStakeRound会为0，需要特殊处理
+      // 如果还没有人质押，跳转到质押页面
       router.push(`/gov/stakelp?symbol=${token.symbol}&first=true`);
     }
   }, [token]);

@@ -37,29 +37,49 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
  */
 function buildFormSchema(parentTokenBalance: bigint, tokenBalance: bigint) {
   return z.object({
-    parentToken: z
-      .string()
-      .regex(/^\d+(\.\d{1,12})?$/, '请输入合法数值，最多支持12位小数')
-      .refine((val) => {
-        const parsed = parseUnits(val);
-        return parsed !== null && parsed > 0n;
-      }, '质押父币数不能为 0')
-      .refine((val) => {
-        const parsed = parseUnits(val);
-        return parsed !== null && parsed <= parentTokenBalance;
-      }, '质押父币数不能超过当前持有'),
+    parentToken: z.preprocess(
+      (val) => {
+        if (typeof val !== 'string') return val;
+        let sanitized = val.replace(/。/g, '.');
+        if (sanitized.startsWith('.')) {
+          sanitized = '0' + sanitized;
+        }
+        return sanitized;
+      },
+      z
+        .string()
+        .regex(/^\d+(\.\d{1,12})?$/, '请输入合法数值，最多支持12位小数')
+        .refine((val) => {
+          const parsed = parseUnits(val);
+          return parsed !== null && parsed > 0n;
+        }, '质押父币数不能为 0')
+        .refine((val) => {
+          const parsed = parseUnits(val);
+          return parsed !== null && parsed <= parentTokenBalance;
+        }, '质押父币数不能超过当前持有'),
+    ),
 
-    stakeToken: z
-      .string()
-      .regex(/^\d+(\.\d{1,12})?$/, '请输入合法数值，最多支持12位小数')
-      .refine((val) => {
-        const parsed = parseUnits(val);
-        return parsed !== null && parsed > 0n;
-      }, '质押 token 数不能为 0')
-      .refine((val) => {
-        const parsed = parseUnits(val);
-        return parsed !== null && parsed <= tokenBalance;
-      }, '质押 token 数不能超过当前持有'),
+    stakeToken: z.preprocess(
+      (val) => {
+        if (typeof val !== 'string') return val;
+        let sanitized = val.replace(/。/g, '.');
+        if (sanitized.startsWith('.')) {
+          sanitized = '0' + sanitized;
+        }
+        return sanitized;
+      },
+      z
+        .string()
+        .regex(/^\d+(\.\d{1,12})?$/, '请输入合法数值，最多支持12位小数')
+        .refine((val) => {
+          const parsed = parseUnits(val);
+          return parsed !== null && parsed > 0n;
+        }, '质押 token 数不能为 0')
+        .refine((val) => {
+          const parsed = parseUnits(val);
+          return parsed !== null && parsed <= tokenBalance;
+        }, '质押 token 数不能超过当前持有'),
+    ),
 
     // 释放期可直接用 string，也可用 z.coerce.number() 转 number
     releasePeriod: z.string(),
@@ -89,22 +109,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
   const { setError } = useError();
   const { first: isFirstTimeStake } = useRouter().query;
 
-  // 检查token数量
-  useEffect(() => {
-    if (!tokenBalance && token && token.symbol) {
-      setError({
-        name: '余额不足',
-        message: `您当前${token.symbol}数量为0，请先获取${token.symbol}`,
-      });
-    }
-    if (!parentTokenBalance && token && token.parentTokenSymbol) {
-      setError({
-        name: '余额不足',
-        message: `您当前${token.parentTokenSymbol}数量为0，请先获取${token.parentTokenSymbol}`,
-      });
-    }
-  }, [tokenBalance, parentTokenBalance, token]);
-
   // 是否是首次质押
   const [updateInitialStakeRound, setUpdateInitialStakeRound] = useState(false);
   const {
@@ -126,7 +130,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     mode: 'onChange',
   });
 
-  // 为了兼容“自动计算”逻辑，保留以下两个标记
+  // 为了兼容"自动计算"逻辑，保留以下两个标记
   const [isParentTokenChangedByUser, setIsParentTokenChangedByUser] = useState(false);
   const [isTokenChangedByUser, setIsTokenChangedByUser] = useState(false);
 
@@ -134,23 +138,29 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
   // 2.2 自动计算兑换数量
   // --------------------------------------------------
   const pairExists = stakedTokenAmountOfLP > 0n;
+  const parentTokenValue = form.watch('parentToken');
+  const stakeTokenValue = form.watch('stakeToken');
+  const parsedParentToken = parseUnits(parentTokenValue);
+  const parsedStakeToken = parseUnits(stakeTokenValue);
+
   const {
     data: amountsOut,
     error: errAmountsOut,
     isLoading: isAmountsOutLoading,
   } = useGetAmountsOut(
-    parseUnits(form.watch('parentToken')),
+    parsedParentToken !== null ? parsedParentToken : 0n,
     [token?.parentTokenAddress as `0x${string}`, token?.address as `0x${string}`],
     token as Token,
     pairExists,
     isParentTokenChangedByUser,
   );
+
   const {
     data: amountsIn,
     error: errAmountsIn,
     isLoading: isAmountsInLoading,
   } = useGetAmountsIn(
-    parseUnits(form.watch('stakeToken')),
+    parsedStakeToken !== null ? parsedStakeToken : 0n,
     [token?.parentTokenAddress as `0x${string}`, token?.address as `0x${string}`],
     token as Token,
     pairExists,
@@ -211,13 +221,17 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     }
     // data.parentToken / data.stakeToken 已通过 zod 校验，不为 0 且不超余额
     try {
-      const stakeAmount = parseUnits(data.stakeToken)!;
-      const parentAmount = parseUnits(data.parentToken)!;
+      const stakeAmount = parseUnits(data.stakeToken);
+      const parentAmount = parseUnits(data.parentToken);
+      if (stakeAmount === null || parentAmount === null) {
+        throw new Error('无效的输入格式');
+      }
 
       await approveToken(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, stakeAmount);
       await approveParentToken(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, parentAmount);
     } catch (error) {
       console.error('Approve failed', error);
+      toast.error('授权失败，请检查输入格式');
     }
   }
 
@@ -253,8 +267,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
 
     const stakeAmount = parseUnits(data.stakeToken);
     const parentAmount = parseUnits(data.parentToken);
-    if (!stakeAmount || !parentAmount) {
-      toast.error('转换金额时出错');
+    if (stakeAmount === null || parentAmount === null) {
+      toast.error('转换金额时出错，请检查输入格式');
       return;
     }
 
@@ -345,6 +359,22 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
     }
   }, [isFirstTimeStake, hadStartedApprove, setError]);
 
+  // 检查token数量
+  useEffect(() => {
+    if (!tokenBalance && !hadStartedApprove && token && token.symbol) {
+      setError({
+        name: '余额不足',
+        message: `您当前${token.symbol}数量为0，请先获取${token.symbol}`,
+      });
+    }
+    if (!parentTokenBalance && !hadStartedApprove && token && token.parentTokenSymbol) {
+      setError({
+        name: '余额不足',
+        message: `您当前${token.parentTokenSymbol}数量为0，请先获取${token.parentTokenSymbol}`,
+      });
+    }
+  }, [tokenBalance, parentTokenBalance, token]);
+
   // --------------------------------------------------
   // 2.7 渲染
   // --------------------------------------------------
@@ -356,11 +386,11 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
 
       {/* 
         用 Form 包裹，然后在 <form> 上使用 form.handleSubmit(...) 
-        本例中，因为“授权”和“质押”是两步，所以我们分别对按钮做 handleSubmit 
+        本例中，因为"授权"和"质押"是两步，所以我们分别对按钮做 handleSubmit 
       */}
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onStake)} // 如果想把“质押”改成 <button type="submit">
+          onSubmit={form.handleSubmit(onStake)} // 如果想把"质押"改成 <button type="submit">
           className="w-full max-w-md mt-4 space-y-4"
         >
           {/* 质押父币数 */}
