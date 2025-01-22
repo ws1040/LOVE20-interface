@@ -18,39 +18,36 @@ const StakePage = () => {
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress } = useAccount();
   const { balance: tokenBalance } = useBalanceOf(token?.address as `0x${string}`, accountAddress as `0x${string}`);
-  const { balance: parentTokenBalance, error: errorParentTokenBalance } = useBalanceOf(
-    token?.parentTokenAddress as `0x${string}`,
-    accountAddress as `0x${string}`,
-  );
+  // const { balance: parentTokenBalance, error: errorParentTokenBalance } = useBalanceOf(
+  //   token?.parentTokenAddress as `0x${string}`,
+  //   accountAddress as `0x${string}`,
+  // );
   const {
-    tokenAmount: stakedTokenAmount,
-    parentTokenAmount: stakedParentTokenAmount,
-    feeTokenAmount: stakedFeeTokenAmount,
-    feeParentTokenAmount: stakedFeeParentTokenAmount,
-    isPending: isPendingStakedTokenAmount,
-    error: errorStakedTokenAmount,
+    tokenAmount: stakedSLTokenAmount,
+    isPending: isPendingStakedSLTokenAmount,
+    error: errorStakedSLTokenAmount,
   } = useTokenAmounts(token?.slTokenAddress as `0x${string}`);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
-    if (errorStakedTokenAmount) {
-      handleContractError(errorStakedTokenAmount, 'slToken');
+    if (errorStakedSLTokenAmount) {
+      handleContractError(errorStakedSLTokenAmount, 'slToken');
     }
-    if (errorParentTokenBalance) {
-      handleContractError(errorParentTokenBalance, 'token');
-    }
-  }, [errorStakedTokenAmount, errorParentTokenBalance]);
+    // if (errorParentTokenBalance) {
+    //   handleContractError(errorParentTokenBalance, 'token');
+    // }
+  }, [errorStakedSLTokenAmount]);
 
   return (
     <>
       <Header title="质押代币" />
       <main className="flex-grow">
-        {isPendingStakedTokenAmount && <LoadingIcon />}
-        {!isPendingStakedTokenAmount && !stakedTokenAmount && (
+        {isPendingStakedSLTokenAmount && <LoadingIcon />}
+        {!isPendingStakedSLTokenAmount && !stakedSLTokenAmount && (
           <div className="flex justify-center items-center mt-10">需要先质押流动性LP，才可以质押代币</div>
         )}
-        {stakedTokenAmount && <StakeTokenPanel tokenBalance={tokenBalance || 0n} />}
+        {stakedSLTokenAmount && <StakeTokenPanel tokenBalance={tokenBalance || 0n} />}
         <div className="flex flex-col w-full p-6 mt-4">
           <div className="text-base font-bold text-greyscale-700 pb-2">规则说明：</div>
           <div className="text-sm text-greyscale-500 mb-2">

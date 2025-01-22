@@ -274,7 +274,8 @@ export function useSubmitNewAction() {
       action: string;
       consensus: string;
       verificationRule: string;
-      verificationInfoGuide: string;
+      verificationKeys: string[];
+      verificationInfoGuides: string[];
     },
   ) => {
     try {

@@ -199,7 +199,7 @@ export const useVotesNumByAccount = (tokenAddress: `0x${string}`, round: bigint,
     functionName: 'votesNumByAccount',
     args: [tokenAddress, round, accountAddress],
     query: {
-      enabled: !!tokenAddress && !!accountAddress && !!round,
+      enabled: !!tokenAddress && !!accountAddress,
     },
   });
 

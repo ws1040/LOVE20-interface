@@ -8,8 +8,8 @@ import {
   useCurrentRound,
   useJoinedAmountByActionIdByAccount,
   useJoinedAmountByActionId,
-  useVerificationInfo,
 } from '@/src/hooks/contracts/useLOVE20Join';
+import { useVerificationInfosByAccount } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -43,7 +43,6 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
     error: errorJoinedAmountByAccount,
   } = useJoinedAmountByActionIdByAccount(
     (token?.address as `0x${string}`) || '',
-    currentRound,
     actionId,
     (account as `0x${string}`) || '',
   );
@@ -53,7 +52,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
     joinedAmountByActionId,
     isPending: isPendingJoinedAmount,
     error: errorJoinedAmount,
-  } = useJoinedAmountByActionId((token?.address as `0x${string}`) || '', currentRound, actionId);
+  } = useJoinedAmountByActionId((token?.address as `0x${string}`) || '', actionId);
   const isJoined =
     joinedAmountByActionIdByAccount &&
     joinedAmountByActionIdByAccount > 0 &&
@@ -65,12 +64,12 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
 
   // 获取验证信息
   const {
-    verificationInfo,
+    verificationKeys,
+    verificationInfos,
     isPending: isPendingVerificationInfo,
     error: errorVerificationInfo,
-  } = useVerificationInfo(
+  } = useVerificationInfosByAccount(
     (token?.address as `0x${string}`) || '',
-    currentRound,
     actionId,
     (account as `0x${string}`) || '',
     isJoined as boolean,
@@ -131,7 +130,16 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
           </Button>
           <div className="flex flex-col items-center mt-2">
             <div className="text-sm text-greyscale-600">
-              {isPendingVerificationInfo ? '加载中...' : `我的信息：${verificationInfo}`}
+              {isPendingVerificationInfo && '加载中...'}
+              {verificationKeys && verificationKeys.length > 0 && (
+                <div>
+                  {verificationKeys.map((key, index) => (
+                    <div key={index}>
+                      {key}: {verificationInfos[index]}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </>

@@ -121,7 +121,7 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
       <div className="stats w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center">
           <div className="stat-value text-xl">
-            <span className="text-sm font-normal text-greyscale-500">质押 </span>
+            <span className="text-sm font-normal text-greyscale-500">申购 </span>
             {formatTokenAmount(contributed || 0n)}
             {isContributedPending ? (
               <LoadingIcon />
@@ -132,7 +132,7 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
         </div>
         <div className="stat place-items-center">
           <div className="stat-value text-xl">
-            <span className="text-sm font-normal text-greyscale-500">退回 </span>
+            <span className="text-sm font-normal text-greyscale-500">已退回 </span>
             {formatTokenAmount(extraRefunded || 0n)}
             {isExtraRefundedPending ? (
               <LoadingIcon />

@@ -33,7 +33,11 @@ const GovPage = () => {
 
   // 如果还没有人质押，跳转到质押页面
   useEffect(() => {
-    if (currentToken && !currentToken.initialStakeRound) {
+    if (
+      currentToken &&
+      !currentToken.initialStakeRound &&
+      currentToken.symbol != process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL
+    ) {
       router.push(`/gov/stakelp?symbol=${currentToken.symbol}&first=true`);
     }
   }, [currentToken]);

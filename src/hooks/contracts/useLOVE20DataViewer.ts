@@ -9,6 +9,7 @@ import {
   VerifiedAddress,
   GovReward,
   TokenInfo,
+  VerificationInfo,
 } from '@/src/types/life20types';
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_DATAVIEWER as `0x${string}`;
 
@@ -222,45 +223,36 @@ export const useVerificationInfosByAction = (tokenAddress: `0x${string}`, round:
       enabled: !!tokenAddress && round !== undefined && actionId !== undefined,
     },
   });
-  return { accounts: data?.[0] as `0x${string}`[], infos: data?.[1] as string[], isPending, error };
+  return { verificationInfos: data as VerificationInfo[], isPending, error };
+};
+
+export const useVerificationInfosByAccount = (
+  tokenAddress: `0x${string}`,
+  actionId: bigint,
+  account: `0x${string}`,
+  isJoined: boolean,
+) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'verificationInfosByAccount',
+    args: [tokenAddress, actionId, account],
+    query: {
+      enabled: isJoined && !!tokenAddress && !!account && actionId !== undefined,
+    },
+  });
+
+  return {
+    verificationKeys: data?.[0] as string[],
+    verificationInfos: data?.[1] as string[],
+    isPending,
+    error,
+  };
 };
 
 // =====================
 // === 写入 Hooks ===
 // =====================
-
-/**
- * Hook for init
- * Initializes the contract with multiple addresses.
- */
-export const useInitContract = () => {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
-
-  const init = async (
-    launchAddress: `0x${string}`,
-    voteAddress: `0x${string}`,
-    joinAddress: `0x${string}`,
-    verifyAddress: `0x${string}`,
-    mintAddress: `0x${string}`,
-  ) => {
-    try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20DataViewerAbi,
-        functionName: 'init',
-        args: [launchAddress, voteAddress, joinAddress, verifyAddress, mintAddress],
-      });
-    } catch (err) {
-      console.error('Initialization failed:', err);
-    }
-  };
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
-
-  return { init, writeData, isWriting, writeError, isConfirming, isConfirmed };
-};
 
 /**
  * Hook for setInitSetter

@@ -144,9 +144,14 @@ export const LOVE20SubmitAbi = [
                 "internalType": "string"
               },
               {
-                "name": "verificationInfoGuide",
-                "type": "string",
-                "internalType": "string"
+                "name": "verificationKeys",
+                "type": "string[]",
+                "internalType": "string[]"
+              },
+              {
+                "name": "verificationInfoGuides",
+                "type": "string[]",
+                "internalType": "string[]"
               }
             ]
           }
@@ -234,9 +239,14 @@ export const LOVE20SubmitAbi = [
                 "internalType": "string"
               },
               {
-                "name": "verificationInfoGuide",
-                "type": "string",
-                "internalType": "string"
+                "name": "verificationKeys",
+                "type": "string[]",
+                "internalType": "string[]"
+              },
+              {
+                "name": "verificationInfoGuides",
+                "type": "string[]",
+                "internalType": "string[]"
               }
             ]
           }
@@ -334,9 +344,14 @@ export const LOVE20SubmitAbi = [
                 "internalType": "string"
               },
               {
-                "name": "verificationInfoGuide",
-                "type": "string",
-                "internalType": "string"
+                "name": "verificationKeys",
+                "type": "string[]",
+                "internalType": "string[]"
+              },
+              {
+                "name": "verificationInfoGuides",
+                "type": "string[]",
+                "internalType": "string[]"
               }
             ]
           }
@@ -433,6 +448,35 @@ export const LOVE20SubmitAbi = [
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isInWhiteList",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "stateMutability": "view"
@@ -611,9 +655,14 @@ export const LOVE20SubmitAbi = [
             "internalType": "string"
           },
           {
-            "name": "verificationInfoGuide",
-            "type": "string",
-            "internalType": "string"
+            "name": "verificationKeys",
+            "type": "string[]",
+            "internalType": "string[]"
+          },
+          {
+            "name": "verificationInfoGuides",
+            "type": "string[]",
+            "internalType": "string[]"
           }
         ]
       }
@@ -692,9 +741,14 @@ export const LOVE20SubmitAbi = [
             "internalType": "string"
           },
           {
-            "name": "verificationInfoGuide",
-            "type": "string",
-            "internalType": "string"
+            "name": "verificationKeys",
+            "type": "string[]",
+            "internalType": "string[]"
+          },
+          {
+            "name": "verificationInfoGuides",
+            "type": "string[]",
+            "internalType": "string[]"
           }
         ]
       }

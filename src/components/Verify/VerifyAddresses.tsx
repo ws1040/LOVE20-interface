@@ -4,8 +4,9 @@ import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect, useContext } from 'react';
 
-// my funcs
+// my types & funcs
 import { checkWalletConnection } from '@/src/lib/web3';
+import { ActionInfo } from '@/src/types/life20types';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -23,10 +24,11 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 interface VerifyAddressesProps {
   currentRound: bigint;
   actionId: bigint;
+  actionInfo: ActionInfo | undefined;
   remainingVotes: bigint;
 }
 
-const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionId, remainingVotes }) => {
+const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionId, actionInfo, remainingVotes }) => {
   const { token } = useContext(TokenContext) || {};
   const { chain: accountChain } = useAccount();
   const router = useRouter();
@@ -34,23 +36,22 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
 
   // 获取参与验证的地址
   const {
-    accounts: accountsForVerify,
-    infos: verificationInfos,
+    verificationInfos,
     isPending: isPendingVerificationInfosByAction,
     error: errorVerificationInfosByAction,
   } = useVerificationInfosByAction(token?.address as `0x${string}`, currentRound, actionId);
 
   // 初始化百分比
   useEffect(() => {
-    if (accountsForVerify && accountsForVerify.length > 0) {
-      const equalPercentage = Math.floor(100 / accountsForVerify.length).toString();
+    if (verificationInfos && verificationInfos.length > 0) {
+      const equalPercentage = Math.floor(100 / verificationInfos.length).toString();
       const initialScores: { [address: string]: string } = {};
-      accountsForVerify.forEach((address) => {
-        initialScores[address] = equalPercentage;
+      verificationInfos.forEach((info) => {
+        initialScores[info.account] = equalPercentage;
       });
       setScores(initialScores);
     }
-  }, [accountsForVerify]);
+  }, [verificationInfos]);
 
   // 表单 & 计算票数
   const [scores, setScores] = useState<{ [address: string]: string }>({});
@@ -77,8 +78,8 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     if (!checkInput()) {
       return;
     }
-    const scoresArray = accountsForVerify.map((addr) => {
-      const percentage = parseInt(scores[addr] || '0');
+    const scoresArray = verificationInfos.map((info) => {
+      const percentage = parseInt(scores[info.account] || '0');
       return (BigInt(percentage) * remainingVotes) / 100n;
     });
 
@@ -113,27 +114,36 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     }
   }, [submitError, errorVerificationInfosByAction]);
 
+  // 渲染
   return (
     <>
       <div className="w-full max-w-2xl">
         <ul className="space-y-4">
           {isPendingVerificationInfosByAction && <LoadingIcon />}
-          {accountsForVerify && accountsForVerify.length > 0 ? (
-            accountsForVerify.map((address, index) => (
-              <li key={address} className="flex justify-between items-center p-4 border-b border-gray-100">
+          {verificationInfos && verificationInfos.length > 0 ? (
+            verificationInfos.map((info, index) => (
+              <li key={info.account} className="flex justify-between items-center p-4 border-b border-gray-100">
                 <div className="text-left">
                   <div className="font-mono">
-                    <AddressWithCopyButton address={address} />
+                    <AddressWithCopyButton address={info.account} />
                   </div>
-                  <div className="text-sm text-greyscale-800">{verificationInfos[index]}</div>
+                  {actionInfo && (
+                    <div className="text-sm text-greyscale-800">
+                      {actionInfo.body.verificationKeys.map((key, i) => (
+                        <div key={i}>
+                          {key}: {info.infos[i]}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center">
                   <input
                     type="number"
                     min="0"
                     max="100"
-                    value={scores[address] || ''}
-                    onChange={(e) => handleScoreChange(address, e.target.value)}
+                    value={scores[info.account] || ''}
+                    onChange={(e) => handleScoreChange(info.account, e.target.value)}
                     className="w-13 px-1 py-1 border rounded"
                     disabled={isWriting || isConfirmed}
                   />
@@ -144,7 +154,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
           ) : (
             <div className="text-center text-greyscale-500">没有人参与活动</div>
           )}
-          {accountsForVerify && (
+          {verificationInfos && (
             <li className="flex justify-between items-center p-4 border-b border-gray-100">
               <div className="text-left">
                 <div className="text-sm text-greyscale-800">

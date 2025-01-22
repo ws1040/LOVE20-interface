@@ -5,6 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Verify';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
+// my types
+import { ActionInfo } from '@/src/types/life20types';
+
 // my components
 import Header from '@/src/components/Header';
 import ActionDetail from '@/src/components/ActionDetail/ActionDetail';
@@ -32,6 +35,9 @@ const VerifyPage = () => {
     setRemainingVotes(votes);
   }
 
+  // 行动详情
+  const [actionInfo, setActionInfo] = useState<ActionInfo | undefined>(undefined);
+
   return (
     <>
       <Header title="验证" />
@@ -42,9 +48,19 @@ const VerifyPage = () => {
             actionId={actionId}
             onRemainingVotesChange={onRemainingVotesChange}
           />
-          <VerifyAddresses currentRound={currentRound} actionId={actionId} remainingVotes={remainingVotes} />
+          <VerifyAddresses
+            currentRound={currentRound}
+            actionId={actionId}
+            actionInfo={actionInfo}
+            remainingVotes={remainingVotes}
+          />
         </div>
-        <ActionDetail actionId={actionId} round={BigInt(currentRound || 0)} showSubmitter={true} />
+        <ActionDetail
+          actionId={actionId}
+          round={BigInt(currentRound || 0)}
+          showSubmitter={true}
+          onActionInfo={setActionInfo}
+        />
       </main>
     </>
   );

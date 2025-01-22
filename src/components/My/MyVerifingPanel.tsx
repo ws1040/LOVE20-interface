@@ -13,6 +13,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { useVotesNumByAccount } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useScoreByVerifier } from '@/src/hooks/contracts/useLOVE20Verify';
 import { useHandleContractError } from '@/src/lib/errorUtils';
+
 // my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LeftTitle from '@/src/components/Common/LeftTitle';
@@ -76,7 +77,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
         <div className="stat place-items-center pt-1 pb-2">
           <div className="stat-title text-sm">已验证票数</div>
           <div className={`stat-value text-xl ${!showBtn ? 'text-secondary' : ''}`}>
-            {isPendingVotesNumByAccount ? <LoadingIcon /> : formatTokenAmount(scoreByVerifier || BigInt(0))}
+            {isPendingScoreByVerifier ? <LoadingIcon /> : formatTokenAmount(scoreByVerifier || BigInt(0))}
           </div>
         </div>
         <div className="stat place-items-center pt-1 pb-2">

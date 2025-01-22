@@ -8,7 +8,7 @@ import { formatTokenAmount } from '@/src/lib/format';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
-import { useStakedAmountByAccountByActionId } from '@/src/hooks/contracts/useLOVE20Join';
+import { useJoinedAmountByActionIdByAccount } from '@/src/hooks/contracts/useLOVE20Join';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my components
@@ -26,21 +26,21 @@ const MyJoinInfoOfActionAbstract: React.FC<MyJoinInfoOfActionAbstractProps> = ({
 
   // 获取我参与的代币数
   const {
-    stakedAmountByAccountByActionId,
+    joinedAmountByActionIdByAccount,
     isPending: isPendingStakedAmountByAccountByActionId,
     error: errorStakedAmountByAccountByActionId,
-  } = useStakedAmountByAccountByActionId(
+  } = useJoinedAmountByActionIdByAccount(
     (token?.address as `0x${string}`) || '',
-    (account as `0x${string}`) || '',
     actionId,
+    (account as `0x${string}`) || '',
   );
 
   useEffect(() => {
     if (isPendingStakedAmountByAccountByActionId) {
       return;
     }
-    onStakedAmountChange?.(stakedAmountByAccountByActionId || BigInt(0));
-  }, [stakedAmountByAccountByActionId, isPendingStakedAmountByAccountByActionId]);
+    onStakedAmountChange?.(joinedAmountByActionIdByAccount || BigInt(0));
+  }, [joinedAmountByActionIdByAccount, isPendingStakedAmountByAccountByActionId]);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -50,21 +50,21 @@ const MyJoinInfoOfActionAbstract: React.FC<MyJoinInfoOfActionAbstractProps> = ({
     }
   }, [errorStakedAmountByAccountByActionId]);
 
-  return stakedAmountByAccountByActionId > 0n ? (
+  return joinedAmountByActionIdByAccount && joinedAmountByActionIdByAccount > 0n ? (
     <div className="px-6 py-4">
-      <LeftTitle title="上次参与" />
+      <LeftTitle title="我的参与" />
       <div className="stats w-full divide-x-0">
         <div className="stat place-items-center">
-          <div className="stat-title">已结束, 未取回的代币</div>
+          <div className="stat-title">已参与的代币</div>
           <div className="stat-value text-2xl text-secondary">
             {isPendingStakedAmountByAccountByActionId ? (
               <LoadingIcon />
             ) : (
-              formatTokenAmount(stakedAmountByAccountByActionId || BigInt(0))
+              formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0))
             )}
           </div>
           <div className="stat-desc text-xs text-greyscale-400">
-            <span className="text-secondary">提示：</span>未取回的代币，再加入时默认直接参与
+            <span className="text-secondary">提示：</span>已参与的代币，再加入时默认直接参与
           </div>
         </div>
       </div>

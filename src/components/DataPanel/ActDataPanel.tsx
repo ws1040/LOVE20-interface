@@ -30,7 +30,7 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
     joinedAmount,
     isPending: isPendingJoinedAmount,
     error: errorJoinedAmount,
-  } = useJoinedAmount((token?.address as `0x${string}`) || '', currentRound);
+  } = useJoinedAmount((token?.address as `0x${string}`) || '');
 
   // 错误处理
   const { handleContractError } = useHandleContractError();

@@ -1,11 +1,9 @@
 import { useContext, useEffect } from 'react';
-import { useAccount } from 'wagmi';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
-import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
 import { useTokenAmounts } from '@/src/hooks/contracts/useLOVE20SLToken';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
@@ -16,22 +14,10 @@ import StakeLiquidityPanel from '@/src/components/Stake/StakeLiquidityPanel';
 
 const StakePage = () => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
-  const { balance: tokenBalance, error: errorTokenBalance } = useBalanceOf(
-    token?.address as `0x${string}`,
-    accountAddress as `0x${string}`,
-  );
-  const { balance: parentTokenBalance, error: errorParentTokenBalance } = useBalanceOf(
-    token?.parentTokenAddress as `0x${string}`,
-    accountAddress as `0x${string}`,
-  );
 
   const hasInitialStakeRound = !!token?.initialStakeRound && token?.initialStakeRound > 0;
   const {
     tokenAmount: stakedTokenAmount,
-    parentTokenAmount: stakedParentTokenAmount,
-    feeTokenAmount: stakedFeeTokenAmount,
-    feeParentTokenAmount: stakedFeeParentTokenAmount,
     isPending: isPendingStakedTokenAmount,
     error: errorStakedTokenAmount,
   } = useTokenAmounts(token?.slTokenAddress as `0x${string}`, hasInitialStakeRound);
@@ -42,13 +28,7 @@ const StakePage = () => {
     if (errorStakedTokenAmount) {
       handleContractError(errorStakedTokenAmount, 'slToken');
     }
-    if (errorTokenBalance) {
-      handleContractError(errorTokenBalance, 'token');
-    }
-    if (errorParentTokenBalance) {
-      handleContractError(errorParentTokenBalance, 'token');
-    }
-  }, [errorStakedTokenAmount, errorTokenBalance, errorParentTokenBalance]);
+  }, [errorStakedTokenAmount]);
 
   return (
     <>
@@ -60,11 +40,7 @@ const StakePage = () => {
           </div>
         )}
         {(!isPendingStakedTokenAmount || !hasInitialStakeRound) && (
-          <StakeLiquidityPanel
-            tokenBalance={tokenBalance || 0n}
-            parentTokenBalance={parentTokenBalance || 0n}
-            stakedTokenAmountOfLP={stakedTokenAmount || 0n}
-          />
+          <StakeLiquidityPanel stakedTokenAmountOfLP={stakedTokenAmount || 0n} />
         )}
         <div className="flex flex-col w-full p-4 mt-4">
           <div className="text-base font-bold text-greyscale-700 pb-2">规则说明：</div>

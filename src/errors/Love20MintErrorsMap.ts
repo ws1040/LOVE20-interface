@@ -8,4 +8,5 @@ export const LOVE20MintErrorsMap: Record<string, string> = {
   RoundStartMustBeLessOrEqualToRoundEnd: '轮次开始必须小于或等于轮次结束',
   NotEnoughReward: '奖励不足，无法铸造',
   NotEnoughRewardToBurn: '奖励不足，无法销毁',
+  RoundNotStarted: '轮次还没有开始，请耐心等待',
 };

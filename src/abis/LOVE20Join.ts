@@ -6,27 +6,12 @@ export const LOVE20JoinAbi = [
     "type": "constructor",
     "inputs": [
       {
-        "name": "submitAddress_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "voteAddress_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
         "name": "originBlocks",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
         "name": "roundBlocks",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "joinEndRoundBlocks",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -48,27 +33,89 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
-    "name": "_caculateRandomAccounts",
+    "name": "accountByActionIdByIndex",
     "inputs": [
       {
-        "name": "randomSeed",
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
-        "name": "num",
+        "name": "",
         "type": "uint256",
         "internalType": "uint256"
-      },
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "actionIdsByAccount",
+    "inputs": [
       {
         "name": "tokenAddress",
         "type": "address",
         "internalType": "address"
       },
       {
-        "name": "round",
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "amountByAccount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "amountByActionId",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
       },
       {
         "name": "actionId",
@@ -79,15 +126,44 @@ export const LOVE20JoinAbi = [
     "outputs": [
       {
         "name": "",
-        "type": "address[]",
-        "internalType": "address[]"
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
   },
   {
     "type": "function",
-    "name": "cumulatedJoinedAmountsByActionId",
+    "name": "amountByActionIdByAccount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "cumulatedAmountsByActionId",
     "inputs": [
       {
         "name": "",
@@ -103,6 +179,25 @@ export const LOVE20JoinAbi = [
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "cumulatedWithdrawnAmountByActionId",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
       },
       {
         "name": "",
@@ -134,79 +229,7 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
-    "name": "join",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "actionId",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "additionalStakeAmount",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "verificationInfo_",
-        "type": "string",
-        "internalType": "string"
-      },
-      {
-        "name": "rounds",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "to",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "joinedAccountsByActionId",
-    "inputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "joinedAccountsNumByActionId",
+    "name": "getOrGenerateRandomAccounts",
     "inputs": [
       {
         "name": "tokenAddress",
@@ -227,16 +250,26 @@ export const LOVE20JoinAbi = [
     "outputs": [
       {
         "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
+        "type": "address[]",
+        "internalType": "address[]"
       }
     ],
-    "stateMutability": "view"
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
-    "name": "joinedAmount",
+    "name": "indexesByActionIdByAccount",
     "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
       {
         "name": "",
         "type": "address",
@@ -259,95 +292,77 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
-    "name": "joinedAmountByActionId",
+    "name": "initialize",
     "inputs": [
       {
-        "name": "",
+        "name": "submitAddress_",
         "type": "address",
         "internalType": "address"
       },
       {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
+        "name": "voteAddress_",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        "name": "",
+        "name": "randomAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "joinEndRoundBlocks",
         "type": "uint256",
         "internalType": "uint256"
       }
     ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "initialized",
+    "inputs": [],
     "outputs": [
       {
         "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "stateMutability": "view"
   },
   {
     "type": "function",
-    "name": "joinedAmountByActionIdByAccount",
+    "name": "join",
     "inputs": [
       {
-        "name": "",
+        "name": "tokenAddress",
         "type": "address",
         "internalType": "address"
       },
       {
-        "name": "",
+        "name": "actionId",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
-        "name": "",
+        "name": "additionalAmount",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
-        "name": "",
+        "name": "verificationInfos_",
+        "type": "string[]",
+        "internalType": "string[]"
+      },
+      {
+        "name": "to",
         "type": "address",
         "internalType": "address"
       }
     ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "lastJoinedRoundByAccountByActionId",
-    "inputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -364,6 +379,24 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
+    "name": "prepareRandomAccountsIfNeeded",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "randomAccounts",
     "inputs": [
       {
@@ -375,6 +408,30 @@ export const LOVE20JoinAbi = [
         "name": "round",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address[]",
+        "internalType": "address[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "randomAccountsByRandomSeed",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
       },
       {
         "name": "actionId",
@@ -397,6 +454,19 @@ export const LOVE20JoinAbi = [
         "name": "",
         "type": "address[]",
         "internalType": "address[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "randomAddress",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "stateMutability": "view"
@@ -459,107 +529,6 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
-    "name": "stakedActionIdsByAccount",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256[]",
-        "internalType": "uint256[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "stakedAmountByAccount",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "amount",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "stakedAmountByAccountByActionId",
-    "inputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "stakedAmountByActionId",
-    "inputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "submitAddress",
     "inputs": [],
     "outputs": [
@@ -567,6 +536,25 @@ export const LOVE20JoinAbi = [
         "name": "",
         "type": "address",
         "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "totalAmount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -581,19 +569,14 @@ export const LOVE20JoinAbi = [
         "internalType": "address"
       },
       {
-        "name": "actionId",
-        "type": "uint256",
-        "internalType": "uint256"
+        "name": "verificationKeys_",
+        "type": "string[]",
+        "internalType": "string[]"
       },
       {
-        "name": "aVerificationInfo",
-        "type": "string",
-        "internalType": "string"
-      },
-      {
-        "name": "rounds",
-        "type": "uint256",
-        "internalType": "uint256"
+        "name": "verificationInfos_",
+        "type": "string[]",
+        "internalType": "string[]"
       }
     ],
     "outputs": [],
@@ -609,38 +592,14 @@ export const LOVE20JoinAbi = [
         "internalType": "address"
       },
       {
-        "name": "round",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "actionId",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
         "name": "accountAddress",
         "type": "address",
         "internalType": "address"
-      }
-    ],
-    "outputs": [
+      },
       {
-        "name": "",
+        "name": "verificationKey",
         "type": "string",
         "internalType": "string"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "verificationInfoStrings",
-    "inputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
       }
     ],
     "outputs": [
@@ -663,25 +622,20 @@ export const LOVE20JoinAbi = [
       },
       {
         "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "",
+        "type": "string",
+        "internalType": "string"
       }
     ],
     "outputs": [
       {
         "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
+        "type": "string",
+        "internalType": "string"
       }
     ],
     "stateMutability": "view"
@@ -716,7 +670,7 @@ export const LOVE20JoinAbi = [
     ],
     "outputs": [
       {
-        "name": "withdrawnAmount",
+        "name": "",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -756,12 +710,6 @@ export const LOVE20JoinAbi = [
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
-      },
-      {
-        "name": "rounds",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
       }
     ],
     "anonymous": false
@@ -777,34 +725,16 @@ export const LOVE20JoinAbi = [
         "internalType": "address"
       },
       {
-        "name": "currentRound",
-        "type": "uint256",
+        "name": "verificationKey",
+        "type": "string",
         "indexed": true,
-        "internalType": "uint256"
-      },
-      {
-        "name": "actionId",
-        "type": "uint256",
-        "indexed": true,
-        "internalType": "uint256"
-      },
-      {
-        "name": "account",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
+        "internalType": "string"
       },
       {
         "name": "verificationInfo",
         "type": "string",
         "indexed": false,
         "internalType": "string"
-      },
-      {
-        "name": "rounds",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
       }
     ],
     "anonymous": false
@@ -848,17 +778,42 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "error",
-    "name": "ActionAlreadyJoined",
-    "inputs": []
-  },
-  {
-    "type": "error",
     "name": "ActionNotVoted",
     "inputs": []
   },
   {
     "type": "error",
-    "name": "JoinedRoundIsNotFinished",
+    "name": "AddressCannotBeZero",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "AlreadyInitialized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "AmountIsZero",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "CannotGenerateAtCurrentRound",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidToAddress",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "JoinAmountExceedsMaxStake",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "JoinedAmountIsZero",
     "inputs": []
   },
   {
@@ -873,37 +828,12 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "error",
-    "name": "RoundNotFinished",
-    "inputs": []
-  },
-  {
-    "type": "error",
     "name": "RoundNotStarted",
     "inputs": []
   },
   {
     "type": "error",
-    "name": "RoundsIsZero",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "StakedAmountExceedsMaxStake",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "StakedAmountIsZero",
-    "inputs": []
-  },
-  {
-    "type": "error",
     "name": "TransferFailed",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "VerificationInfoIsEmpty",
     "inputs": []
   }
 ] as const satisfies Abi;

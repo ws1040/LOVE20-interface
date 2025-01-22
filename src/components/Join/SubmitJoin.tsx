@@ -10,9 +10,9 @@ import { toast } from 'react-hot-toast';
 
 // ui components
 import { Button } from '@/components/ui/button';
-import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
 
 // my hooks
 import { checkWalletConnection } from '@/src/lib/web3';
@@ -34,9 +34,9 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 // ------------------------------
 
 interface FormValues {
-  additionalStakeAmount: string; // 输入框里是 string
-  rounds: string; // 输入框里是 string
-  verificationInfo: string;
+  additionalStakeAmount: string; // 参与数量
+  rounds: string; // 轮数
+  verificationInfos: string[]; // 多项验证信息
 }
 
 interface SubmitJoinProps {
@@ -57,14 +57,15 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
 
   // 计算剩余可质押
   const maxStake = BigInt(actionInfo.body.maxStake) - (stakedAmount || 0n);
-  // 如果 stakedAmount = 0，newStake 不可为 0；如果 stakedAmount > 0，newStake 可为 0。
-  // 其他：newStake <= maxStake && newStake <= tokenBalance.
+
+  // 这里构造 “verificationInfos” 字段的默认值；长度与 verificationKeys 一致
+  const defaultVerificationInfos = actionInfo.body.verificationKeys.map(() => '');
 
   // 动态构造 zod schema
   const formSchema = z.object({
+    // 参与数量
     additionalStakeAmount: z
       .string()
-      // 如果前端输入为空字符串或不是数字，需要先转成 '0' 再做数值比较，避免 NaN
       .transform((val) => (val.trim() === '' ? '0' : val.trim()))
       .refine(
         (val) => {
@@ -74,35 +75,29 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
           }
           return true;
         },
-        {
-          message: '参与代币数不能为 0',
-        },
+        { message: '参与代币数不能为 0' },
       )
       .refine(
         (val) => {
           const inputVal = parseUnits(val);
-          // 确保 inputVal 不为 null 并且不超过剩余可参与数
           return inputVal !== null && inputVal <= maxStake;
         },
-        {
-          message: '参与代币数不能超过活动最大限制',
-        },
+        { message: '参与代币数不能超过活动最大限制' },
       )
       .refine(
         (val) => {
           const inputVal = parseUnits(val);
           return inputVal !== null && tokenBalance ? inputVal <= tokenBalance : true;
         },
-        {
-          message: '参与代币数不能超过持有代币数',
-        },
+        { message: '参与代币数不能超过持有代币数' },
       ),
-    rounds: z
-      .string()
-      .trim()
-      .nonempty({ message: '参与轮数不能为空' })
-      .refine((val) => Number(val) > 0, { message: '参与轮数必须大于 0' }),
-    verificationInfo: z.string().min(1, { message: '验证信息不能为空' }),
+
+    // 多项验证信息
+    verificationInfos: z.array(z.string().min(1, { message: '验证信息不能为空' })),
+    // 如果想强制要求长度必须与 verificationKeys.length 一致，可使用：
+    // verificationInfos: z
+    //   .array(z.string().min(1, { message: '验证信息不能为空' }))
+    //   .length(actionInfo.body.verificationKeys.length, '必须填写完所有验证信息'),
   });
 
   // ------------------------------
@@ -112,8 +107,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     resolver: zodResolver(formSchema),
     defaultValues: {
       additionalStakeAmount: '',
-      rounds: '',
-      verificationInfo: '',
+      verificationInfos: defaultVerificationInfos,
     },
     mode: 'onChange',
   });
@@ -136,7 +130,6 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
 
     // 确保 newStake 始终为 bigint，避免 null
     const newStake = parseUnits(values.additionalStakeAmount) ?? 0n;
-
     if (newStake === 0n && stakedAmount && stakedAmount > 0n) {
       toast.error('当前无需授权。');
       return;
@@ -164,13 +157,13 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     if (!checkWalletConnection(accountChain)) {
       return;
     }
+
     try {
       await join(
         token?.address as `0x${string}`,
         BigInt(actionInfo.head.id),
         parseUnits(values.additionalStakeAmount) ?? 0n,
-        values.verificationInfo,
-        BigInt(values.rounds),
+        values.verificationInfos,
         accountAddress as `0x${string}`,
       );
     } catch (error) {
@@ -229,7 +222,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-greyscale-500 font-normal">
-                    {stakedAmount ? '增加参与代币数：' : '参与代币数：：'}
+                    {stakedAmount ? '增加参与代币数：' : '参与代币数：'}
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -254,39 +247,30 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
               )}
             />
 
-            {/* 参与轮数 */}
-            <FormField
-              control={form.control}
-              name="rounds"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-greyscale-500 font-normal">参与轮数：</FormLabel>
-                  <FormControl>
-                    <Input placeholder="输入参与轮数" className="!ring-secondary-foreground" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* 验证信息 */}
-            <FormField
-              control={form.control}
-              name="verificationInfo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-greyscale-500 font-normal">验证信息：</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder={actionInfo?.body.verificationInfoGuide || ''}
-                      className="!ring-secondary-foreground"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* 多项验证信息：根据 verificationKeys 动态生成输入框 */}
+            {actionInfo.body.verificationKeys.map((key, index) => (
+              <FormField
+                key={key + index}
+                control={form.control}
+                // 注意这里的 name，需要用 `verificationInfos.${index}`
+                name={`verificationInfos.${index}`}
+                render={({ field }) => (
+                  <FormItem>
+                    {/* label 显示对应的 key */}
+                    <FormLabel className="text-greyscale-500 font-normal">{key}</FormLabel>
+                    <FormControl>
+                      {/* placeholder 显示对应的 verificationInfoGuides[index] */}
+                      <Textarea
+                        placeholder={actionInfo.body.verificationInfoGuides[index] || ''}
+                        className="!ring-secondary-foreground"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
 
             {/* 操作按钮 */}
             <div className="flex justify-center space-x-4 pt-2">

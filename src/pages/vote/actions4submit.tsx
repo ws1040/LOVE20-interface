@@ -1,4 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
+import { useRouter } from 'next/router';
+// my contexts
+import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
 import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Submit';
@@ -19,6 +22,19 @@ const Actions4SubmitPage = () => {
       handleContractError(errorCurrentRound, 'submit');
     }
   }, [errorCurrentRound]);
+
+  // 如果还没有人质押，跳转到质押页面
+  const router = useRouter();
+  const { token: currentToken } = useContext(TokenContext) || {};
+  useEffect(() => {
+    if (
+      currentToken &&
+      !currentToken.initialStakeRound &&
+      currentToken.symbol != process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL
+    ) {
+      router.push(`/gov/stakelp?symbol=${currentToken.symbol}&first=true`);
+    }
+  }, [currentToken]);
 
   if (isPending) {
     return <LoadingIcon />;

@@ -68,7 +68,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
     try {
       if (ifNoSymbol) {
-        // 没有指定token时, 清掉 localStorage
+        // 没有指定token时, 清掉 localStorage。这个是解决协议地址变化，导致token缓存出错。回头看看可不可以优化。
         localStorage.removeItem('currentToken');
       } else {
         // 从 Local Storage 加载 token
