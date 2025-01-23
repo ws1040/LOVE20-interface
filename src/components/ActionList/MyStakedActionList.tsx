@@ -1,5 +1,6 @@
 import { useAccount } from 'wagmi';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
@@ -71,7 +72,11 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
         <div className="mt-4 space-y-4">
           {joinedActions?.map((action: JoinedAction, index: number) => (
             <Card key={action.actionId} className="shadow-none">
-              <Link href={`/my/actrewards?id=${action.actionId}&symbol=${token?.symbol}`} key={action.actionId}>
+              <Link
+                href={`/my/actrewards?id=${action.actionId}&symbol=${token?.symbol}`}
+                key={action.actionId}
+                className="relative block"
+              >
                 <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
                   <span className="text-greyscale-400 text-sm mr-1">{`No.${action.actionId}`}</span>
                   <span className="font-bold text-greyscale-800">{`${actionInfos?.[index]?.body.action}`}</span>
@@ -80,18 +85,12 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
                   <div className="text-greyscale-500">{actionInfos?.[index]?.body.consensus}</div>
                   <div className="flex justify-between mt-1 text-sm">
                     <span>
-                      <span className="text-greyscale-400 mr-1">参与到第</span>
-                      <span className="text-secondary">
-                        {token ? formatRoundForDisplay(action.lastJoinedRound, token).toString() : '—'}
-                      </span>
-                      <span className="text-greyscale-400 ml-1">轮</span>
-                    </span>
-                    <span>
                       <span className="text-greyscale-400 mr-1">参与代币数</span>
                       <span className="text-secondary">{formatTokenAmount(action.stakedAmount)}</span>
                     </span>
                   </div>
                 </CardContent>
+                <ChevronRight className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-greyscale-400 pointer-events-none" />
               </Link>
             </Card>
           ))}

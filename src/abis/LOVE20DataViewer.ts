@@ -74,6 +74,11 @@ export const LOVE20DataViewerAbi = [
         "internalType": "address"
       },
       {
+        "name": "submitAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
         "name": "voteAddress_",
         "type": "address",
         "internalType": "address"
@@ -191,11 +196,6 @@ export const LOVE20DataViewerAbi = [
             "internalType": "uint256"
           },
           {
-            "name": "lastJoinedRound",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
             "name": "stakedAmount",
             "type": "uint256",
             "internalType": "uint256"
@@ -243,6 +243,19 @@ export const LOVE20DataViewerAbi = [
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "submitAddress",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -600,6 +613,40 @@ export const LOVE20DataViewerAbi = [
   },
   {
     "type": "function",
+    "name": "verificationInfosByAccount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "verificationKeys",
+        "type": "string[]",
+        "internalType": "string[]"
+      },
+      {
+        "name": "verificationInfos",
+        "type": "string[]",
+        "internalType": "string[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "verificationInfosByAction",
     "inputs": [
       {
@@ -620,14 +667,21 @@ export const LOVE20DataViewerAbi = [
     ],
     "outputs": [
       {
-        "name": "accounts",
-        "type": "address[]",
-        "internalType": "address[]"
-      },
-      {
-        "name": "infos",
-        "type": "string[]",
-        "internalType": "string[]"
+        "name": "verificationInfos",
+        "type": "tuple[]",
+        "internalType": "struct VerificationInfo[]",
+        "components": [
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "infos",
+            "type": "string[]",
+            "internalType": "string[]"
+          }
+        ]
       }
     ],
     "stateMutability": "view"

@@ -14,16 +14,22 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 
+// my utils
 import { checkWalletConnection } from '@/src/lib/web3';
 import { extractErrorMessage } from '@/src/lib/utils';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 
+// my contexts
 import { TokenContext, Token } from '@/src/contexts/TokenContext';
 import { useError } from '@/src/contexts/ErrorContext';
-import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
+
+// my hooks
+import { useApprove, useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
 import { useGetAmountsIn, useGetAmountsOut } from '@/src/components/Stake/getAmountHooks';
 import { useStakeLiquidity, useInitialStakeRound } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
@@ -90,16 +96,10 @@ function buildFormSchema(parentTokenBalance: bigint, tokenBalance: bigint) {
 // 2. 组件主体
 // --------------------------------------------------
 interface StakeLiquidityPanelProps {
-  tokenBalance: bigint;
-  parentTokenBalance: bigint;
   stakedTokenAmountOfLP: bigint;
 }
 
-const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
-  tokenBalance,
-  parentTokenBalance,
-  stakedTokenAmountOfLP,
-}) => {
+const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAmountOfLP }) => {
   const { address: accountAddress, chain: accountChain } = useAccount();
   const context = useContext(TokenContext);
   if (!context) {
@@ -108,6 +108,16 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
   const { token, setToken } = context;
   const { setError } = useError();
   const { first: isFirstTimeStake } = useRouter().query;
+  const {
+    balance: tokenBalance,
+    isPending: isPendingTokenBalance,
+    error: errorTokenBalance,
+  } = useBalanceOf(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  const {
+    balance: parentTokenBalance,
+    isPending: isPendingParentTokenBalance,
+    error: errorParentTokenBalance,
+  } = useBalanceOf(token?.parentTokenAddress as `0x${string}`, accountAddress as `0x${string}`);
 
   // 是否是首次质押
   const [updateInitialStakeRound, setUpdateInitialStakeRound] = useState(false);
@@ -121,7 +131,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
   // 2.1 使用 React Hook Form
   // --------------------------------------------------
   const form = useForm<z.infer<ReturnType<typeof buildFormSchema>>>({
-    resolver: zodResolver(buildFormSchema(parentTokenBalance, tokenBalance)),
+    resolver: zodResolver(buildFormSchema(parentTokenBalance || 0n, tokenBalance || 0n)),
     defaultValues: {
       parentToken: '',
       stakeToken: '',
@@ -321,6 +331,12 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
   // --------------------------------------------------
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
+    if (errorParentTokenBalance) {
+      handleContractError(errorParentTokenBalance, 'token');
+    }
+    if (errorTokenBalance) {
+      handleContractError(errorTokenBalance, 'token');
+    }
     if (errApproveToken) {
       handleContractError(errApproveToken, 'stake');
     }
@@ -340,7 +356,16 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
       handleContractError(errAmountsIn, 'uniswap');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errApproveToken, errApproveParentToken, errStakeLiquidity, errInitialStakeRound, errAmountsOut, errAmountsIn]);
+  }, [
+    errorParentTokenBalance,
+    errorTokenBalance,
+    errApproveToken,
+    errApproveParentToken,
+    errStakeLiquidity,
+    errInitialStakeRound,
+    errAmountsOut,
+    errAmountsIn,
+  ]);
 
   // --------------------------------------------------
   // 2.6 其它状态与提示
@@ -358,16 +383,15 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
       });
     }
   }, [isFirstTimeStake, hadStartedApprove, setError]);
-
   // 检查token数量
   useEffect(() => {
-    if (!tokenBalance && !hadStartedApprove && token && token.symbol) {
+    if (!isPendingTokenBalance && !tokenBalance && !hadStartedApprove && token && token.symbol) {
       setError({
         name: '余额不足',
         message: `您当前${token.symbol}数量为0，请先获取${token.symbol}`,
       });
     }
-    if (!parentTokenBalance && !hadStartedApprove && token && token.parentTokenSymbol) {
+    if (!isPendingParentTokenBalance && !parentTokenBalance && !hadStartedApprove && token && token.parentTokenSymbol) {
       setError({
         name: '余额不足',
         message: `您当前${token.parentTokenSymbol}数量为0，请先获取${token.parentTokenSymbol}`,
@@ -401,7 +425,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
               <FormItem>
                 <FormLabel>
                   质押父币数 (当前持有：
-                  <span className="text-secondary-400 mr-2">{formatTokenAmount(parentTokenBalance)}</span>
+                  <span className="text-secondary-400 mr-2">{formatTokenAmount(parentTokenBalance || 0n)}</span>
                   {token?.parentTokenSymbol})
                   <Link href="/launch/deposit/" className="text-secondary-400 ml-2">
                     去获取{token?.parentTokenSymbol}
@@ -433,7 +457,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({
               <FormItem>
                 <FormLabel>
                   质押 token 数 (当前持有：
-                  <span className="text-secondary-400 mr-2">{formatTokenAmount(tokenBalance)}</span>
+                  <span className="text-secondary-400 mr-2">{formatTokenAmount(tokenBalance || 0n)}</span>
                   {token?.symbol})
                 </FormLabel>
                 <FormControl>

@@ -9,9 +9,11 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
 
-// my components
-import { ActionSubmit } from '@/src/types/life20types';
+// my types & funcs
+import { ActionInfo, ActionSubmit } from '@/src/types/life20types';
 import { formatTokenAmount } from '@/src/lib/format';
+
+// my components
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LeftTitle from '@/src/components/Common/LeftTitle';
@@ -20,9 +22,10 @@ interface ActivityDetailProps {
   actionId: bigint;
   round: bigint;
   showSubmitter: boolean;
+  onActionInfo?: (actionInfo: ActionInfo) => void;
 }
 
-const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubmitter }) => {
+const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubmitter, onActionInfo }) => {
   const { token } = useContext(TokenContext) || {};
 
   // 行动详情
@@ -31,6 +34,11 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
     isPending: isPendingActionInfo,
     error: errorActionInfo,
   } = useActionInfo(token?.address as `0x${string}`, actionId);
+  useEffect(() => {
+    if (onActionInfo && actionInfo) {
+      onActionInfo(actionInfo);
+    }
+  }, [actionInfo]);
 
   // 发起提案者
   const {
@@ -101,7 +109,13 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
 
           <div className="mb-4">
             <h3 className="text-sm font-bold">验证规则</h3>
-            <p className="text-greyscale-500">{actionInfo?.body.verificationRule || '-'}</p>
+            {actionInfo?.body.verificationKeys.map((key: string, index: number) => (
+              <div key={index}>
+                <span className="text-greyscale-500">
+                  {key} : {actionInfo?.body.verificationInfoGuides[index]}
+                </span>
+              </div>
+            ))}
           </div>
 
           <div className="mb-4">

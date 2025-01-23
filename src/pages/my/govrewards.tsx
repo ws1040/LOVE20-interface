@@ -24,15 +24,28 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress, chain: accountChain } = useAccount();
-
   const { currentRound, error: errorCurrentRound } = useCurrentRound();
-  const startRound = currentRound && token && currentRound - BigInt(token.initialStakeRound) >= 3n ? currentRound : 0n;
-  const endRound =
-    token && startRound - BigInt(token.initialStakeRound) >= 22n
-      ? startRound - 20n
-      : token
-      ? BigInt(token.initialStakeRound)
-      : startRound;
+  const [startRound, setStartRound] = useState<bigint>(0n);
+  const [endRound, setEndRound] = useState<bigint>(0n);
+
+  useEffect(() => {
+    if (currentRound && token) {
+      if (currentRound - BigInt(token.initialStakeRound) >= 0n) {
+        setEndRound(currentRound);
+      } else {
+        setEndRound(BigInt(token.initialStakeRound));
+      }
+    }
+  }, [currentRound, token]);
+  useEffect(() => {
+    if (endRound && token) {
+      if (endRound - BigInt(token.initialStakeRound) >= 20n) {
+        setStartRound(endRound - 20n);
+      } else {
+        setStartRound(BigInt(token.initialStakeRound));
+      }
+    }
+  }, [endRound, token]);
 
   // 获取治理奖励
   const {

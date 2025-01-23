@@ -11,7 +11,8 @@ export interface ActionBody {
   action: string;
   consensus: string;
   verificationRule: string;
-  verificationInfoGuide: string;
+  verificationKeys: string[];
+  verificationInfoGuides: string[];
 }
 
 export interface ActionInfo {
@@ -69,4 +70,15 @@ export interface LaunchInfo {
   participantCount: bigint;
   totalContributed: bigint;
   totalExtraRefunded: bigint;
+}
+
+/**
+ * struct VerificationInfo {
+    address account;
+    string[] infos;
+}
+ */
+export interface VerificationInfo {
+  account: `0x${string}`;
+  infos: string[];
 }

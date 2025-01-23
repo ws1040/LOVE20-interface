@@ -9,4 +9,5 @@ export const LOVE20VerifyErrorsMap: Record<string, string> = {
   RandomAddressCannotBeZero: '随机地址不能为空',
   ScoresAndAccountsLengthMismatch: '分数和地址数量不匹配',
   ScoresExceedVotesNum: '分数超过投票数量',
+  RoundNotStarted: '轮次还没有开始，请耐心等待',
 };
