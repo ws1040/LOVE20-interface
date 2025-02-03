@@ -7,11 +7,11 @@ export const abbreviateAddress = (address: string): string => {
 };
 
 // 格式化代币数量：将最小单位转换为可读数字并带有逗号分隔
-export const formatTokenAmount = (balance: bigint): string => {
+export const formatTokenAmount = (balance: bigint, maximumFractionDigits_ = 4): string => {
   const formatted = formatUnits(balance);
   // 使用 Intl.NumberFormat 格式化数字，添加逗号
   const formattedWithCommas = new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: 4, // 保留小数位
+    maximumFractionDigits: maximumFractionDigits_, // 保留小数位
   }).format(Number(formatted));
 
   return formattedWithCommas;

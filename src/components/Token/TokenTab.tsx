@@ -59,7 +59,7 @@ export default function TokenTab() {
         <TokenLabel />
         <div className="mt-1 flex items-center" onClick={() => setIsOpen(true)}>
           <Info className="w-4 h-4 mr-1 text-greyscale-500 cursor-pointer" />
-          <span className="text-sm text-greyscale-500">已铸币量: </span>
+          <span className="text-sm text-greyscale-500 mr-1">已铸币量:</span>
           <span className="text-sm text-secondary">
             {isTotalSupplyPending ? <LoadingIcon /> : formatTokenAmount(totalSupply || 0n)}
           </span>

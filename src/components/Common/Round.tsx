@@ -40,8 +40,10 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
       <h1 className="text-lg font-bold">
         {roundName} 第 <span className="text-secondary">{Number(currentTokenRound)}</span> 轮
       </h1>
-      <span className="text-sm text-greyscale-400 mt-1 pt-0">
-        本轮剩余：
+      <span className="text-sm mt-1 pt-0">
+        <span className="text-greyscale-400 mr-1">本轮剩余:</span>
+        <span className="text-secondary mr-1">{leftBlocks}</span>
+        <span className="text-greyscale-400 mr-1">块, 约</span>
         <LeftTime initialTimeLeft={initialTimeLeft} />
       </span>
     </div>

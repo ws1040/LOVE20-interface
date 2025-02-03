@@ -122,9 +122,9 @@ const Deposit: React.FC = () => {
       setTimeout(() => {
         // 如果发射未结束,跳到申购页;否则,跳到质押lp页
         if (token && !token.hasEnded) {
-          router.push(`/launch/contribute/?symbol=${token.symbol}`);
+          window.location.href = `/launch/contribute/?symbol=${token.symbol}`;
         } else if (token && !token.initialStakeRound) {
-          router.push(`/gov/stakelp?symbol=${token.symbol}`);
+          window.location.href = `/gov/stakelp?symbol=${token.symbol}`;
         } else {
           router.back();
         }

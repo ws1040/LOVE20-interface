@@ -72,14 +72,14 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
         <div className="stat place-items-center pb-3">
           <div className="stat-title text-sm mb-1">持有 {token?.symbol}</div>
           <div className="stat-value text-xl">
-            {isPendingBalance ? <LoadingIcon /> : formatTokenAmount(balance || BigInt(0))}
+            {isPendingBalance ? <LoadingIcon /> : formatTokenAmount(balance || BigInt(0), 0)}
           </div>
           <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light">不含质押、锁定</div>
         </div>
         <div className="stat place-items-center pb-3">
           <div className="stat-title text-sm">行动锁定 {token?.symbol}</div>
           <div className="stat-value text-xl">
-            {isPendingStakedAmount ? <LoadingIcon /> : formatTokenAmount(stakedAmount || BigInt(0))}
+            {isPendingStakedAmount ? <LoadingIcon /> : formatTokenAmount(stakedAmount || BigInt(0), 0)}
           </div>
           <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light">行动结束可取回</div>
         </div>

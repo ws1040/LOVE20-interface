@@ -119,11 +119,6 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
           </div>
 
           <div className="mb-4">
-            <h3 className="text-sm font-bold">验证信息填写指引</h3>
-            <p className="text-greyscale-500">{actionInfo?.body.verificationInfoGuide || '-'}</p>
-          </div>
-
-          <div className="mb-4">
             <h3 className="text-sm font-bold">白名单</h3>
             <p className="text-greyscale-500 flex flex-wrap items-center">
               {actionInfo?.body.whiteList.length

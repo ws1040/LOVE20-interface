@@ -84,7 +84,7 @@ export const useJoinableActions = (tokenAddress: `0x${string}`, round: bigint) =
     functionName: 'joinableActions',
     args: [tokenAddress, round],
     query: {
-      enabled: !!tokenAddress && !!round,
+      enabled: !!tokenAddress,
     },
   });
 

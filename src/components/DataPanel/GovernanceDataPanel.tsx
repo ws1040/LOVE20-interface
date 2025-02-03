@@ -50,13 +50,13 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
           <div className="stat place-items-center pt-3 pb-0 mb-0">
             <div className="stat-title">总治理票数</div>
             <div className="stat-value text-2xl">
-              {isPendingGovVotesNum ? <LoadingIcon /> : formatTokenAmount(govVotesNum || BigInt(0))}
+              {isPendingGovVotesNum ? <LoadingIcon /> : formatTokenAmount(govVotesNum || BigInt(0), 0)}
             </div>
           </div>
           <div className="stat place-items-center pt-3 pb-0 mb-0">
             <div className="stat-title">质押代币数</div>
             <div className="stat-value text-2xl">
-              {isPendingStTokenAmount ? <LoadingIcon /> : formatTokenAmount(stTokenAmount || BigInt(0))}
+              {isPendingStTokenAmount ? <LoadingIcon /> : formatTokenAmount(stTokenAmount || BigInt(0), 0)}
             </div>
           </div>
         </div>

@@ -54,14 +54,14 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
             {isPendingRewardAvailable || rewardAvailable === undefined ? (
               <LoadingIcon />
             ) : (
-              formatTokenAmount((rewardAvailable * 99n) / 10000n)
+              formatTokenAmount((rewardAvailable * 99n) / 10000n, 0)
             )}
           </div>
         </div>
         <div className="stat place-items-center">
           <div className="stat-title">参与行动代币</div>
           <div className="stat-value text-2xl">
-            {isPendingJoinedAmount ? <LoadingIcon /> : formatTokenAmount(joinedAmount || BigInt(0))}
+            {isPendingJoinedAmount ? <LoadingIcon /> : formatTokenAmount(joinedAmount || BigInt(0), 0)}
           </div>
         </div>
       </div>

@@ -123,6 +123,7 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
   // 4.如果找不到对应的错误文案，则返回默认的错误文案
   const originalRevertError = _parseOriginalRevertMessage(rawMessage);
   if (originalRevertError) {
+    //打印原始错误
     return { name: '交易错误', message: originalRevertError };
   }
 
