@@ -20,9 +20,9 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   // 计算剩余时间
   const ROUND_BLOCKS = Number(process.env.NEXT_PUBLIC_ROUND_BLOCKS) || 0;
   const BLOCK_TIME = Number(process.env.NEXT_PUBLIC_BLOCK_TIME) || 0;
-  const leftBlocks = blockNumber
-    ? ROUND_BLOCKS - ((Number(blockNumber) - Number(token?.voteOriginBlocks)) % ROUND_BLOCKS)
-    : 0;
+  // 使用默认值防止 undefined 导致 NaN
+  const voteOriginBlocks = token?.voteOriginBlocks ? Number(token.voteOriginBlocks) : 0;
+  const leftBlocks = blockNumber ? ROUND_BLOCKS - ((Number(blockNumber) - voteOriginBlocks) % ROUND_BLOCKS) : 0;
   const initialTimeLeft = leftBlocks > 0 ? leftBlocks * BLOCK_TIME : 0;
 
   // 计算当前轮次
@@ -35,10 +35,13 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   // 计算轮次名称
   const roundName = roundType === 'vote' ? '投票轮' : '行动轮';
 
+  // 如果 currentRound 为空，则设置默认值，否则转换为字符串
+  const displayRound = currentRound != null ? currentRound.toString() : '0';
+
   return (
     <div className="flex justify-between items-center mb-2">
       <h1 className="text-lg font-bold">
-        {roundName} 第 <span className="text-secondary">{Number(currentTokenRound)}</span> 轮
+        {roundName} 第 <span className="text-secondary">{displayRound}</span> 轮
       </h1>
       <span className="text-sm mt-1 pt-0">
         <span className="text-greyscale-400 mr-1">本轮剩余:</span>

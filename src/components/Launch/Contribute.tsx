@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,7 +21,7 @@ import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { LaunchInfo } from '@/src/types/life20types';
 import { useContribute, useContributed } from '@/src/hooks/contracts/useLOVE20Launch';
-import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
+import { useAllowance, useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import { useError } from '@/src/contexts/ErrorContext';
 
 // my context
@@ -31,6 +31,7 @@ import { Token } from '@/src/contexts/TokenContext';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
+import { Loader2 } from 'lucide-react';
 
 // 1. 定义带有动态验证的 FormSchema
 const getFormSchema = (balance: bigint) =>
@@ -77,12 +78,12 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     },
   });
 
-  // 表单内点击“最高”时，设置最大值
+  // 表单内点击"最高"时，设置最大值
   const setMaxAmount = () => {
     form.setValue('contributeAmount', formatUnits(balanceOfParentToken || 0n));
   };
 
-  // 3. “授权”相关逻辑
+  // 3. "授权"相关逻辑
   const {
     approve: approveParentToken,
     isWriting: isPendingApproveParentToken,
@@ -90,6 +91,44 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     isConfirmed: isConfirmedApproveParentToken,
     writeError: errApproveParentToken,
   } = useApprove(token?.parentTokenAddress as `0x${string}`);
+
+  // 新增状态变量，判断是否已授权足够额度（包括之前已授权）
+  const [isTokenApproved, setIsTokenApproved] = useState(false);
+
+  // 获取已授权额度
+  const {
+    allowance: allowanceParentTokenApproved,
+    isPending: isPendingAllowanceParentToken,
+    error: errAllowanceParentToken,
+  } = useAllowance(
+    token?.parentTokenAddress as `0x${string}`,
+    account as `0x${string}`,
+    process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x${string}`,
+  );
+
+  // 授权交易确认后，设置状态
+  useEffect(() => {
+    if (isConfirmedApproveParentToken) {
+      setIsTokenApproved(true);
+      toast.success(`授权${token?.parentTokenSymbol}成功`);
+    }
+  }, [isConfirmedApproveParentToken, token?.parentTokenSymbol]);
+
+  // 根据用户输入和已授权额度，判断是否满足当前申购数额的授权
+  const contributeAmount = form.watch('contributeAmount');
+  useEffect(() => {
+    const parsedContributeToken = parseUnits(contributeAmount) ?? 0n;
+    if (
+      parsedContributeToken > 0n &&
+      allowanceParentTokenApproved &&
+      allowanceParentTokenApproved > 0n &&
+      allowanceParentTokenApproved >= parsedContributeToken
+    ) {
+      setIsTokenApproved(true);
+    } else {
+      setIsTokenApproved(false);
+    }
+  }, [contributeAmount, allowanceParentTokenApproved]);
 
   const onApprove = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
     if (!checkWalletConnection(accountChain)) {
@@ -104,13 +143,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     }
   };
 
-  useEffect(() => {
-    if (isConfirmedApproveParentToken) {
-      toast.success('授权成功');
-    }
-  }, [isConfirmedApproveParentToken]);
-
-  // 4. “申购”相关逻辑
+  // 4. "申购"相关逻辑
   const {
     contribute,
     isPending: isPendingContributeToken,
@@ -121,6 +154,10 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
 
   const onContribute = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
     if (!checkWalletConnection(accountChain)) {
+      return;
+    }
+    if (!isTokenApproved) {
+      toast.error('请先授权');
       return;
     }
     try {
@@ -152,7 +189,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     }
   }, [balanceOfParentToken, token]);
 
-  // 6. 错误处理
+  // 6. 错误处理（增加 errAllowanceParentToken 处理）
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
     if (errContributeToken) {
@@ -167,11 +204,20 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     if (errorBalanceOfParentToken) {
       handleContractError(errorBalanceOfParentToken, 'token');
     }
-  }, [errApproveParentToken, errContributeToken, errorBalanceOfParentToken, contributedError, handleContractError]);
+    if (errAllowanceParentToken) {
+      handleContractError(errAllowanceParentToken, 'token');
+    }
+  }, [
+    errApproveParentToken,
+    errContributeToken,
+    errorBalanceOfParentToken,
+    contributedError,
+    errAllowanceParentToken,
+    handleContractError,
+  ]);
 
-  // 控制按钮文案
-  const hasStartedApproving =
-    isPendingApproveParentToken || isConfirmingApproveParentToken || isConfirmedApproveParentToken;
+  // 控制按钮文案，已启动授权状态
+  const hasStartedApproving = isPendingApproveParentToken || isConfirmingApproveParentToken;
 
   if (!token) {
     return <LoadingIcon />;
@@ -234,15 +280,28 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
             </div>
 
             <div className="flex justify-center space-x-4">
-              {/* 先授权 */}
-              <Button className="w-1/2" onClick={form.handleSubmit(onApprove)} disabled={hasStartedApproving}>
-                {isPendingApproveParentToken
-                  ? '1.授权中...'
-                  : isConfirmingApproveParentToken
-                  ? '1.确认中...'
-                  : isConfirmedApproveParentToken
-                  ? '1.已授权'
-                  : '1.授权'}
+              {/* 先授权：新增判断已查询授权状态 */}
+              <Button
+                className="w-1/2"
+                onClick={form.handleSubmit(onApprove)}
+                disabled={
+                  isPendingAllowanceParentToken ||
+                  isPendingApproveParentToken ||
+                  isConfirmingApproveParentToken ||
+                  isTokenApproved
+                }
+              >
+                {isPendingAllowanceParentToken ? (
+                  <Loader2 className="animate-spin" />
+                ) : isPendingApproveParentToken ? (
+                  '1.提交中...'
+                ) : isConfirmingApproveParentToken ? (
+                  '1.确认中...'
+                ) : isTokenApproved ? (
+                  `1.${token.parentTokenSymbol}已授权`
+                ) : (
+                  `1.授权${token.parentTokenSymbol}`
+                )}
               </Button>
 
               {/* 再申购，需要先完成授权 */}
@@ -250,7 +309,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
                 className="w-1/2 text-white py-2 rounded-lg"
                 onClick={form.handleSubmit(onContribute)}
                 disabled={
-                  !isConfirmedApproveParentToken ||
+                  !isTokenApproved ||
                   isPendingContributeToken ||
                   isConfirmingContributeToken ||
                   isConfirmedContributeToken

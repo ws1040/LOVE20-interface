@@ -16,6 +16,8 @@ const StakePage = () => {
   const { token } = useContext(TokenContext) || {};
 
   const hasInitialStakeRound = !!token?.initialStakeRound && token?.initialStakeRound > 0;
+
+  // 获取质押LP消耗的token数量
   const {
     tokenAmount: stakedTokenAmount,
     isPending: isPendingStakedTokenAmount,

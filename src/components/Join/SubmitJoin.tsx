@@ -3,13 +3,14 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 
 // ui components
 import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
@@ -18,7 +19,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, For
 import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
-import { useApprove, useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
+import { useApprove, useBalanceOf, useAllowance } from '@/src/hooks/contracts/useLOVE20Token';
 import { useJoin } from '@/src/hooks/contracts/useLOVE20Join';
 
 // contexts / types / etc
@@ -54,6 +55,20 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     token?.address as `0x${string}`,
     accountAddress as `0x${string}`,
   );
+
+  // 获取已授权数量
+  const {
+    allowance: allowanceToken,
+    isPending: isPendingAllowanceToken,
+    error: errAllowanceToken,
+  } = useAllowance(
+    token?.address as `0x${string}`,
+    accountAddress as `0x${string}`,
+    process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN as `0x${string}`,
+  );
+
+  // 定义授权状态变量：是否已完成代币授权
+  const [isTokenApproved, setIsTokenApproved] = useState(false);
 
   // 计算剩余可质押
   const maxStake = BigInt(actionInfo.body.maxStake) - (stakedAmount || 0n);
@@ -142,6 +157,25 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     }
   }
 
+  // 监听授权交易确认后更新状态
+  useEffect(() => {
+    if (isConfirmedApprove) {
+      setIsTokenApproved(true);
+      toast.success(`授权${token?.symbol}成功`);
+    }
+  }, [isConfirmedApprove, token?.symbol]);
+
+  // 监听用户输入的质押数量及链上返回的授权额度判断是否已授权
+  const additionalStakeAmount = form.watch('additionalStakeAmount');
+  const parsedStakeAmount = parseUnits(additionalStakeAmount || '0') ?? 0n;
+  useEffect(() => {
+    if (parsedStakeAmount > 0n && allowanceToken && allowanceToken > 0n && allowanceToken >= parsedStakeAmount) {
+      setIsTokenApproved(true);
+    } else {
+      setIsTokenApproved(false);
+    }
+  }, [parsedStakeAmount, isPendingAllowanceToken, allowanceToken]);
+
   // ------------------------------
   //  加入提交
   // ------------------------------
@@ -200,13 +234,14 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     if (errorJoin) {
       handleContractError(errorJoin, 'join');
     }
-  }, [errorTokenBalance, errApprove, errorJoin]);
+    if (errAllowanceToken) {
+      handleContractError(errAllowanceToken, 'token');
+    }
+  }, [errorTokenBalance, errApprove, errorJoin, errAllowanceToken]);
 
   // ------------------------------
   //  组件渲染
   // ------------------------------
-  const additionalStakeAmount = form.watch('additionalStakeAmount');
-  const parsedStakeAmount = parseUnits(additionalStakeAmount || '0') ?? 0n;
   const needsApproval = parsedStakeAmount > 0n;
 
   return (
@@ -274,22 +309,26 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
 
             {/* 操作按钮 */}
             <div className="flex justify-center space-x-4 pt-2">
-              {needsApproval && (
+              {needsApproval && !isTokenApproved && (
                 <Button
                   className="w-1/2"
-                  disabled={isPendingApprove || isConfirmingApprove || isConfirmedApprove || isConfirmedJoin}
+                  disabled={isPendingAllowanceToken || isPendingApprove || isConfirmingApprove || isTokenApproved}
                   type="button"
                   onClick={() => {
                     form.handleSubmit((values) => handleApprove(values))();
                   }}
                 >
-                  {isPendingApprove
-                    ? '1.授权中...'
-                    : isConfirmingApprove
-                    ? '1.确认中...'
-                    : isConfirmedApprove
-                    ? '1.已授权'
-                    : '1.授权'}
+                  {isPendingAllowanceToken ? (
+                    <Loader2 className="animate-spin" />
+                  ) : isPendingApprove ? (
+                    '1.提交中...'
+                  ) : isConfirmingApprove ? (
+                    '1.确认中...'
+                  ) : isTokenApproved ? (
+                    `1.${token?.symbol}已授权`
+                  ) : (
+                    `1.授权${token?.symbol}`
+                  )}
                 </Button>
               )}
 
@@ -297,7 +336,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
                 className="w-1/2"
                 disabled={
                   needsApproval
-                    ? (!isConfirmedApprove && parsedStakeAmount !== 0n) ||
+                    ? (!isTokenApproved && parsedStakeAmount !== 0n) ||
                       isPendingJoin ||
                       isConfirmingJoin ||
                       isConfirmedJoin

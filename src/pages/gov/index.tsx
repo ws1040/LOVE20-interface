@@ -50,9 +50,9 @@ const GovPage = () => {
       <Header title="治理首页" />
       <main className="flex-grow">
         <TokenTab />
-        <GovernanceDataPanel currentRound={currentVoteRound} />
+        <GovernanceDataPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
         <MyStakingPanel />
-        <MyVotingPanel currentRound={currentVoteRound} />
+        <MyVotingPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
         <MyVerifingPanel currentRound={currentVoteRound > 2 ? currentVoteRound - 2n : 0n} />
       </main>
     </>

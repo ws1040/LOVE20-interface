@@ -47,7 +47,6 @@ export const useCurrentRound = () => {
     functionName: 'currentRound',
     args: [],
   });
-
   return { currentRound: data as bigint, isPending, error };
 };
 
