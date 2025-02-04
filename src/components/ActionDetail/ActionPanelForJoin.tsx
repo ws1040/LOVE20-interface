@@ -59,7 +59,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
     joinedAmountByActionId &&
     joinedAmountByActionId > 0;
   const participationRatio = isJoined
-    ? Number(joinedAmountByActionIdByAccount / joinedAmountByActionId) * 100 + '%'
+    ? `${parseFloat(((Number(joinedAmountByActionIdByAccount) / Number(joinedAmountByActionId)) * 100).toFixed(3))}%`
     : '0%';
 
   // 获取验证信息
