@@ -141,13 +141,23 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
     mode: 'onChange',
   });
 
-  // 在 useForm 定义之后，添加如下 useEffect
+  // 修改后的 useEffect：将 verificationKeys 和 verificationInfos 生成映射字典，再构造最终数组填入表单
   useEffect(() => {
-    // 判断若用户已参与行动且验证信息数据不为空，则填入表单，显示在 Textarea 中
-    if (myStakedAmount && verificationInfos && verificationInfos.length > 0) {
-      form.setValue('verificationInfos', verificationInfos);
+    if (myStakedAmount && verificationInfos && verificationInfos.length > 0 && verificationKeys) {
+      // 构造映射字典：key 为 verificationKeys 中的值，value 为对应位置的 verificationInfos
+      const verificationMap: Record<string, string> = {};
+      verificationKeys.forEach((key, index) => {
+        verificationMap[key] = verificationInfos[index];
+      });
+
+      // 根据 actionInfo.body.verificationKeys 的顺序构造最终数组，如果找不到则填空字符串
+      const finalVerificationInfos = actionInfo.body.verificationKeys.map((key) => {
+        return verificationMap[key] ?? '';
+      });
+
+      form.setValue('verificationInfos', finalVerificationInfos);
     }
-  }, [myStakedAmount, verificationInfos, form]);
+  }, [myStakedAmount, verificationInfos, verificationKeys, form, actionInfo.body.verificationKeys]);
 
   // ------------------------------
   //  授权(approve)
