@@ -11,19 +11,12 @@ import { useRouter } from 'next/router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Loader2 } from 'lucide-react';
 
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { checkWalletConnection } from '@/src/lib/web3';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { LaunchInfo } from '@/src/types/life20types';
-import {
-  useAllowance,
-  useApprove,
-  useBalanceOf,
-  useBurnForParentToken,
-  useTotalSupply,
-} from '@/src/hooks/contracts/useLOVE20Token';
+import { useBalanceOf, useBurnForParentToken, useTotalSupply } from '@/src/hooks/contracts/useLOVE20Token';
 
 import { Token } from '@/src/contexts/TokenContext';
 import LeftTitle from '@/src/components/Common/LeftTitle';
@@ -95,27 +88,6 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
     }
   }, [burnAmount]);
 
-  // 使用 useAllowance 检查用户是否已经授权
-  const [isTokenApproved, setIsTokenApproved] = useState(false);
-  const {
-    allowance: allowanceToken,
-    isPending: isPendingAllowanceToken,
-    error: errAllowanceToken,
-  } = useAllowance(
-    token?.address as `0x${string}`,
-    account as `0x${string}`,
-    process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x${string}`,
-  );
-
-  // 根据用户输入的销毁数量和已获得的授权额度，判断是否视为已授权
-  useEffect(() => {
-    if (parsedBurnAmount > 0n && allowanceToken && allowanceToken > 0n && allowanceToken >= parsedBurnAmount) {
-      setIsTokenApproved(true);
-    } else {
-      setIsTokenApproved(false);
-    }
-  }, [parsedBurnAmount, allowanceToken, isPendingAllowanceToken]);
-
   // 计算预计可换回的父币数量
   const [expectedParentTokenBalance, setExpectedParentTokenBalance] = useState(0n);
   useEffect(() => {
@@ -126,34 +98,6 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch('burnAmount'), totalSupplyOfToken, balanceOfParentToken]);
-
-  // 授权相关逻辑
-  const {
-    approve: approveParentToken,
-    isWriting: isPendingApproveParentToken,
-    isConfirming: isConfirmingApproveParentToken,
-    isConfirmed: isConfirmedApproveParentToken,
-    writeError: errApproveParentToken,
-  } = useApprove(token?.address as `0x${string}`);
-
-  const onApprove = async (data: z.infer<typeof FormSchema>) => {
-    if (!checkWalletConnection(accountChain)) return;
-    try {
-      await approveParentToken(
-        process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x${string}`,
-        parseUnits(data.burnAmount),
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    if (isConfirmedApproveParentToken) {
-      setIsTokenApproved(true);
-      toast.success('授权成功');
-    }
-  }, [isConfirmedApproveParentToken]);
 
   // 销毁相关逻辑
   const {
@@ -182,7 +126,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
     }
   }, [isConfirmedBurn, router, token?.symbol]);
 
-  // 设置"全选"按钮逻辑
+  // "全选"按钮逻辑
   const setMaxAmount = () => {
     form.setValue('burnAmount', formatUnits(balanceOfToken || 0n));
   };
@@ -193,21 +137,8 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
     if (errorBalanceOfToken) handleContractError(errorBalanceOfToken, 'token');
     if (errorBalanceOfParentToken) handleContractError(errorBalanceOfParentToken, 'token');
     if (errorTotalSupplyOfToken) handleContractError(errorTotalSupplyOfToken, 'token');
-    if (errApproveParentToken) handleContractError(errApproveParentToken, 'token');
     if (errBurn) handleContractError(errBurn, 'token');
-    if (errAllowanceToken) handleContractError(errAllowanceToken, 'token');
-  }, [
-    errorBalanceOfToken,
-    errorBalanceOfParentToken,
-    errorTotalSupplyOfToken,
-    errApproveParentToken,
-    errBurn,
-    errAllowanceToken,
-    handleContractError,
-  ]);
-
-  const hasStartedApproving =
-    isPendingApproveParentToken || isConfirmingApproveParentToken || isConfirmedApproveParentToken;
+  }, [errorBalanceOfToken, errorBalanceOfParentToken, errorTotalSupplyOfToken, errBurn, handleContractError]);
 
   if (!token || isPendingBalanceOfToken) {
     return <LoadingIcon />;
@@ -243,7 +174,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
                       <Input
                         type="number"
                         placeholder="请输入数量"
-                        disabled={hasStartedApproving || (balanceOfToken || 0n) <= 0n}
+                        disabled={(balanceOfToken || 0n) <= 0n || isPendingBurn || isConfirmingBurn}
                         className="!ring-secondary-foreground"
                         {...field}
                       />
@@ -254,13 +185,13 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
               />
               <div className="flex items-center text-sm">
                 <span className="text-greyscale-400">
-                  我的{token.symbol}: <span className="text-secondary">{formatTokenAmount(balanceOfToken || 0n)}</span>
+                  我的 {token.symbol}: <span className="text-secondary">{formatTokenAmount(balanceOfToken || 0n)}</span>
                 </span>
                 <Button
                   variant="link"
                   size="sm"
                   onClick={setMaxAmount}
-                  disabled={hasStartedApproving || (balanceOfToken || 0n) <= 0n}
+                  disabled={(balanceOfToken || 0n) <= 0n || isPendingBurn || isConfirmingBurn}
                   className="text-secondary"
                 >
                   全选
@@ -274,36 +205,13 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
                 </span>
               </div>
 
-              <div className="flex justify-center space-x-4">
-                <Button
-                  className="w-1/2"
-                  onClick={form.handleSubmit(onApprove)}
-                  disabled={hasStartedApproving || isTokenApproved || isPendingAllowanceToken}
-                >
-                  {isPendingAllowanceToken ? (
-                    <Loader2 className="animate-spin" />
-                  ) : isPendingApproveParentToken ? (
-                    '1.提交中...'
-                  ) : isConfirmingApproveParentToken ? (
-                    '1.确认中...'
-                  ) : isTokenApproved ? (
-                    `1.${token?.symbol}已授权`
-                  ) : (
-                    `1.授权${token?.symbol}`
-                  )}
-                </Button>
+              <div className="flex justify-center">
                 <Button
                   className="w-1/2 text-white py-2 rounded-lg"
                   onClick={form.handleSubmit(onBurn)}
-                  disabled={!isTokenApproved || isPendingBurn || isConfirmingBurn || isConfirmedBurn}
+                  disabled={isPendingBurn || isConfirmingBurn || isConfirmedBurn}
                 >
-                  {isPendingBurn
-                    ? '2.销毁中...'
-                    : isConfirmingBurn
-                    ? '2.确认中...'
-                    : isConfirmedBurn
-                    ? '2.销毁成功'
-                    : '2.销毁'}
+                  {isPendingBurn ? '销毁中...' : isConfirmingBurn ? '确认中...' : isConfirmedBurn ? '销毁成功' : '销毁'}
                 </Button>
               </div>
             </form>
@@ -312,16 +220,16 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
           <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mt-4">
             <p className="mb-1">计算公式：</p>
             <p>
-              所得{token.parentTokenSymbol}数量 = 底池{token.parentTokenSymbol}总量 * (销毁{token.symbol}数量 /{' '}
-              {token.symbol}总发行量)
+              所得 {token.parentTokenSymbol} 数量 = 底池 {token.parentTokenSymbol} 总量 * (销毁 {token.symbol} 数量 /{' '}
+              {token.symbol} 总发行量)
             </p>
           </div>
         </div>
       </div>
 
       <LoadingOverlay
-        isLoading={isPendingApproveParentToken || isConfirmingApproveParentToken || isPendingBurn || isConfirmingBurn}
-        text={isPendingApproveParentToken || isPendingBurn ? '提交交易...' : '确认交易...'}
+        isLoading={isPendingBurn || isConfirmingBurn}
+        text={isPendingBurn ? '提交交易...' : '确认交易...'}
       />
     </>
   );

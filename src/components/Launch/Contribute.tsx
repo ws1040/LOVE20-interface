@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -219,6 +219,16 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   // 控制按钮文案，已启动授权状态
   const hasStartedApproving = isPendingApproveParentToken || isConfirmingApproveParentToken;
 
+  // 为按钮添加 ref
+  const approveButtonRef = useRef<HTMLButtonElement>(null);
+
+  // 监听 isPendingAllowanceParentToken 变化
+  useEffect(() => {
+    if (!isPendingAllowanceParentToken && approveButtonRef.current) {
+      approveButtonRef.current.blur();
+    }
+  }, [isPendingAllowanceParentToken]);
+
   if (!token) {
     return <LoadingIcon />;
   }
@@ -280,8 +290,8 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
             </div>
 
             <div className="flex justify-center space-x-4">
-              {/* 先授权：新增判断已查询授权状态 */}
               <Button
+                ref={approveButtonRef}
                 className="w-1/2"
                 onClick={form.handleSubmit(onApprove)}
                 disabled={
@@ -304,7 +314,6 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
                 )}
               </Button>
 
-              {/* 再申购，需要先完成授权 */}
               <Button
                 className="w-1/2 text-white py-2 rounded-lg"
                 onClick={form.handleSubmit(onContribute)}

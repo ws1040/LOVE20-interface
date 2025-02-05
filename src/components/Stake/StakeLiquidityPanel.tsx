@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
@@ -405,10 +405,10 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
       handleContractError(errorTokenBalance, 'token');
     }
     if (errAllowanceParentToken) {
-      handleContractError(errAllowanceParentToken, 'stake');
+      handleContractError(errAllowanceParentToken, 'token');
     }
     if (errAllowanceToken) {
-      handleContractError(errAllowanceToken, 'stake');
+      handleContractError(errAllowanceToken, 'token');
     }
     if (errApproveToken) {
       handleContractError(errApproveToken, 'stake');
@@ -487,6 +487,18 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
     }
   }, [promisedWaitingRounds]);
 
+  // 针对授权 token 按钮，添加 ref 及其状态保存，用于检测 isPendingAllowanceToken 的状态变化
+  const approveTokenButtonRef = useRef<HTMLButtonElement>(null);
+  const prevIsPendingAllowanceToken = useRef<boolean>(isPendingAllowanceToken);
+
+  useEffect(() => {
+    // 当上一次的状态为 true，而当前为 false，则执行 blur()
+    if (prevIsPendingAllowanceToken.current && !isPendingAllowanceToken) {
+      approveTokenButtonRef.current?.blur();
+    }
+    prevIsPendingAllowanceToken.current = isPendingAllowanceToken;
+  }, [isPendingAllowanceToken]);
+
   // 如果质押状态正在加载，则显示 loading
   if (isPendingAccountStakeStatus) {
     return <LoadingIcon />;
@@ -549,6 +561,11 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
                   质押 token 数 (当前持有：
                   <span className="text-secondary-400 mr-2">{formatTokenAmount(tokenBalance || 0n)}</span>
                   {token?.symbol})
+                  {!!tokenBalance && tokenBalance <= 10n && (
+                    <Link href="/dex/swap/" className="text-secondary-400 ml-2">
+                      去获取{token?.symbol}
+                    </Link>
+                  )}
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -602,10 +619,11 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
 
           {/* 两个按钮：授权 + 质押 */}
           <div className="flex justify-center space-x-2 mt-4">
-            {/* 授权 token 的按钮 */}
+            {/* 修改后的授权 token 按钮 */}
             <Button
               type="button"
               className="w-1/3"
+              ref={approveTokenButtonRef}
               disabled={isPendingAllowanceToken || isPendingApproveToken || isConfirmingApproveToken || isTokenApproved}
               onClick={form.handleSubmit(onApproveToken)}
             >

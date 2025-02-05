@@ -30,6 +30,12 @@ export interface JoinableAction {
   votesNum: bigint;
   joinedAmount: bigint;
 }
+
+export interface JoinableActionDetail {
+  action: ActionInfo;
+  votesNum: bigint;
+  joinedAmount: bigint;
+}
 export interface JoinedAction {
   actionId: bigint;
   lastJoinedRound: bigint;

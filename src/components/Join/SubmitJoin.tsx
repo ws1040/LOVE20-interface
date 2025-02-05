@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
@@ -21,6 +21,7 @@ import { formatTokenAmount, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useApprove, useBalanceOf, useAllowance } from '@/src/hooks/contracts/useLOVE20Token';
 import { useJoin } from '@/src/hooks/contracts/useLOVE20Join';
+import { useVerificationInfosByAccount } from '@/src/hooks/contracts/useLOVE20DataViewer';
 
 // contexts / types / etc
 import { ActionInfo } from '@/src/types/life20types';
@@ -28,6 +29,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // ------------------------------
@@ -45,7 +47,7 @@ interface SubmitJoinProps {
   stakedAmount: bigint | undefined;
 }
 
-const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => {
+const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: myStakedAmount }) => {
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress, chain: accountChain } = useAccount();
@@ -67,13 +69,26 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN as `0x${string}`,
   );
 
+  // 获取验证信息
+  const {
+    verificationKeys,
+    verificationInfos,
+    isPending: isPendingVerificationInfo,
+    error: errorVerificationInfo,
+  } = useVerificationInfosByAccount(
+    (token?.address as `0x${string}`) || '',
+    BigInt(actionInfo.head.id),
+    accountAddress as `0x${string}`,
+    !!myStakedAmount,
+  );
+
   // 定义授权状态变量：是否已完成代币授权
   const [isTokenApproved, setIsTokenApproved] = useState(false);
 
   // 计算剩余可质押
-  const maxStake = BigInt(actionInfo.body.maxStake) - (stakedAmount || 0n);
+  const maxStake = BigInt(actionInfo.body.maxStake) - (myStakedAmount || 0n);
 
-  // 这里构造 “verificationInfos” 字段的默认值；长度与 verificationKeys 一致
+  // 这里构造 "verificationInfos" 字段的默认值；长度与 verificationKeys 一致
   const defaultVerificationInfos = actionInfo.body.verificationKeys.map(() => '');
 
   // 动态构造 zod schema
@@ -84,8 +99,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
       .transform((val) => (val.trim() === '' ? '0' : val.trim()))
       .refine(
         (val) => {
-          // 如果 stakedAmount = 0，那么 val 不能为 "0"
-          if ((stakedAmount ?? 0n) === 0n && val === '0') {
+          if (val === '0') {
             return false;
           }
           return true;
@@ -127,6 +141,14 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     mode: 'onChange',
   });
 
+  // 在 useForm 定义之后，添加如下 useEffect
+  useEffect(() => {
+    // 判断若用户已参与行动且验证信息数据不为空，则填入表单，显示在 Textarea 中
+    if (myStakedAmount && verificationInfos && verificationInfos.length > 0) {
+      form.setValue('verificationInfos', verificationInfos);
+    }
+  }, [myStakedAmount, verificationInfos, form]);
+
   // ------------------------------
   //  授权(approve)
   // ------------------------------
@@ -138,6 +160,17 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     writeError: errApprove,
   } = useApprove(token?.address as `0x${string}`);
 
+  // 新增：为授权按钮设置 ref ，用于在授权等待状态结束后调用 blur() 取消 hover 效果
+  const approveButtonRef = useRef<HTMLButtonElement>(null);
+  const prevIsPendingAllowanceTokenRef = useRef(isPendingAllowanceToken);
+  useEffect(() => {
+    // 当 isPendingAllowanceToken 从 true 变为 false 时调用 blur()
+    if (prevIsPendingAllowanceTokenRef.current && !isPendingAllowanceToken && approveButtonRef.current) {
+      approveButtonRef.current.blur();
+    }
+    prevIsPendingAllowanceTokenRef.current = isPendingAllowanceToken;
+  }, [isPendingAllowanceToken]);
+
   async function handleApprove(values: FormValues) {
     if (!checkWalletConnection(accountChain)) {
       return;
@@ -145,7 +178,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
 
     // 确保 newStake 始终为 bigint，避免 null
     const newStake = parseUnits(values.additionalStakeAmount) ?? 0n;
-    if (newStake === 0n && stakedAmount && stakedAmount > 0n) {
+    if (newStake === 0n && myStakedAmount && myStakedAmount > 0n) {
       toast.error('当前无需授权。');
       return;
     }
@@ -228,6 +261,9 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     if (errorTokenBalance) {
       handleContractError(errorTokenBalance, 'token');
     }
+    if (errorVerificationInfo) {
+      handleContractError(errorVerificationInfo, 'join');
+    }
     if (errApprove) {
       handleContractError(errApprove, 'token');
     }
@@ -237,17 +273,19 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
     if (errAllowanceToken) {
       handleContractError(errAllowanceToken, 'token');
     }
-  }, [errorTokenBalance, errApprove, errorJoin, errAllowanceToken]);
+  }, [errorTokenBalance, errorVerificationInfo, errApprove, errorJoin, errAllowanceToken]);
 
   // ------------------------------
   //  组件渲染
   // ------------------------------
-  const needsApproval = parsedStakeAmount > 0n;
+  if (isPendingVerificationInfo) {
+    return <LoadingIcon />;
+  }
 
   return (
     <>
       <div className="px-6 pt-0 pb-2">
-        <LeftTitle title="加入行动" />
+        <LeftTitle title={myStakedAmount ? '增加参与代币' : '参与行动'} />
         <Form {...form}>
           <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
             {/* 参与代币数 */}
@@ -257,14 +295,14 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-greyscale-500 font-normal">
-                    {stakedAmount ? '增加参与代币数：' : '参与代币数：'}
+                    {myStakedAmount ? '' : '参与代币数：'}
                   </FormLabel>
                   <FormControl>
                     <Input
                       placeholder={
                         maxStake > 0n
-                          ? stakedAmount
-                            ? `可填 0 不追加。最大可追加：${formatTokenAmount(maxStake)}`
+                          ? myStakedAmount
+                            ? `最大可追加 ${formatTokenAmount(maxStake)}`
                             : `最大 ${formatTokenAmount(maxStake)}`
                           : `已到最大${formatTokenAmount(BigInt(actionInfo.body.maxStake))}，不能再追加`
                       }
@@ -273,11 +311,11 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
                   <FormDescription>
                     当前持有：<span className="text-secondary">{formatTokenAmount(tokenBalance || 0n)}</span>{' '}
                     {token?.symbol}
                   </FormDescription>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -309,59 +347,43 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount }) => 
 
             {/* 操作按钮 */}
             <div className="flex justify-center space-x-4 pt-2">
-              {needsApproval && !isTokenApproved && (
-                <Button
-                  className="w-1/2"
-                  disabled={isPendingAllowanceToken || isPendingApprove || isConfirmingApprove || isTokenApproved}
-                  type="button"
-                  onClick={() => {
-                    form.handleSubmit((values) => handleApprove(values))();
-                  }}
-                >
-                  {isPendingAllowanceToken ? (
-                    <Loader2 className="animate-spin" />
-                  ) : isPendingApprove ? (
-                    '1.提交中...'
-                  ) : isConfirmingApprove ? (
-                    '1.确认中...'
-                  ) : isTokenApproved ? (
-                    `1.${token?.symbol}已授权`
-                  ) : (
-                    `1.授权${token?.symbol}`
-                  )}
-                </Button>
-              )}
+              <Button
+                ref={approveButtonRef} // 将 ref 绑定到授权按钮上
+                className="w-1/2"
+                disabled={isPendingAllowanceToken || isPendingApprove || isConfirmingApprove || isTokenApproved}
+                type="button"
+                onClick={() => {
+                  form.handleSubmit((values) => handleApprove(values))();
+                }}
+              >
+                {isPendingAllowanceToken ? (
+                  <Loader2 className="animate-spin" />
+                ) : isPendingApprove ? (
+                  '1.提交中...'
+                ) : isConfirmingApprove ? (
+                  '1.确认中...'
+                ) : isTokenApproved ? (
+                  `1.${token?.symbol}已授权`
+                ) : (
+                  `1.授权${token?.symbol}`
+                )}
+              </Button>
 
               <Button
                 className="w-1/2"
-                disabled={
-                  needsApproval
-                    ? (!isTokenApproved && parsedStakeAmount !== 0n) ||
-                      isPendingJoin ||
-                      isConfirmingJoin ||
-                      isConfirmedJoin
-                    : isPendingJoin || isConfirmingJoin || isConfirmedJoin
-                }
+                disabled={!isTokenApproved || isPendingJoin || isConfirmingJoin || isConfirmedJoin}
                 type="button"
                 onClick={() => {
                   form.handleSubmit((values) => handleJoin(values))();
                 }}
               >
                 {isPendingJoin
-                  ? needsApproval
-                    ? '2.加入中...'
-                    : '加入中...'
+                  ? '2.提交中...'
                   : isConfirmingJoin
-                  ? needsApproval
-                    ? '2.确认中...'
-                    : '确认中...'
+                  ? '2.确认中...'
                   : isConfirmedJoin
-                  ? needsApproval
-                    ? '2.已加入'
-                    : '已加入'
-                  : needsApproval
-                  ? '2.加入'
-                  : '加入'}
+                  ? '2.已加入'
+                  : '2.加入'}
               </Button>
             </div>
           </form>

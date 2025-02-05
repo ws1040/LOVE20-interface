@@ -1,4 +1,4 @@
-// src/components/AddToMetamask.jsx
+'use client';
 
 import { useState } from 'react';
 import { Loader2, CirclePlus } from 'lucide-react';

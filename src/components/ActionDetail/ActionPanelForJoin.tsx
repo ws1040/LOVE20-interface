@@ -109,7 +109,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
                 formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0))
               )}
             </div>
-            <div className="stat-desc text-sm mt-2">我参与本行动的代币数</div>
+            <div className="stat-desc text-sm mt-2">参与本行动的代币</div>
           </div>
           <div className="stat place-items-center">
             <div className="stat-title">我的占比</div>
@@ -125,8 +125,8 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
         </Button>
       ) : (
         <>
-          <Button variant="outline" className="w-1/2 text-secondary border-secondary py-0" disabled>
-            您已加入
+          <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
+            <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
           </Button>
           <div className="flex flex-col items-center mt-2">
             <div className="text-sm text-greyscale-600">

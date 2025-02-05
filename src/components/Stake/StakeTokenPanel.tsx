@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -95,6 +95,19 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
   );
 
+  // 新增：为授权按钮创建 ref
+  const approveButtonRef = useRef<HTMLButtonElement>(null);
+  // 保存 isPendingAllowanceToken 的上一个值
+  const prevIsPendingAllowance = useRef(isPendingAllowanceToken);
+
+  // 当 isPendingAllowanceToken 从 true 变为 false 时，调用按钮的 blur() 方法
+  useEffect(() => {
+    if (prevIsPendingAllowance.current && !isPendingAllowanceToken) {
+      approveButtonRef.current?.blur();
+    }
+    prevIsPendingAllowance.current = isPendingAllowanceToken;
+  }, [isPendingAllowanceToken]);
+
   // 2. 初始化表单
   const form = useForm<z.infer<ReturnType<typeof stakeSchemaFactory>>>({
     resolver: zodResolver(stakeSchemaFactory(tokenBalance)),
@@ -168,20 +181,6 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     }
   }, [promisedWaitingRounds]);
 
-  // 错误处理
-  const { handleContractError } = useHandleContractError();
-  useEffect(() => {
-    if (errStakeToken) {
-      handleContractError(errStakeToken, 'stake');
-    }
-    if (errApproveToken) {
-      handleContractError(errApproveToken, 'token');
-    }
-    if (errAllowanceToken) {
-      handleContractError(errAllowanceToken, 'allowance');
-    }
-  }, [errStakeToken, errApproveToken, errAllowanceToken, handleContractError]);
-
   // 监听用户输入的质押数量以及 allowance 值，动态判断是否已授权
   const stakeTokenAmountValue = form.watch('stakeTokenAmount');
   useEffect(() => {
@@ -198,6 +197,20 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
       setIsTokenApproved(false);
     }
   }, [stakeTokenAmountValue, allowanceToken, isPendingAllowanceToken]);
+
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errStakeToken) {
+      handleContractError(errStakeToken, 'stake');
+    }
+    if (errApproveToken) {
+      handleContractError(errApproveToken, 'token');
+    }
+    if (errAllowanceToken) {
+      handleContractError(errAllowanceToken, 'token');
+    }
+  }, [errStakeToken, errApproveToken, errAllowanceToken]);
 
   return (
     <div className="w-full flex flex-col items-center p-6 mt-1">
@@ -268,6 +281,8 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
           {/* 按钮组：1.授权；2.质押 */}
           <div className="flex justify-center space-x-4">
             <Button
+              // 为授权按钮添加 ref
+              ref={approveButtonRef}
               className="w-1/2"
               disabled={isPendingAllowanceToken || isPendingApproveToken || isConfirmingApproveToken || isTokenApproved}
               onClick={() => form.handleSubmit(handleApprove)()}
