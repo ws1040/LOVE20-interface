@@ -124,7 +124,7 @@ const Deposit: React.FC = () => {
         if (token && !token.hasEnded) {
           window.location.href = `/launch/contribute/?symbol=${token.symbol}`;
         } else if (token && !token.initialStakeRound) {
-          window.location.href = `/gov/stakelp?symbol=${token.symbol}`;
+          window.location.href = `/gov/stakelp?symbol=${token.symbol}&first=true`;
         } else {
           router.back();
         }

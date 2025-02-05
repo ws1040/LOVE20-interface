@@ -456,8 +456,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
   useEffect(() => {
     if (isFirstTimeStake === 'true' && !hadStartedApprove) {
       setError({
-        name: '首次质押',
-        message: '部署新代币后，先质押获取治理票，才能进行后续操作',
+        name: '提示：',
+        message: '新部署的代币，需先质押获取治理票，才能后续操作',
       });
     }
   }, [isFirstTimeStake, hadStartedApprove, setError]);

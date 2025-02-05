@@ -33,13 +33,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: '社区首页',
-            url: `${basePath}/acting?symbol=${token.symbol}`,
+            url: `${basePath}/acting/?symbol=${token.symbol}`,
             isActive: false,
             icon: SmilePlus,
           },
           {
             title: '治理首页',
-            url: `${basePath}/gov?symbol=${token.symbol}`,
+            url: `${basePath}/gov/?symbol=${token.symbol}`,
             isActive: false,
             icon: Landmark,
           },
@@ -63,13 +63,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: '发射平台',
-            url: `${basePath}/launch?symbol=${token.symbol}`,
+            url: `${basePath}/launch/?symbol=${token.symbol}`,
             isActive: false,
             icon: Rocket,
           },
           {
             title: '代币列表',
-            url: `${basePath}/tokens?symbol=${token.symbol}`,
+            url: `${basePath}/tokens/?symbol=${token.symbol}`,
             isActive: false,
             icon: List,
           },
@@ -87,7 +87,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: '我的首页',
-            url: `${basePath}/my?symbol=${token.symbol}`,
+            url: `${basePath}/my/?symbol=${token.symbol}`,
             isActive: false,
             icon: Home,
           },
