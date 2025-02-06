@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useContext } from 'react';
 import { BaseError, useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';

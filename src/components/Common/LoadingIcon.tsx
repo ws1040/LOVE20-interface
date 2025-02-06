@@ -1,4 +1,5 @@
 // components/Common/LoadingIcon.tsx
+'use client';
 import { Loader2 } from 'lucide-react';
 
 const LoadingIcon: React.FC = () => {

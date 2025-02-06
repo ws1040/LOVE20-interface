@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';

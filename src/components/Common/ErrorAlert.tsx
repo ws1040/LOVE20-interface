@@ -1,3 +1,4 @@
+'use client';
 // components/common/ErrorAlert.tsx
 import React, { useEffect, useState } from 'react';
 import { AlertCircle } from 'lucide-react';

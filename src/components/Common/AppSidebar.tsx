@@ -1,3 +1,4 @@
+'use client';
 import { useContext, useState } from 'react';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { SmilePlus, Home, Landmark, SatelliteDish, BadgeDollarSign, Rocket, List, TicketCheck } from 'lucide-react';
@@ -38,7 +39,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             icon: SmilePlus,
           },
           {
-            title: '治理首页',
+            title: '社区治理',
             url: `${basePath}/gov/?symbol=${token.symbol}`,
             isActive: false,
             icon: Landmark,
@@ -48,12 +49,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             url: `${basePath}/vote/actions4submit?symbol=${token.symbol}`,
             isActive: false,
             icon: SatelliteDish,
-          },
-          {
-            title: '交易代币',
-            url: `${basePath}/dex/swap?symbol=${token.symbol}`,
-            isActive: false,
-            icon: BadgeDollarSign,
           },
         ],
       },
@@ -72,6 +67,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             url: `${basePath}/tokens/?symbol=${token.symbol}`,
             isActive: false,
             icon: List,
+          },
+        ],
+      },
+      {
+        title: '交易',
+        url: '#',
+        items: [
+          {
+            title: '交易代币',
+            url: `${basePath}/dex/swap?symbol=${token.symbol}`,
+            isActive: false,
+            icon: BadgeDollarSign,
           },
           {
             title: `兑换${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`,

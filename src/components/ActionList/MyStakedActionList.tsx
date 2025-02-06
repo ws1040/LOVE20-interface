@@ -1,3 +1,4 @@
+'use client';
 import { useAccount } from 'wagmi';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ChevronRight } from 'lucide-react';

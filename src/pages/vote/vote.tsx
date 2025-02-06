@@ -1,6 +1,8 @@
+'use client';
+
 import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
-import { BaseError, useAccount } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';

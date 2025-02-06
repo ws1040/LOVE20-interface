@@ -1,4 +1,4 @@
-// src/pages/index.tsx
+'use client';
 
 import type { NextPage } from 'next';
 import { useContext, useEffect } from 'react';

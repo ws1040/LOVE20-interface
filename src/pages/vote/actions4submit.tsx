@@ -1,5 +1,8 @@
+'use client';
+
 import { useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
+
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
 

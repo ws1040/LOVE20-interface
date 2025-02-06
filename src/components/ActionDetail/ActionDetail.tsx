@@ -1,5 +1,4 @@
-// components/ActivityDetail/ActivityDetail.tsx
-
+'use client';
 import React, { useContext, useEffect } from 'react';
 
 // my hooks

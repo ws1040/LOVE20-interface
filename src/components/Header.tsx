@@ -1,3 +1,4 @@
+'use client';
 // src/components/Header.tsx
 
 import Head from 'next/head';

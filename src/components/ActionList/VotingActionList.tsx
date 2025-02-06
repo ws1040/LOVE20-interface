@@ -1,3 +1,4 @@
+'use client';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
