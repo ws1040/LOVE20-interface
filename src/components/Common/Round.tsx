@@ -37,7 +37,7 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   const roundName = roundType === 'vote' ? '投票轮' : '行动轮';
 
   // 如果 currentRound 为空，则设置默认值，否则转换为字符串
-  const displayRound = currentRound != null ? currentRound.toString() : '0';
+  const displayRound = currentTokenRound != null ? currentTokenRound.toString() : '0';
 
   return (
     <div className="flex justify-between items-center mb-2">
