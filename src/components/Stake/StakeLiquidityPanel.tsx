@@ -367,7 +367,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
     toast.success('质押成功');
     setTimeout(() => {
       // 跳转到治理首页
-      window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH}/gov/?symbol=${token?.symbol}`;
+      window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/gov/?symbol=${token?.symbol}`;
     }, 2000);
   }
 
