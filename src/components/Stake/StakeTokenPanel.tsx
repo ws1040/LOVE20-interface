@@ -169,7 +169,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
       form.reset();
       // 2秒后刷新页面，跳转到治理首页
       setTimeout(() => {
-        window.location.href = `/gov?symbol=${token?.symbol}`;
+        window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH}/gov?symbol=${token?.symbol}`;
       }, 2000);
     }
   }, [isConfirmedStakeToken, form, token?.symbol]);
