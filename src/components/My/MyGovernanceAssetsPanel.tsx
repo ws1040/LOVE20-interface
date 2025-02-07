@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
 import { useAccount } from 'wagmi';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 // my funcs
@@ -13,6 +13,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useAccountStakeStatus, useUnstake, useWithdraw, useCurrentRound } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useApprove as useApproveST } from '@/src/hooks/contracts/useLOVE20STToken';
 import { useApprove as useApproveSL } from '@/src/hooks/contracts/useLOVE20SLToken';
+import { useAllowance } from '@/src/hooks/contracts/useLOVE20Token';
 
 // my contexts
 import { Token } from '@/src/contexts/TokenContext';
@@ -44,7 +45,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     error: errorAccountStakeStatus,
   } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
 
-  // 检查输入
+  // 检查输入条件
   const checkInput = () => {
     if (!checkWalletConnection(accountChain)) {
       return false;
@@ -56,7 +57,53 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     return true;
   };
 
-  // 授权
+  // 使用 useAllowance 检查授权状态（流动性质押 & 质押代币分别检查）
+  const {
+    allowance: allowanceSL,
+    isPending: isPendingAllowanceSL,
+    error: errAllowanceSL,
+  } = useAllowance(
+    token?.slTokenAddress as `0x${string}`,
+    accountAddress as `0x${string}`,
+    process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
+  );
+
+  const {
+    allowance: allowanceST,
+    isPending: isPendingAllowanceST,
+    error: errAllowanceST,
+  } = useAllowance(
+    token?.stTokenAddress as `0x${string}`,
+    accountAddress as `0x${string}`,
+    process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
+  );
+
+  // 状态变量：判断各 token 是否已授权
+  const [isSlTokenApproved, setIsSlTokenApproved] = useState(false);
+  const [isStTokenApproved, setIsStTokenApproved] = useState(false);
+
+  // 根据 slAmount 与 allowanceSL 判断流动性质押代币是否已授权
+  useEffect(() => {
+    if (slAmount && slAmount > 0n && allowanceSL && allowanceSL >= slAmount) {
+      setIsSlTokenApproved(true);
+    } else {
+      setIsSlTokenApproved(false);
+    }
+  }, [slAmount, allowanceSL, isPendingAllowanceSL]);
+
+  // 根据 stAmount 与 allowanceST 判断质押代币是否已授权
+  useEffect(() => {
+    if (stAmount && stAmount > 0n && allowanceST && allowanceST >= stAmount) {
+      setIsStTokenApproved(true);
+    } else {
+      setIsStTokenApproved(false);
+    }
+  }, [stAmount, allowanceST, isPendingAllowanceST]);
+
+  // 组合是否完成授权，若没有质押stToken，则只需检查流动性质押的授权情况
+  const isApproved = isSlTokenApproved && (stAmount && stAmount > 0n ? isStTokenApproved : true);
+
+  // 授权相关 hook（保留原有逻辑）
   const {
     isPending: isPendingApproveST,
     isConfirming: isConfirmingApproveST,
@@ -71,15 +118,17 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     error: approveSLWriteError,
     approve: approveSL,
   } = useApproveSL(token?.slTokenAddress as `0x${string}`);
+
+  // 授权流程：如果相应代币尚未授权，则进行授权
   const handleApprove = async () => {
     if (!checkInput()) {
       return;
     }
     try {
-      if (slAmount && slAmount > 0n) {
+      if (slAmount && slAmount > 0n && !isSlTokenApproved) {
         await approveSL(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, slAmount);
       }
-      if (stAmount && stAmount > 0n) {
+      if (stAmount && stAmount > 0n && !isStTokenApproved) {
         await approveST(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, stAmount);
       }
     } catch (error) {
@@ -162,6 +211,12 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     if (errorCurrentRound) {
       handleContractError(errorCurrentRound, 'stake');
     }
+    if (errAllowanceSL) {
+      handleContractError(errAllowanceSL, 'slToken');
+    }
+    if (errAllowanceST) {
+      handleContractError(errAllowanceST, 'stToken');
+    }
   }, [
     errorAccountStakeStatus,
     approveSTWriteError,
@@ -169,6 +224,8 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     unstakeWriteError,
     withdrawWriteError,
     errorCurrentRound,
+    errAllowanceSL,
+    errAllowanceST,
   ]);
 
   if (!accountAddress) {
@@ -181,11 +238,11 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     return <div className="text-sm mt-4 text-greyscale-500 text-center">您没有质押</div>;
   }
 
-  // 中间状态
+  // 中间状态：原先的确认状态替换为 isApproved 状态
   const isApproving = isPendingApproveSL || isPendingApproveST;
   const isApproveConfirming = isConfirmingApproveSL || isConfirmingApproveST;
-  const isApproveConfirmed = isConfirmedApproveSL && (!stAmount || isConfirmedApproveST);
-  const hadStartedApprove = isApproving || isApproveConfirming || isApproveConfirmed;
+  const hadStartedApprove = isApproving || isApproveConfirming || isApproved;
+
   // 是否可以取回代币
   const canWithdraw =
     enableWithdraw &&
@@ -206,7 +263,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             />
           </div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || BigInt(0))}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || BigInt(0), 0)}
           </div>
         </div>
         <div className="stat place-items-center pt-2">
@@ -220,7 +277,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             />
           </div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || BigInt(0))}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || BigInt(0), 0)}
           </div>
         </div>
       </div>
@@ -234,7 +291,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         <div className="stat place-items-center pt-0">
           <div className="stat-title text-sm">治理票数</div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0))}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0), 0)}
           </div>
         </div>
       </div>
@@ -248,14 +305,14 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
                     ? '1.授权中...'
                     : isApproveConfirming
                     ? '1.确认中...'
-                    : isApproveConfirmed
-                    ? '1.已授权'
+                    : isApproved
+                    ? `1.已授权`
                     : 'Step1. 授权'}
                 </Button>
                 <Button
                   className="w-1/2"
                   onClick={handleUnstake}
-                  disabled={!isApproveConfirmed || isPendingUnstake || isConfirmingUnstake || isConfirmedUnstake}
+                  disabled={!isApproved || isPendingUnstake || isConfirmingUnstake || isConfirmedUnstake}
                 >
                   {isPendingUnstake
                     ? '2.提交中'

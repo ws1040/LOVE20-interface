@@ -76,7 +76,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
         <div className="stat place-items-center pt-1 pb-2">
           <div className="stat-title text-sm">我的已投票数</div>
           <div className="stat-value text-xl">
-            {isPendingVotesNumByAccount ? <LoadingIcon /> : formatTokenAmount(votesNumByAccount || BigInt(0))}
+            {isPendingVotesNumByAccount ? <LoadingIcon /> : formatTokenAmount(votesNumByAccount || BigInt(0), 0)}
           </div>
         </div>
         <div className="stat place-items-center pt-1 pb-2">
@@ -85,7 +85,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
             {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
               <LoadingIcon />
             ) : validGovVotes ? (
-              formatTokenAmount(validGovVotes - votesNumByAccount || BigInt(0))
+              formatTokenAmount(validGovVotes - votesNumByAccount || BigInt(0), 0)
             ) : (
               '0'
             )}

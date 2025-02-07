@@ -1,4 +1,5 @@
 'use client';
+
 import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -24,7 +25,7 @@ const MyPage = () => {
     if (token && !token.hasEnded) {
       // 如果发射未结束，跳转到发射页面
       router.push(`/launch?symbol=${token.symbol}`);
-    } else if (token && !token.initialStakeRound && token.symbol != process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL) {
+    } else if (token && !token.initialStakeRound) {
       // 如果还没有人质押，跳转到质押页面
       router.push(`/gov/stakelp?symbol=${token.symbol}&first=true`);
     }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,6 +22,10 @@ import { useDeposit } from '@/src/hooks/contracts/useWETH';
 import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useError } from '@/src/contexts/ErrorContext';
+
+// my context
+import { TokenContext } from '@/src/contexts/TokenContext';
+
 // my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '../Common/LoadingOverlay';
@@ -53,6 +57,7 @@ type DepositFormValues = z.infer<ReturnType<typeof getDepositFormSchema>>;
 const Deposit: React.FC = () => {
   const router = useRouter();
   const { address: account, chain: accountChain } = useAccount();
+  const { token } = useContext(TokenContext) || {};
 
   // 读取余额
   const {
@@ -115,7 +120,14 @@ const Deposit: React.FC = () => {
 
       // 2秒后刷新/返回
       setTimeout(() => {
-        router.back();
+        // 如果发射未结束,跳到申购页;否则,跳到质押lp页
+        if (token && !token.hasEnded) {
+          window.location.href = `/launch/contribute/?symbol=${token.symbol}`;
+        } else if (token && !token.initialStakeRound) {
+          window.location.href = `/gov/stakelp?symbol=${token.symbol}&first=true`;
+        } else {
+          router.back();
+        }
       }, 2000);
     }
   }, [isConfirmedDeposit, router]);

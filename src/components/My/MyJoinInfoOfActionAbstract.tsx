@@ -63,9 +63,9 @@ const MyJoinInfoOfActionAbstract: React.FC<MyJoinInfoOfActionAbstractProps> = ({
               formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0))
             )}
           </div>
-          <div className="stat-desc text-xs text-greyscale-400">
+          {/* <div className="stat-desc text-xs text-greyscale-400">
             <span className="text-secondary">提示：</span>已参与的代币，再加入时默认直接参与
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

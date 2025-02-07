@@ -1,3 +1,4 @@
+'use client';
 import React, { useContext, useEffect } from 'react';
 
 // my hooks
@@ -45,7 +46,7 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
 
   return (
     <div className="px-4">
-      <Round currentRound={currentRound} roundType="act" />
+      <Round currentRound={currentRound ? currentRound : 0n} roundType="act" />
 
       <div className="stats w-full border grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center">
@@ -54,14 +55,14 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
             {isPendingRewardAvailable || rewardAvailable === undefined ? (
               <LoadingIcon />
             ) : (
-              formatTokenAmount((rewardAvailable * 99n) / 10000n)
+              formatTokenAmount((rewardAvailable * 99n) / 10000n, 0)
             )}
           </div>
         </div>
         <div className="stat place-items-center">
           <div className="stat-title">参与行动代币</div>
           <div className="stat-value text-2xl">
-            {isPendingJoinedAmount ? <LoadingIcon /> : formatTokenAmount(joinedAmount || BigInt(0))}
+            {isPendingJoinedAmount ? <LoadingIcon /> : formatTokenAmount(joinedAmount || BigInt(0), 0)}
           </div>
         </div>
       </div>

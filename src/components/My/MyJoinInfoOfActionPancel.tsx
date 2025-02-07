@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 // my hooks
 import { useJoinedAmountByActionIdByAccount, useWithdraw } from '@/src/hooks/contracts/useLOVE20Join';
@@ -97,14 +98,15 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
           </div>
         </div>
       </div>
-      <div className="flex justify-center mt-2">
+      <div className="flex justify-center space-x-4 mt-2">
         {joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= 2n ? (
-          <Button className="w-1/2" disabled>
+          <Button variant="outline" className="w-1/3 text-secondary border-secondary" disabled>
             已取回
           </Button>
         ) : (
           <Button
-            className="w-1/2"
+            variant="outline"
+            className="w-1/3 text-secondary border-secondary"
             onClick={handleWithdraw}
             disabled={isPendingWithdraw || isConfirmingWithdraw || isConfirmedWithdraw}
           >
@@ -117,6 +119,9 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
               : '取回代币'}
           </Button>
         )}
+        <Button variant="outline" className="w-1/3 text-secondary border-secondary" asChild>
+          <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
+        </Button>
       </div>
       <LoadingOverlay
         isLoading={isPendingWithdraw || isConfirmingWithdraw}

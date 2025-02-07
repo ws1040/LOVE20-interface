@@ -1,3 +1,5 @@
+'use client';
+
 import { useContext, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 
@@ -18,10 +20,6 @@ const StakePage = () => {
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress } = useAccount();
   const { balance: tokenBalance } = useBalanceOf(token?.address as `0x${string}`, accountAddress as `0x${string}`);
-  // const { balance: parentTokenBalance, error: errorParentTokenBalance } = useBalanceOf(
-  //   token?.parentTokenAddress as `0x${string}`,
-  //   accountAddress as `0x${string}`,
-  // );
   const {
     tokenAmount: stakedSLTokenAmount,
     isPending: isPendingStakedSLTokenAmount,
@@ -34,9 +32,6 @@ const StakePage = () => {
     if (errorStakedSLTokenAmount) {
       handleContractError(errorStakedSLTokenAmount, 'slToken');
     }
-    // if (errorParentTokenBalance) {
-    //   handleContractError(errorParentTokenBalance, 'token');
-    // }
   }, [errorStakedSLTokenAmount]);
 
   return (

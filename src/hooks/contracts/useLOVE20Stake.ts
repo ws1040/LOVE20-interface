@@ -52,7 +52,7 @@ export const useAccountStakeStatus = (token: `0x${string}`, account: `0x${string
   return {
     slAmount: data?.slAmount as bigint | undefined,
     stAmount: data?.stAmount as bigint | undefined,
-    promisedWaitingRounds: data?.promisedWaitingRounds as bigint | undefined,
+    promisedWaitingRounds: data?.promisedWaitingRounds as bigint | 0,
     requestedUnstakeRound: data?.requestedUnstakeRound as bigint | undefined,
     govVotes: data?.govVotes as bigint | undefined,
     isPending,

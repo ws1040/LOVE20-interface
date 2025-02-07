@@ -1,3 +1,4 @@
+'use client';
 import toast from 'react-hot-toast';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Copy } from 'lucide-react';

@@ -1,3 +1,5 @@
+'use client';
+
 import Header from '@/src/components/Header';
 
 import StakedLiquidDataPanel from '@/src/components/DataPanel/StakedLiquidDataPanel';

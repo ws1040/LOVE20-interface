@@ -1,3 +1,5 @@
+'use client';
+
 import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
@@ -12,13 +14,12 @@ export default function SwapPage() {
   const router = useRouter();
   const { token: currentToken } = useContext(TokenContext) || {};
 
-  // 如果还没有人质押，跳转到质押页面
   useEffect(() => {
-    if (
-      currentToken &&
-      !currentToken.initialStakeRound &&
-      currentToken.symbol != process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL
-    ) {
+    if (currentToken && !currentToken.hasEnded) {
+      // 如果发射未结束，跳转到发射页面
+      router.push(`/launch?symbol=${currentToken.symbol}`);
+    } else if (currentToken && !currentToken.initialStakeRound) {
+      // 如果还没有人质押，跳转到质押页面
       router.push(`/gov/stakelp?symbol=${currentToken.symbol}&first=true`);
     }
   }, [currentToken]);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,14 +12,14 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, For
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-
+import { Loader2 } from 'lucide-react';
 // my funcs
 import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount, parseUnits } from '@/src/lib/format';
 
 // my hooks
-import { useStakeToken } from '@/src/hooks/contracts/useLOVE20Stake';
-import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
+import { useAccountStakeStatus, useStakeToken } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useApprove, useAllowance } from '@/src/hooks/contracts/useLOVE20Token';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -58,6 +58,9 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
   const { address: accountAddress, chain: accountChain } = useAccount();
   const { token } = useContext(TokenContext) || {};
 
+  // 状态变量：是否完成授权的
+  const [isTokenApproved, setIsTokenApproved] = useState(false);
+
   const {
     approve: approveToken,
     isWriting: isPendingApproveToken,
@@ -73,6 +76,37 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     isConfirmed: isConfirmedStakeToken,
     writeError: errStakeToken,
   } = useStakeToken();
+
+  // 0. 获取质押状态(释放轮次)
+  const {
+    promisedWaitingRounds,
+    isPending: isPendingAccountStakeStatus,
+    error: errAccountStakeStatus,
+  } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+
+  // 1. 获取已授权数量
+  const {
+    allowance: allowanceToken,
+    isPending: isPendingAllowanceToken,
+    error: errAllowanceToken,
+  } = useAllowance(
+    token?.address as `0x${string}`,
+    accountAddress as `0x${string}`,
+    process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
+  );
+
+  // 新增：为授权按钮创建 ref
+  const approveButtonRef = useRef<HTMLButtonElement>(null);
+  // 保存 isPendingAllowanceToken 的上一个值
+  const prevIsPendingAllowance = useRef(isPendingAllowanceToken);
+
+  // 当 isPendingAllowanceToken 从 true 变为 false 时，调用按钮的 blur() 方法
+  useEffect(() => {
+    if (prevIsPendingAllowance.current && !isPendingAllowanceToken) {
+      approveButtonRef.current?.blur();
+    }
+    prevIsPendingAllowance.current = isPendingAllowanceToken;
+  }, [isPendingAllowanceToken]);
 
   // 2. 初始化表单
   const form = useForm<z.infer<ReturnType<typeof stakeSchemaFactory>>>({
@@ -104,9 +138,10 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
   // 监听授权成功
   useEffect(() => {
     if (isConfirmedApproveToken) {
-      toast.success('授权成功');
+      setIsTokenApproved(true);
+      toast.success(`授权${token?.symbol}成功`);
     }
-  }, [isConfirmedApproveToken]);
+  }, [isConfirmedApproveToken, token?.symbol]);
 
   // 4. 质押按钮点击
   const handleStake = async (data: z.infer<ReturnType<typeof stakeSchemaFactory>>) => {
@@ -139,6 +174,30 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     }
   }, [isConfirmedStakeToken, form, token?.symbol]);
 
+  useEffect(() => {
+    // 确保 promisedWaitingRounds 有效，再设置初始值（注意转换为 string）
+    if (promisedWaitingRounds !== undefined && promisedWaitingRounds > 0) {
+      form.setValue('releasePeriod', String(promisedWaitingRounds));
+    }
+  }, [promisedWaitingRounds]);
+
+  // 监听用户输入的质押数量以及 allowance 值，动态判断是否已授权
+  const stakeTokenAmountValue = form.watch('stakeTokenAmount');
+  useEffect(() => {
+    let parsedStakeToken = 0n;
+    try {
+      parsedStakeToken = parseUnits(stakeTokenAmountValue || '0');
+    } catch {
+      parsedStakeToken = 0n;
+    }
+
+    if (parsedStakeToken > 0n && allowanceToken && allowanceToken > 0n && allowanceToken >= parsedStakeToken) {
+      setIsTokenApproved(true);
+    } else {
+      setIsTokenApproved(false);
+    }
+  }, [stakeTokenAmountValue, allowanceToken, isPendingAllowanceToken]);
+
   // 错误处理
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
@@ -148,7 +207,10 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     if (errApproveToken) {
       handleContractError(errApproveToken, 'token');
     }
-  }, [errStakeToken, errApproveToken, handleContractError]);
+    if (errAllowanceToken) {
+      handleContractError(errAllowanceToken, 'token');
+    }
+  }, [errStakeToken, errApproveToken, errAllowanceToken]);
 
   return (
     <div className="w-full flex flex-col items-center p-6 mt-1">
@@ -158,7 +220,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
 
       {/* 5. 使用 shadcn/ui 的 Form 组件，结合 react-hook-form */}
       <Form {...form}>
-        {/* 用于阻止默认提交，这里手动分别处理"授权"“质押” */}
+        {/* 用于阻止默认提交，这里手动分别处理"授权""质押" */}
         <form onSubmit={(e) => e.preventDefault()} className="w-full max-w-md space-y-4">
           {/* 质押数量 */}
           <FormField
@@ -193,22 +255,24 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
             name="releasePeriod"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm text-greyscale-500">释放期</FormLabel>
+                <FormLabel>释放期</FormLabel>
                 <FormControl>
-                  <Select value={field.value} onValueChange={(val) => field.onChange(val)}>
+                  <Select onValueChange={(value) => field.onChange(value)} value={field.value}>
                     <SelectTrigger className="w-full !ring-secondary-foreground">
-                      <SelectValue placeholder="请选择释放期" />
+                      <SelectValue placeholder="选择释放期" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from({ length: 9 }, (_, i) => i + 4).map((val) => (
-                        <SelectItem key={val} value={val.toString()}>
-                          {val}
-                        </SelectItem>
-                      ))}
+                      {Array.from({ length: 9 }, (_, i) => i + 4)
+                        .filter((item) => item >= promisedWaitingRounds)
+                        .map((item) => (
+                          <SelectItem key={item} value={String(item)}>
+                            {item}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </FormControl>
-                <FormDescription />
+                <FormDescription>释放期：申请解锁后，几轮之后可以领取。</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -217,23 +281,27 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
           {/* 按钮组：1.授权；2.质押 */}
           <div className="flex justify-center space-x-4">
             <Button
+              // 为授权按钮添加 ref
+              ref={approveButtonRef}
               className="w-1/2"
-              disabled={isPendingApproveToken || isConfirmingApproveToken || isConfirmedApproveToken}
+              disabled={isPendingAllowanceToken || isPendingApproveToken || isConfirmingApproveToken || isTokenApproved}
               onClick={() => form.handleSubmit(handleApprove)()}
             >
-              {isPendingApproveToken
-                ? '1.授权中...'
-                : isConfirmingApproveToken
-                ? '1.确认中...'
-                : isConfirmedApproveToken
-                ? '1.已授权'
-                : '1.授权'}
+              {isPendingAllowanceToken ? (
+                <Loader2 className="animate-spin h-4 w-4" />
+              ) : isPendingApproveToken ? (
+                '1.授权中...'
+              ) : isConfirmingApproveToken ? (
+                '1.确认中...'
+              ) : isTokenApproved ? (
+                `1.${token?.symbol}已授权`
+              ) : (
+                `1.授权${token?.symbol}`
+              )}
             </Button>
             <Button
               className="w-1/2"
-              disabled={
-                !isConfirmedApproveToken || isPendingStakeToken || isConfirmingStakeToken || isConfirmedStakeToken
-              }
+              disabled={!isTokenApproved || isPendingStakeToken || isConfirmingStakeToken || isConfirmedStakeToken}
               onClick={() => form.handleSubmit(handleStake)()}
             >
               {isPendingStakeToken

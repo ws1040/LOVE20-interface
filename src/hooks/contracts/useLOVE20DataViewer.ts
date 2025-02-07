@@ -10,6 +10,7 @@ import {
   GovReward,
   TokenInfo,
   VerificationInfo,
+  JoinableActionDetail,
 } from '@/src/types/life20types';
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_DATAVIEWER as `0x${string}`;
 
@@ -84,7 +85,7 @@ export const useJoinableActions = (tokenAddress: `0x${string}`, round: bigint) =
     functionName: 'joinableActions',
     args: [tokenAddress, round],
     query: {
-      enabled: !!tokenAddress && !!round,
+      enabled: !!tokenAddress,
     },
   });
 
@@ -107,6 +108,40 @@ export const useJoinedActions = (tokenAddress: `0x${string}`, account: `0x${stri
   });
 
   return { joinedActions: data as JoinedAction[], isPending, error };
+};
+
+/**
+ * Hook for joinableActionDetailsWithJoinedInfos
+ * Reads the joinable action details with joined infos.
+ */
+export const useJoinableActionDetailsWithJoinedInfos = (
+  tokenAddress: `0x${string}`,
+  round: bigint,
+  account: `0x${string}`,
+) => {
+  const enableRead = !!tokenAddress && !!account;
+
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'joinableActionDetailsWithJoinedInfos',
+    args: [tokenAddress, round, account],
+    query: {
+      enabled: enableRead,
+    },
+  });
+
+  // 如果条件不满足，则直接返回默认值
+  if (round === 0n || !enableRead) {
+    return { joinableActionDetails: [], joinedActions: [], isPending: false, error: undefined };
+  }
+
+  return {
+    joinableActionDetails: data && data[0] ? [...(data[0] as unknown as JoinableActionDetail[])] : [],
+    joinedActions: data && data[1] ? [...(data[1] as unknown as JoinedAction[])] : [],
+    isPending,
+    error,
+  };
 };
 
 /**
@@ -241,6 +276,15 @@ export const useVerificationInfosByAccount = (
       enabled: isJoined && !!tokenAddress && !!account && actionId !== undefined,
     },
   });
+
+  if (!isJoined) {
+    return {
+      verificationKeys: [],
+      verificationInfos: [],
+      isPending: false,
+      error: undefined,
+    };
+  }
 
   return {
     verificationKeys: data?.[0] as string[],

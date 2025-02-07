@@ -130,6 +130,140 @@ export const LOVE20DataViewerAbi = [
   },
   {
     "type": "function",
+    "name": "joinableActionDetailsWithJoinedInfos",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple[]",
+        "internalType": "struct JoinableActionDetail[]",
+        "components": [
+          {
+            "name": "action",
+            "type": "tuple",
+            "internalType": "struct ActionInfo",
+            "components": [
+              {
+                "name": "head",
+                "type": "tuple",
+                "internalType": "struct ActionHead",
+                "components": [
+                  {
+                    "name": "id",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "author",
+                    "type": "address",
+                    "internalType": "address"
+                  },
+                  {
+                    "name": "createAtBlock",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  }
+                ]
+              },
+              {
+                "name": "body",
+                "type": "tuple",
+                "internalType": "struct ActionBody",
+                "components": [
+                  {
+                    "name": "maxStake",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "maxRandomAccounts",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "whiteList",
+                    "type": "address[]",
+                    "internalType": "address[]"
+                  },
+                  {
+                    "name": "action",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "consensus",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "verificationRule",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "verificationKeys",
+                    "type": "string[]",
+                    "internalType": "string[]"
+                  },
+                  {
+                    "name": "verificationInfoGuides",
+                    "type": "string[]",
+                    "internalType": "string[]"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "votesNum",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "joinedAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "name": "",
+        "type": "tuple[]",
+        "internalType": "struct JoinedAction[]",
+        "components": [
+          {
+            "name": "actionId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "stakedAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "joinableActions",
     "inputs": [
       {

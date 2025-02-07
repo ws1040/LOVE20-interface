@@ -1,3 +1,4 @@
+'use client';
 import Header from '@/src/components/Header';
 import TokenDeployment from '@/src/components/Launch/Deploy';
 

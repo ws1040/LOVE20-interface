@@ -103,9 +103,9 @@ export default function TokenList() {
     setToken(token);
     //跳转代币详情页
     if (token.hasEnded) {
-      router.push(`/acting?symbol=${token.symbol}`);
+      router.push(`/acting/?symbol=${token.symbol}`);
     } else {
-      router.push(`/launch?symbol=${token.symbol}`);
+      router.push(`/launch/?symbol=${token.symbol}`);
     }
   };
 

@@ -1,14 +1,14 @@
+'use client';
 import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
 import { ChevronRight } from 'lucide-react';
 
-import { ActionInfo } from '@/src/types/life20types';
+import { ActionInfo, JoinableActionDetail } from '@/src/types/life20types';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { formatTokenAmount } from '@/src/lib/format';
 import { TokenContext } from '@/src/contexts/TokenContext';
-import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
-import { useJoinableActions, useJoinedActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useJoinableActionDetailsWithJoinedInfos } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import { useHandleContractError } from '@/src/lib/errorUtils';
@@ -21,90 +21,75 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress } = useAccount();
 
-  // 获取可加入的行动ids以及投票数、质押币数 TODO：将3个API合并1个外围API
-  const {
-    actions: joinableActions,
-    isPending: isPendingJoinableActions,
-    error: errorJoinableActions,
-  } = useJoinableActions((token?.address as `0x${string}`) || '', currentRound);
-  joinableActions?.sort((a, b) => Number(a.actionId) - Number(b.actionId)); // 排序：将 joinableActions 按 actionId 从小到大排序
-  const actionIds = joinableActions?.map((action) => action.actionId);
-  const totalVotes = joinableActions?.reduce((acc, action) => acc + action.votesNum, 0n) || 0n;
+  // 使用合并后的钩子，一次性获取所有相关数据
+  const { joinableActionDetails, joinedActions, isPending, error } = useJoinableActionDetailsWithJoinedInfos(
+    (token?.address as `0x${string}`) || '',
+    currentRound ? currentRound : 0n,
+    accountAddress as `0x${string}`,
+  );
 
-  // 获取行动详情 TODO：将3个API合并1个外围API
-  const {
-    actionInfos,
-    isPending: isPendingActionInfosByIds,
-    error: errorActionInfosByIds,
-  } = useActionInfosByIds((token?.address as `0x${string}`) || '', actionIds || []);
+  // 对返回的 joinableActionDetails 根据 action 的 id 进行排序
+  joinableActionDetails?.sort((a, b) => Number(a.action.head.id) - Number(b.action.head.id));
 
-  // 获取已加入的行动 TODO：将3个API合并1个外围API
-  const {
-    joinedActions,
-    isPending: isPendingJoinedActions,
-    error: errorJoinedActions,
-  } = useJoinedActions((token?.address as `0x${string}`) || '', accountAddress as `0x${string}`);
+  // 计算所有 joinableActionDetails 的总票数，用于计算投票占比
+  const totalVotes = joinableActionDetails?.reduce((acc, action) => acc + action.votesNum, 0n) || 0n;
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
-    if (errorActionInfosByIds) {
-      handleContractError(errorActionInfosByIds, 'submit');
+    if (error) {
+      handleContractError(error, 'dataViewer');
     }
-    if (errorJoinableActions) {
-      handleContractError(errorJoinableActions, 'dataViewer');
-    }
-    if (errorJoinedActions) {
-      handleContractError(errorJoinedActions, 'dataViewer');
-    }
-  }, [errorJoinableActions, errorActionInfosByIds, errorJoinedActions]);
-
-  const isLoading =
-    isPendingJoinableActions ||
-    (joinableActions && joinableActions.length > 0 && isPendingActionInfosByIds) ||
-    isPendingJoinedActions;
+  }, [error]);
 
   return (
     <div className="p-4">
       <LeftTitle title="进行中的行动" />
       {!accountAddress && <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>}
-      {accountAddress && isLoading && (
+      {accountAddress && isPending && (
         <div className="p-4 flex justify-center items-center">
           <LoadingIcon />
         </div>
       )}
-      {!isLoading && !actionIds?.length && (
+      {!isPending && !joinableActionDetails?.length && (
         <div className="text-sm mt-4 text-greyscale-500 text-center">本轮暂无行动</div>
       )}
-      {!isLoading && actionIds && actionIds.length > 0 && (
+      {!isPending && joinableActionDetails && joinableActionDetails.length > 0 && (
         <div className="mt-4 space-y-4">
-          {actionInfos?.map((action: ActionInfo, index: number) => {
-            const isJoined = joinedActions?.some((joinedAction) => joinedAction.actionId === BigInt(action.head.id));
+          {joinableActionDetails.map((actionDetail: JoinableActionDetail, index: number) => {
+            // 判断当前账户是否已经加入该行动
+            const isJoined = joinedActions?.some(
+              (joinedAction) => joinedAction.actionId === BigInt(actionDetail.action.head.id),
+            );
 
+            // 根据是否已加入，设置不同的链接
             const href = isJoined
-              ? `/action/${action.head.id}?type=join&symbol=${token?.symbol}`
-              : `/acting/join?id=${action.head.id}&symbol=${token?.symbol}`;
+              ? `/action/${actionDetail.action.head.id}?type=join&symbol=${token?.symbol}`
+              : `/acting/join?id=${actionDetail.action.head.id}&symbol=${token?.symbol}`;
 
             return (
-              <Card key={action.head.id} className="shadow-none">
+              <Card key={actionDetail.action.head.id} className="shadow-none">
                 <Link href={href} className="relative block">
                   <CardHeader className="px-3 pt-2 pb-1 flex-row items-baseline">
-                    <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
-                    <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
+                    <span className="text-greyscale-400 text-sm mr-1">{`No.${actionDetail.action.head.id}`}</span>
+                    <span className="font-bold text-greyscale-800">{`${actionDetail.action.body.action}`}</span>
                   </CardHeader>
                   <CardContent className="px-3 pt-1 pb-2">
-                    <div className="text-greyscale-500">{action.body.consensus}</div>
+                    <div className="text-greyscale-500">{actionDetail.action.body.consensus}</div>
                     <div className="flex justify-between mt-1 text-sm">
                       <span>
                         <span className="text-greyscale-400 mr-1">投票占比</span>
                         <span className="text-secondary">
-                          {((Number(joinableActions?.[index].votesNum || 0n) * 100) / Number(totalVotes)).toFixed(1)}%
+                          {((Number(joinableActionDetails[index].votesNum || 0n) * 100) / Number(totalVotes)).toFixed(
+                            1,
+                          )}
+                          %
                         </span>
                       </span>
                       <span>
                         <span className="text-greyscale-400 mr-1">参与代币数</span>
                         <span className="text-secondary">
-                          {formatTokenAmount(joinableActions?.[index].joinedAmount || 0n)}
+                          {formatTokenAmount(joinableActionDetails[index].joinedAmount || 0n)}
                         </span>
                       </span>
                     </div>

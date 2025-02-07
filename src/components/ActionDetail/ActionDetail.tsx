@@ -1,5 +1,4 @@
-// components/ActivityDetail/ActivityDetail.tsx
-
+'use client';
 import React, { useContext, useEffect } from 'react';
 
 // my hooks
@@ -116,11 +115,6 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
                 </span>
               </div>
             ))}
-          </div>
-
-          <div className="mb-4">
-            <h3 className="text-sm font-bold">验证信息填写指引</h3>
-            <p className="text-greyscale-500">{actionInfo?.body.verificationInfoGuide || '-'}</p>
           </div>
 
           <div className="mb-4">

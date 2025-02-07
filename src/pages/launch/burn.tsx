@@ -1,5 +1,6 @@
+'use client';
+
 import { useContext, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
