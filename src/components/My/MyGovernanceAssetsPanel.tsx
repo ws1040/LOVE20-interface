@@ -159,7 +159,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
       // 2秒后刷新页面
       setTimeout(() => {
         // 跳转到我的首页
-        window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH}/my?symbol=${token?.symbol}`;
+        window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/my?symbol=${token?.symbol}`;
       }, 2000);
     }
   }, [isConfirmedUnstake]);
@@ -185,7 +185,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
       // 2秒后刷新页面
       setTimeout(() => {
         // 跳转到我的首页
-        window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH}/my?symbol=${token?.symbol}`;
+        window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/my?symbol=${token?.symbol}`;
       }, 2000);
     }
   }, [isConfirmedWithdraw]);

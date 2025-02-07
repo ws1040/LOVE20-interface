@@ -34,14 +34,12 @@ const FormSchema = z.object({
   verificationRule: z.string().min(1, { message: '验证规则不能为空' }),
 
   // 使用数组存储多组 key-value
-  verificationPairs: z
-    .array(
-      z.object({
-        key: z.string().min(1, { message: '验证名称不能为空' }),
-        value: z.string().min(1, { message: '验证信息提示不能为空' }),
-      }),
-    )
-    .min(1, { message: '至少需要一组验证信息' }),
+  verificationPairs: z.array(
+    z.object({
+      key: z.string().min(1, { message: '验证名称不能为空' }),
+      value: z.string().min(1, { message: '验证信息提示不能为空' }),
+    }),
+  ),
 
   rewardAddressCount: z
     .string()
@@ -210,7 +208,6 @@ export default function NewAction() {
                             variant="ghost"
                             size="icon"
                             onClick={() => remove(index)}
-                            disabled={fields.length === 1}
                             className="flex-shrink-0"
                             type="button"
                           >
