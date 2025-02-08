@@ -174,8 +174,14 @@ const VotingSubmitPage = () => {
     }
   }, [isConfirmed, submitVoteError]);
 
-  if (!token) {
-    return '';
+  useEffect(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  }, []);
+
+  if (!token || isPendingActionInfosByIds) {
+    return <LoadingIcon />;
   }
 
   return (
@@ -241,7 +247,12 @@ const VotingSubmitPage = () => {
             })}
           </div>
           <div className="flex justify-center mt-4">
-            <Button className="w-1/2" onClick={handleSubmit} disabled={isWriting || isConfirming || isConfirmed}>
+            <Button
+              className="w-1/2 focus:outline-none focus:ring-0"
+              onFocus={(e) => e.currentTarget.blur()}
+              onClick={handleSubmit}
+              disabled={isWriting || isConfirming || isConfirmed}
+            >
               {isWriting ? '提交中...' : isConfirming ? '确认中...' : isConfirmed ? '已提交' : '提交投票'}
             </Button>
           </div>
