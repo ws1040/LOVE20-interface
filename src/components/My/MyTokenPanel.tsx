@@ -81,7 +81,7 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
           <div className="stat-value text-xl">
             {isPendingStakedAmount ? <LoadingIcon /> : formatTokenAmount(stakedAmount || BigInt(0), 0)}
           </div>
-          <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light">行动结束可取回</div>
+          <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light">随时可从行动取回</div>
         </div>
       </div>
     </div>

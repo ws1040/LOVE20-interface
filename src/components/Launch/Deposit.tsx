@@ -179,7 +179,7 @@ const Deposit: React.FC = () => {
                   <FormControl>
                     <Input
                       placeholder={`填写 ${balance?.symbol} 数量`}
-                      type="text"
+                      type="number"
                       disabled={isPendingDeposit || isConfirmingDeposit}
                       className="!ring-secondary-foreground"
                       {...field}

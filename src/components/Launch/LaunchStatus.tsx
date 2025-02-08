@@ -59,7 +59,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
           <div className="stat-desc pt-2">
             {launchInfo.hasEnded && `超出筹集目标的 ${token.parentTokenSymbol} 在申领时退还`}
             {!launchInfo.hasEnded && ratio < 0.5 && `已筹集${ratioPercent}%，达到 50% 开始倒计时`}
-            {!launchInfo.hasEnded && ratio >= 0.5 && leftBlocks <= 0 && `已筹集${ratioPercent}%，达到 100% 即结束发射`}
+            {!launchInfo.hasEnded && ratio >= 0.5 && leftBlocks <= 0 && `已筹集${ratioPercent}%`}
             {!launchInfo.hasEnded && ratio >= 0.5 && leftBlocks > 0 && (
               <>
                 {ratio < 1 ? '发射结束至少要' : '距离发射结束'}：<LeftTime initialTimeLeft={timeLeft} />
@@ -74,6 +74,9 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
         <p>2. 发射数量：{formatTokenAmount(BigInt(TOKEN_CONFIG.fairLaunch))} (10%)</p>
         <p>3. 治理激励：{formatTokenAmount(BigInt(TOKEN_CONFIG.govRewards))} (45%)</p>
         <p>4. 行动激励：{formatTokenAmount(BigInt(TOKEN_CONFIG.actionRewards))} (45%)</p>
+        {/* <p className="mt-2 mb-1 font-medium">发射结束判定：</p>
+        <p>1. 从首笔达成 50%最低募资数量开始，等待xxx个区块，当前剩余区块数xxx个（约xx天xx小时xx分钟）</p>
+        <p>2. 累计申购达到100%</p> */}
         <p className="mt-2 mb-1 font-medium">发射规则：</p>
         <p>1. 代币发放：按申购数量占比比例发放</p>
         <p>2. 超过募集目标的父币，将按申购比例返还</p>

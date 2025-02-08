@@ -21,7 +21,8 @@ export const formatTokenAmount = (balance: bigint, maximumFractionDigits_ = 4): 
 export const parseUnits = (value: string): bigint => {
   const decimals = parseInt(process.env.NEXT_PUBLIC_TOKEN_DECIMALS || '18', 10);
   try {
-    return viemParseUnits(value, decimals);
+    const normalizedValue = value.replace(/,/g, '');
+    return viemParseUnits(normalizedValue, decimals);
   } catch (error) {
     console.error('parseUnits error:', error);
     return 0n;

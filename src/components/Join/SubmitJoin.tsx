@@ -96,7 +96,13 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
     // 参与数量
     additionalStakeAmount: z
       .string()
-      .transform((val) => (val.trim() === '' ? '0' : val.trim()))
+      // 第一步：验证输入的格式（允许纯数字、带千分位逗号、或带小数的数字）
+      .refine((val) => val.trim() === '' || /^[0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?$/.test(val.trim()), {
+        message: '请输入合法的数字格式',
+      })
+      // 第二步：去除输入首尾空格，若为空则变为 '0'，否则移除逗号，保证后续数值处理时格式正确
+      .transform((val) => (val.trim() === '' ? '0' : val.trim().replace(/,/g, '')))
+      // 检查是否为 '0'
       .refine(
         (val) => {
           if (val === '0') {
@@ -106,6 +112,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
         },
         { message: '参与代币数不能为 0' },
       )
+      // 检查输入的数值不能超过活动最大限制
       .refine(
         (val) => {
           const inputVal = parseUnits(val);
@@ -113,6 +120,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
         },
         { message: '参与代币数不能超过活动最大限制' },
       )
+      // 检查输入的数值不能超过持有代币数
       .refine(
         (val) => {
           const inputVal = parseUnits(val);
@@ -123,10 +131,6 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
 
     // 多项验证信息
     verificationInfos: z.array(z.string().min(1, { message: '验证信息不能为空' })),
-    // 如果想强制要求长度必须与 verificationKeys.length 一致，可使用：
-    // verificationInfos: z
-    //   .array(z.string().min(1, { message: '验证信息不能为空' }))
-    //   .length(actionInfo.body.verificationKeys.length, '必须填写完所有验证信息'),
   });
 
   // ------------------------------
@@ -316,6 +320,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
                             : `最大 ${formatTokenAmount(maxStake)}`
                           : `已到最大${formatTokenAmount(BigInt(actionInfo.body.maxStake))}，不能再追加`
                       }
+                      type="number"
                       disabled={maxStake <= 0n}
                       className="!ring-secondary-foreground"
                       {...field}

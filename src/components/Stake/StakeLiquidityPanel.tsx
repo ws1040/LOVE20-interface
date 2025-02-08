@@ -535,6 +535,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
                 </FormLabel>
                 <FormControl>
                   <Input
+                    type="number"
                     placeholder={`输入 ${token?.parentTokenSymbol} 数量`}
                     {...field}
                     disabled={hadStartedApprove}
@@ -569,6 +570,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
                 </FormLabel>
                 <FormControl>
                   <Input
+                    type="number"
                     placeholder={`输入 ${token?.symbol} 数量`}
                     {...field}
                     disabled={hadStartedApprove}

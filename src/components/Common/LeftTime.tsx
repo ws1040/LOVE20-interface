@@ -4,33 +4,35 @@ import { formatSeconds } from '@/src/lib/format';
 
 interface LeftTimeProps {
   initialTimeLeft: number;
+  onTick?: (timeLeft: number) => void;
 }
 
-const LeftTime: React.FC<LeftTimeProps> = ({ initialTimeLeft }) => {
+const LeftTime: React.FC<LeftTimeProps> = ({ initialTimeLeft, onTick }) => {
+  // 计算目标时间（milliseconds）
+  const [targetTime, setTargetTime] = useState<number>(Date.now() + initialTimeLeft * 1000);
+  // 当前剩余秒数
   const [timeLeft, setTimeLeft] = useState<number>(initialTimeLeft);
 
+  // 当传入的初始时间变化时，重新设定目标时间
   useEffect(() => {
-    if (initialTimeLeft <= 0) {
-      return;
-    } else {
-      setTimeLeft(initialTimeLeft);
-    }
-
-    const timerRef = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
-          clearInterval(timerRef);
-          window.location.reload();
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-
-    return () => {
-      clearInterval(timerRef);
-    };
+    setTargetTime(Date.now() + initialTimeLeft * 1000);
   }, [initialTimeLeft]);
+
+  // 每秒计算一次剩余时间，确保倒计时与 targetTime 保持同步
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const newTimeLeft = Math.max(0, Math.floor((targetTime - Date.now()) / 1000));
+      setTimeLeft(newTimeLeft);
+      if (onTick) {
+        onTick(newTimeLeft);
+      }
+      if (newTimeLeft <= 0) {
+        clearInterval(timer);
+        window.location.reload();
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [targetTime, onTick]);
 
   const days = Math.floor(timeLeft / 86400);
   const hours = Math.floor((timeLeft % 86400) / 3600);
@@ -38,7 +40,7 @@ const LeftTime: React.FC<LeftTimeProps> = ({ initialTimeLeft }) => {
   const seconds = timeLeft % 60;
 
   return (
-    <div className="inline-flex gap-1  text-secondary">
+    <div className="inline-flex gap-1 text-secondary">
       {days > 0 && (
         <div>
           <span className="countdown font-mono">
