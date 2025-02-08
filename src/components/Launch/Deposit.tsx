@@ -190,7 +190,7 @@ const Deposit: React.FC = () => {
                   <FormLabel>兑换数量：</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder={`填写 ${balance?.symbol} 数量`}
+                      placeholder={`填写 ${balance?.symbol ?? ''} 数量`}
                       type="number"
                       disabled={isPendingDeposit || isConfirmingDeposit}
                       className="!ring-secondary-foreground"
