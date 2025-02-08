@@ -19,7 +19,7 @@ const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
       </div>
       <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mt-4">
         <p className="mb-1">说明：</p>
-        <p>1. 部署者：须持有${token?.symbol}不少于 0.5%的治理票</p>
+        <p>1. 部署者：须持有 {token?.symbol}不少于 0.5%的治理票</p>
         <p>2. 子币发射目标：须筹集 20,000,000个 {token?.symbol}</p>
       </div>
     </div>

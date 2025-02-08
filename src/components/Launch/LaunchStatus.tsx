@@ -19,6 +19,10 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
   const ratio = Number(launchInfo.totalContributed) / Number(launchInfo.parentTokenFundraisingGoal);
   const ratioPercent = (ratio * 100).toFixed(1);
 
+  const days = Math.floor(timeLeft / (24 * 60 * 60));
+  const hours = Math.floor((timeLeft % (24 * 60 * 60)) / (60 * 60));
+  const minutes = Math.floor((timeLeft % 3600) / 60);
+
   if (!launchInfo) {
     return <div className="text-red-500">找不到发射信息</div>;
   }
@@ -74,9 +78,18 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
         <p>2. 发射数量：{formatTokenAmount(BigInt(TOKEN_CONFIG.fairLaunch))} (10%)</p>
         <p>3. 治理激励：{formatTokenAmount(BigInt(TOKEN_CONFIG.govRewards))} (45%)</p>
         <p>4. 行动激励：{formatTokenAmount(BigInt(TOKEN_CONFIG.actionRewards))} (45%)</p>
-        {/* <p className="mt-2 mb-1 font-medium">发射结束判定：</p>
-        <p>1. 从首笔达成 50%最低募资数量开始，等待xxx个区块，当前剩余区块数xxx个（约xx天xx小时xx分钟）</p>
-        <p>2. 累计申购达到100%</p> */}
+        <p className="mt-2 mb-1 font-medium">发射结束判定：</p>
+        <p>
+          1. 从首笔达成 50%最低募资数量开始，需等待 {launchInfo.secondHalfMinBlocks.toString()} 个区块 (当前还剩余{' '}
+          {leftBlocks > 0 ? leftBlocks.toString() : '0'} 个区块
+          {leftBlocks > 0 &&
+            (days > 0 || hours > 0 || minutes > 0) &&
+            `，约 ${days > 0 ? days + ' 天 ' : ''}${hours > 0 ? hours + ' 小时 ' : ''}${
+              minutes > 0 ? minutes + ' 分钟' : ''
+            }`}
+          )
+        </p>
+        <p>2. 累计申购达到100%</p>
         <p className="mt-2 mb-1 font-medium">发射规则：</p>
         <p>1. 代币发放：按申购数量占比比例发放</p>
         <p>2. 超过募集目标的父币，将按申购比例返还</p>
