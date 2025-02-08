@@ -108,6 +108,10 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
 
           <div className="mb-4">
             <h3 className="text-sm font-bold">验证规则</h3>
+            <p className="text-greyscale-500">{actionInfo?.body.verificationRule}</p>
+          </div>
+          <div className="mb-4">
+            <h3 className="text-sm font-bold">验证信息</h3>
             {actionInfo?.body.verificationKeys && actionInfo?.body.verificationKeys.length > 0 ? (
               actionInfo.body.verificationKeys.map((key: string, index: number) => (
                 <div key={index}>
