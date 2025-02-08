@@ -80,14 +80,12 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
         <p>4. 行动激励：{formatTokenAmount(BigInt(TOKEN_CONFIG.actionRewards))} (45%)</p>
         <p className="mt-2 mb-1 font-medium">发射结束判定：</p>
         <p>
-          1. 从首笔达成 50%最低募资数量开始，需等待 {launchInfo.secondHalfMinBlocks.toString()} 个区块 (当前还剩余{' '}
-          {leftBlocks > 0 ? leftBlocks.toString() : '0'} 个区块
+          1. 从首笔达成 50%最低募资数量开始，需等待 {launchInfo.secondHalfMinBlocks.toString()} 个区块
           {leftBlocks > 0 &&
             (days > 0 || hours > 0 || minutes > 0) &&
-            `，约 ${days > 0 ? days + ' 天 ' : ''}${hours > 0 ? hours + ' 小时 ' : ''}${
-              minutes > 0 ? minutes + ' 分钟' : ''
-            }`}
-          )
+            ` (当前还剩余 ${leftBlocks > 0 ? leftBlocks.toString() : '0'} 个区块，约 ${days > 0 ? days + ' 天 ' : ''}${
+              hours > 0 ? hours + ' 小时 ' : ''
+            }${minutes > 0 ? minutes + ' 分钟' : ''}`}
         </p>
         <p>2. 累计申购达到100%</p>
         <p className="mt-2 mb-1 font-medium">发射规则：</p>
