@@ -1,7 +1,9 @@
 'use client';
-import toast from 'react-hot-toast';
+
+import { useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Copy } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 import { abbreviateAddress } from '@/src/lib/format';
 
@@ -18,9 +20,11 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
   showAddress = true,
   colorClassName = '',
 }) => {
+  const [copied, setCopied] = useState(false);
+
   const handleCopy = (text: string, result: boolean) => {
     if (result) {
-      toast.success('复制成功');
+      setCopied(true);
     } else {
       toast.error('复制失败');
     }
@@ -32,18 +36,22 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
   };
 
   return (
-    <span className={`flex items-center space-x-2`}>
+    <span className="flex items-center space-x-2">
       {showAddress && (
         <span className={`text-xs ${colorClassName ?? 'text-greyscale-500'}`}>{abbreviateAddress(address)}</span>
       )}
-      {showCopyButton && ( // 根据 showCopyButton 显示或隐藏按钮
+      {showCopyButton && (
         <CopyToClipboard text={address} onCopy={handleCopy}>
           <button
             className="flex items-center justify-center p-1 rounded hover:bg-gray-200 focus:outline-none"
             onClick={handleClick}
             aria-label="复制地址"
           >
-            <Copy className={`h-4 w-4 ${colorClassName ?? 'text-greyscale-500'}`} />
+            {copied ? (
+              <Check className={`h-4 w-4 ${colorClassName ?? 'text-greyscale-500'}`} />
+            ) : (
+              <Copy className={`h-4 w-4 ${colorClassName ?? 'text-greyscale-500'}`} />
+            )}
           </button>
         </CopyToClipboard>
       )}

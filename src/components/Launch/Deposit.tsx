@@ -27,9 +27,11 @@ import { useError } from '@/src/contexts/ErrorContext';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my components
+import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
+import AddToMetamask from '@/src/components/Common/AddToMetamask';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import LoadingOverlay from '../Common/LoadingOverlay';
-import LeftTitle from '../Common/LeftTitle';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // 1. 修改为函数，接收 balance 作为参数
 const getDepositFormSchema = (balance: bigint) =>
@@ -158,7 +160,17 @@ const Deposit: React.FC = () => {
   return (
     <>
       <div className="p-6">
-        <LeftTitle title={`换得 ${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`} />
+        <div className="mb-4 flex items-center space-x-2">
+          <LeftTitle title={`换取 ${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`} />
+          <AddressWithCopyButton
+            address={process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN as `0x${string}`}
+          />
+          <AddToMetamask
+            tokenAddress={process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN as `0x${string}`}
+            tokenSymbol={process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL || ''}
+            tokenDecimals={parseInt(process.env.NEXT_PUBLIC_TOKEN_DECIMALS || '0')}
+          />
+        </div>
         <div className="stats w-full">
           <div className="stat place-items-center">
             <div className="stat-title text-sm">我的{process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}</div>
@@ -223,9 +235,8 @@ const Deposit: React.FC = () => {
               </Button>
             </div>
             <div className="flex justify-center mb-2">
-              <span className="text-sm">兑换比例：</span>
-              <span className="text-secondary text-sm">
-                1{balance?.symbol} = 1{process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}
+              <span className="text-sm">
+                兑换比例：1 {process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL} = 1 {balance?.symbol}
               </span>
             </div>
           </form>
