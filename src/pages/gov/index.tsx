@@ -13,10 +13,12 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 // my components
 import Header from '@/src/components/Header';
 import GovernanceDataPanel from '@/src/components/DataPanel/GovernanceDataPanel';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import MyStakingPanel from '@/src/components/My/MyStakingPanel';
 import MyVotingPanel from '@/src/components/My/MyVotingPanel';
 import MyVerifingPanel from '@/src/components/My/MyVerifingPanel';
 import TokenTab from '@/src/components/Token/TokenTab';
+import Todeploy from '@/src/components/Launch/Todeploy';
 
 const GovPage = () => {
   const router = useRouter();
@@ -41,6 +43,10 @@ const GovPage = () => {
     }
   }, [errorCurrentRound]);
 
+  if (!currentToken) {
+    return <LoadingIcon />;
+  }
+
   return (
     <>
       <Header title="治理首页" />
@@ -50,6 +56,7 @@ const GovPage = () => {
         <MyStakingPanel />
         <MyVotingPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
         <MyVerifingPanel currentRound={currentVoteRound > 2 ? currentVoteRound - 2n : 0n} />
+        <Todeploy token={currentToken} />
       </main>
     </>
   );

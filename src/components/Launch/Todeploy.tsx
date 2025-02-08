@@ -3,12 +3,11 @@ import { Plus } from 'lucide-react';
 import Link from 'next/link';
 
 import { Token } from '@/src/contexts/TokenContext';
-import { LaunchInfo } from '@/src/types/life20types';
 import LeftTitle from '../Common/LeftTitle';
 
-const Todeploy: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
+const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
   return (
-    <div className="p-4">
+    <div className="mt-2 p-4">
       <LeftTitle title="部署子币" />
       <div className="w-full text-center">
         <Button variant="outline" size="sm" className="mt-2 w-1/2 text-secondary border-secondary" asChild>

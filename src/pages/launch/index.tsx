@@ -58,7 +58,6 @@ export default function TokenFairLaunch() {
         <LaunchStatus token={token} launchInfo={launchInfo} />
         {!launchInfo.hasEnded && token && <ContributeInfo token={token} launchInfo={launchInfo} />}
         {launchInfo.hasEnded && token && <Claim token={token} launchInfo={launchInfo} />}
-        {launchInfo.hasEnded && token && <Todeploy token={token} launchInfo={launchInfo} />}
       </main>
     </>
   );

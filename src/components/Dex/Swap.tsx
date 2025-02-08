@@ -433,7 +433,7 @@ const SwapPanel = () => {
             <div className="mb-6">
               <div className="flex space-x-4">
                 <Input
-                  type="text"
+                  type="number"
                   disabled
                   placeholder="0.0"
                   className="flex-grow w-2/3 !ring-secondary-foreground"
