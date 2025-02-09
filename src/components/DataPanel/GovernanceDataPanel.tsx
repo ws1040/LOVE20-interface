@@ -40,7 +40,7 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
       <div className="border rounded-lg mt-4 p-0">
         <div className="stats w-full">
           <div className="stat place-items-center pb-0">
-            <div className="stat-title text-sm">总治理票数</div>
+            <div className="stat-title text-base">总治理票数</div>
             <div className="stat-value text-secondary text-2xl">
               {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.govVotes || BigInt(0), 2)}
             </div>
