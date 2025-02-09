@@ -49,12 +49,14 @@ const LeftTime: React.FC<LeftTimeProps> = ({ initialTimeLeft, onTick }) => {
           天
         </div>
       )}
-      <div>
-        <span className="countdown font-mono">
-          <span style={{ '--value': hours } as React.CSSProperties}></span>
-        </span>
-        时
-      </div>
+      {(hours > 0 || days > 0) && (
+        <div>
+          <span className="countdown font-mono">
+            <span style={{ '--value': hours } as React.CSSProperties}></span>
+          </span>
+          时
+        </div>
+      )}
       <div>
         <span className="countdown font-mono">
           <span style={{ '--value': minutes } as React.CSSProperties}></span>
