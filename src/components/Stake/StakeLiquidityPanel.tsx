@@ -505,7 +505,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
   }
 
   return (
-    <div className="w-full flex-col items-center p-6 mt-1">
+    <div className="w-full flex-col items-center p-6 pt-2">
       <div className="w-full flex justify-between items-center">
         <LeftTitle title="质押获取治理票" />
       </div>

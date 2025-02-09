@@ -11,6 +11,7 @@ import {
   TokenInfo,
   VerificationInfo,
   JoinableActionDetail,
+  GovData,
 } from '@/src/types/life20types';
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_DATAVIEWER as `0x${string}`;
 
@@ -292,6 +293,20 @@ export const useVerificationInfosByAccount = (
     isPending,
     error,
   };
+};
+
+export const useGovData = (tokenAddress: `0x${string}`) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'govData',
+    args: [tokenAddress],
+    query: {
+      enabled: !!tokenAddress,
+    },
+  });
+
+  return { govData: data as GovData, isPending, error };
 };
 
 // =====================

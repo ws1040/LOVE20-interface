@@ -6,6 +6,7 @@ import React, { useContext, useEffect } from 'react';
 // my hooks
 import { formatTokenAmount } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
+import { useGovData } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useTokenAmounts } from '@/src/hooks/contracts/useLOVE20SLToken';
 
 // my contexts
@@ -29,6 +30,7 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({}) => {
     isPending: isPendingTokenAmount,
     error: errorTokenAmount,
   } = useTokenAmounts(token?.slTokenAddress as `0x${string}`, true);
+  const { govData, isPending: isPendingGovData, error: errorGovData } = useGovData(token?.address as `0x${string}`);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -36,33 +38,46 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({}) => {
     if (errorTokenAmount) {
       handleContractError(errorTokenAmount, 'slToken');
     }
-  }, [errorTokenAmount]);
+    if (errorGovData) {
+      handleContractError(errorGovData, 'govData');
+    }
+  }, [errorTokenAmount, errorGovData]);
 
-  if (isPendingTokenAmount) {
+  if (isPendingTokenAmount || isPendingGovData) {
     return <LoadingIcon />;
   }
 
   return (
     <div className="flex-col items-center px-6">
       <LeftTitle title="流动性质押详情" />
-      <div className="stats border rounded-lg w-full grid grid-cols-2 divide-x-0 mt-2 mb-6">
-        <div className="stat place-items-center pt-3 ">
-          <div className="stat-title">{token?.symbol}</div>
-          <div className="stat-value text-xl">{formatTokenAmount(tokenAmount || BigInt(0))}</div>
+      <div className="border rounded-lg my-4">
+        <div className="stats w-full">
+          <div className="stat place-items-center pb-0">
+            <div className="stat-title text-sm">流动性质押 sl{token?.symbol} 总数</div>
+            <div className="stat-value text-secondary text-2xl">
+              {isPendingGovData ? <LoadingIcon /> : formatTokenAmount(govData?.slAmount || BigInt(0), 2)}
+            </div>
+          </div>
         </div>
-        <div className="stat place-items-center pt-3 ">
-          <div className="stat-title">{token?.parentTokenSymbol}</div>
-          <div className="stat-value text-xl">{formatTokenAmount(parentTokenAmount || BigInt(0))}</div>
+        <div className="stats rounded-lg w-full grid grid-cols-2 divide-x-0 mt-2">
+          <div className="stat place-items-center pt-3 ">
+            <div className="stat-title text-sm">质押 {token?.symbol} 总数</div>
+            <div className="stat-value text-xl">{formatTokenAmount(tokenAmount || BigInt(0))}</div>
+          </div>
+          <div className="stat place-items-center pt-3 ">
+            <div className="stat-title text-sm">质押 {token?.parentTokenSymbol} 总数</div>
+            <div className="stat-value text-xl">{formatTokenAmount(parentTokenAmount || BigInt(0))}</div>
+          </div>
         </div>
       </div>
       <LeftTitle title="待分配手续费" />
       <div className="stats border rounded-lg w-full grid grid-cols-2 divide-x-0 mt-2 mb-6">
         <div className="stat place-items-center pt-3">
-          <div className="stat-title">{token?.symbol}</div>
+          <div className="stat-title text-sm">待分配 {token?.symbol} 总数</div>
           <div className="stat-value text-xl">{formatTokenAmount(feeTokenAmount || BigInt(0))}</div>
         </div>
         <div className="stat place-items-center pt-3">
-          <div className="stat-title">{token?.parentTokenSymbol}</div>
+          <div className="stat-title text-sm">待分配 {token?.parentTokenSymbol} 总数</div>
           <div className="stat-value text-xl">{formatTokenAmount(feeParentTokenAmount || BigInt(0))}</div>
         </div>
       </div>

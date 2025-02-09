@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 
@@ -30,6 +30,9 @@ const GovRewardsPage: React.FC = () => {
   const [startRound, setStartRound] = useState<bigint>(0n);
   const [endRound, setEndRound] = useState<bigint>(0n);
 
+  // 引入参考元素，用于无限滚动加载
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (currentRound && token) {
       if (currentRound - BigInt(token.initialStakeRound) >= 0n) {
@@ -39,8 +42,10 @@ const GovRewardsPage: React.FC = () => {
       }
     }
   }, [currentRound, token]);
+
   useEffect(() => {
     if (endRound && token) {
+      // 初始加载20个轮次数据，如果可加载数量超过20，则初始显示最近20轮，否则显示全部
       if (endRound - BigInt(token.initialStakeRound) >= 20n) {
         setStartRound(endRound - 20n);
       } else {
@@ -49,7 +54,7 @@ const GovRewardsPage: React.FC = () => {
     }
   }, [endRound, token]);
 
-  // 获取治理奖励
+  // 获取治理奖励数据
   const {
     rewards,
     isPending: isLoadingRewards,
@@ -64,7 +69,7 @@ const GovRewardsPage: React.FC = () => {
   const [rewardList, setRewardList] = useState<GovReward[]>([]);
   useEffect(() => {
     if (rewards) {
-      setRewardList([...rewards].sort((a, b) => (a.round > b.round ? -1 : 1))); // 按round倒序排列
+      setRewardList([...rewards].sort((a, b) => (a.round > b.round ? -1 : 1))); // 按 round 倒序排列
     }
   }, [rewards]);
 
@@ -77,7 +82,7 @@ const GovRewardsPage: React.FC = () => {
         prev.map((item) => (item.round === mintingRound ? { ...item, unminted: 0n, minted: item.unminted } : item)),
       );
     }
-  }, [isConfirmed]);
+  }, [isConfirmed, mintingRound]);
 
   const handleClaim = async (round: bigint) => {
     if (!checkWalletConnection(accountChain)) {
@@ -101,7 +106,37 @@ const GovRewardsPage: React.FC = () => {
     if (errorMintGovReward) {
       handleContractError(errorMintGovReward, 'mint');
     }
-  }, [errorLoadingRewards, errorCurrentRound, errorMintGovReward]);
+  }, [errorLoadingRewards, errorCurrentRound, errorMintGovReward, handleContractError]);
+
+  // 无限滚动加载更多奖励：当滚动到底部时更新 startRound
+  const loadMoreRewards = () => {
+    if (!token) return;
+    const initialStake = BigInt(token.initialStakeRound);
+    // 如果当前加载的起始轮次仍高于最初的质押轮次才可以加载更多
+    if (startRound > initialStake) {
+      const newStart = startRound - 20n >= initialStake ? startRound - 20n : initialStake;
+      setStartRound(newStart);
+    }
+  };
+
+  // 使用 IntersectionObserver 监控底部 sentinel 元素
+  useEffect(() => {
+    if (!loadMoreRef.current) return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          loadMoreRewards();
+        }
+      });
+    });
+    observer.observe(loadMoreRef.current);
+    return () => {
+      if (loadMoreRef.current) {
+        observer.unobserve(loadMoreRef.current);
+      }
+      observer.disconnect();
+    };
+  }, [startRound, token]);
 
   if (isLoadingRewards) return <LoadingIcon />;
 
@@ -146,6 +181,15 @@ const GovRewardsPage: React.FC = () => {
               ))}
             </tbody>
           </table>
+
+          {/* 页面底部的 sentinel 元素，进入可视区域时自动加载更多 */}
+          <div ref={loadMoreRef} className="h-12 flex justify-center items-center">
+            {token && startRound > BigInt(token.initialStakeRound) ? (
+              <span className="text-sm text-gray-500">加载更多...</span>
+            ) : (
+              <span className="text-sm text-gray-500">没有更多奖励</span>
+            )}
+          </div>
         </div>
         <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
       </main>

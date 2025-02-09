@@ -12,6 +12,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 // my components
 import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import SlTokenTab from '@/src/components/Token/SlTokenTab';
 import StakeLiquidityPanel from '@/src/components/Stake/StakeLiquidityPanel';
 
 const StakePage = () => {
@@ -43,6 +44,7 @@ const StakePage = () => {
             <LoadingIcon />
           </div>
         )}
+        <SlTokenTab />
         {(!isPendingStakedTokenAmount || !hasInitialStakeRound) && (
           <StakeLiquidityPanel stakedTokenAmountOfLP={stakedTokenAmount || 0n} />
         )}
