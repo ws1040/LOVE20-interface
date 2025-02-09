@@ -251,10 +251,24 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
 
   return (
     <>
+      <div className="stats w-full grid grid-cols-2 divide-x-0 ">
+        <div className="stat place-items-center pt-0">
+          <div className="stat-title text-sm">我的治理票数</div>
+          <div className="stat-value text-xl">
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0), 2)}
+          </div>
+        </div>
+        <div className="stat place-items-center pt-0">
+          <div className="stat-title text-sm">承诺释放间隔轮数</div>
+          <div className="stat-value text-xl">
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingRounds || BigInt(0)}`}
+          </div>
+        </div>
+      </div>
       <div className="stats w-full grid grid-cols-2 divide-x-0">
-        <div className="stat place-items-center pt-2">
+        <div className="stat place-items-center pt-0 pb-3">
           <div className="stat-title text-sm flex items-center">
-            流动性质押
+            流动性质押sl{token.symbol}
             <AddressWithCopyButton address={token.slTokenAddress as `0x${string}`} showAddress={false} />
             <AddToMetamask
               tokenAddress={token.slTokenAddress as `0x${string}`}
@@ -263,12 +277,17 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             />
           </div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || BigInt(0), 0)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || BigInt(0), 2)}
+          </div>
+          <div className="stat-desc text-xs">
+            <Button variant="link" className="text-secondary font-normal border-secondary" asChild>
+              <Link href={`/gov/stakelp?symbol=${token.symbol}`}>质押&获取治理票&nbsp;&gt;&gt;</Link>
+            </Button>
           </div>
         </div>
-        <div className="stat place-items-center pt-2">
+        <div className="stat place-items-center pt-0 pb-3">
           <div className="stat-title text-sm flex items-center">
-            质押代币
+            质押代币st{token.symbol}
             <AddressWithCopyButton address={token.stTokenAddress as `0x${string}`} showAddress={false} />
             <AddToMetamask
               tokenAddress={token.stTokenAddress as `0x${string}`}
@@ -277,24 +296,16 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             />
           </div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || BigInt(0), 0)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || BigInt(0), 2)}
+          </div>
+          <div className="stat-desc text-xs">
+            <Button variant="link" className="text-secondary font-normal border-secondary" asChild>
+              <Link href={`/gov/staketoken?symbol=${token.symbol}`}>质押&增加收益&nbsp;&gt;&gt;</Link>
+            </Button>
           </div>
         </div>
       </div>
-      <div className="stats w-full grid grid-cols-2 divide-x-0">
-        <div className="stat place-items-center pt-0">
-          <div className="stat-title text-sm">承诺释放间隔轮数</div>
-          <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingRounds || BigInt(0)}`}
-          </div>
-        </div>
-        <div className="stat place-items-center pt-0">
-          <div className="stat-title text-sm">治理票数</div>
-          <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0), 0)}
-          </div>
-        </div>
-      </div>
+
       {enableWithdraw && (
         <>
           {!requestedUnstakeRound && (
@@ -356,7 +367,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         </>
       )}
       {!enableWithdraw && (
-        <div className="flex justify-center">
+        <div className="flex justify-center space-x-4">
           <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
             <Link href={`/my/govrewards?symbol=${token.symbol}`}>查看奖励</Link>
           </Button>

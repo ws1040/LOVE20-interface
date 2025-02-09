@@ -14,7 +14,6 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 import Header from '@/src/components/Header';
 import GovernanceDataPanel from '@/src/components/DataPanel/GovernanceDataPanel';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import MyStakingPanel from '@/src/components/My/MyStakingPanel';
 import MyVotingPanel from '@/src/components/My/MyVotingPanel';
 import MyVerifingPanel from '@/src/components/My/MyVerifingPanel';
 import TokenTab from '@/src/components/Token/TokenTab';
@@ -53,7 +52,6 @@ const GovPage = () => {
       <main className="flex-grow">
         <TokenTab />
         <GovernanceDataPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
-        <MyStakingPanel />
         <MyVotingPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
         <MyVerifingPanel currentRound={currentVoteRound > 2 ? currentVoteRound - 2n : 0n} />
         <Todeploy token={currentToken} />

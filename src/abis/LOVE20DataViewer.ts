@@ -15,6 +15,42 @@ export const LOVE20DataViewerAbi = [
   },
   {
     "type": "function",
+    "name": "govData",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "govData_",
+        "type": "tuple",
+        "internalType": "struct GovData",
+        "components": [
+          {
+            "name": "govVotes",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "slAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "stAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "govRewardsByAccountByRounds",
     "inputs": [
       {

@@ -54,6 +54,12 @@ export interface GovReward {
   unminted: bigint;
 }
 
+export interface GovData {
+  govVotes: bigint;
+  slAmount: bigint;
+  stAmount: bigint;
+}
+
 export interface TokenInfo {
   tokenAddress: `0x${string}`;
   name: string;

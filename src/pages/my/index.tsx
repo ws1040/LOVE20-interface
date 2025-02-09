@@ -36,8 +36,8 @@ const MyPage = () => {
       <Header title="我的" />
       <main className="flex-grow">
         <MyTokenPanel token={token} />
-        <div className="flex-col items-center px-4 pt-2 pb-2">
-          <div className="flex justify-between items-center">
+        <div className="flex-col items-center p-4">
+          <div className="flex justify-between items-center mb-2">
             <LeftTitle title="治理资产" />
             <Button variant="link" className="text-secondary border-secondary" asChild>
               <Link href={`/gov/unstake?symbol=${token?.symbol}`}>取消质押</Link>

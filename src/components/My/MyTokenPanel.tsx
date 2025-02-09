@@ -68,16 +68,16 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
           <Link href={`/dex/swap?symbol=${token.symbol}`}>交易代币</Link>
         </Button>
       </div>
-      <div className="stats border w-full grid grid-cols-2 divide-x-0">
+      <div className="stats bg-gray-100 w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center pb-3">
-          <div className="stat-title text-sm mb-1">持有 {token?.symbol}</div>
+          <div className="stat-title text-sm mb-1">持有 {token?.symbol} 数</div>
           <div className="stat-value text-xl">
             {isPendingBalance ? <LoadingIcon /> : formatTokenAmount(balance || BigInt(0), 0)}
           </div>
           <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light">不含质押、锁定</div>
         </div>
         <div className="stat place-items-center pb-3">
-          <div className="stat-title text-sm">行动锁定 {token?.symbol}</div>
+          <div className="stat-title text-sm">行动锁定 {token?.symbol} 数</div>
           <div className="stat-value text-xl">
             {isPendingStakedAmount ? <LoadingIcon /> : formatTokenAmount(stakedAmount || BigInt(0), 0)}
           </div>

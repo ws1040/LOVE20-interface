@@ -8,7 +8,7 @@ import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
 import { useContext, useEffect } from 'react';
 
-import { toast } from 'react-hot-toast'; // 或者你的项目中封装的 toast
+import { toast } from 'react-hot-toast';
 
 // shadcn/ui
 import { Input } from '@/components/ui/input';
@@ -130,15 +130,19 @@ export default function TokenDeployment() {
                 )}
               />
             </CardContent>
-            <CardFooter>
-              <Button className="w-full" type="submit" disabled={isLoading || isConfirmed}>
+            <CardFooter className="flex justify-center">
+              <Button className="w-1/2" type="submit" disabled={isLoading || isConfirmed}>
                 {isWriting ? '提交中...' : isConfirming ? '确认中...' : isConfirmed ? '提交成功' : '提交'}
               </Button>
             </CardFooter>
           </form>
         </Form>
+        <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mt-0 m-6">
+          <p className="mb-1">说明：</p>
+          <p>1. 部署者：须持有 {token?.symbol}不少于 0.5%的治理票</p>
+          <p>2. 子币发射目标：须筹集 20,000,000个 {token?.symbol}</p>
+        </div>
       </Card>
-
       <LoadingOverlay isLoading={isLoading} text={isWriting ? '提交交易...' : '确认交易...'} />
     </>
   );

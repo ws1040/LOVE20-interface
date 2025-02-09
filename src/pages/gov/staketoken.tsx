@@ -15,6 +15,7 @@ import { useTokenAmounts } from '@/src/hooks/contracts/useLOVE20SLToken';
 import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import StakeTokenPanel from '@/src/components/Stake/StakeTokenPanel';
+import StTokenTab from '@/src/components/Token/StTokenTab';
 
 const StakePage = () => {
   const { token } = useContext(TokenContext) || {};
@@ -42,7 +43,13 @@ const StakePage = () => {
         {!isPendingStakedSLTokenAmount && !stakedSLTokenAmount && (
           <div className="flex justify-center items-center mt-10">需要先质押流动性LP，才可以质押代币</div>
         )}
-        {stakedSLTokenAmount && <StakeTokenPanel tokenBalance={tokenBalance || 0n} />}
+        {stakedSLTokenAmount && (
+          <>
+            <StTokenTab />
+            <StakeTokenPanel tokenBalance={tokenBalance || 0n} />
+          </>
+        )}
+
         <div className="flex flex-col w-full p-6 mt-4">
           <div className="text-base font-bold text-greyscale-700 pb-2">规则说明：</div>
           <div className="text-sm text-greyscale-500 mb-2">

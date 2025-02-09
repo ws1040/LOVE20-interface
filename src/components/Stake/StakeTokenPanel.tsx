@@ -213,7 +213,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
   }, [errStakeToken, errApproveToken, errAllowanceToken]);
 
   return (
-    <div className="w-full flex flex-col items-center p-6 mt-1">
+    <div className="w-full flex flex-col items-center pt-0 p-6">
       <div className="w-full text-left mb-4">
         <LeftTitle title="质押增加治理收益" />
       </div>
