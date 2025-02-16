@@ -82,7 +82,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           },
           {
             title: `兑换${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`,
-            url: `${basePath}/launch/deposit?symbol=${token.symbol}`,
+            url: `${basePath}/dex/deposit?symbol=${token.symbol}`,
             isActive: false,
             icon: TicketCheck,
           },

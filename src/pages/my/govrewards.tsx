@@ -112,11 +112,14 @@ const GovRewardsPage: React.FC = () => {
   const loadMoreRewards = () => {
     if (!token) return;
     const initialStake = BigInt(token.initialStakeRound);
-    // 如果当前加载的起始轮次仍高于最初的质押轮次才可以加载更多
-    if (startRound > initialStake) {
-      const newStart = startRound - 20n >= initialStake ? startRound - 20n : initialStake;
-      setStartRound(newStart);
-    }
+    // 使用函数式更新，确保拿到最新的 startRound
+    setStartRound((prev) => {
+      if (prev > initialStake) {
+        const newStart = prev - 20n >= initialStake ? prev - 20n : initialStake;
+        return newStart;
+      }
+      return prev;
+    });
   };
 
   // 使用 IntersectionObserver 监控底部 sentinel 元素
@@ -131,12 +134,9 @@ const GovRewardsPage: React.FC = () => {
     });
     observer.observe(loadMoreRef.current);
     return () => {
-      if (loadMoreRef.current) {
-        observer.unobserve(loadMoreRef.current);
-      }
       observer.disconnect();
     };
-  }, [startRound, token]);
+  }, [token]);
 
   if (isLoadingRewards) return <LoadingIcon />;
 

@@ -282,7 +282,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
               >
                 最高
               </Button>
-              <Link href={`/launch/deposit?symbol=${token.symbol}`}>
+              <Link href={`/dex/deposit?symbol=${token.symbol}`}>
                 <Button variant="link" size="sm" className="text-secondary">
                   获取{token.parentTokenSymbol}
                 </Button>

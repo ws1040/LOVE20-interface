@@ -31,10 +31,10 @@ interface MyGovernanceAssetsPanelProps {
 const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token, enableWithdraw = false }) => {
   const { address: accountAddress, chain: accountChain } = useAccount();
 
-  // Hook: 获取当前轮次
+  // Hook：获取当前轮次
   const { currentRound, isPending: isPendingCurrentRound, error: errorCurrentRound } = useCurrentRound(enableWithdraw);
 
-  // Hook: 获取质押状态
+  // Hook：获取质押状态
   const {
     slAmount,
     stAmount,
@@ -57,7 +57,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     return true;
   };
 
-  // 使用 useAllowance 检查授权状态（流动性质押 & 质押代币分别检查）
+  // 使用 useAllowance 检查授权状态（分别检查流动性质押与质押代币）
   const {
     allowance: allowanceSL,
     isPending: isPendingAllowanceSL,
@@ -82,28 +82,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
   const [isSlTokenApproved, setIsSlTokenApproved] = useState(false);
   const [isStTokenApproved, setIsStTokenApproved] = useState(false);
 
-  // 根据 slAmount 与 allowanceSL 判断流动性质押代币是否已授权
-  useEffect(() => {
-    if (slAmount && slAmount > 0n && allowanceSL && allowanceSL >= slAmount) {
-      setIsSlTokenApproved(true);
-    } else {
-      setIsSlTokenApproved(false);
-    }
-  }, [slAmount, allowanceSL, isPendingAllowanceSL]);
-
-  // 根据 stAmount 与 allowanceST 判断质押代币是否已授权
-  useEffect(() => {
-    if (stAmount && stAmount > 0n && allowanceST && allowanceST >= stAmount) {
-      setIsStTokenApproved(true);
-    } else {
-      setIsStTokenApproved(false);
-    }
-  }, [stAmount, allowanceST, isPendingAllowanceST]);
-
-  // 组合是否完成授权，若没有质押stToken，则只需检查流动性质押的授权情况
-  const isApproved = isSlTokenApproved && (stAmount && stAmount > 0n ? isStTokenApproved : true);
-
-  // 授权相关 hook（保留原有逻辑）
+  // 授权相关 hook
   const {
     isPending: isPendingApproveST,
     isConfirming: isConfirmingApproveST,
@@ -119,15 +98,21 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     approve: approveSL,
   } = useApproveSL(token?.slTokenAddress as `0x${string}`);
 
-  // 授权流程：如果相应代币尚未授权，则进行授权
-  const handleApprove = async () => {
-    if (!checkInput()) {
-      return;
-    }
+  // 分离授权流程：分别为流动性质押的 slToken 与质押代币 stToken 授权
+  const handleApproveSL = async () => {
+    if (!checkInput()) return;
     try {
       if (slAmount && slAmount > 0n && !isSlTokenApproved) {
         await approveSL(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, slAmount);
       }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleApproveST = async () => {
+    if (!checkInput()) return;
+    try {
       if (stAmount && stAmount > 0n && !isStTokenApproved) {
         await approveST(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, stAmount);
       }
@@ -136,7 +121,32 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     }
   };
 
-  // 取消质押
+  // 根据 slAmount 与 allowanceSL 判断流动性质押代币是否已授权
+  useEffect(() => {
+    if (isConfirmedApproveSL) {
+      setIsSlTokenApproved(true);
+    } else if (slAmount && slAmount > 0n && allowanceSL && allowanceSL >= slAmount) {
+      setIsSlTokenApproved(true);
+    } else {
+      setIsSlTokenApproved(false);
+    }
+  }, [slAmount, allowanceSL, isPendingAllowanceSL, isConfirmedApproveSL]);
+
+  // 根据 stAmount 与 allowanceST 判断质押代币是否已授权
+  // 若 stAmount 为 0，则认为无需授权（视为已授权）
+  useEffect(() => {
+    if (isConfirmedApproveST) {
+      setIsStTokenApproved(true);
+    } else if (!stAmount || stAmount <= 0n) {
+      setIsStTokenApproved(true);
+    } else if (allowanceST && allowanceST >= stAmount) {
+      setIsStTokenApproved(true);
+    } else {
+      setIsStTokenApproved(false);
+    }
+  }, [stAmount, allowanceST, isPendingAllowanceST, isConfirmedApproveST]);
+
+  // 取消质押逻辑
   const {
     isWriting: isPendingUnstake,
     isConfirming: isConfirmingUnstake,
@@ -152,19 +162,17 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     }
   };
 
-  // 如果取消质押成功
+  // 取消质押成功后跳转
   useEffect(() => {
     if (isConfirmedUnstake) {
       toast.success('取消质押成功');
-      // 2秒后刷新页面
       setTimeout(() => {
-        // 跳转到我的首页
         window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/my?symbol=${token?.symbol}`;
       }, 2000);
     }
   }, [isConfirmedUnstake]);
 
-  // 取回代币
+  // 取回代币逻辑
   const {
     isWriting: isPendingWithdraw,
     isConfirming: isConfirmingWithdraw,
@@ -182,9 +190,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
   useEffect(() => {
     if (isConfirmedWithdraw) {
       toast.success('取回代币成功');
-      // 2秒后刷新页面
       setTimeout(() => {
-        // 跳转到我的首页
         window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/my?symbol=${token?.symbol}`;
       }, 2000);
     }
@@ -238,10 +244,10 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     return <div className="text-sm mt-4 text-greyscale-500 text-center">您没有质押</div>;
   }
 
-  // 中间状态：原先的确认状态替换为 isApproved 状态
-  const isApproving = isPendingApproveSL || isPendingApproveST;
-  const isApproveConfirming = isConfirmingApproveSL || isConfirmingApproveST;
-  const hadStartedApprove = isApproving || isApproveConfirming || isApproved;
+  // 状态标记：分别用于显示授权中的状态
+  const isApprovingSL = isPendingApproveSL || isConfirmingApproveSL;
+  const isApprovingST = isPendingApproveST || isConfirmingApproveST;
+  const allApproved = isSlTokenApproved && isStTokenApproved;
 
   // 是否可以取回代币
   const canWithdraw =
@@ -255,13 +261,13 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         <div className="stat place-items-center pt-0">
           <div className="stat-title text-sm">我的治理票数</div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0), 2)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || 0n, 2)}
           </div>
         </div>
         <div className="stat place-items-center pt-0">
           <div className="stat-title text-sm">承诺释放间隔轮数</div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingRounds || BigInt(0)}`}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingRounds || 0n}`}
           </div>
         </div>
       </div>
@@ -277,7 +283,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             />
           </div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || BigInt(0), 2)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || 0n, 2)}
           </div>
           <div className="stat-desc text-xs">
             <Button variant="link" className="text-secondary font-normal border-secondary" asChild>
@@ -296,7 +302,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             />
           </div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || BigInt(0), 2)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || 0n, 2)}
           </div>
           <div className="stat-desc text-xs">
             <Button variant="link" className="text-secondary font-normal border-secondary" asChild>
@@ -308,36 +314,50 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
 
       {enableWithdraw && (
         <>
+          {/* 当用户还未申请取消质押时，显示三个按钮（从左至右依次为：授权 slToken、授权 stToken、取消质押） */}
           {!requestedUnstakeRound && (
             <>
-              <div className="flex justify-center space-x-4 mt-2">
-                <Button className="w-1/2" onClick={handleApprove} disabled={hadStartedApprove}>
-                  {isApproving
-                    ? '1.授权中...'
-                    : isApproveConfirming
+              <div className="flex justify-center space-x-2 mt-2">
+                <Button className="w-1/3" onClick={handleApproveSL} disabled={isApprovingSL || isSlTokenApproved}>
+                  {isApprovingSL
+                    ? '1.提交中...'
+                    : isConfirmingApproveSL
                     ? '1.确认中...'
-                    : isApproved
-                    ? `1.已授权`
-                    : 'Step1. 授权'}
+                    : isSlTokenApproved
+                    ? `1.sl${token?.symbol} 已授权`
+                    : `1.授权 sl${token?.symbol}`}
                 </Button>
                 <Button
-                  className="w-1/2"
+                  className="w-1/3"
+                  onClick={handleApproveST}
+                  disabled={!isSlTokenApproved || isApprovingST || isStTokenApproved}
+                >
+                  {isApprovingST
+                    ? '2.提交中...'
+                    : isConfirmingApproveST
+                    ? '2.确认中...'
+                    : isStTokenApproved
+                    ? `2.st${token?.symbol} 已授权`
+                    : `2.授权 st${token?.symbol}`}
+                </Button>
+                <Button
+                  className="w-1/3"
                   onClick={handleUnstake}
-                  disabled={!isApproved || isPendingUnstake || isConfirmingUnstake || isConfirmedUnstake}
+                  disabled={!allApproved || isPendingUnstake || isConfirmingUnstake || isConfirmedUnstake}
                 >
                   {isPendingUnstake
-                    ? '2.提交中'
+                    ? '3.提交中'
                     : isConfirmingUnstake
-                    ? '2.确认中'
+                    ? '3.确认中'
                     : isConfirmedUnstake
-                    ? '2.已取消质押'
-                    : 'Step2. 取消质押'}
+                    ? '3.已取消质押'
+                    : '3.取消质押'}
                 </Button>
               </div>
               <div className="text-center mt-2 text-sm text-greyscale-600">
                 取消质押后，投票轮第
                 <span className="text-secondary mx-1">{`${
-                  formatRoundForDisplay(currentRound, token) + (promisedWaitingRounds || BigInt(0)) + 1n
+                  formatRoundForDisplay(currentRound, token) + (promisedWaitingRounds || 0n) + 1n
                 } `}</span>
                 轮才能取回代币
               </div>
@@ -352,14 +372,16 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
                   disabled={!canWithdraw || isPendingWithdraw || isConfirmingWithdraw || isConfirmedWithdraw}
                 >
                   {!canWithdraw
-                    ? '第' + (currentRound + (promisedWaitingRounds || BigInt(0)) + 1n) + '轮后可取回'
+                    ? '已取消,第' +
+                      (formatRoundForDisplay(requestedUnstakeRound, token) + (promisedWaitingRounds || 0n) + 1n) +
+                      '轮才可取回'
                     : isPendingWithdraw
                     ? '提交中'
                     : isConfirmingWithdraw
                     ? '确认中'
                     : isConfirmedWithdraw
                     ? '已取回'
-                    : '取回代币'}
+                    : '取回质押代币'}
                 </Button>
               </div>
             </>
@@ -371,6 +393,24 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
           <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
             <Link href={`/my/govrewards?symbol=${token.symbol}`}>查看奖励</Link>
           </Button>
+          {requestedUnstakeRound && (
+            <Button
+              variant="outline"
+              className={`w-1/2 ${
+                canWithdraw ? 'text-secondary border-secondary' : 'text-greyscale-400 border-greyscale-400'
+              } `}
+              disabled={!canWithdraw}
+              asChild
+            >
+              <Link href={`/gov/unstake/?symbol=${token.symbol}`}>
+                {!canWithdraw
+                  ? '已取消, 第' +
+                    (formatRoundForDisplay(requestedUnstakeRound, token) + (promisedWaitingRounds || 0n) + 1n) +
+                    '轮可取回'
+                  : '取回质押代币'}
+              </Link>
+            </Button>
+          )}
         </div>
       )}
     </>
