@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, { useEffect, useState, useContext, useRef, useCallback } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 
@@ -114,8 +114,8 @@ const GovRewardsPage: React.FC = () => {
   }, [errorLoadingRewards, errorCurrentRound, errorMintGovReward, handleContractError]);
 
   // 无限滚动加载更多奖励：当滚动到底部时更新 startRound
-  const loadMoreRewards = () => {
-    if (!token || !hasMoreRewards) return;
+  const loadMoreRewards = useCallback(() => {
+    if (!token) return;
     const initialStake = BigInt(token.initialStakeRound);
     // 使用函数式更新，确保拿到最新的 startRound
     setStartRound((prev) => {
@@ -125,7 +125,7 @@ const GovRewardsPage: React.FC = () => {
       }
       return prev;
     });
-  };
+  }, [token]);
 
   // 使用 IntersectionObserver 监控底部 sentinel 元素
   useEffect(() => {
@@ -141,9 +141,7 @@ const GovRewardsPage: React.FC = () => {
     return () => {
       observer.disconnect();
     };
-  }, [token, hasMoreRewards]);
-
-  if (isLoadingRewards) return <LoadingIcon />;
+  }, [loadMoreRewards]);
 
   return (
     <>
@@ -152,44 +150,54 @@ const GovRewardsPage: React.FC = () => {
         <div className="flex flex-col space-y-6 p-4">
           <LeftTitle title="铸造治理奖励" />
 
-          <table className="table w-full table-auto">
-            <thead>
-              <tr className="border-b border-gray-100">
-                <th>轮次</th>
-                <th className="text-center">待领取奖励</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {rewardList.map((item) => (
-                <tr key={item.round.toString()} className="border-b border-gray-100">
-                  <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
-                  <td className="text-center">{formatTokenAmount(item.unminted)}</td>
-                  <td className="text-center">
-                    {item.unminted > 0n ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-secondary border-secondary"
-                        onClick={() => handleClaim(item.round)}
-                        disabled={isWriting || isConfirming}
-                      >
-                        领取
-                      </Button>
-                    ) : item.minted > 0n ? (
-                      <span className="text-secondary">已领取</span>
-                    ) : (
-                      <span className="text-greyscale-500">无奖励</span>
-                    )}
-                  </td>
+          {/* 如果 rewardList 为空，则判断是否处于加载状态 */}
+          {rewardList.length === 0 ? (
+            <div className="flex justify-center items-center">
+              {isLoadingRewards ? '' : <span className="text-sm text-gray-500">暂无数据</span>}
+            </div>
+          ) : (
+            // 当已有部分数据时，始终展示表格
+            <table className="table w-full table-auto">
+              <thead>
+                <tr className="border-b border-gray-100">
+                  <th>轮次</th>
+                  <th className="text-center">待领取奖励</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {rewardList.map((item) => (
+                  <tr key={item.round.toString()} className="border-b border-gray-100">
+                    <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
+                    <td className="text-center">{formatTokenAmount(item.unminted)}</td>
+                    <td className="text-center">
+                      {item.unminted > 0n ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-secondary border-secondary"
+                          onClick={() => handleClaim(item.round)}
+                          disabled={isWriting || isConfirming}
+                        >
+                          领取
+                        </Button>
+                      ) : item.minted > 0n ? (
+                        <span className="text-secondary">已领取</span>
+                      ) : (
+                        <span className="text-greyscale-500">无奖励</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
 
-          {/* 页面底部的 sentinel 元素，进入可视区域时自动加载更多 */}
+          {/* 始终渲染 sentinel 元素 */}
           <div ref={loadMoreRef} className="h-12 flex justify-center items-center">
-            {hasMoreRewards ? (
+            {isLoadingRewards ? (
+              <LoadingIcon />
+            ) : hasMoreRewards ? (
               <span className="text-sm text-gray-500">加载更多...</span>
             ) : (
               <span className="text-sm text-gray-500">没有更多奖励</span>
