@@ -529,7 +529,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
                   质押父币数 (当前持有：
                   <span className="text-secondary-400 mr-2">{formatTokenAmount(parentTokenBalance || 0n)}</span>
                   {token?.parentTokenSymbol})
-                  <Link href="/launch/deposit/" className="text-secondary-400 ml-2">
+                  <Link href="/dex/deposit/" className="text-secondary-400 ml-2">
                     去获取{token?.parentTokenSymbol}
                   </Link>
                 </FormLabel>

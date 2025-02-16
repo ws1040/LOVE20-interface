@@ -5,13 +5,12 @@ import { useRouter } from 'next/router';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-
 import { useAccount, useBalance } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-
 import { toast } from 'react-hot-toast';
+import Link from 'next/link';
 
 // my funcs
 import { checkWalletConnection } from '@/src/lib/web3';
@@ -27,8 +26,6 @@ import { useError } from '@/src/contexts/ErrorContext';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my components
-import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
-import AddToMetamask from '@/src/components/Common/AddToMetamask';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
@@ -159,24 +156,12 @@ const Deposit: React.FC = () => {
 
   return (
     <>
-      <div className="p-6">
-        <div className="mb-4 flex items-center space-x-2">
-          <LeftTitle title={`换取 ${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`} />
-          <AddressWithCopyButton
-            address={process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN as `0x${string}`}
-          />
-          <AddToMetamask
-            tokenAddress={process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN as `0x${string}`}
-            tokenSymbol={process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL || ''}
-            tokenDecimals={parseInt(process.env.NEXT_PUBLIC_TOKEN_DECIMALS || '0')}
-          />
-        </div>
-        <div className="stats w-full">
-          <div className="stat place-items-center">
-            <div className="stat-title text-sm">我的{process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}</div>
-            <div className="stat-value text-secondary mt-2">{formatTokenAmount(balanceOfERC20Token || 0n)}</div>
-            <div className="stat-desc text-sm mt-2"></div>
-          </div>
+      <div className="p-6 pt-0">
+        <div className="mb-4 flex justify-between items-center">
+          <LeftTitle title={`存入${balance?.symbol} 换取 ${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`} />
+          <Button variant="link" className="text-secondary border-secondary m-0 p-0" asChild>
+            <Link href={`/dex/withdraw?symbol=${token?.symbol}`}>提现 {balance?.symbol}</Link>
+          </Button>
         </div>
 
         {/* 4. 使用 Form 组件包裹并渲染  */}
@@ -187,7 +172,7 @@ const Deposit: React.FC = () => {
               name="depositAmount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>兑换数量：</FormLabel>
+                  <FormLabel>存入数量：</FormLabel>
                   <FormControl>
                     <Input
                       placeholder={`填写 ${balance?.symbol ?? ''} 数量`}
@@ -200,7 +185,7 @@ const Deposit: React.FC = () => {
                   <FormMessage />
                   <FormDescription className="flex items-center justify-between">
                     <span>
-                      你拥有 {isLoadingBalance ? <LoadingIcon /> : formatTokenAmount(balance?.value || 0n)}{' '}
+                      共 {isLoadingBalance ? <LoadingIcon /> : formatTokenAmount(balance?.value || 0n)}{' '}
                       {balance?.symbol}
                     </span>
                     <Button
@@ -226,12 +211,12 @@ const Deposit: React.FC = () => {
                 disabled={isPendingDeposit || isConfirmingDeposit || isConfirmedDeposit}
               >
                 {isPendingDeposit
-                  ? '兑换中...'
+                  ? '存入中...'
                   : isConfirmingDeposit
                   ? '确认中...'
                   : isConfirmedDeposit
-                  ? '兑换成功'
-                  : '兑换'}
+                  ? '存入成功'
+                  : '存入'}
               </Button>
             </div>
             <div className="flex justify-center mb-2">
