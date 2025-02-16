@@ -19,9 +19,10 @@ import { useAllowance } from '@/src/hooks/contracts/useLOVE20Token';
 import { Token } from '@/src/contexts/TokenContext';
 
 // my components
-import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import AddToMetamask from '@/src/components/Common/AddToMetamask';
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 interface MyGovernanceAssetsPanelProps {
   token: Token | null | undefined;
@@ -413,6 +414,21 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
           )}
         </div>
       )}
+      <LoadingOverlay
+        isLoading={
+          isApprovingSL ||
+          isApprovingST ||
+          isPendingWithdraw ||
+          isPendingUnstake ||
+          isConfirmingWithdraw ||
+          isConfirmingUnstake
+        }
+        text={
+          isPendingApproveSL || isPendingApproveST || isPendingWithdraw || isPendingUnstake
+            ? '提交交易...'
+            : '确认交易...'
+        }
+      />
     </>
   );
 };
