@@ -27,7 +27,7 @@ const anvil: Chain = {
 };
 
 // 定义自定义链 Thinkium Test
-const thinkiumTestnet: Chain = {
+const thinkium801: Chain = {
   id: 801,
   name: 'thinkium801',
   nativeCurrency: { name: 'TestTKM', symbol: 'TKM', decimals: 18 },
@@ -41,7 +41,7 @@ const CHAIN_MAP: Record<string, Chain> = {
   sepolia: sepolia,
   bscTestnet: bscTestnet,
   anvil: anvil,
-  thinkiumTestnet: thinkiumTestnet,
+  thinkium801: thinkium801,
 };
 
 // 从环境变量中获取所选的链名称
