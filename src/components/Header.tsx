@@ -22,9 +22,12 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
   useEffect(() => {
     if (address && !chain) {
       setError({
-        name: address ? '钱包网络错误' : '未连接钱包',
-        message: address ? `请切换到 ${chainName} 网络` : '请先连接钱包，再进行操作',
+        name: '钱包网络错误',
+        message: `请切换到 ${chainName} 网络`,
       });
+    } else {
+      // 钱包网络正常，清除错误状态
+      setError(null);
     }
   }, [address, chain]);
 
