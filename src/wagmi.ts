@@ -26,12 +26,22 @@ const anvil: Chain = {
   testnet: true,
 };
 
+// 定义自定义链 Thinkium Test
+const thinkiumTestnet: Chain = {
+  id: 801,
+  name: 'thinkium801',
+  nativeCurrency: { name: 'TestTKM', symbol: 'TKM', decimals: 18 },
+  rpcUrls: { default: { http: [process.env.NEXT_PUBLIC_THINKIUM_RPC_URL || 'https://rpc-testnet.ruleos.com'] } },
+  testnet: true,
+};
+
 // 映射链名称到链配置
 const CHAIN_MAP: Record<string, Chain> = {
   mainnet: mainnet,
   sepolia: sepolia,
   bscTestnet: bscTestnet,
   anvil: anvil,
+  thinkiumTestnet: thinkiumTestnet,
 };
 
 // 从环境变量中获取所选的链名称
