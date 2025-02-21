@@ -160,7 +160,7 @@ export const useCalculateRoundActionReward = (tokenAddress: `0x${string}`, round
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'calculateRoundActionReward',
-    args: [tokenAddress, round],
+    args: [tokenAddress],
   });
 
   return {
