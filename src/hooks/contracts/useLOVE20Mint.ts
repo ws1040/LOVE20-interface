@@ -550,7 +550,7 @@ export function usePrepareRewardIfNeeded() {
         address: CONTRACT_ADDRESS,
         abi: LOVE20MintAbi,
         functionName: 'prepareRewardIfNeeded',
-        args: [tokenAddress, round],
+        args: [tokenAddress],
       });
     } catch (err) {
       console.error('prepareRewardIfNeeded failed:', err);
