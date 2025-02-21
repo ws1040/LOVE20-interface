@@ -6,16 +6,6 @@ export const LOVE20VoteAbi = [
     "type": "constructor",
     "inputs": [
       {
-        "name": "stakeAddress_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "submitAddress_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
         "name": "originBlocks",
         "type": "uint256",
         "internalType": "uint256"
@@ -90,6 +80,56 @@ export const LOVE20VoteAbi = [
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "currentRoundIsLowerThan",
+    "inputs": [
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "initialize",
+    "inputs": [
+      {
+        "name": "stakeAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "submitAddress_",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "initialized",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "stateMutability": "view"
@@ -543,6 +583,11 @@ export const LOVE20VoteAbi = [
       }
     ],
     "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AlreadyInitialized",
+    "inputs": []
   },
   {
     "type": "error",

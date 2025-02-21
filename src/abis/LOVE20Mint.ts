@@ -6,37 +6,12 @@ export const LOVE20MintAbi = [
     "type": "constructor",
     "inputs": [
       {
-        "name": "verifyAddress_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "stakeAddress_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
         "name": "originBlocks",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
         "name": "roundBlocks",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "roundRewardGovPerThousand",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "roundRewardActionPerThousand",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "maxStakeVerifyRewardMultiplier",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -226,11 +201,6 @@ export const LOVE20MintAbi = [
         "name": "tokenAddress",
         "type": "address",
         "internalType": "address"
-      },
-      {
-        "name": "round",
-        "type": "uint256",
-        "internalType": "uint256"
       }
     ],
     "outputs": [
@@ -270,6 +240,25 @@ export const LOVE20MintAbi = [
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "currentRoundIsLowerThan",
+    "inputs": [
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "stateMutability": "view"
@@ -362,6 +351,52 @@ export const LOVE20MintAbi = [
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "initialize",
+    "inputs": [
+      {
+        "name": "verifyAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "stakeAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "roundRewardGovPerThousand",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "roundRewardActionPerThousand",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "maxStakeVerifyRewardMultiplier",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "initialized",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "stateMutability": "view"
@@ -474,11 +509,6 @@ export const LOVE20MintAbi = [
         "name": "tokenAddress",
         "type": "address",
         "internalType": "address"
-      },
-      {
-        "name": "round",
-        "type": "uint256",
-        "internalType": "uint256"
       }
     ],
     "outputs": [],
@@ -644,6 +674,31 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "event",
+    "name": "BurnAbstentionActionReward",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "burnReward",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "MintActionReward",
     "inputs": [
       {
@@ -755,6 +810,11 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "error",
+    "name": "AlreadyInitialized",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "NoRewardAvailable",
     "inputs": []
   },
@@ -766,11 +826,6 @@ export const LOVE20MintAbi = [
   {
     "type": "error",
     "name": "NotEnoughRewardToBurn",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "RoundNotFinished",
     "inputs": []
   },
   {

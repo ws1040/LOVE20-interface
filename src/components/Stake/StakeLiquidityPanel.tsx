@@ -122,12 +122,12 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
   } = useBalanceOf(token?.parentTokenAddress as `0x${string}`, accountAddress as `0x${string}`);
 
   // 是否是首次质押
-  const [updateInitialStakeRound, setUpdateInitialStakeRound] = useState(false);
+  const [updatedInitialStakeRound, setUpdatedInitialStakeRound] = useState(false);
   const {
     initialStakeRound,
     isPending: isPendingInitialStakeRound,
     error: errInitialStakeRound,
-  } = useInitialStakeRound(token?.address as `0x${string}`, updateInitialStakeRound);
+  } = useInitialStakeRound(token?.address as `0x${string}`, updatedInitialStakeRound);
 
   // --------------------------------------------------
   // 2.0 使用 React Hook Form
@@ -226,11 +226,14 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
       setIsTokenApproved(true);
       toast.success(`授权${token?.symbol}成功`);
     }
+  }, [isConfirmedApproveToken]);
+
+  useEffect(() => {
     if (isConfirmedApproveParentToken) {
       setIsParentTokenApproved(true);
       toast.success(`授权${token?.parentTokenSymbol}成功`);
     }
-  }, [isConfirmedApproveToken, isConfirmedApproveParentToken]);
+  }, [isConfirmedApproveParentToken]);
 
   // --------------------------------------------------
   // 2.3 自动计算兑换数量
@@ -377,8 +380,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
         // 本次质押非首次
         handleStakeSuccess();
       } else {
-        // 本次质押是首次，则更新 token 的 initialStakeRound
-        setUpdateInitialStakeRound(true);
+        // 本次质押是首次，则更新 token 的 initialStakeRound，以便更新缓存
+        setUpdatedInitialStakeRound(true);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -386,12 +389,12 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
 
   // 如果是首次质押，需要在拿到新的 initialStakeRound 后再次跳转
   useEffect(() => {
-    if (updateInitialStakeRound && !isPendingInitialStakeRound && initialStakeRound && initialStakeRound > 0) {
+    if (updatedInitialStakeRound && !isPendingInitialStakeRound && initialStakeRound && initialStakeRound > 0) {
       setToken({ ...token, initialStakeRound: Number(initialStakeRound) } as Token);
       handleStakeSuccess();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateInitialStakeRound, isPendingInitialStakeRound, initialStakeRound]);
+  }, [updatedInitialStakeRound, isPendingInitialStakeRound, initialStakeRound]);
 
   // --------------------------------------------------
   // 2.5 错误处理
@@ -698,7 +701,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
           isApproveConfirming ||
           isPendingStakeLiquidity ||
           isConfirmingStakeLiquidity ||
-          (isPendingInitialStakeRound && updateInitialStakeRound)
+          (isPendingInitialStakeRound && updatedInitialStakeRound)
         }
         text={isApproving || isPendingStakeLiquidity ? '提交交易...' : '确认交易...'}
       />

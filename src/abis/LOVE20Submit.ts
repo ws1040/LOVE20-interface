@@ -6,22 +6,12 @@ export const LOVE20SubmitAbi = [
     "type": "constructor",
     "inputs": [
       {
-        "name": "stakeAddress_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
         "name": "originBlocks",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
         "name": "roundBlocks",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "submitMinPerThousand",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -454,6 +444,56 @@ export const LOVE20SubmitAbi = [
   },
   {
     "type": "function",
+    "name": "currentRoundIsLowerThan",
+    "inputs": [
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "initialize",
+    "inputs": [
+      {
+        "name": "stakeAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "submitMinPerThousand",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "initialized",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "isInWhiteList",
     "inputs": [
       {
@@ -789,6 +829,11 @@ export const LOVE20SubmitAbi = [
   {
     "type": "error",
     "name": "ActionIdNotExist",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "AlreadyInitialized",
     "inputs": []
   },
   {

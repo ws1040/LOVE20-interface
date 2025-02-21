@@ -99,7 +99,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     launchInfo: launchInfoBySymbol,
     error: errorBySymbol,
   } = useTokenDetailBySymbol(symbolToGetDetail as string);
-
+  console.log(token);
   // 合约返回成功，更新 token
   useEffect(() => {
     if (tokenInfoBySymbol && launchInfoBySymbol) {

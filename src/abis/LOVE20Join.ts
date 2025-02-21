@@ -229,6 +229,25 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
+    "name": "currentRoundIsLowerThan",
+    "inputs": [
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getOrGenerateRandomAccounts",
     "inputs": [
       {
