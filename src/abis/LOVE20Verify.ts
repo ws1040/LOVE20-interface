@@ -6,42 +6,12 @@ export const LOVE20VerifyAbi = [
     "type": "constructor",
     "inputs": [
       {
-        "name": "stakeAddress_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "submitAddress_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "voteAddress_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "joinAddress_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
         "name": "originBlocks",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
         "name": "roundBlocks",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "randomSeedUpdateMinPerTenThousand",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "actionRewardMinVotePerThousand",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -161,6 +131,25 @@ export const LOVE20VerifyAbi = [
   },
   {
     "type": "function",
+    "name": "currentRoundIsLowerThan",
+    "inputs": [
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "firstTokenAddress",
     "inputs": [],
     "outputs": [
@@ -185,10 +174,58 @@ export const LOVE20VerifyAbi = [
         "name": "firstTokenAddress_",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "stakeAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "submitAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "voteAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "joinAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "mintAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "randomSeedUpdateMinPerTenThousand",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "actionRewardMinVotePerThousand",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "initialized",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -222,6 +259,19 @@ export const LOVE20VerifyAbi = [
   {
     "type": "function",
     "name": "joinAddress",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "mintAddress",
     "inputs": [],
     "outputs": [
       {
