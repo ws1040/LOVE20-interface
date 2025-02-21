@@ -358,32 +358,6 @@ export const useVoteAddress = () => {
 // =====================
 
 /**
- * Hook for initialize
- */
-export function useInitialize() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
-
-  const initialize = async (randomAddress: `0x${string}`, firstTokenAddress: `0x${string}`) => {
-    try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20VerifyAbi,
-        functionName: 'initialize',
-        args: [randomAddress, firstTokenAddress],
-      });
-    } catch (err) {
-      console.error('Initialization failed:', err);
-    }
-  };
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
-
-  return { initialize, writeData, isWriting, writeError, isConfirming, isConfirmed };
-}
-
-/**
  * Hook for verify
  */
 export function useVerify() {
