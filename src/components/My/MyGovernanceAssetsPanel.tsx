@@ -412,6 +412,11 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
               </Link>
             </Button>
           )}
+          {!requestedUnstakeRound && (
+            <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
+              <Link href={`/gov/?symbol=${token.symbol}`}>社区治理</Link>
+            </Button>
+          )}
         </div>
       )}
       <LoadingOverlay

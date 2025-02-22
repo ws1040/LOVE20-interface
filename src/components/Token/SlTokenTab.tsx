@@ -47,7 +47,7 @@ export default function SlTokenTab() {
               <AddressWithCopyButton address={token.slTokenAddress as `0x${string}`} />
               <AddToMetamask
                 tokenAddress={token.slTokenAddress as `0x${string}`}
-                tokenSymbol={token.symbol || ''}
+                tokenSymbol={'sl' + token.symbol || ''}
                 tokenDecimals={token.decimals || 0}
               />
             </div>

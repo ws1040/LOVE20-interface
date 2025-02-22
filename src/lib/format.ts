@@ -6,13 +6,25 @@ export const abbreviateAddress = (address: string): string => {
   return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
 };
 
-// 格式化代币数量：将最小单位转换为可读数字并带有逗号分隔
+// 格式化代币数量：将最小单位转换为可读数字并带有逗号分隔 例如从 1000000000000000000 转换为 1.0000
 export const formatTokenAmount = (balance: bigint, maximumFractionDigits_ = 4): string => {
   const formatted = formatUnits(balance);
+  const numberFormatted = Number(formatted);
+
+  // 如果过小，显示0
+  if (balance < 10n) {
+    return '0';
+  }
+
+  // 如果数字小于0.0001，则显示<0.0001
+  if (numberFormatted < 0.0001) {
+    return '<0.0001';
+  }
+
   // 使用 Intl.NumberFormat 格式化数字，添加逗号
   const formattedWithCommas = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: maximumFractionDigits_, // 保留小数位
-  }).format(Number(formatted));
+  }).format(numberFormatted);
 
   return formattedWithCommas;
 };

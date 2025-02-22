@@ -108,37 +108,12 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
     <div className="p-6">
       <LeftTitle title="我的领取" />
 
-      <div className="stats w-full border mt-4">
+      <div className="stats w-full">
         <div className="stat place-items-center">
           <div className="stat-title text-sm mr-6">共获得</div>
-          <div className="stat-value text-secondary">
+          <div className="stat-value text-3xl text-secondary">
             {formatTokenAmount(gotTokens)}
             <span className="text-greyscale-500 font-normal text-sm ml-2">{token.symbol}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="stats w-full grid grid-cols-2 divide-x-0">
-        <div className="stat place-items-center">
-          <div className="stat-value text-xl">
-            <span className="text-sm font-normal text-greyscale-500">申购 </span>
-            {formatTokenAmount(contributed || 0n)}
-            {isContributedPending ? (
-              <LoadingIcon />
-            ) : (
-              <span className="text-sm font-normal text-greyscale-500 ml-1">{token?.parentTokenSymbol}</span>
-            )}
-          </div>
-        </div>
-        <div className="stat place-items-center">
-          <div className="stat-value text-xl">
-            <span className="text-sm font-normal text-greyscale-500">已退回 </span>
-            {formatTokenAmount(extraRefunded || 0n)}
-            {isExtraRefundedPending ? (
-              <LoadingIcon />
-            ) : (
-              <span className="text-sm font-normal text-greyscale-500 ml-1">{token?.parentTokenSymbol}</span>
-            )}
           </div>
         </div>
       </div>
@@ -174,6 +149,15 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
           </>
         )}
       </div>
+      {Number(contributed) > 0 && claimed && (
+        <div className="text-center text-sm my-2 text-greyscale-400">
+          我共申购了 <span className="text-secondary">{formatTokenAmount(contributed ?? 0n)} </span>
+          {token.symbol}， 申购成功{' '}
+          <span className="text-secondary">{formatTokenAmount((contributed ?? 0n) - (extraRefunded ?? 0n))}</span>{' '}
+          {token.symbol}，申购返还了 <span className="text-secondary">{formatTokenAmount(extraRefunded ?? 0n)}</span>{' '}
+          {token.symbol}
+        </div>
+      )}
 
       <LoadingOverlay isLoading={isClaiming || isClaimConfirming} text={isClaiming ? '提交交易...' : '确认交易...'} />
     </div>
