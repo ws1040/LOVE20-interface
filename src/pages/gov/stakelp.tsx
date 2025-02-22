@@ -39,12 +39,12 @@ const StakePage = () => {
     <>
       <Header title="质押LP" />
       <main className="flex-grow">
+        <SlTokenTab />
         {isPendingStakedTokenAmount && hasInitialStakeRound && (
           <div className="flex justify-center items-center mt-10">
             <LoadingIcon />
           </div>
         )}
-        <SlTokenTab />
         {(!isPendingStakedTokenAmount || !hasInitialStakeRound) && (
           <StakeLiquidityPanel stakedTokenAmountOfLP={stakedTokenAmount || 0n} />
         )}
