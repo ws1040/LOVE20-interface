@@ -133,15 +133,12 @@ export const useCurrentRound = (enabled: boolean = true) => {
  * 获取代币的初始质押轮次
  * @param token 代币地址
  */
-export const useInitialStakeRound = (tokenAddress: `0x${string}`, flag: boolean) => {
+export const useInitialStakeRound = (tokenAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20StakeAbi,
     functionName: 'initialStakeRound',
     args: [tokenAddress],
-    query: {
-      enabled: flag,
-    },
   });
 
   return { initialStakeRound: data as bigint | undefined, isPending, error };

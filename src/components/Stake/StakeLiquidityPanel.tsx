@@ -123,11 +123,13 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
 
   // 是否是首次质押
   const [updatedInitialStakeRound, setUpdatedInitialStakeRound] = useState(false);
+
+  // 获取首次质押轮数
   const {
     initialStakeRound,
     isPending: isPendingInitialStakeRound,
     error: errInitialStakeRound,
-  } = useInitialStakeRound(token?.address as `0x${string}`, updatedInitialStakeRound);
+  } = useInitialStakeRound(token?.address as `0x${string}`);
 
   // --------------------------------------------------
   // 2.0 使用 React Hook Form
@@ -146,11 +148,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
   // 2.1 获取质押状态
   // --------------------------------------------------
   const {
-    slAmount,
-    stAmount,
     promisedWaitingRounds,
-    requestedUnstakeRound,
-    govVotes,
     isPending: isPendingAccountStakeStatus,
     error: errAccountStakeStatus,
   } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
@@ -242,7 +240,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
   const [isParentTokenChangedByUser, setIsParentTokenChangedByUser] = useState(false);
   const [isTokenChangedByUser, setIsTokenChangedByUser] = useState(false);
 
-  const pairExists = stakedTokenAmountOfLP > 0n;
+  const pairExists = !!initialStakeRound && initialStakeRound > 0;
   const parentTokenValue = form.watch('parentToken');
   const stakeTokenValue = form.watch('stakeToken');
   const parsedParentToken = parseUnits(parentTokenValue);
@@ -274,7 +272,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
 
   // 如果输入了 parentToken，就自动计算 stakeToken
   useEffect(() => {
-    if (amountsOut && amountsOut.length > 1) {
+    if (pairExists && amountsOut && amountsOut.length > 1) {
       const amountOut = formatUnits(BigInt(amountsOut[1]));
       const amountOutShow = Number(amountOut)
         .toFixed(12)
@@ -288,7 +286,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
 
   // 如果输入了 stakeToken，就自动计算 parentToken
   useEffect(() => {
-    if (amountsIn && amountsIn.length > 1) {
+    if (pairExists && amountsIn && amountsIn.length > 1) {
       const amountIn = formatUnits(BigInt(amountsIn[0]));
       const amountInShow = Number(amountIn)
         .toFixed(12)
@@ -369,8 +367,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
   function handleStakeSuccess() {
     toast.success('质押成功');
     setTimeout(() => {
-      // 跳转到治理首页
-      window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/gov/?symbol=${token?.symbol}`;
+      // 跳转到我的首页
+      window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/my/?symbol=${token?.symbol}`;
     }, 2000);
   }
 
@@ -503,7 +501,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
   }, [isPendingAllowanceToken]);
 
   // 如果质押状态正在加载，则显示 loading
-  if (isPendingAccountStakeStatus) {
+  if (isPendingAccountStakeStatus || isPendingInitialStakeRound) {
     return <LoadingIcon />;
   }
 
@@ -528,14 +526,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
             name="parentToken"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  质押父币数 (当前持有：
-                  <span className="text-secondary-400 mr-2">{formatTokenAmount(parentTokenBalance || 0n)}</span>
-                  {token?.parentTokenSymbol})
-                  <Link href="/dex/deposit/" className="text-secondary-400 ml-2">
-                    去获取{token?.parentTokenSymbol}
-                  </Link>
-                </FormLabel>
+                <FormLabel>质押父币数</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -551,6 +542,15 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
                   />
                 </FormControl>
                 <FormMessage />
+                <FormDescription className="flex justify-between items-center">
+                  <span>
+                    持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(parentTokenBalance || 0n)}</span>
+                    {token?.parentTokenSymbol}
+                  </span>
+                  <Link href="/dex/deposit/" className="text-secondary-400 ml-2">
+                    去获取 {token?.parentTokenSymbol}
+                  </Link>
+                </FormDescription>
               </FormItem>
             )}
           />
@@ -561,16 +561,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
             name="stakeToken"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  质押 token 数 (当前持有：
-                  <span className="text-secondary-400 mr-2">{formatTokenAmount(tokenBalance || 0n)}</span>
-                  {token?.symbol})
-                  {!!tokenBalance && tokenBalance <= 10n && (
-                    <Link href="/dex/swap/" className="text-secondary-400 ml-2">
-                      去获取{token?.symbol}
-                    </Link>
-                  )}
-                </FormLabel>
+                <FormLabel>质押 token 数</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -585,6 +576,15 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
                   />
                 </FormControl>
                 <FormMessage />
+                <FormDescription className="flex justify-between items-center">
+                  <span>
+                    持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(tokenBalance || 0n)}</span>
+                    {token?.symbol}
+                  </span>
+                  <Link href="/dex/swap/" className="text-secondary-400">
+                    去获取{token?.symbol}
+                  </Link>
+                </FormDescription>
               </FormItem>
             )}
           />

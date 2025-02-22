@@ -32,7 +32,7 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
   const [selectedRound, setSelectedRound] = useState(0n);
 
   useEffect(() => {
-    if (token && currentJoinRound - BigInt(token.initialStakeRound) >= 3n) {
+    if (token && currentJoinRound - BigInt(token.initialStakeRound) >= 2n) {
       setSelectedRound(currentJoinRound - BigInt(token.initialStakeRound) - 1n);
     }
   }, [currentJoinRound, token]);
@@ -103,10 +103,12 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
         <span className="text-sm text-greyscale-500 ml-2">行动轮第</span>
         <span className="text-sm text-secondary ml-1">{selectedRound.toString()}</span>
         <span className="text-sm text-greyscale-500 ml-1">轮</span>
-        <ChangeRound
-          currentRound={token && currentJoinRound ? formatRoundForDisplay(currentJoinRound - 2n, token) : 0n}
-          handleChangedRound={handleChangedRound}
-        />
+        {selectedRound > 0 && (
+          <ChangeRound
+            currentRound={token && currentJoinRound ? formatRoundForDisplay(currentJoinRound - 2n, token) : 0n}
+            handleChangedRound={handleChangedRound}
+          />
+        )}
       </div>
       {isPendingVerifiedAddresses ? (
         ''

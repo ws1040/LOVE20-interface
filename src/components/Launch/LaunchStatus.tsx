@@ -33,20 +33,28 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
   return (
     <div className="flex-col items-center px-4">
       <div className="stats w-full grid grid-cols-2 divide-x-0">
-        <div className="stat place-items-center">
+        <div className="stat place-items-center pb-2">
           <div className="stat-title text-sm">
             <span className="text-secondary">{token.symbol} </span>
             发射总量
           </div>
           <div className="stat-value text-xl">{`${formatTokenAmount(BigInt(TOKEN_CONFIG.fairLaunch))}`}</div>
         </div>
-        <div className="stat place-items-center">
+        <div className="stat place-items-center pb-2">
           <div className="stat-title text-sm">
             <span className="text-secondary">{token.parentTokenSymbol} </span>
             筹集目标
           </div>
           <div className="stat-value text-xl">{formatTokenAmount(launchInfo.parentTokenFundraisingGoal)}</div>
         </div>
+      </div>
+      <div className="text-center text-xs mb-4 text-greyscale-400">
+        兑换比例：1 {token.parentTokenSymbol} ={' '}
+        {(Number(TOKEN_CONFIG.fairLaunch) / Number(launchInfo.parentTokenFundraisingGoal)).toLocaleString('en-US', {
+          maximumFractionDigits: 2,
+          minimumFractionDigits: 2,
+        })}{' '}
+        {token.symbol}
       </div>
       <div className="stats w-full border">
         <div className="stat place-items-center">

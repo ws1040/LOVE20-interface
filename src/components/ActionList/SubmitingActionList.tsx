@@ -62,31 +62,38 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
         <LoadingIcon />
       ) : (
         <div className="space-y-4">
-          {actionInfos?.map((action: ActionInfo, index: number) => {
-            const isSubmitted = actionSubmits?.some((submit) => submit.actionId === action.head.id);
-            return (
-              <Card key={action.head.id} className="shadow-none">
-                <Link href={`/action/${action.head.id}?type=submit&submitted=${isSubmitted}`} key={action.head.id}>
-                  <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
-                    <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
-                    <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
-                  </CardHeader>
-                  <CardContent className="px-3 pt-1 pb-2">
-                    <div className="text-base text-greyscale-600">{action.body.consensus}</div>
-                    <div className="flex justify-between mt-1 text-sm">
-                      <span className="text-sm">
-                        {isSubmitted ? (
-                          <span className="text-secondary">已推举</span>
-                        ) : (
-                          <span className="text-greyscale-600">未推举</span>
-                        )}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Link>
-              </Card>
-            );
-          })}
+          {/* 
+            如果 actionInfos 为空，则显示 "暂无行动"
+          */}
+          {actionInfos?.length === 0 && <div className="text-sm mt-4 text-greyscale-500 text-center">暂无行动</div>}
+
+          {actionInfos &&
+            actionInfos?.length > 0 &&
+            actionInfos?.map((action: ActionInfo, index: number) => {
+              const isSubmitted = actionSubmits?.some((submit) => submit.actionId === action.head.id);
+              return (
+                <Card key={action.head.id} className="shadow-none">
+                  <Link href={`/action/${action.head.id}?type=submit&submitted=${isSubmitted}`} key={action.head.id}>
+                    <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
+                      <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
+                      <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
+                    </CardHeader>
+                    <CardContent className="px-3 pt-1 pb-2">
+                      <div className="text-base text-greyscale-600">{action.body.consensus}</div>
+                      <div className="flex justify-between mt-1 text-sm">
+                        <span className="text-sm">
+                          {isSubmitted ? (
+                            <span className="text-secondary">已推举</span>
+                          ) : (
+                            <span className="text-greyscale-600">未推举</span>
+                          )}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Link>
+                </Card>
+              );
+            })}
         </div>
       )}
     </div>

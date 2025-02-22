@@ -24,6 +24,7 @@ export const useGetAmountsOut = (
     if (!isEnabled || pairExists) {
       return { data: _data, error: _error, isLoading: _isLoading };
     } else {
+      //【已废弃】初始第1次质押按配置的比例计算
       // 计算父币和子币的质押比例
       let parentToChildRate = 0n;
 
@@ -73,6 +74,7 @@ export const useGetAmountsIn = (
     if (!isEnabled || pairExists) {
       return { data: _data, error: _error, isLoading: _isLoading };
     } else {
+      //【已废弃】初始第1次质押按配置的比例计算
       // 计算父币和子币的质押比例
       let parentToChildRate = 0n;
 
