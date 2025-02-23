@@ -1,736 +1,784 @@
+
 import { Abi } from 'abitype';
 
 export const LOVE20StakeAbi = [
   {
-    type: 'constructor',
-    inputs: [
+    "type": "constructor",
+    "inputs": [
       {
-        name: 'originBlocks',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "originBlocks",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'roundBlocks',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "roundBlocks",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'nonpayable',
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'PROMISED_WAITING_ROUNDS_MAX',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "PROMISED_WAITING_ROUNDS_MAX",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'PROMISED_WAITING_ROUNDS_MIN',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "PROMISED_WAITING_ROUNDS_MIN",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'accountStakeStatus',
-    inputs: [
+    "type": "function",
+    "name": "accountStakeStatus",
+    "inputs": [
       {
-        name: 'tokenAddress',
-        type: 'address',
-        internalType: 'address',
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'accountAddress',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "accountAddress",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'tuple',
-        internalType: 'struct AccountStakeStatus',
-        components: [
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct AccountStakeStatus",
+        "components": [
           {
-            name: 'slAmount',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "slAmount",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'stAmount',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "stAmount",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'promisedWaitingRounds',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "promisedWaitingRounds",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'requestedUnstakeRound',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "requestedUnstakeRound",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'govVotes',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-        ],
-      },
+            "name": "govVotes",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'caculateGovVotes',
-    inputs: [
+    "type": "function",
+    "name": "caculateGovVotes",
+    "inputs": [
       {
-        name: 'lpAmount',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "lpAmount",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'promisedWaitingRounds',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "promisedWaitingRounds",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'pure',
+    "stateMutability": "pure"
   },
   {
-    type: 'function',
-    name: 'cumulatedTokenAmount',
-    inputs: [
+    "type": "function",
+    "name": "cumulatedTokenAmount",
+    "inputs": [
       {
-        name: 'tokenAddress',
-        type: 'address',
-        internalType: 'address',
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'round',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'tokenAmount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "tokenAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'cumulatedTokenAmountByAccount',
-    inputs: [
+    "type": "function",
+    "name": "cumulatedTokenAmountByAccount",
+    "inputs": [
       {
-        name: 'tokenAddress',
-        type: 'address',
-        internalType: 'address',
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'round',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'accountAddress',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "accountAddress",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'tokenAmount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "tokenAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'currentRound',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "currentRound",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'currentRoundIsLowerThan',
-    inputs: [
+    "type": "function",
+    "name": "currentRoundIsLowerThan",
+    "inputs": [
       {
-        name: 'round',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'bool',
-        internalType: 'bool',
-      },
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'govVotesNum',
-    inputs: [
+    "type": "function",
+    "name": "govVotesNum",
+    "inputs": [
       {
-        name: '',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'initialStakeRound',
-    inputs: [
+    "type": "function",
+    "name": "initialStakeRound",
+    "inputs": [
       {
-        name: '',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'initialize',
-    inputs: [
+    "type": "function",
+    "name": "initialize",
+    "inputs": [
       {
-        name: 'promisedWaitingRoundsMin',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "promisedWaitingRoundsMin",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'promisedWaitingRoundsMax',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "promisedWaitingRoundsMax",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'initialized',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "initialized",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'bool',
-        internalType: 'bool',
-      },
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'originBlocks',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "originBlocks",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'roundBlocks',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "roundBlocks",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'roundByBlockNumber',
-    inputs: [
+    "type": "function",
+    "name": "roundByBlockNumber",
+    "inputs": [
       {
-        name: 'blockNumber',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "blockNumber",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'roundRange',
-    inputs: [
+    "type": "function",
+    "name": "roundRange",
+    "inputs": [
       {
-        name: 'round',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'start',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "start",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'end',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "end",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'stakeLiquidity',
-    inputs: [
+    "type": "function",
+    "name": "stakeLiquidity",
+    "inputs": [
       {
-        name: 'tokenAddress',
-        type: 'address',
-        internalType: 'address',
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'tokenAmountForLP',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "tokenAmountForLP",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'parentTokenAmountForLP',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "parentTokenAmountForLP",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'promisedWaitingRounds',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "promisedWaitingRounds",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'to',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "to",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'stakeToken',
-    inputs: [
+    "outputs": [
       {
-        name: 'tokenAddress',
-        type: 'address',
-        internalType: 'address',
+        "name": "govVotesAdded",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'tokenAmount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: 'promisedWaitingRounds',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: 'to',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "slAmountAdded",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'stakeUpdateRoundsByPage',
-    inputs: [
+    "type": "function",
+    "name": "stakeToken",
+    "inputs": [
       {
-        name: 'tokenAddress',
-        type: 'address',
-        internalType: 'address',
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'start',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "tokenAmount",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'end',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "promisedWaitingRounds",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'reverse',
-        type: 'bool',
-        internalType: 'bool',
-      },
+        "name": "to",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'uint256[]',
-        internalType: 'uint256[]',
-      },
+        "name": "govVotesAdded",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'unstake',
-    inputs: [
+    "type": "function",
+    "name": "stakeUpdateRoundsByPage",
+    "inputs": [
       {
-        name: 'tokenAddress',
-        type: 'address',
-        internalType: 'address',
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
       },
+      {
+        "name": "start",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "end",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "reverse",
+        "type": "bool",
+        "internalType": "bool"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'validGovVotes',
-    inputs: [
+    "outputs": [
       {
-        name: 'tokenAddress',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'accountAddress',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      }
     ],
-    outputs: [
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "unstake",
+    "inputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    stateMutability: 'view',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'withdraw',
-    inputs: [
+    "type": "function",
+    "name": "validGovVotes",
+    "inputs": [
       {
-        name: 'tokenAddress',
-        type: 'address',
-        internalType: 'address',
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
       },
+      {
+        "name": "accountAddress",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'event',
-    name: 'StakeLiquidity',
-    inputs: [
+    "outputs": [
       {
-        name: 'tokenAddress',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
-      {
-        name: 'account',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
-      {
-        name: 'tokenAmountForLP',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
-      {
-        name: 'parentTokenAmountForLP',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
-      {
-        name: 'promisedWaitingRounds',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
-      {
-        name: 'govVotes',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
-      {
-        name: 'slAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "stateMutability": "view"
   },
   {
-    type: 'event',
-    name: 'StakeToken',
-    inputs: [
+    "type": "function",
+    "name": "withdraw",
+    "inputs": [
       {
-        name: 'tokenAddress',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
-      {
-        name: 'account',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
-      {
-        name: 'tokenAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
-      {
-        name: 'promisedWaitingRounds',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    anonymous: false,
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'Unstake',
-    inputs: [
+    "type": "event",
+    "name": "StakeLiquidity",
+    "inputs": [
       {
-        name: 'tokenAddress',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'account',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'slAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "tokenAmountForLP",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
       {
-        name: 'stAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "parentTokenAmountForLP",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
+      {
+        "name": "promisedWaitingRounds",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "govVotesAdded",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "govVotesNew",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "slAmountAdded",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "slAmountNew",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "anonymous": false
   },
   {
-    type: 'event',
-    name: 'Withdraw',
-    inputs: [
+    "type": "event",
+    "name": "StakeToken",
+    "inputs": [
       {
-        name: 'tokenAddress',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'account',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'slAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "tokenAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
       {
-        name: 'stAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "promisedWaitingRounds",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
+      {
+        "name": "govVotesAdded",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "govVotesNew",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "stAmountNew",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'AlreadyInitialized',
-    inputs: [],
+    "type": "event",
+    "name": "Unstake",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "slAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "stAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'AlreadyUnstaked',
-    inputs: [],
+    "type": "event",
+    "name": "Withdraw",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "slAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "stAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'InvalidToAddress',
-    inputs: [],
+    "type": "error",
+    "name": "AlreadyInitialized",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'NoStakedLiquidity',
-    inputs: [],
+    "type": "error",
+    "name": "AlreadyUnstaked",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'NoStakedLiquidityOrToken',
-    inputs: [],
+    "type": "error",
+    "name": "InvalidToAddress",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'NotAllowedToStakeAtRoundZero',
-    inputs: [],
+    "type": "error",
+    "name": "NoStakedLiquidity",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'NotEnoughWaitingRounds',
-    inputs: [],
+    "type": "error",
+    "name": "NoStakedLiquidityOrToken",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'PromisedWaitingRoundsMustBeGreaterOrEqualThanBefore',
-    inputs: [],
+    "type": "error",
+    "name": "NotAllowedToStakeAtRoundZero",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'PromisedWaitingRoundsOutOfRange',
-    inputs: [],
+    "type": "error",
+    "name": "NotEnoughWaitingRounds",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'ReleaseAlreadyRequested',
-    inputs: [],
+    "type": "error",
+    "name": "PromisedWaitingRoundsMustBeGreaterOrEqualThanBefore",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'RoundHasNotStartedYet',
-    inputs: [],
+    "type": "error",
+    "name": "PromisedWaitingRoundsOutOfRange",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'RoundNotStarted',
-    inputs: [],
+    "type": "error",
+    "name": "ReleaseAlreadyRequested",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'StakeAmountMustBeSet',
-    inputs: [],
+    "type": "error",
+    "name": "RoundHasNotStartedYet",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'TokenAmountNotEnough',
-    inputs: [],
+    "type": "error",
+    "name": "RoundNotStarted",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'TransferParentTokenAmountForLPFailed',
-    inputs: [],
+    "type": "error",
+    "name": "StakeAmountMustBeSet",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'TransferParentTokenFailed',
-    inputs: [],
+    "type": "error",
+    "name": "TokenAmountNotEnough",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'TransferSLTokenFailed',
-    inputs: [],
+    "type": "error",
+    "name": "TransferParentTokenAmountForLPFailed",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'TransferSTTokenFailed',
-    inputs: [],
+    "type": "error",
+    "name": "TransferParentTokenFailed",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'TransferTokenAmountFailed',
-    inputs: [],
+    "type": "error",
+    "name": "TransferSLTokenFailed",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'TransferTokenAmountForLPFailed',
-    inputs: [],
+    "type": "error",
+    "name": "TransferSTTokenFailed",
+    "inputs": []
   },
   {
-    type: 'error',
-    name: 'UnableToUnstakeAtRoundZero',
-    inputs: [],
+    "type": "error",
+    "name": "TransferTokenAmountFailed",
+    "inputs": []
   },
+  {
+    "type": "error",
+    "name": "TransferTokenAmountForLPFailed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "UnableToUnstakeAtRoundZero",
+    "inputs": []
+  }
 ] as const satisfies Abi;
