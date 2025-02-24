@@ -84,12 +84,16 @@ export interface LaunchInfo {
   totalExtraRefunded: bigint;
 }
 
-/**
- * struct VerificationInfo {
-    address account;
-    string[] infos;
+export interface PairInfo {
+  pairAddress: `0x${string}`;
+  balanceOfToken: bigint;
+  balanceOfParentToken: bigint;
+  allowanceOfToken: bigint;
+  allowanceOfParentToken: bigint;
+  pairReserveToken: bigint;
+  pairReserveParentToken: bigint;
 }
- */
+
 export interface VerificationInfo {
   account: `0x${string}`;
   infos: string[];

@@ -9,19 +9,13 @@ import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
 import { Token } from '@/src/contexts/TokenContext';
 
 // my components
-import LeftTime from '@/src/components/Common/LeftTime';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const { data: blockNumber } = useBlockNumber();
   const leftBlocks = blockNumber ? launchInfo.secondHalfMinBlocks - (blockNumber - launchInfo.secondHalfStartBlock) : 0;
-  const timeLeft = leftBlocks > 0 ? Number(leftBlocks) * Number(process.env.NEXT_PUBLIC_BLOCK_TIME) : 0;
   const ratio = Number(launchInfo.totalContributed) / Number(launchInfo.parentTokenFundraisingGoal);
   const ratioPercent = (ratio * 100).toFixed(1);
-
-  const days = Math.floor(timeLeft / (24 * 60 * 60));
-  const hours = Math.floor((timeLeft % (24 * 60 * 60)) / (60 * 60));
-  const minutes = Math.floor((timeLeft % 3600) / 60);
 
   if (!launchInfo) {
     return <div className="text-red-500">找不到发射信息</div>;
@@ -53,7 +47,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
           <div className="stat-value text-xl">{`${formatTokenAmount(BigInt(TOKEN_CONFIG.fairLaunch))}`}</div>
         </div>
       </div>
-      <div className="text-center text-xs mb-4 text-greyscale-400">
+      <div className="text-center text-xs mb-4 text-greyscale-500">
         兑换比例：1 {token.parentTokenSymbol} ={' '}
         {removeExtraZeros(
           (Number(TOKEN_CONFIG.fairLaunch) / Number(launchInfo.parentTokenFundraisingGoal)).toLocaleString('en-US', {
@@ -70,7 +64,6 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
             <span className="text-3xl text-secondary">{formatTokenAmount(launchInfo.totalContributed)}</span>
             <span className="text-greyscale-500 font-normal text-sm ml-2">{token.parentTokenSymbol}</span>
           </div>
-          {/* <div className="stat-desc pt-2">超出筹集目标的 {token.parentTokenSymbol} 在申领时按比例退还</div> */}
           <div className="mt-2 rounded-lg text-sm">
             <p className="mt-2 mb-1 font-medium">发射结束条件：</p>
             <p className="text-greyscale-600">
