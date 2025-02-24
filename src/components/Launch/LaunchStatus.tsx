@@ -1,5 +1,4 @@
 import { formatTokenAmount, removeExtraZeros } from '@/src/lib/format';
-import { useBlockNumber } from 'wagmi';
 
 // my contexts
 import { LaunchInfo } from '@/src/types/life20types';
@@ -12,8 +11,6 @@ import { Token } from '@/src/contexts/TokenContext';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
-  const { data: blockNumber } = useBlockNumber();
-  const leftBlocks = blockNumber ? launchInfo.secondHalfMinBlocks - (blockNumber - launchInfo.secondHalfStartBlock) : 0;
   const ratio = Number(launchInfo.totalContributed) / Number(launchInfo.parentTokenFundraisingGoal);
   const ratioPercent = (ratio * 100).toFixed(1);
 
@@ -84,7 +81,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
         <p>3. 治理激励：{formatTokenAmount(BigInt(TOKEN_CONFIG.govRewards))} (45%)</p>
         <p>4. 行动激励：{formatTokenAmount(BigInt(TOKEN_CONFIG.actionRewards))} (45%)</p>
         <p className="mt-3 font-medium">发射规则：</p>
-        <p>1. 代币发放：按申购数量占比比例发放</p>
+        <p>1. 代币发放：按申购数量占比平均发放</p>
         <p>2. 超过募集目标的父币，将按申购比例返还</p>
       </div>
     </div>

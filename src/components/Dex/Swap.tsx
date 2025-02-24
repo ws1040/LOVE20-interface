@@ -27,6 +27,7 @@ import useTokenContext from '@/src/hooks/context/useTokenContext';
 
 // my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // -------------------------------------
@@ -345,7 +346,7 @@ const SwapPanel = () => {
 
   // 如果还没有 token 信息
   if (!token) {
-    return <div>Loading...</div>;
+    return <LoadingIcon />;
   }
 
   // 加载状态
@@ -354,7 +355,7 @@ const SwapPanel = () => {
   // 转换率的计算逻辑
   const conversionRate =
     fromTokenInfo.amount > 0n && amountsOut && amountsOut.length > 1
-      ? formatIntegerStringWithCommas(formatUnits((amountsOut[1] * 10n ** 18n) / fromTokenInfo.amount), 2)
+      ? formatIntegerStringWithCommas(formatUnits((amountsOut[1] * 10n ** 18n) / fromTokenInfo.amount), 2, 4)
       : '0';
 
   return (
