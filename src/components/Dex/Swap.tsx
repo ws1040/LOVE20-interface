@@ -17,7 +17,7 @@ import { Form, FormField, FormItem, FormControl, FormMessage } from '@/component
 
 // my hooks & funcs
 import { checkWalletConnection } from '@/src/lib/web3';
-import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
+import { formatIntegerStringWithCommas, formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import { useGetAmountsOut, useSwapExactTokensForTokens } from '@/src/hooks/contracts/useUniswapV2Router';
@@ -351,6 +351,12 @@ const SwapPanel = () => {
   // 加载状态
   const isLoadingOverlay = isApproving || isSwapping || isConfirmingSwap;
 
+  // 转换率的计算逻辑
+  const conversionRate =
+    fromTokenInfo.amount > 0n && amountsOut && amountsOut.length > 1
+      ? formatIntegerStringWithCommas(formatUnits((amountsOut[1] * 10n ** 18n) / fromTokenInfo.amount), 2)
+      : '0';
+
   return (
     <div className="p-6">
       <LeftTitle title="兑换" />
@@ -516,6 +522,12 @@ const SwapPanel = () => {
         {/* 手续费和滑点提示 */}
         {fromTokenInfo.amount > 0n && (
           <div className="mt-4 p-4 bg-gray-50 rounded-md">
+            <div className="flex justify-between text-sm">
+              <span className="text-greyscale-400">兑换率: </span>
+              <span>
+                1 {fromTokenInfo.symbol} = {conversionRate} {toTokenInfo.symbol}
+              </span>
+            </div>
             <div className="flex justify-between text-sm">
               <span className="text-greyscale-400">手续费 (0.3%)：</span>
               <span>

@@ -1,5 +1,6 @@
 import { parseUnits as viemParseUnits, formatUnits as viemFormatUnits } from 'viem';
 import { Token } from '@/src/contexts/TokenContext';
+
 // 地址缩写
 export const abbreviateAddress = (address: string): string => {
   if (!address) return '';
@@ -74,4 +75,20 @@ export const formatRoundForDisplay = (round: bigint, token: Token): bigint => {
     return 0n;
   }
   return round - BigInt(token.initialStakeRound) + 1n;
+};
+
+// 将整数转换为千分位, 保留n小数, 并去掉小数位末尾的0
+export const formatIntegerWithCommas = (value: bigint, maximumFractionDigits: number): string => {
+  const formatted = formatUnits(value);
+  const numberFormatted = Number(formatted);
+  return new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: maximumFractionDigits,
+  }).format(numberFormatted);
+};
+
+export const formatIntegerStringWithCommas = (value: string, maximumFractionDigits: number): string => {
+  const numberFormatted = Number(value);
+  return new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: maximumFractionDigits,
+  }).format(numberFormatted);
 };
