@@ -15,6 +15,72 @@ export const LOVE20DataViewerAbi = [
   },
   {
     "type": "function",
+    "name": "accountPair",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "parentTokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "pairInfo",
+        "type": "tuple",
+        "internalType": "struct AccountPairInfo",
+        "components": [
+          {
+            "name": "pairAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "balanceOfToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "balanceOfParentToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "allowanceOfToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "allowanceOfParentToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "pairReserveToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "pairReserveParentToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "govData",
     "inputs": [
       {

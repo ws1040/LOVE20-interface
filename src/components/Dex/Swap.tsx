@@ -32,22 +32,31 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 // -------------------------------------
 // 1. 定义 zod Schema
 // -------------------------------------
-const SwapFormSchema = z.object({
-  fromTokenAddress: z.string().regex(/^0x[0-9a-fA-F]{40}$/, '无效合约地址'), // 简单示例：检测是否0x开头+40位hex
-  toTokenAddress: z.string().regex(/^0x[0-9a-fA-F]{40}$/, '无效合约地址'),
-  fromTokenAmount: z
-    .string()
-    .nonempty('请输入兑换数量')
-    .refine((val) => {
-      try {
-        return (parseUnits(val) ?? 0n) > 0n;
-      } catch {
-        return false;
-      }
-    }, '兑换数量必须大于0'),
-});
+const getSwapFormSchema = (balance: bigint) =>
+  z.object({
+    fromTokenAmount: z
+      .string()
+      .nonempty('请输入兑换数量')
+      .refine(
+        (val) => {
+          // 如果输入以 '.' 结尾，则视为用户仍在输入中，不触发报错
+          if (val.endsWith('.')) return true;
+          // 如果输入仅为 "0"，也允许中间状态（或可根据需求调整为不允许）
+          if (val === '0') return true;
+          try {
+            const amount = parseUnits(val);
+            return amount > 0n && amount <= balance;
+          } catch (e) {
+            return false;
+          }
+        },
+        { message: '输入数量必须大于0且不超过您的可用余额' },
+      ),
+    fromTokenAddress: z.string().regex(/^0x[0-9a-fA-F]{40}$/, '无效合约地址'),
+    toTokenAddress: z.string().regex(/^0x[0-9a-fA-F]{40}$/, '无效合约地址'),
+  });
 
-type SwapFormValues = z.infer<typeof SwapFormSchema>;
+type SwapFormValues = z.infer<ReturnType<typeof getSwapFormSchema>>;
 
 // -------------------------------------
 // 主组件
@@ -103,11 +112,11 @@ const SwapPanel = () => {
   //    注意：defaultValues要与State保持同步
   // -------------------------------------
   const form = useForm<SwapFormValues>({
-    resolver: zodResolver(SwapFormSchema),
+    resolver: zodResolver(getSwapFormSchema(fromTokenInfo.balance)),
     defaultValues: {
       fromTokenAddress: token?.parentTokenAddress || '0x0',
       toTokenAddress: token?.address || '0x0',
-      fromTokenAmount: '0',
+      fromTokenAmount: '',
     },
     mode: 'onChange',
   });
@@ -357,7 +366,7 @@ const SwapPanel = () => {
                     <FormItem className="w-2/3">
                       <FormControl>
                         <Input
-                          placeholder="0.0"
+                          placeholder="请填写数量"
                           type="number"
                           className="w-full !ring-secondary-foreground"
                           disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}

@@ -25,8 +25,8 @@ import { TokenContext, Token } from '@/src/contexts/TokenContext';
 import { useError } from '@/src/contexts/ErrorContext';
 
 // my hooks
-import { useAllowance, useApprove, useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
-import { useGetAmountsIn, useGetAmountsOut } from '@/src/components/Stake/getAmountHooks';
+import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
+import { useAccountPair } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useAccountStakeStatus, useStakeLiquidity, useInitialStakeRound } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
@@ -97,11 +97,9 @@ function buildFormSchema(parentTokenBalance: bigint, tokenBalance: bigint) {
 // --------------------------------------------------
 // 2. 组件主体
 // --------------------------------------------------
-interface StakeLiquidityPanelProps {
-  stakedTokenAmountOfLP: bigint;
-}
+interface StakeLiquidityPanelProps {}
 
-const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAmountOfLP }) => {
+const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   const { address: accountAddress, chain: accountChain } = useAccount();
   const context = useContext(TokenContext);
   if (!context) {
@@ -110,16 +108,26 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
   const { token, setToken } = context;
   const { setError } = useError();
   const { first: isFirstTimeStake } = useRouter().query;
+
+  // 使用 useAccountPair 替换 useBalanceOf 和 useAllowance
   const {
-    balance: tokenBalance,
-    isPending: isPendingTokenBalance,
-    error: errorTokenBalance,
-  } = useBalanceOf(token?.address as `0x${string}`, accountAddress as `0x${string}`);
-  const {
-    balance: parentTokenBalance,
-    isPending: isPendingParentTokenBalance,
-    error: errorParentTokenBalance,
-  } = useBalanceOf(token?.parentTokenAddress as `0x${string}`, accountAddress as `0x${string}`);
+    pairInfo,
+    isPending: isPendingPair,
+    error: errorPair,
+  } = useAccountPair(
+    accountAddress as `0x${string}`,
+    token?.address as `0x${string}`,
+    token?.parentTokenAddress as `0x${string}`,
+  );
+
+  // 从 pairInfo 中读取余额及授权额度
+  const tokenBalance = pairInfo?.balanceOfToken ?? 0n;
+  const parentTokenBalance = pairInfo?.balanceOfParentToken ?? 0n;
+  const allowanceToken = pairInfo?.allowanceOfToken ?? 0n;
+  const allowanceParentToken = pairInfo?.allowanceOfParentToken ?? 0n;
+
+  // 判断 pairReserve 是否有效
+  const pairExists = pairInfo && pairInfo.pairReserveToken > 0n && pairInfo.pairReserveParentToken > 0n;
 
   // 是否是首次质押
   const [updatedInitialStakeRound, setUpdatedInitialStakeRound] = useState(false);
@@ -154,30 +162,10 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
   } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
 
   // --------------------------------------------------
-  // 2.2 授权逻辑
+  // 2.2 授权逻辑，使用 useApprove 保持不变
   // --------------------------------------------------
   const [isTokenApproved, setIsTokenApproved] = useState(false);
   const [isParentTokenApproved, setIsParentTokenApproved] = useState(false);
-
-  const {
-    allowance: allowanceToken,
-    isPending: isPendingAllowanceToken,
-    error: errAllowanceToken,
-  } = useAllowance(
-    token?.address as `0x${string}`,
-    accountAddress as `0x${string}`,
-    process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
-  );
-
-  const {
-    allowance: allowanceParentToken,
-    isPending: isPendingAllowanceParentToken,
-    error: errAllowanceParentToken,
-  } = useAllowance(
-    token?.parentTokenAddress as `0x${string}`,
-    accountAddress as `0x${string}`,
-    process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
-  );
 
   const {
     approve: approveToken,
@@ -234,90 +222,63 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
   }, [isConfirmedApproveParentToken]);
 
   // --------------------------------------------------
-  // 2.3 自动计算兑换数量
+  // 2.3 自动计算兑换数量，利用 pairReserve 进行计算
   // --------------------------------------------------
-  // 为了兼容"自动计算"逻辑，保留以下两个标记
+  // 标记是否由用户手动输入，目的是区分"自动计算"与手动输入
   const [isParentTokenChangedByUser, setIsParentTokenChangedByUser] = useState(false);
   const [isTokenChangedByUser, setIsTokenChangedByUser] = useState(false);
 
-  const pairExists = !!initialStakeRound && initialStakeRound > 0;
   const parentTokenValue = form.watch('parentToken');
   const stakeTokenValue = form.watch('stakeToken');
   const parsedParentToken = parseUnits(parentTokenValue);
   const parsedStakeToken = parseUnits(stakeTokenValue);
 
-  const {
-    data: amountsOut,
-    error: errAmountsOut,
-    isLoading: isAmountsOutLoading,
-  } = useGetAmountsOut(
-    parsedParentToken !== null ? parsedParentToken : 0n,
-    [token?.parentTokenAddress as `0x${string}`, token?.address as `0x${string}`],
-    token as Token,
-    pairExists,
-    isParentTokenChangedByUser,
-  );
-
-  const {
-    data: amountsIn,
-    error: errAmountsIn,
-    isLoading: isAmountsInLoading,
-  } = useGetAmountsIn(
-    parsedStakeToken !== null ? parsedStakeToken : 0n,
-    [token?.parentTokenAddress as `0x${string}`, token?.address as `0x${string}`],
-    token as Token,
-    pairExists,
-    isTokenChangedByUser,
-  );
-
-  // 如果输入了 parentToken，就自动计算 stakeToken
+  // 当用户修改父币时，根据 pairReserve 计算 token 数量
   useEffect(() => {
-    if (pairExists && amountsOut && amountsOut.length > 1) {
-      const amountOut = formatUnits(BigInt(amountsOut[1]));
-      const amountOutShow = Number(amountOut)
-        .toFixed(12)
-        .replace(/\.?0+$/, '');
-      form.setValue('stakeToken', amountOutShow);
-      setIsParentTokenChangedByUser(false);
-      setIsTokenChangedByUser(false);
+    if (pairExists && isParentTokenChangedByUser) {
+      if (parsedParentToken !== null && parsedParentToken > 0n) {
+        const computedStakeToken = (parsedParentToken * pairInfo!.pairReserveToken) / pairInfo!.pairReserveParentToken;
+        const computedStakeTokenStr = Number(formatUnits(computedStakeToken))
+          .toFixed(12)
+          .replace(/\.?0+$/, '');
+        form.setValue('stakeToken', computedStakeTokenStr);
+        setIsParentTokenChangedByUser(false);
+        setIsTokenChangedByUser(false);
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amountsOut]);
+  }, [pairExists, isParentTokenChangedByUser, parsedParentToken, pairInfo, form]);
 
-  // 如果输入了 stakeToken，就自动计算 parentToken
+  // 当用户修改 token 时，根据 pairReserve 计算父币数量
   useEffect(() => {
-    if (pairExists && amountsIn && amountsIn.length > 1) {
-      const amountIn = formatUnits(BigInt(amountsIn[0]));
-      const amountInShow = Number(amountIn)
-        .toFixed(12)
-        .replace(/\.?0+$/, '');
-      form.setValue('parentToken', amountInShow);
-      setIsParentTokenChangedByUser(false);
-      setIsTokenChangedByUser(false);
+    if (pairExists && isTokenChangedByUser) {
+      if (parsedStakeToken !== null && parsedStakeToken > 0n) {
+        const computedParentToken = (parsedStakeToken * pairInfo!.pairReserveParentToken) / pairInfo!.pairReserveToken;
+        const computedParentTokenStr = Number(formatUnits(computedParentToken))
+          .toFixed(12)
+          .replace(/\.?0+$/, '');
+        form.setValue('parentToken', computedParentTokenStr);
+        setIsParentTokenChangedByUser(false);
+        setIsTokenChangedByUser(false);
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amountsIn]);
+  }, [pairExists, isTokenChangedByUser, parsedStakeToken, pairInfo, form]);
 
+  // 根据 pairInfo 中的授权额度判断授权状态
   useEffect(() => {
-    if (
-      parsedParentToken > 0n &&
-      allowanceParentToken &&
-      allowanceParentToken > 0n &&
-      allowanceParentToken >= parsedParentToken
-    ) {
+    if (parsedParentToken > 0n && allowanceParentToken >= parsedParentToken) {
       setIsParentTokenApproved(true);
     } else {
       setIsParentTokenApproved(false);
     }
-  }, [parsedParentToken, isPendingAllowanceParentToken]);
+  }, [parsedParentToken, allowanceParentToken]);
 
   useEffect(() => {
-    if (parsedStakeToken > 0n && allowanceToken && allowanceToken > 0n && allowanceToken >= parsedStakeToken) {
+    if (parsedStakeToken > 0n && allowanceToken >= parsedStakeToken) {
       setIsTokenApproved(true);
     } else {
       setIsTokenApproved(false);
     }
-  }, [parsedStakeToken, isPendingAllowanceToken]);
+  }, [parsedStakeToken, allowanceToken]);
 
   // --------------------------------------------------
   // 2.4 质押逻辑
@@ -331,7 +292,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
   } = useStakeLiquidity();
 
   async function onStake(data: z.infer<ReturnType<typeof buildFormSchema>>) {
-    // 先检查钱包
     if (!checkWalletConnection(accountChain)) {
       return;
     }
@@ -354,7 +314,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
       token?.address as `0x${string}`,
       stakeAmount,
       parentAmount,
-      BigInt(data.releasePeriod), // releasePeriod 是 string
+      BigInt(data.releasePeriod),
       accountAddress as `0x${string}`,
     ).catch((error) => {
       const errorMessage = extractErrorMessage(error);
@@ -363,11 +323,9 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
     });
   }
 
-  // 质押成功后，可能需要更新首次质押轮数
   function handleStakeSuccess() {
     toast.success('质押成功');
     setTimeout(() => {
-      // 跳转到我的首页
       window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/my/?symbol=${token?.symbol}`;
     }, 2000);
   }
@@ -375,23 +333,18 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
   useEffect(() => {
     if (isConfirmedStakeLiquidity) {
       if (token?.initialStakeRound && token.initialStakeRound > 0) {
-        // 本次质押非首次
         handleStakeSuccess();
       } else {
-        // 本次质押是首次，则更新 token 的 initialStakeRound，以便更新缓存
         setUpdatedInitialStakeRound(true);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConfirmedStakeLiquidity]);
 
-  // 如果是首次质押，需要在拿到新的 initialStakeRound 后再次跳转
   useEffect(() => {
     if (updatedInitialStakeRound && !isPendingInitialStakeRound && initialStakeRound && initialStakeRound > 0) {
       setToken({ ...token, initialStakeRound: Number(initialStakeRound) } as Token);
       handleStakeSuccess();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updatedInitialStakeRound, isPendingInitialStakeRound, initialStakeRound]);
 
   // --------------------------------------------------
@@ -399,17 +352,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
   // --------------------------------------------------
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
-    if (errorParentTokenBalance) {
-      handleContractError(errorParentTokenBalance, 'token');
-    }
-    if (errorTokenBalance) {
-      handleContractError(errorTokenBalance, 'token');
-    }
-    if (errAllowanceParentToken) {
-      handleContractError(errAllowanceParentToken, 'token');
-    }
-    if (errAllowanceToken) {
-      handleContractError(errAllowanceToken, 'token');
+    if (errorPair) {
+      handleContractError(errorPair, 'token');
     }
     if (errApproveToken) {
       handleContractError(errApproveToken, 'stake');
@@ -423,27 +367,15 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
     if (errInitialStakeRound) {
       handleContractError(errInitialStakeRound, 'stake');
     }
-    if (errAmountsOut) {
-      handleContractError(errAmountsOut, 'uniswap');
-    }
-    if (errAmountsIn) {
-      handleContractError(errAmountsIn, 'uniswap');
-    }
     if (errAccountStakeStatus) {
       handleContractError(errAccountStakeStatus, 'stake');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    errorParentTokenBalance,
-    errorTokenBalance,
-    errAllowanceParentToken,
-    errAllowanceToken,
+    errorPair,
     errApproveToken,
     errApproveParentToken,
     errStakeLiquidity,
     errInitialStakeRound,
-    errAmountsOut,
-    errAmountsIn,
     errAccountStakeStatus,
   ]);
 
@@ -462,45 +394,38 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
       });
     }
   }, [isFirstTimeStake, hadStartedApprove, setError]);
-  // 检查token数量
+
   useEffect(() => {
-    if (!isPendingTokenBalance && !tokenBalance && !hadStartedApprove && token && token.symbol) {
+    if (!isPendingPair && !tokenBalance && !hadStartedApprove && token && token.symbol) {
       setError({
         name: '余额不足',
         message: `您当前${token.symbol}数量为0，请先获取${token.symbol}`,
       });
     }
-    if (!isPendingParentTokenBalance && !parentTokenBalance && !hadStartedApprove && token && token.parentTokenSymbol) {
+    if (!isPendingPair && !parentTokenBalance && !hadStartedApprove && token && token.parentTokenSymbol) {
       setError({
         name: '余额不足',
         message: `您当前${token.parentTokenSymbol}数量为0，请先获取${token.parentTokenSymbol}`,
       });
     }
-  }, [tokenBalance, parentTokenBalance, token]);
+  }, [tokenBalance, parentTokenBalance, token, isPendingPair]);
 
-  // --------------------------------------------------
-  // 2.7 渲染
-  // --------------------------------------------------
   useEffect(() => {
-    // 确保 promisedWaitingRounds 有效，再设置初始值（注意转换为 string）
     if (promisedWaitingRounds !== undefined && promisedWaitingRounds > 0) {
       form.setValue('releasePeriod', String(promisedWaitingRounds));
     }
   }, [promisedWaitingRounds]);
 
-  // 针对授权 token 按钮，添加 ref 及其状态保存，用于检测 isPendingAllowanceToken 的状态变化
   const approveTokenButtonRef = useRef<HTMLButtonElement>(null);
-  const prevIsPendingAllowanceToken = useRef<boolean>(isPendingAllowanceToken);
+  const prevIsPendingApproveToken = useRef<boolean>(isPendingApproveToken);
 
   useEffect(() => {
-    // 当上一次的状态为 true，而当前为 false，则执行 blur()
-    if (prevIsPendingAllowanceToken.current && !isPendingAllowanceToken) {
+    if (prevIsPendingApproveToken.current && !isPendingApproveToken) {
       approveTokenButtonRef.current?.blur();
     }
-    prevIsPendingAllowanceToken.current = isPendingAllowanceToken;
-  }, [isPendingAllowanceToken]);
+    prevIsPendingApproveToken.current = isPendingApproveToken;
+  }, [isPendingApproveToken]);
 
-  // 如果质押状态正在加载，则显示 loading
   if (isPendingAccountStakeStatus || isPendingInitialStakeRound) {
     return <LoadingIcon />;
   }
@@ -511,16 +436,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
         <LeftTitle title="质押获取治理票" />
       </div>
 
-      {/* 
-        用 Form 包裹，然后在 <form> 上使用 form.handleSubmit(...) 
-        本例中，因为"授权"和"质押"是两步，所以我们分别对按钮做 handleSubmit 
-      */}
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onStake)} // 如果想把"质押"改成 <button type="submit">
-          className="w-full max-w-md mt-4 space-y-4"
-        >
-          {/* 质押父币数 */}
+        <form onSubmit={form.handleSubmit(onStake)} className="w-full max-w-md mt-4 space-y-4">
           <FormField
             control={form.control}
             name="parentToken"
@@ -534,7 +451,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
                     {...field}
                     disabled={hadStartedApprove}
                     onChange={(e) => {
-                      // 同时触发 React Hook Form 的更新 & 原先逻辑
                       field.onChange(e);
                       setIsParentTokenChangedByUser(true);
                     }}
@@ -544,7 +460,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
                 <FormMessage />
                 <FormDescription className="flex justify-between items-center">
                   <span>
-                    持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(parentTokenBalance || 0n)}</span>
+                    持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(parentTokenBalance)}</span>
                     {token?.parentTokenSymbol}
                   </span>
                   <Link href="/dex/deposit/" className="text-secondary-400 ml-2">
@@ -555,7 +471,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
             )}
           />
 
-          {/* 质押 token 数 */}
           <FormField
             control={form.control}
             name="stakeToken"
@@ -578,7 +493,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
                 <FormMessage />
                 <FormDescription className="flex justify-between items-center">
                   <span>
-                    持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(tokenBalance || 0n)}</span>
+                    持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(tokenBalance)}</span>
                     {token?.symbol}
                   </span>
                   <Link href="/dex/swap/" className="text-secondary-400">
@@ -589,7 +504,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
             )}
           />
 
-          {/* 释放期 */}
           <FormField
             control={form.control}
             name="releasePeriod"
@@ -622,53 +536,41 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
             )}
           />
 
-          {/* 两个按钮：授权 + 质押 */}
           <div className="flex justify-center space-x-2 mt-4">
-            {/* 修改后的授权 token 按钮 */}
             <Button
               type="button"
               className="w-1/3"
               ref={approveTokenButtonRef}
-              disabled={isPendingAllowanceToken || isPendingApproveToken || isConfirmingApproveToken || isTokenApproved}
+              disabled={isPendingApproveToken || isConfirmingApproveToken || isTokenApproved}
               onClick={form.handleSubmit(onApproveToken)}
             >
-              {isPendingAllowanceToken ? (
-                <Loader2 className="animate-spin" />
-              ) : isPendingApproveToken ? (
-                `1.提交中...`
-              ) : isConfirmingApproveToken ? (
-                `1.确认中...`
-              ) : isTokenApproved ? (
-                `1.${token?.symbol}已授权`
-              ) : (
-                `1.授权${token?.symbol}`
-              )}
+              {isPendingApproveToken
+                ? `1.提交中...`
+                : isConfirmingApproveToken
+                ? `1.确认中...`
+                : isTokenApproved
+                ? `1.${token?.symbol}已授权`
+                : `1.授权${token?.symbol}`}
             </Button>
 
-            {/* 授权 父币 的按钮 */}
             <Button
               type="button"
               className="w-1/3"
               disabled={
                 !isTokenApproved ||
-                isPendingAllowanceParentToken ||
                 isPendingApproveParentToken ||
                 isConfirmingApproveParentToken ||
                 isParentTokenApproved
               }
               onClick={form.handleSubmit(onApproveParentToken)}
             >
-              {isPendingAllowanceParentToken ? (
-                <Loader2 className="animate-spin" />
-              ) : isPendingApproveParentToken ? (
-                `2.提交中...`
-              ) : isConfirmingApproveParentToken ? (
-                `2.确认中...`
-              ) : isParentTokenApproved ? (
-                `2.${token?.parentTokenSymbol}已授权`
-              ) : (
-                `2.授权${token?.parentTokenSymbol}`
-              )}
+              {isPendingApproveParentToken
+                ? `2.提交中...`
+                : isConfirmingApproveParentToken
+                ? `2.确认中...`
+                : isParentTokenApproved
+                ? `2.${token?.parentTokenSymbol}已授权`
+                : `2.授权${token?.parentTokenSymbol}`}
             </Button>
 
             <Button
@@ -694,7 +596,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({ stakedTokenAm
         </form>
       </Form>
 
-      {/* 全局 Loading */}
       <LoadingOverlay
         isLoading={
           isApproving ||

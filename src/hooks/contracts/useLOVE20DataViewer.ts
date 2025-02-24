@@ -12,6 +12,7 @@ import {
   VerificationInfo,
   JoinableActionDetail,
   GovData,
+  PairInfo,
 } from '@/src/types/life20types';
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_DATAVIEWER as `0x${string}`;
 
@@ -307,6 +308,24 @@ export const useGovData = (tokenAddress: `0x${string}`) => {
   });
 
   return { govData: data as GovData, isPending, error };
+};
+
+export const useAccountPair = (
+  account: `0x${string}`,
+  tokenAddress: `0x${string}`,
+  parentTokenAddress: `0x${string}`,
+) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'accountPair',
+    args: [account, tokenAddress, parentTokenAddress],
+    query: {
+      enabled: !!account && !!tokenAddress && !!parentTokenAddress,
+    },
+  });
+
+  return { pairInfo: data as PairInfo, isPending, error };
 };
 
 // =====================
