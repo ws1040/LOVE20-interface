@@ -26,7 +26,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
 
   return (
     <div className="flex-col items-center px-4">
-      <div className="place-items-center">
+      <div className="grid place-items-center">
         <div className="stat-title text-base mr-6 text-secondary">
           {launchInfo.hasEnded ? '发射已结束' : '发射进行中'}
         </div>
