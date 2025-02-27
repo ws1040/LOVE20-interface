@@ -509,7 +509,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
             name="releasePeriod"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>释放期</FormLabel>
+                <FormLabel>释放等待阶段</FormLabel>
                 <FormControl>
                   <Select
                     disabled={hadStartedApprove}
@@ -517,7 +517,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                     value={field.value}
                   >
                     <SelectTrigger className="w-full !ring-secondary-foreground">
-                      <SelectValue placeholder="选择释放期" />
+                      <SelectValue placeholder="选择释放等待阶段" />
                     </SelectTrigger>
                     <SelectContent>
                       {Array.from({ length: 9 }, (_, i) => i + 4)
@@ -530,7 +530,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                     </SelectContent>
                   </Select>
                 </FormControl>
-                <FormDescription>释放期：申请解锁后，几轮之后可以领取。</FormDescription>
+                <FormDescription>含义：申请解除质押后，几个阶段之后可以取回代币</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

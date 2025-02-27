@@ -120,7 +120,8 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
             <tr className="border-b border-gray-100">
               <th>地址</th>
               <th>得分</th>
-              <th colSpan={2}>待领取奖励</th>
+              <th>待领取奖励</th>
+              <th className="text-center">结果</th>
             </tr>
           </thead>
           <tbody>

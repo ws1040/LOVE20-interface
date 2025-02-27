@@ -53,7 +53,7 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   }, [currentRound, token]);
 
   // 计算轮次名称
-  const roundName = roundType === 'vote' ? '投票轮' : '行动轮';
+  const roundName = roundType === 'vote' ? '投票' : '行动';
 
   // 如果 currentRound 为空，则设置默认值，否则转换为字符串
   const displayRound = currentTokenRound != null ? currentTokenRound.toString() : '0';
@@ -66,10 +66,10 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   return (
     <div className="flex justify-between items-center mb-2">
       <h1 className="text-lg font-bold">
-        {roundName} 第 <span className="text-secondary">{displayRound}</span> 轮
+        第 <span className="text-secondary">{displayRound}</span> 轮{roundName}阶段
       </h1>
       <span className="text-sm mt-1 pt-0">
-        <span className="text-greyscale-400 mr-1">本轮剩余:</span>
+        <span className="text-greyscale-400 mr-1">剩余:</span>
         <span className="text-secondary mr-1">{Math.ceil(currentTimeLeft / BLOCK_TIME)}</span>
         <span className="text-greyscale-400 mr-1">块, 约</span>
         <LeftTime initialTimeLeft={initialTimeLeft} onTick={setCurrentTimeLeft} />

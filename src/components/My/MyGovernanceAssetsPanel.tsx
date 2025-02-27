@@ -10,7 +10,13 @@ import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 
 // my hooks
 import { useHandleContractError } from '@/src/lib/errorUtils';
-import { useAccountStakeStatus, useUnstake, useWithdraw, useCurrentRound } from '@/src/hooks/contracts/useLOVE20Stake';
+import {
+  useAccountStakeStatus,
+  useUnstake,
+  useWithdraw,
+  useCurrentRound,
+  useValidGovVotes,
+} from '@/src/hooks/contracts/useLOVE20Stake';
 import { useApprove as useApproveST } from '@/src/hooks/contracts/useLOVE20STToken';
 import { useApprove as useApproveSL } from '@/src/hooks/contracts/useLOVE20SLToken';
 import { useAllowance } from '@/src/hooks/contracts/useLOVE20Token';
@@ -67,6 +73,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     token?.slTokenAddress as `0x${string}`,
     accountAddress as `0x${string}`,
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
+    enableWithdraw,
   );
 
   const {
@@ -77,7 +84,15 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     token?.stTokenAddress as `0x${string}`,
     accountAddress as `0x${string}`,
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
+    enableWithdraw,
   );
+
+  // 我的治理票&总有效票数
+  const {
+    validGovVotes,
+    isPending: isPendingValidGovVotes,
+    error: errorValidGovVotes,
+  } = useValidGovVotes((token?.address as `0x${string}`) || '', (accountAddress as `0x${string}`) || '');
 
   // 状态变量：判断各 token 是否已授权
   const [isSlTokenApproved, setIsSlTokenApproved] = useState(false);
@@ -311,6 +326,11 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             </Button>
           </div>
         </div>
+      </div>
+      <div className="text-sm mb-4 text-greyscale-500 text-center">
+        {validGovVotes <= 0n && govVotes && govVotes > 0n && (
+          <div className="text-red-500">当前 sl 或 st 代币余额不足，导致有效治理票为0，请及时补足</div>
+        )}
       </div>
 
       {enableWithdraw && (
