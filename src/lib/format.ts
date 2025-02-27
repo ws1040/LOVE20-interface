@@ -48,10 +48,14 @@ export const formatUnits = (value: bigint): string => {
   return viemFormatUnits(value, decimals);
 };
 
-// 去除小数结尾多余的0
+// 去除小数结尾多余的0: 1.000000000000000000 -> 1
 export const removeExtraZeros = (value: string) => {
+  console.log('value', value);
   if (value.includes('.')) {
-    return parseFloat(value).toString();
+    // 先移除所有逗号再解析
+    const valueWithoutCommas = value.replace(/,/g, '');
+    console.log('parseFloat(value)', parseFloat(valueWithoutCommas));
+    return parseFloat(valueWithoutCommas).toString();
   }
   return value;
 };
@@ -80,8 +84,8 @@ export const formatRoundForDisplay = (round: bigint, token: Token): bigint => {
 // 将整数转换为千分位, 保留n小数, 并去掉小数位末尾的0
 export const formatIntegerStringWithCommas = (
   value: string,
-  maximumFractionDigits: number,
-  maximumFractionDigits2: number,
+  maximumFractionDigits: number = 2,
+  maximumFractionDigits2: number = 4,
 ): string => {
   const num = Number(value);
 

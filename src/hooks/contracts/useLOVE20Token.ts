@@ -12,14 +12,19 @@ import { LOVE20TokenAbi } from '@/src/abis/LOVE20Token';
  * @param owner - Address of the owner
  * @param spender - Address of the spender
  */
-export const useAllowance = (token: `0x${string}`, owner: `0x${string}`, spender: `0x${string}`) => {
+export const useAllowance = (
+  token: `0x${string}`,
+  owner: `0x${string}`,
+  spender: `0x${string}`,
+  flag: boolean = true,
+) => {
   const { data, isPending, error } = useReadContract({
     address: token,
     abi: LOVE20TokenAbi,
     functionName: 'allowance',
     args: [owner, spender],
     query: {
-      enabled: !!token && !!owner && !!spender,
+      enabled: !!token && !!owner && !!spender && flag,
     },
   });
 

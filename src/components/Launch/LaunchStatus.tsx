@@ -1,4 +1,4 @@
-import { formatTokenAmount, removeExtraZeros } from '@/src/lib/format';
+import { formatIntegerStringWithCommas, formatTokenAmount, removeExtraZeros } from '@/src/lib/format';
 
 // my contexts
 import { LaunchInfo } from '@/src/types/life20types';
@@ -46,11 +46,13 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
       </div>
       <div className="text-center text-xs mb-4 text-greyscale-500">
         兑换比例：1 {token.parentTokenSymbol} ={' '}
-        {removeExtraZeros(
-          (Number(TOKEN_CONFIG.fairLaunch) / Number(launchInfo.parentTokenFundraisingGoal)).toLocaleString('en-US', {
-            maximumFractionDigits: 2,
-            minimumFractionDigits: 2,
-          }),
+        {formatIntegerStringWithCommas(
+          removeExtraZeros(
+            (Number(TOKEN_CONFIG.fairLaunch) / Number(launchInfo.parentTokenFundraisingGoal)).toLocaleString('en-US', {
+              maximumFractionDigits: 2,
+              minimumFractionDigits: 2,
+            }),
+          ),
         )}{' '}
         {token.symbol}
       </div>

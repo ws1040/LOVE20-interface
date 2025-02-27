@@ -257,6 +257,15 @@ const VotingSubmitPage = () => {
             </Button>
           </div>
         </div>
+        <div className="flex flex-col w-full p-4 mt-4">
+          <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 mb-8 text-sm">
+            <div className="text-base font-bold text-greyscale-700 pb-1">注意：</div>
+            <div className="text-sm text-greyscale-500 pb-1">1、必须一次投完100%票数</div>
+            <div className="text-sm text-greyscale-500 pb-1">
+              2、投票时需持有完整数量的质押资产凭证：SL 类(流动性质押)、ST 类(代币质押)
+            </div>
+          </div>
+        </div>
         <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
       </main>
     </>

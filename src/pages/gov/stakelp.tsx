@@ -12,11 +12,22 @@ const StakePage = () => {
       <main className="flex-grow">
         <SlTokenTab />
         <StakeLiquidityPanel />
-        <div className="flex flex-col w-full p-4 mt-4">
-          <div className="text-base font-bold text-greyscale-700 pb-2">规则说明：</div>
-          <div className="text-sm text-greyscale-500">1、所得治理票数 = LP 数量 * 释放期轮次</div>
-          <div className="text-sm text-greyscale-500">
-            2、释放期指：申请解锁后，几轮之后可以领取。最小为4轮，最大为12轮。
+        <div className="flex flex-col w-full p-4">
+          <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 mb-8 text-sm">
+            <div className="text-base font-bold text-greyscale-700 pb-2">治理票</div>
+            <div className="text-sm text-greyscale-500">1、质押后，代币对将自动注入 Uniswap V2 流动性池，成为 LP</div>
+            <div className="text-sm text-greyscale-500">2、所得治理票数 = LP 数量 * 释放期阶段数</div>
+            <div className="text-base font-bold text-greyscale-700 pt-2 pb-1">治理激励</div>
+            <div className="text-sm text-greyscale-500 pb-1">1、当轮所得治理激励 = 验证激励 + 增益激励</div>
+            <div className="text-sm text-greyscale-500 pb-1">
+              2、单个地址的验证激励：当轮治理总激励 * 50% * 该地址行使验证权的治理票数 / 行使验权的治理票总数
+            </div>
+            <div className="text-sm text-greyscale-500 pb-1">
+              3、单个地址的增益激励：当轮治理总激励 * 50% * 该地址质押代币数量 / 质押代币总数量
+            </div>
+            <div className="text-sm text-greyscale-500">
+              4、溢出：单个地址的增益激励 超过投票激励 2 倍以上的部分，为溢出激励，自动销毁，归入未来总激励
+            </div>
           </div>
         </div>
       </main>
