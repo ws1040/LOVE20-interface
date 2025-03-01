@@ -8,34 +8,6 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${
 // =======================
 
 /**
- * 获取 PROMISED_WAITING_ROUNDS_MAX 的值
- */
-export const usePromisedWaitingRoundsMax = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20StakeAbi,
-    functionName: 'PROMISED_WAITING_ROUNDS_MAX',
-    args: [],
-  });
-
-  return { promisedWaitingRoundsMax: data as bigint | undefined, isPending, error };
-};
-
-/**
- * 获取 PROMISED_WAITING_ROUNDS_MIN 的值
- */
-export const usePromisedWaitingRoundsMin = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20StakeAbi,
-    functionName: 'PROMISED_WAITING_ROUNDS_MIN',
-    args: [],
-  });
-
-  return { promisedWaitingRoundsMin: data as bigint | undefined, isPending, error };
-};
-
-/**
  * 获取账户的质押状态
  * @param token 代币地址
  * @param account 账户地址
