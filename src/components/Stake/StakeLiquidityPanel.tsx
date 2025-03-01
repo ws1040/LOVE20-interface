@@ -426,7 +426,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     prevIsPendingApproveToken.current = isPendingApproveToken;
   }, [isPendingApproveToken]);
 
-  if (isPendingAccountStakeStatus || isPendingInitialStakeRound) {
+  if (!token || isPendingAccountStakeStatus || isPendingInitialStakeRound) {
     return <LoadingIcon />;
   }
 
@@ -463,9 +463,12 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                     持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(parentTokenBalance)}</span>
                     {token?.parentTokenSymbol}
                   </span>
-                  <Link href="/dex/deposit/" className="text-secondary-400 ml-2">
-                    去获取 {token?.parentTokenSymbol}
-                  </Link>
+
+                  {token.parentTokenSymbol === process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL && (
+                    <Link href="/dex/deposit/" className="text-secondary-400 ml-2">
+                      去获取 {token?.parentTokenSymbol}
+                    </Link>
+                  )}
                 </FormDescription>
               </FormItem>
             )}
@@ -496,9 +499,11 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                     持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(tokenBalance)}</span>
                     {token?.symbol}
                   </span>
-                  <Link href="/dex/swap/" className="text-secondary-400">
-                    去获取{token?.symbol}
-                  </Link>
+                  {!isFirstTimeStake && (
+                    <Link href={`/dex/swap/?symbol=${token?.symbol}`} className="text-secondary-400">
+                      去获取{token?.symbol}
+                    </Link>
+                  )}
                 </FormDescription>
               </FormItem>
             )}

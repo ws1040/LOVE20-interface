@@ -11,7 +11,7 @@ export const LOVE20VerifyAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "roundBlocks",
+        "name": "phaseBlocks",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -258,6 +258,35 @@ export const LOVE20VerifyAbi = [
   },
   {
     "type": "function",
+    "name": "isVerifierVerified",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "joinAddress",
     "inputs": [],
     "outputs": [
@@ -297,6 +326,19 @@ export const LOVE20VerifyAbi = [
   },
   {
     "type": "function",
+    "name": "phaseBlocks",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "randomAddress",
     "inputs": [],
     "outputs": [
@@ -304,19 +346,6 @@ export const LOVE20VerifyAbi = [
         "name": "",
         "type": "address",
         "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "roundBlocks",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -553,6 +582,30 @@ export const LOVE20VerifyAbi = [
   },
   {
     "type": "function",
+    "name": "stakedAmountOfVerifiers",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "submitAddress",
     "inputs": [],
     "outputs": [
@@ -656,6 +709,11 @@ export const LOVE20VerifyAbi = [
   {
     "type": "error",
     "name": "AlreadyInitialized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "AlreadyVerified",
     "inputs": []
   },
   {

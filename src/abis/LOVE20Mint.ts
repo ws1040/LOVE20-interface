@@ -11,7 +11,7 @@ export const LOVE20MintAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "roundBlocks",
+        "name": "phaseBlocks",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -20,7 +20,7 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "function",
-    "name": "MAX_STAKE_VERIFY_REWARD_MULTIPLIER",
+    "name": "MAX_GOV_BOOST_REWARD_MULTIPLIER",
     "inputs": [],
     "outputs": [
       {
@@ -265,6 +265,30 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "function",
+    "name": "govBoostReward",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "govReward",
     "inputs": [
       {
@@ -357,6 +381,30 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "function",
+    "name": "govVerifyReward",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "initialize",
     "inputs": [
       {
@@ -380,7 +428,7 @@ export const LOVE20MintAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "maxStakeVerifyRewardMultiplier",
+        "name": "maxGovBoostRewardMultiplier",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -503,6 +551,19 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "function",
+    "name": "phaseBlocks",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "prepareRewardIfNeeded",
     "inputs": [
       {
@@ -592,19 +653,6 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "function",
-    "name": "roundBlocks",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "roundByBlockNumber",
     "inputs": [
       {
@@ -675,6 +723,31 @@ export const LOVE20MintAbi = [
   {
     "type": "event",
     "name": "BurnAbstentionActionReward",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "burnReward",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "BurnBoostReward",
     "inputs": [
       {
         "name": "tokenAddress",

@@ -56,19 +56,6 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "WITHDRAW_FEE_RATE_PERCENT",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "WITHDRAW_WAITING_BLOCKS",
     "inputs": [],
     "outputs": [
@@ -389,11 +376,6 @@ export const LOVE20LaunchAbi = [
       },
       {
         "name": "secondHalfMinBlocks",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "withdrawFeeRatePercent",
         "type": "uint256",
         "internalType": "uint256"
       },
@@ -1036,30 +1018,6 @@ export const LOVE20LaunchAbi = [
     "stateMutability": "nonpayable"
   },
   {
-    "type": "function",
-    "name": "withdrawFee",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "fee",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
     "type": "event",
     "name": "Claim",
     "inputs": [
@@ -1237,12 +1195,6 @@ export const LOVE20LaunchAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "fee",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      },
-      {
         "name": "received",
         "type": "uint256",
         "indexed": false,
@@ -1289,6 +1241,11 @@ export const LOVE20LaunchAbi = [
   {
     "type": "error",
     "name": "NotEligibleToDeployToken",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotEnoughWaitingBlocks",
     "inputs": []
   },
   {

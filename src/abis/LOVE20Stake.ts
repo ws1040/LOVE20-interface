@@ -11,7 +11,7 @@ export const LOVE20StakeAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "roundBlocks",
+        "name": "phaseBlocks",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -20,7 +20,7 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "function",
-    "name": "PROMISED_WAITING_ROUNDS_MAX",
+    "name": "PROMISED_WAITING_PHASES_MAX",
     "inputs": [],
     "outputs": [
       {
@@ -33,7 +33,7 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "function",
-    "name": "PROMISED_WAITING_ROUNDS_MIN",
+    "name": "PROMISED_WAITING_PHASES_MIN",
     "inputs": [],
     "outputs": [
       {
@@ -247,12 +247,12 @@ export const LOVE20StakeAbi = [
     "name": "initialize",
     "inputs": [
       {
-        "name": "promisedWaitingRoundsMin",
+        "name": "promisedWaitingPhasesMin",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
-        "name": "promisedWaitingRoundsMax",
+        "name": "promisedWaitingPhasesMax",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -288,7 +288,7 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "function",
-    "name": "roundBlocks",
+    "name": "phaseBlocks",
     "inputs": [],
     "outputs": [
       {

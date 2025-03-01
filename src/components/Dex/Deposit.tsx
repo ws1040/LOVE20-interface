@@ -121,7 +121,13 @@ const Deposit: React.FC = () => {
       setTimeout(() => {
         // 如果发射未结束,跳到申购页;否则,跳到质押lp页
         if (token && !token.hasEnded) {
-          window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/launch/contribute/?symbol=${token.symbol}`;
+          if (token.parentTokenSymbol === process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL) {
+            window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/launch/contribute/?symbol=${
+              token.symbol
+            }`;
+          } else {
+            router.back();
+          }
         } else if (token && !token.initialStakeRound) {
           window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/gov/stakelp?symbol=${
             token.symbol

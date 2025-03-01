@@ -174,17 +174,17 @@ export const useOriginBlocks = () => {
 };
 
 /**
- * 获取 roundBlocks 的值
+ * 获取 phaseBlocks 的值
  */
 export const useRoundBlocks = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20StakeAbi,
-    functionName: 'roundBlocks',
+    functionName: 'phaseBlocks',
     args: [],
   });
 
-  return { roundBlocks: data as bigint | undefined, isPending, error };
+  return { phaseBlocks: data as bigint | undefined, isPending, error };
 };
 
 /**

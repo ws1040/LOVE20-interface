@@ -11,7 +11,7 @@ export const LOVE20SubmitAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "roundBlocks",
+        "name": "phaseBlocks",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -565,7 +565,7 @@ export const LOVE20SubmitAbi = [
   },
   {
     "type": "function",
-    "name": "roundBlocks",
+    "name": "phaseBlocks",
     "inputs": [],
     "outputs": [
       {

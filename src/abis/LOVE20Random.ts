@@ -11,7 +11,7 @@ export const LOVE20RandomAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "roundBlocks",
+        "name": "phaseBlocks",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -91,6 +91,19 @@ export const LOVE20RandomAbi = [
   },
   {
     "type": "function",
+    "name": "phaseBlocks",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "prevRandomSeed",
     "inputs": [],
     "outputs": [
@@ -112,19 +125,6 @@ export const LOVE20RandomAbi = [
         "internalType": "uint256"
       }
     ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "roundBlocks",
-    "inputs": [],
     "outputs": [
       {
         "name": "",
