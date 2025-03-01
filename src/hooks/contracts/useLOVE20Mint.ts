@@ -8,25 +8,6 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MINT as `0x${s
 // =====================
 // === 读取 Hook ===
 // =====================
-
-/**
- * Hook for MAX_STAKE_VERIFY_REWARD_MULTIPLIER
- */
-export const useMaxStakeVerifyRewardMultiplier = () => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'MAX_STAKE_VERIFY_REWARD_MULTIPLIER',
-    args: [],
-  });
-
-  return {
-    maxStakeVerifyRewardMultiplier: data as bigint | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
 /**
  * Hook for ROUND_REWARD_ACTION_PER_THOUSAND
  */
