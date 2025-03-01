@@ -1,32 +1,40 @@
 'use client';
 
 import { useAccount } from 'wagmi';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useFieldArray } from 'react-hook-form';
-import { z } from 'zod';
-
-// 如果你使用了 lucide-react
 import { Plus, Trash2 } from 'lucide-react';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-// 如果你使用了 shadcn/ui
+// shadcn/ui
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
-// 你的业务相关
+// my hooks
+import { useSubmitNewAction } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+import { useCanSubmit } from '@/src/hooks/util/useCanSubmit';
+
+// my contexts
+import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my components
 import Header from '@/src/components/Header';
+import AlertBox from '@/src/components/Common/AlertBox';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
-import { useSubmitNewAction } from '@/src/hooks/contracts/useLOVE20Submit';
-import { useHandleContractError } from '@/src/lib/errorUtils';
+// others
 import { checkWalletConnection } from '@/src/lib/web3';
 import { parseUnits } from '@/src/lib/format';
-import { TokenContext } from '@/src/contexts/TokenContext';
+
+// 获取环境变量
+const SUBMIT_MIN_PERCENTAGE = Number(process.env.NEXT_PUBLIC_SUBMIT_MIN_PER_THOUSAND || '0') / 1000;
 
 const FormSchema = z.object({
   actionName: z.string().min(1, { message: '行动名称不能为空' }),
@@ -58,25 +66,7 @@ type FormValues = z.infer<typeof FormSchema>;
 
 export default function NewAction() {
   const { chain: accountChain } = useAccount();
-  const router = useRouter();
-
-  const {
-    submitNewAction,
-    isWriting: isSubmitting,
-    isConfirming,
-    isConfirmed: isSubmitted,
-    writeError: submitError,
-    writeData,
-  } = useSubmitNewAction();
   const { token } = useContext(TokenContext) || {};
-
-  // 合约错误处理
-  const { handleContractError } = useHandleContractError();
-  useEffect(() => {
-    if (submitError) {
-      handleContractError(submitError, 'submit');
-    }
-  }, [submitError, handleContractError]);
 
   // 初始化表单
   const form = useForm<FormValues>({
@@ -99,9 +89,37 @@ export default function NewAction() {
     name: 'verificationPairs',
   });
 
+  // 检查是否可以提交（替换原有的两个hooks）
+  const {
+    hasEnoughVotes,
+    validGovVotes,
+    govData: totalGovVotes,
+    SUBMIT_MIN_PERCENTAGE: SUBMIT_PERCENTAGE,
+    isPending: isPendingSubmitCheck,
+    error: errorSubmitCheck,
+  } = useCanSubmit();
+
   // 提交表单
+  const {
+    submitNewAction,
+    isWriting: isSubmitting,
+    isConfirming,
+    isConfirmed: isSubmitted,
+    writeError: submitError,
+    writeData,
+  } = useSubmitNewAction();
   const onSubmit = async (values: FormValues) => {
     if (!checkWalletConnection(accountChain)) return;
+
+    // 检查是否有足够的治理票权
+    if (!hasEnoughVotes) {
+      const percentage = (SUBMIT_PERCENTAGE * 100).toFixed(2);
+      form.setError('actionName', {
+        type: 'manual',
+        message: `有效治理票，须达到总治理票的${percentage}%，才能新建、推举行动（您当前有效治理票为${validGovVotes}）`,
+      });
+      return;
+    }
 
     // 拆分多组 key / value
     const verificationKeys = values.verificationPairs.map((p) => p.key);
@@ -122,16 +140,37 @@ export default function NewAction() {
   };
 
   // 提交成功后跳转
+  const router = useRouter();
   useEffect(() => {
     if (isSubmitted) {
       router.push(`/vote/actions4submit?symbol=${token?.symbol}`);
     }
   }, [isSubmitted, writeData, router, token?.symbol]);
 
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorSubmitCheck) {
+      handleContractError(errorSubmitCheck, 'submit');
+    }
+    if (submitError) {
+      handleContractError(submitError, 'submit');
+    }
+  }, [errorSubmitCheck, submitError, handleContractError]);
+
   return (
     <>
       <Header title="创建新行动" />
       <div className="max-w-xl p-4">
+        {!hasEnoughVotes && validGovVotes !== undefined && totalGovVotes && (
+          <AlertBox
+            type="error"
+            message={`有效治理票，须达到总治理票的${(SUBMIT_PERCENTAGE * 100).toFixed(
+              1,
+            )}%，才能新建、推举行动（您当前有效治理票为${validGovVotes.toString()}）`}
+            className="mb-4"
+          />
+        )}
         <LeftTitle title="创建新行动" />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 space-y-4">
@@ -310,7 +349,11 @@ export default function NewAction() {
             />
 
             {/* 提交按钮 */}
-            <Button type="submit" disabled={isSubmitting || isConfirming || isSubmitted} className="mt-4 w-full">
+            <Button
+              type="submit"
+              disabled={isSubmitting || isConfirming || isSubmitted || !hasEnoughVotes || isPendingSubmitCheck}
+              className="mt-4 w-full"
+            >
               {isSubmitting ? '提交中...' : isConfirming ? '确认中...' : isSubmitted ? '已提交' : '提交'}
             </Button>
           </form>

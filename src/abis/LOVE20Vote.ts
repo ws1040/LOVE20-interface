@@ -11,7 +11,7 @@ export const LOVE20VoteAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "roundBlocks",
+        "name": "phaseBlocks",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -202,7 +202,7 @@ export const LOVE20VoteAbi = [
   },
   {
     "type": "function",
-    "name": "roundBlocks",
+    "name": "phaseBlocks",
     "inputs": [],
     "outputs": [
       {

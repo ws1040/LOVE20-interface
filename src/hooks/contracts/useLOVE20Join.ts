@@ -95,16 +95,16 @@ export const useOriginBlocks = () => {
 };
 
 /**
- * Hook for roundBlocks
+ * Hook for phaseBlocks
  */
 export const useRoundBlocks = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20JoinAbi,
-    functionName: 'roundBlocks',
+    functionName: 'phaseBlocks',
   });
 
-  return { roundBlocks: data as bigint | undefined, isPending, error };
+  return { phaseBlocks: data as bigint | undefined, isPending, error };
 };
 
 /**

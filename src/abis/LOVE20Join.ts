@@ -11,7 +11,7 @@ export const LOVE20JoinAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "roundBlocks",
+        "name": "phaseBlocks",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -20,7 +20,7 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
-    "name": "JOIN_END_ROUND_BLOCKS",
+    "name": "JOIN_END_PHASE_BLOCKS",
     "inputs": [],
     "outputs": [
       {
@@ -329,7 +329,7 @@ export const LOVE20JoinAbi = [
         "internalType": "address"
       },
       {
-        "name": "joinEndRoundBlocks",
+        "name": "joinEndPhaseBlocks",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -386,6 +386,19 @@ export const LOVE20JoinAbi = [
   {
     "type": "function",
     "name": "originBlocks",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "phaseBlocks",
     "inputs": [],
     "outputs": [
       {
@@ -486,19 +499,6 @@ export const LOVE20JoinAbi = [
         "name": "",
         "type": "address",
         "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "roundBlocks",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"

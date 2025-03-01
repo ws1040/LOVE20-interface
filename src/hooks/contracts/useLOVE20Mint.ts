@@ -378,18 +378,18 @@ export const useRewardReserved = (accountAddress: `0x${string}`) => {
 };
 
 /**
- * Hook for roundBlocks
+ * Hook for phaseBlocks
  */
 export const useRoundBlocks = () => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
-    functionName: 'roundBlocks',
+    functionName: 'phaseBlocks',
     args: [],
   });
 
   return {
-    roundBlocks: data as bigint | undefined,
+    phaseBlocks: data as bigint | undefined,
     isPending: isLoading,
     error,
   };

@@ -145,7 +145,7 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
                         领取
                       </Button>
                     ) : item.score > 0 ? (
-                      <span className="text-greyscale-500">已领取</span>
+                      <span className="text-greyscale-500">已领</span>
                     ) : (
                       ''
                     )

@@ -23,6 +23,8 @@ import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
+const REWARDS_PER_PAGE = 20n;
+
 const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress, chain: accountChain } = useAccount();
@@ -47,8 +49,8 @@ const GovRewardsPage: React.FC = () => {
   useEffect(() => {
     if (endRound && token) {
       // 初始加载20个轮次数据，如果可加载数量超过20，则初始显示最近20轮，否则显示全部
-      if (endRound - BigInt(token.initialStakeRound) >= 20n) {
-        setStartRound(endRound - 20n);
+      if (endRound - BigInt(token.initialStakeRound) >= REWARDS_PER_PAGE) {
+        setStartRound(endRound - REWARDS_PER_PAGE);
       } else {
         setStartRound(BigInt(token.initialStakeRound));
       }
@@ -74,7 +76,9 @@ const GovRewardsPage: React.FC = () => {
       setRewardList(sortedRewards);
 
       // Check if there are more rewards to load
-      setHasMoreRewards(rewards.length > 0);
+      setHasMoreRewards(
+        endRound - startRound > REWARDS_PER_PAGE && rewards.length >= endRound - startRound - REWARDS_PER_PAGE,
+      );
     }
   }, [rewards]);
 
@@ -120,7 +124,7 @@ const GovRewardsPage: React.FC = () => {
     // 使用函数式更新，确保拿到最新的 startRound
     setStartRound((prev) => {
       if (prev > initialStake) {
-        const newStart = prev - 20n >= initialStake ? prev - 20n : initialStake;
+        const newStart = prev - REWARDS_PER_PAGE >= initialStake ? prev - REWARDS_PER_PAGE : initialStake;
         return newStart;
       }
       return prev;
@@ -142,6 +146,10 @@ const GovRewardsPage: React.FC = () => {
       observer.disconnect();
     };
   }, [loadMoreRewards]);
+
+  if (!token) {
+    return <LoadingIcon />;
+  }
 
   return (
     <>
@@ -184,7 +192,7 @@ const GovRewardsPage: React.FC = () => {
                       ) : item.minted > 0n ? (
                         <span className="text-secondary">已领取</span>
                       ) : (
-                        <span className="text-greyscale-500">无奖励</span>
+                        <span className="text-greyscale-500">无</span>
                       )}
                     </td>
                   </tr>
@@ -199,8 +207,10 @@ const GovRewardsPage: React.FC = () => {
               <LoadingIcon />
             ) : hasMoreRewards ? (
               <span className="text-sm text-gray-500">加载更多...</span>
-            ) : (
+            ) : startRound > token.initialStakeRound ? (
               <span className="text-sm text-gray-500">没有更多奖励</span>
+            ) : (
+              ''
             )}
           </div>
         </div>

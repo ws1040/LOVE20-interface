@@ -26,7 +26,7 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   const [currentTokenRound, setCurrentTokenRound] = useState(0n);
 
   // 计算剩余时间相关变量
-  const ROUND_BLOCKS = Number(process.env.NEXT_PUBLIC_ROUND_BLOCKS) || 0;
+  const ROUND_BLOCKS = Number(process.env.NEXT_PUBLIC_PHASE_BLOCKS) || 0;
   const BLOCK_TIME = Number(process.env.NEXT_PUBLIC_BLOCK_TIME) || 0;
   // 使用默认值防止 undefined 导致 NaN
   const voteOriginBlocks = token ? Number(token.voteOriginBlocks) : 0;

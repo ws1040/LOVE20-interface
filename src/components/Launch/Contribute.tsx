@@ -184,7 +184,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     if (balanceOfParentToken !== undefined && balanceOfParentToken <= 0n) {
       setError({
         name: '余额不足',
-        message: `请先通过下方链接 获取 ${token?.parentTokenSymbol}，再来申购`,
+        message: `请先获取 ${token?.parentTokenSymbol}，再来申购`,
       });
     }
   }, [balanceOfParentToken, token]);
@@ -229,7 +229,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     }
   }, [isPendingAllowanceParentToken]);
 
-  if (!token) {
+  if (!token || isPendingBalanceOfParentToken || isContributedPending) {
     return <LoadingIcon />;
   }
 
@@ -282,11 +282,13 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
               >
                 最高
               </Button>
-              <Link href={`/dex/deposit?symbol=${token.symbol}`}>
-                <Button variant="link" size="sm" className="text-secondary">
-                  获取{token.parentTokenSymbol}
-                </Button>
-              </Link>
+              {token.parentTokenSymbol === process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL && (
+                <Link href={`/dex/deposit?symbol=${token.symbol}`}>
+                  <Button variant="link" size="sm" className="text-secondary">
+                    获取{token.parentTokenSymbol}
+                  </Button>
+                </Link>
+              )}
             </div>
 
             <div className="flex justify-center space-x-4">

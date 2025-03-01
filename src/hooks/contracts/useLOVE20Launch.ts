@@ -162,7 +162,7 @@ export const useClaimed = (tokenAddress: `0x${string}`, accountAddress: `0x${str
  * Hook for contributed
  */
 export const useContributed = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
+  const { data, isPending, error, refetch } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
     functionName: 'contributed',
@@ -172,7 +172,7 @@ export const useContributed = (tokenAddress: `0x${string}`, accountAddress: `0x$
     },
   });
 
-  return { contributed: data as bigint | undefined, isPending, error };
+  return { contributed: data as bigint | undefined, isPending, error, refetch };
 };
 
 /**
@@ -547,6 +547,20 @@ export const useTokensByPage = (start: bigint, end: bigint, reverse: boolean) =>
   return { tokens: data as `0x${string}`[] | undefined, isPending, error };
 };
 
+/**
+ * Hook for lastContributedBlock
+ */
+export const useLastContributedBlock = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20LaunchAbi,
+    functionName: 'lastContributedBlock',
+    args: [tokenAddress, accountAddress],
+  });
+
+  return { lastContributedBlock: data as bigint | undefined, isPending, error };
+};
+
 // =======================
 // ===== Write Hooks =====
 // =======================
@@ -601,6 +615,32 @@ export function useContribute() {
   });
 
   return { contribute, writeData, isPending, writeError, isConfirming, isConfirmed };
+}
+
+/**
+ * Hook for withdraw
+ */
+export function useWithdraw() {
+  const { writeContract, isPending, data: writeData, error: writeError } = useWriteContract();
+
+  const withdraw = async (tokenAddress: `0x${string}`) => {
+    try {
+      await writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20LaunchAbi,
+        functionName: 'withdraw',
+        args: [tokenAddress],
+      });
+    } catch (err) {
+      console.error('Withdraw failed:', err);
+    }
+  };
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash: writeData,
+  });
+
+  return { withdraw, writeData, isPending, writeError, isConfirming, isConfirmed };
 }
 
 /**
