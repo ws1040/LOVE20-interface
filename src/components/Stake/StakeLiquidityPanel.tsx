@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 // my utils
@@ -349,6 +348,13 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     }
   }, [updatedInitialStakeRound, isPendingInitialStakeRound]);
 
+  // 更新token缓存：已经有人质押了，所以要更新 token.initialStakeRound
+  useEffect(() => {
+    if (token && token.initialStakeRound == 0 && initialStakeRound && initialStakeRound > 0) {
+      setToken({ ...token, initialStakeRound: Number(initialStakeRound) });
+    }
+  }, [token, initialStakeRound]);
+
   // --------------------------------------------------
   // 2.5 错误处理
   // --------------------------------------------------
@@ -389,13 +395,13 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   const hadStartedApprove = isApproving || isApproveConfirming || (isTokenApproved && isParentTokenApproved);
 
   useEffect(() => {
-    if (isFirstTimeStake === 'true' && !hadStartedApprove && !isPendingInitialStakeRound && !initialStakeRound) {
+    if (token && isFirstTimeStake === 'true' && !isPendingInitialStakeRound && !initialStakeRound) {
       setError({
         name: '提示：',
         message: '新部署的代币，需先质押获取治理票，才能后续操作',
       });
     }
-  }, [isFirstTimeStake, hadStartedApprove, isPendingInitialStakeRound, initialStakeRound]);
+  }, [token, isFirstTimeStake, isPendingInitialStakeRound, initialStakeRound]);
 
   useEffect(() => {
     if (!isPendingPair && !tokenBalance && !hadStartedApprove && token && token.symbol) {
