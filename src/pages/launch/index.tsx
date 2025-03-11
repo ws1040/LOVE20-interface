@@ -38,10 +38,10 @@ export default function TokenFairLaunch() {
 
   // 如果发射已结束，检查更新 token 的 hasEnded 状态
   useEffect(() => {
-    if (launchInfo && token && launchInfo.hasEnded && !token.hasEnded && setToken) {
+    if (launchInfo && token && launchInfo.hasEnded && !token.hasEnded) {
       setToken({ ...token, hasEnded: true } as Token);
     }
-  }, [launchInfo, token, setToken]);
+  }, [launchInfo, token]);
 
   if (isLaunchInfoPending) {
     return <LoadingIcon />;
