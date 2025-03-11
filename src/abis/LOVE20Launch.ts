@@ -69,30 +69,6 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "allocatingAmount",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "accountAddress",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "canDeployToken",
     "inputs": [
       {
@@ -813,7 +789,7 @@ export const LOVE20LaunchAbi = [
     "name": "participatedTokenNum",
     "inputs": [
       {
-        "name": "walletAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       }
@@ -856,7 +832,7 @@ export const LOVE20LaunchAbi = [
     "name": "participatedTokensByPage",
     "inputs": [
       {
-        "name": "walletAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       },
@@ -1193,12 +1169,6 @@ export const LOVE20LaunchAbi = [
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
-      },
-      {
-        "name": "received",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
       }
     ],
     "anonymous": false
@@ -1261,11 +1231,6 @@ export const LOVE20LaunchAbi = [
   {
     "type": "error",
     "name": "TokensAlreadyClaimed",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "TransferFailed",
     "inputs": []
   },
   {

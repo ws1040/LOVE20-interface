@@ -15,7 +15,7 @@ import { Token } from '@/src/contexts/TokenContext';
 
 // my types & funcs
 import { JoinedAction } from '@/src/types/life20types';
-import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
+import { formatTokenAmount } from '@/src/lib/format';
 
 // my components
 import LeftTitle from '@/src/components/Common/LeftTitle';

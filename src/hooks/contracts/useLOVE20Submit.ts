@@ -202,20 +202,6 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
 };
 
 /**
- * Hook for roundRange
- */
-export const useRoundRange = (round: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20SubmitAbi,
-    functionName: 'roundRange',
-    args: [round],
-  });
-
-  return { roundRange: data as { start: bigint; end: bigint } | undefined, isPending, error };
-};
-
-/**
  * Hook for stakeAddress
  */
 export const useStakeAddress = () => {

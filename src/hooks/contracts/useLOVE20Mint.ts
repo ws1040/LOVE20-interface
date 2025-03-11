@@ -109,31 +109,6 @@ export const useActionRewardMintedByAccount = (
 };
 
 /**
- * Hook for actionRewardRoundsByAccount
- */
-export const useActionRewardRoundsByAccount = (
-  tokenAddress: `0x${string}`,
-  accountAddress: `0x${string}`,
-  actionId: bigint,
-  roundStart: bigint,
-  roundEnd: bigint,
-) => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'actionRewardRoundsByAccount',
-    args: [tokenAddress, accountAddress, actionId, roundStart, roundEnd],
-  });
-
-  return {
-    rounds: data?.[0] as bigint[] | undefined,
-    rewards: data?.[1] as bigint[] | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
  * Hook for calculateRoundActionReward
  */
 export const useCalculateRoundActionReward = (tokenAddress: `0x${string}`, round: bigint) => {
@@ -389,25 +364,6 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
 
   return {
     roundByBlockNumber: data as bigint | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
- * Hook for roundRange
- */
-export const useRoundRange = (round: bigint) => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'roundRange',
-    args: [round],
-  });
-
-  return {
-    start: data?.[0] as bigint | undefined,
-    end: data?.[1] as bigint | undefined,
     isPending: isLoading,
     error,
   };

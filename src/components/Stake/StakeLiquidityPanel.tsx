@@ -26,7 +26,7 @@ import { useError } from '@/src/contexts/ErrorContext';
 
 // my hooks
 import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
-import { useAccountPair } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useTokenPairInfoWithAccount } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useAccountStakeStatus, useStakeLiquidity, useInitialStakeRound } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
@@ -109,12 +109,12 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   const { setError } = useError();
   const { first: isFirstTimeStake } = useRouter().query;
 
-  // 使用 useAccountPair 替换 useBalanceOf 和 useAllowance
+  // 使用 useTokenPairInfoWithAccount 替换 useBalanceOf 和 useAllowance
   const {
     pairInfo,
     isPending: isPendingPair,
     error: errorPair,
-  } = useAccountPair(
+  } = useTokenPairInfoWithAccount(
     accountAddress as `0x${string}`,
     token?.address as `0x${string}`,
     token?.parentTokenAddress as `0x${string}`,
@@ -156,7 +156,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   // 2.1 获取质押状态
   // --------------------------------------------------
   const {
-    promisedWaitingRounds,
+    promisedWaitingPhases,
     isPending: isPendingAccountStakeStatus,
     error: errAccountStakeStatus,
   } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
@@ -411,10 +411,10 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   }, [tokenBalance, parentTokenBalance, token, isPendingPair]);
 
   useEffect(() => {
-    if (promisedWaitingRounds !== undefined && promisedWaitingRounds > 0) {
-      form.setValue('releasePeriod', String(promisedWaitingRounds));
+    if (promisedWaitingPhases !== undefined && promisedWaitingPhases > 0) {
+      form.setValue('releasePeriod', String(promisedWaitingPhases));
     }
-  }, [promisedWaitingRounds]);
+  }, [promisedWaitingPhases]);
 
   const approveTokenButtonRef = useRef<HTMLButtonElement>(null);
   const prevIsPendingApproveToken = useRef<boolean>(isPendingApproveToken);
@@ -526,7 +526,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                     </SelectTrigger>
                     <SelectContent>
                       {Array.from({ length: 9 }, (_, i) => i + 4)
-                        .filter((item) => item >= promisedWaitingRounds)
+                        .filter((item) => item >= promisedWaitingPhases)
                         .map((item) => (
                           <SelectItem key={item} value={String(item)}>
                             {item}

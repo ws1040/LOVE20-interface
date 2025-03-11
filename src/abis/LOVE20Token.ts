@@ -474,37 +474,6 @@ export const LOVE20TokenAbi = [
   },
   {
     "type": "event",
-    "name": "TokenInitialize",
-    "inputs": [
-      {
-        "name": "minter",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
-      },
-      {
-        "name": "parentTokenAddress",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "slAddress",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
-      },
-      {
-        "name": "stAddress",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
     "name": "Transfer",
     "inputs": [
       {
@@ -556,11 +525,6 @@ export const LOVE20TokenAbi = [
   {
     "type": "error",
     "name": "NotEligibleToMint",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "TransferFailed",
     "inputs": []
   }
 ] as const satisfies Abi;

@@ -23,7 +23,7 @@ export const useAccountStakeStatus = (token: `0x${string}`, account: `0x${string
   return {
     slAmount: data?.slAmount as bigint | undefined,
     stAmount: data?.stAmount as bigint | undefined,
-    promisedWaitingRounds: data?.promisedWaitingRounds as bigint | 0,
+    promisedWaitingPhases: data?.promisedWaitingPhases as bigint | 0,
     requestedUnstakeRound: data?.requestedUnstakeRound as bigint | undefined,
     govVotes: data?.govVotes as bigint | undefined,
     isPending,
@@ -34,14 +34,14 @@ export const useAccountStakeStatus = (token: `0x${string}`, account: `0x${string
 /**
  * 计算治理投票数
  * @param lpAmount LP代币数量
- * @param promisedWaitingRounds 预期等待轮数
+ * @param promisedWaitingPhases 预期等待轮数
  */
-export const useCaculateGovVotes = (lpAmount: bigint, promisedWaitingRounds: bigint) => {
+export const useCaculateGovVotes = (lpAmount: bigint, promisedWaitingPhases: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20StakeAbi,
     functionName: 'caculateGovVotes',
-    args: [lpAmount, promisedWaitingRounds],
+    args: [lpAmount, promisedWaitingPhases],
   });
 
   return { govVotes: data as bigint | undefined, isPending, error };
@@ -175,26 +175,6 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
 };
 
 /**
- * 获取轮次范围
- * @param round 轮次
- */
-export const useRoundRange = (round: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20StakeAbi,
-    functionName: 'roundRange',
-    args: [round],
-  });
-
-  return {
-    start: data?.[0] as bigint | undefined,
-    end: data?.[1] as bigint | undefined,
-    isPending,
-    error,
-  };
-};
-
-/**
  * 分页获取更新的轮次
  * @param tokenAddress 代币地址
  * @param start 起始轮次
@@ -250,7 +230,7 @@ export const useStakeLiquidity = () => {
     tokenAddress: `0x${string}`,
     tokenAmountForLP: bigint,
     parentTokenAmountForLP: bigint,
-    promisedWaitingRounds: bigint,
+    promisedWaitingPhases: bigint,
     to: `0x${string}`,
   ) => {
     try {
@@ -258,7 +238,7 @@ export const useStakeLiquidity = () => {
         address: CONTRACT_ADDRESS,
         abi: LOVE20StakeAbi,
         functionName: 'stakeLiquidity',
-        args: [tokenAddress, tokenAmountForLP, parentTokenAmountForLP, promisedWaitingRounds, to],
+        args: [tokenAddress, tokenAmountForLP, parentTokenAmountForLP, promisedWaitingPhases, to],
       });
     } catch (err) {
       console.error('StakeLiquidity failed:', err);
@@ -289,13 +269,13 @@ export const useStakeToken = () => {
    * 调用合约的 stakeToken 函数
    * @param tokenAddress 代币地址
    * @param tokenAmount 代币数量
-   * @param promisedWaitingRounds 预期等待轮数
+   * @param promisedWaitingPhases 预期等待轮数
    * @param to 接收地址
    */
   const stakeToken = async (
     tokenAddress: `0x${string}`,
     tokenAmount: bigint,
-    promisedWaitingRounds: bigint,
+    promisedWaitingPhases: bigint,
     to: `0x${string}`,
   ) => {
     try {
@@ -303,7 +283,7 @@ export const useStakeToken = () => {
         address: CONTRACT_ADDRESS,
         abi: LOVE20StakeAbi,
         functionName: 'stakeToken',
-        args: [tokenAddress, tokenAmount, promisedWaitingRounds, to],
+        args: [tokenAddress, tokenAmount, promisedWaitingPhases, to],
       });
     } catch (err) {
       console.error('StakeToken failed:', err);

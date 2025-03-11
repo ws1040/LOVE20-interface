@@ -8,5 +8,4 @@ export const LOVE20SLTokenErrorsMap: Record<string, string> = {
   NoTokensToBurn: '没有代币可销毁',
   InsufficientLiquidity: '流动性不足',
   TotalLpExceedsBalance: '总LP数量超过余额',
-  TransferFailed: '转账失败，请稍后重试',
 };

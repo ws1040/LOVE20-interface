@@ -20,8 +20,7 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   const token = context ? context.token : undefined;
 
   // 计算加载状态。注意：此处仅用于渲染判断，不影响 Hook 的调用顺序
-  const isLoading =
-    !blockNumber || !token || token.voteOriginBlocks === undefined || token.initialStakeRound === undefined;
+  const isLoading = !blockNumber || !token || token.voteOriginBlocks === undefined || !token.initialStakeRound;
 
   const [currentTokenRound, setCurrentTokenRound] = useState(0n);
 

@@ -124,25 +124,6 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
 };
 
 /**
- * Hook to get the round range.
- */
-export const useRoundRange = (round: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VoteAbi,
-    functionName: 'roundRange',
-    args: [round],
-  });
-
-  return {
-    start: data?.[0] as bigint | undefined,
-    end: data?.[1] as bigint | undefined,
-    isPending,
-    error,
-  };
-};
-
-/**
  * Hook to get the stake address.
  */
 export const useStakeAddress = () => {
