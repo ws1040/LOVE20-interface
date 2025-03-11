@@ -20,7 +20,7 @@ export default function SwapPage() {
       router.push(`/launch?symbol=${currentToken.symbol}`);
     } else if (currentToken && !currentToken.initialStakeRound) {
       // 如果还没有人质押，跳转到质押页面
-      router.push(`/gov/stakelp?symbol=${currentToken.symbol}&first=true`);
+      router.push(`/gov/stakelp/?symbol=${currentToken.symbol}&first=true`);
     }
   }, [currentToken]);
 

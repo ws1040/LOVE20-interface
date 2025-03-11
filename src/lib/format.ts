@@ -50,11 +50,9 @@ export const formatUnits = (value: bigint): string => {
 
 // 去除小数结尾多余的0: 1.000000000000000000 -> 1
 export const removeExtraZeros = (value: string) => {
-  console.log('value', value);
   if (value.includes('.')) {
     // 先移除所有逗号再解析
     const valueWithoutCommas = value.replace(/,/g, '');
-    console.log('parseFloat(value)', parseFloat(valueWithoutCommas));
     return parseFloat(valueWithoutCommas).toString();
   }
   return value;

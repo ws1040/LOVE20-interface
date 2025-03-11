@@ -23,6 +23,7 @@ export interface Token {
 export interface TokenContextType {
   token: Token | null;
   setToken: (token: Token) => void;
+  clearToken: () => void;
 }
 
 // 创建 Context
@@ -174,5 +175,13 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     };
   }, []);
 
-  return <TokenContext.Provider value={{ token, setToken }}>{children}</TokenContext.Provider>;
+  const clearToken = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('currentToken');
+      setToken(null);
+      console.log('clearToken~~~~');
+    }
+  };
+
+  return <TokenContext.Provider value={{ token, setToken, clearToken }}>{children}</TokenContext.Provider>;
 };

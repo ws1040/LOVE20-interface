@@ -129,7 +129,7 @@ const Deposit: React.FC = () => {
             router.back();
           }
         } else if (token && !token.initialStakeRound) {
-          window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/gov/stakelp?symbol=${
+          window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/gov/stakelp/?symbol=${
             token.symbol
           }&first=true`;
         } else {

@@ -27,7 +27,7 @@ const MyPage = () => {
       router.push(`/launch?symbol=${token.symbol}`);
     } else if (token && !token.initialStakeRound) {
       // 如果还没有人质押，跳转到质押页面
-      router.push(`/gov/stakelp?symbol=${token.symbol}&first=true`);
+      router.push(`/gov/stakelp/?symbol=${token.symbol}&first=true`);
     }
   }, [token]);
 

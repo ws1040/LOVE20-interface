@@ -21,7 +21,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const { address: account } = useAccount();
-  const { setToken } = useContext(TokenContext) || {};
+  const { clearToken } = useContext(TokenContext) || {};
 
   // 读取数据的hooks
   const {
@@ -67,14 +67,10 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
   useEffect(() => {
     if (isClaimConfirmed) {
       toast.success(`领取成功`);
-
-      // 将token 的hasEnded 设置为true
-      setToken?.({ ...token, hasEnded: true } as Token);
-
-      // 2秒后刷新
+      clearToken?.();
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 1000);
     } else if (claimError) {
       toast.error(`领取失败`);
     }

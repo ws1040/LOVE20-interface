@@ -125,7 +125,7 @@ const Withdraw: React.FC = () => {
         if (token && !token.hasEnded) {
           window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/launch/contribute/?symbol=${token.symbol}`;
         } else if (token && !token.initialStakeRound) {
-          window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/gov/stakelp?symbol=${
+          window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/gov/stakelp/?symbol=${
             token.symbol
           }&first=true`;
         } else {
