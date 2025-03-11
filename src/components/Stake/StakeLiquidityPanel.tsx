@@ -105,7 +105,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   if (!context) {
     throw new Error('TokenContext 必须在 TokenProvider 内使用');
   }
-  const { token, setToken } = context;
+  const { token, setToken, clearToken } = context;
   const { setError } = useError();
   const { first: isFirstTimeStake } = useRouter().query;
 
@@ -341,11 +341,13 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   }, [isConfirmedStakeLiquidity]);
 
   useEffect(() => {
-    if (updatedInitialStakeRound && !isPendingInitialStakeRound && initialStakeRound && initialStakeRound > 0) {
-      setToken({ ...token, initialStakeRound: Number(initialStakeRound) } as Token);
+    if (updatedInitialStakeRound && !isPendingInitialStakeRound) {
+      if (!initialStakeRound) {
+        clearToken(); // 清除token缓存，下一页重新加载
+      }
       handleStakeSuccess();
     }
-  }, [updatedInitialStakeRound, isPendingInitialStakeRound, initialStakeRound]);
+  }, [updatedInitialStakeRound, isPendingInitialStakeRound]);
 
   // --------------------------------------------------
   // 2.5 错误处理
@@ -387,13 +389,13 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   const hadStartedApprove = isApproving || isApproveConfirming || (isTokenApproved && isParentTokenApproved);
 
   useEffect(() => {
-    if (isFirstTimeStake === 'true' && !hadStartedApprove) {
+    if (isFirstTimeStake === 'true' && !hadStartedApprove && !isPendingInitialStakeRound && !initialStakeRound) {
       setError({
         name: '提示：',
         message: '新部署的代币，需先质押获取治理票，才能后续操作',
       });
     }
-  }, [isFirstTimeStake, hadStartedApprove, setError]);
+  }, [isFirstTimeStake, hadStartedApprove, isPendingInitialStakeRound, initialStakeRound]);
 
   useEffect(() => {
     if (!isPendingPair && !tokenBalance && !hadStartedApprove && token && token.symbol) {

@@ -200,7 +200,7 @@ const VotingSubmitPage = () => {
             </div>
             <div className="stat-desc text-sm mt-2">
               如需更多票数，请先{' '}
-              <Link href={`/gov/stakelp?symbol=${token?.symbol}`} className="text-secondary">
+              <Link href={`/gov/stakelp/?symbol=${token?.symbol}`} className="text-secondary">
                 获取治理票
               </Link>
             </div>

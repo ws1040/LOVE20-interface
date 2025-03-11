@@ -83,7 +83,7 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({}) => {
       </div>
       <div className="flex justify-center">
         <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
-          <Link href={`/gov/stakelp?symbol=${token?.symbol}`}>质押获取治理票</Link>
+          <Link href={`/gov/stakelp/?symbol=${token?.symbol}`}>质押获取治理票</Link>
         </Button>
       </div>
     </div>
