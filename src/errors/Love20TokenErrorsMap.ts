@@ -8,6 +8,5 @@ export const LOVE20TokenErrorsMap: Record<string, string> = {
   NotEligibleToMint: '不符合铸造代币的条件',
   ExceedsMaxSupply: '超过最大供应量',
   InsufficientBalance: '余额不足',
-  TransferFailed: '转账失败，请稍后重试',
   InvalidSupply: '无效的供应量',
 };

@@ -45,7 +45,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
   const {
     slAmount,
     stAmount,
-    promisedWaitingRounds,
+    promisedWaitingPhases,
     requestedUnstakeRound,
     govVotes,
     isPending: isPendingAccountStakeStatus,
@@ -269,7 +269,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
   const canWithdraw =
     enableWithdraw &&
     requestedUnstakeRound &&
-    currentRound > requestedUnstakeRound + (promisedWaitingRounds || BigInt(0));
+    currentRound > requestedUnstakeRound + (promisedWaitingPhases || BigInt(0));
 
   return (
     <>
@@ -283,7 +283,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         <div className="stat place-items-center pt-0">
           <div className="stat-title text-sm">承诺释放间隔轮数</div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingRounds || 0n}`}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingPhases || 0n}`}
           </div>
         </div>
       </div>
@@ -378,7 +378,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
               <div className="text-center mt-2 text-sm text-greyscale-600">
                 取消质押后，投票轮第
                 <span className="text-secondary mx-1">{`${
-                  formatRoundForDisplay(currentRound, token) + (promisedWaitingRounds || 0n) + 1n
+                  formatRoundForDisplay(currentRound, token) + (promisedWaitingPhases || 0n) + 1n
                 } `}</span>
                 轮才能取回代币
               </div>
@@ -394,7 +394,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
                 >
                   {!canWithdraw
                     ? '已取消,第' +
-                      (formatRoundForDisplay(requestedUnstakeRound, token) + (promisedWaitingRounds || 0n) + 1n) +
+                      (formatRoundForDisplay(requestedUnstakeRound, token) + (promisedWaitingPhases || 0n) + 1n) +
                       '轮才可取回'
                     : isPendingWithdraw
                     ? '提交中'
@@ -426,7 +426,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
               <Link href={`/gov/unstake/?symbol=${token.symbol}`}>
                 {!canWithdraw
                   ? '已取消, 第' +
-                    (formatRoundForDisplay(requestedUnstakeRound, token) + (promisedWaitingRounds || 0n) + 1n) +
+                    (formatRoundForDisplay(requestedUnstakeRound, token) + (promisedWaitingPhases || 0n) + 1n) +
                     '轮可取回'
                   : '取回质押代币'}
               </Link>

@@ -79,7 +79,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
 
   // 0. 获取质押状态(释放轮次)
   const {
-    promisedWaitingRounds,
+    promisedWaitingPhases,
     isPending: isPendingAccountStakeStatus,
     error: errAccountStakeStatus,
   } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
@@ -175,11 +175,11 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
   }, [isConfirmedStakeToken, form, token?.symbol]);
 
   useEffect(() => {
-    // 确保 promisedWaitingRounds 有效，再设置初始值（注意转换为 string）
-    if (promisedWaitingRounds !== undefined && promisedWaitingRounds > 0) {
-      form.setValue('releasePeriod', String(promisedWaitingRounds));
+    // 确保 promisedWaitingPhases 有效，再设置初始值（注意转换为 string）
+    if (promisedWaitingPhases !== undefined && promisedWaitingPhases > 0) {
+      form.setValue('releasePeriod', String(promisedWaitingPhases));
     }
-  }, [promisedWaitingRounds]);
+  }, [promisedWaitingPhases]);
 
   // 监听用户输入的质押数量以及 allowance 值，动态判断是否已授权
   const stakeTokenAmountValue = form.watch('stakeTokenAmount');
@@ -263,7 +263,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
                     </SelectTrigger>
                     <SelectContent>
                       {Array.from({ length: 9 }, (_, i) => i + 4)
-                        .filter((item) => item >= promisedWaitingRounds)
+                        .filter((item) => item >= promisedWaitingPhases)
                         .map((item) => (
                           <SelectItem key={item} value={String(item)}>
                             {item}

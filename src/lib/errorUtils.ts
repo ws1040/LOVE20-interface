@@ -40,7 +40,7 @@ function _parseOriginalRevertMessage(errorLog: string): string {
     
     Contract Call:
       address:   0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9
-      function:  stakeLiquidity(address tokenAddress, uint256 tokenAmountForLP, uint256 parentTokenAmountForLP, uint256 promisedWaitingRounds, address to)
+      function:  stakeLiquidity(address tokenAddress, uint256 tokenAmountForLP, uint256 parentTokenAmountForLP, uint256 promisedWaitingPhases, address to)
       args:                    (0x75537828f2ce51be7289709686A69CbFDbB714F1, 10000000000000000000000000000, 1000000000000000000, 4, 0x0000000000000000000000000000000000000000)
       sender:    0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 
@@ -64,7 +64,7 @@ function _parseOriginalRevertMessage(errorLog: string): string {
 
     Contract Call:
       address:   0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9
-      function:  stakeLiquidity(address tokenAddress, uint256 tokenAmountForLP, uint256 parentTokenAmountForLP, uint256 promisedWaitingRounds, address to)
+      function:  stakeLiquidity(address tokenAddress, uint256 tokenAmountForLP, uint256 parentTokenAmountForLP, uint256 promisedWaitingPhases, address to)
       args:                    (0x75537828f2ce51be7289709686A69CbFDbB714F1, 10000000000000000000000000000, 1000000000000000000, 4, 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266)
       sender:    0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 

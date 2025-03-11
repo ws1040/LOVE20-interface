@@ -3,7 +3,7 @@ import React, { useContext, useEffect } from 'react';
 
 // my hooks
 import { useHandleContractError } from '@/src/lib/errorUtils';
-import { useJoinedAmount } from '@/src/hooks/contracts/useLOVE20Join';
+import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
 import { useRewardAvailable } from '@/src/hooks/contracts/useLOVE20Mint';
 
 // my contexts
@@ -13,6 +13,8 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import Round from '@/src/components/Common/Round';
+
+const JOIN_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN as `0x${string}`;
 
 interface ActDataPanelProps {
   currentRound: bigint;
@@ -28,10 +30,10 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
     error: errorRewardAvailable,
   } = useRewardAvailable((token?.address as `0x${string}`) || '');
   const {
-    joinedAmount,
+    balance: joinedAmount,
     isPending: isPendingJoinedAmount,
     error: errorJoinedAmount,
-  } = useJoinedAmount((token?.address as `0x${string}`) || '');
+  } = useBalanceOf((token?.address as `0x${string}`) || '', JOIN_CONTRACT_ADDRESS);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();

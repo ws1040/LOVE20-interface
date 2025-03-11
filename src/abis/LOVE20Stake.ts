@@ -76,7 +76,7 @@ export const LOVE20StakeAbi = [
             "internalType": "uint256"
           },
           {
-            "name": "promisedWaitingRounds",
+            "name": "promisedWaitingPhases",
             "type": "uint256",
             "internalType": "uint256"
           },
@@ -100,12 +100,12 @@ export const LOVE20StakeAbi = [
     "name": "caculateGovVotes",
     "inputs": [
       {
-        "name": "lpAmount",
+        "name": "slAmount",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
-        "name": "promisedWaitingRounds",
+        "name": "promisedWaitingPhases",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -187,25 +187,6 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "function",
-    "name": "currentRoundIsLowerThan",
-    "inputs": [
-      {
-        "name": "round",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "govVotesNum",
     "inputs": [
       {
@@ -275,6 +256,25 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "function",
+    "name": "numOfStakeUpdateRounds",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "originBlocks",
     "inputs": [],
     "outputs": [
@@ -320,30 +320,6 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "function",
-    "name": "roundRange",
-    "inputs": [
-      {
-        "name": "round",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "start",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "end",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "stakeLiquidity",
     "inputs": [
       {
@@ -362,7 +338,7 @@ export const LOVE20StakeAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "promisedWaitingRounds",
+        "name": "promisedWaitingPhases",
         "type": "uint256",
         "internalType": "uint256"
       },
@@ -401,7 +377,7 @@ export const LOVE20StakeAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "promisedWaitingRounds",
+        "name": "promisedWaitingPhases",
         "type": "uint256",
         "internalType": "uint256"
       },
@@ -533,7 +509,7 @@ export const LOVE20StakeAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "promisedWaitingRounds",
+        "name": "promisedWaitingPhases",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -588,7 +564,7 @@ export const LOVE20StakeAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "promisedWaitingRounds",
+        "name": "promisedWaitingPhases",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -708,7 +684,7 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "error",
-    "name": "NotEnoughWaitingRounds",
+    "name": "NotEnoughWaitingPhases",
     "inputs": []
   },
   {
@@ -728,6 +704,11 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "error",
+    "name": "ReleaseNotRequested",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "RoundHasNotStartedYet",
     "inputs": []
   },
@@ -739,46 +720,6 @@ export const LOVE20StakeAbi = [
   {
     "type": "error",
     "name": "StakeAmountMustBeSet",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "TokenAmountNotEnough",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "TransferParentTokenAmountForLPFailed",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "TransferParentTokenFailed",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "TransferSLTokenFailed",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "TransferSTTokenFailed",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "TransferTokenAmountFailed",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "TransferTokenAmountForLPFailed",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "UnableToUnstakeAtRoundZero",
     "inputs": []
   }
 ] as const satisfies Abi;

@@ -11,7 +11,6 @@ export const LOVE20LaunchErrorsMap: Record<string, string> = {
   LaunchNotEnded: '公平发射未结束，无法进行操作',
   NoContribution: '没有申购，无法操作',
   TokensAlreadyClaimed: '代币已领取，请勿重复领取',
-  TransferFailed: '转账失败，请稍后重试',
   LaunchAlreadyExists: '公平发射已存在',
   ParentTokenNotSet: '父代币未设置',
   ZeroContribution: '申购数量不能为0',

@@ -33,25 +33,6 @@ export const LOVE20RandomAbi = [
   },
   {
     "type": "function",
-    "name": "currentRoundIsLowerThan",
-    "inputs": [
-      {
-        "name": "round",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "initialize",
     "inputs": [
       {
@@ -155,30 +136,6 @@ export const LOVE20RandomAbi = [
   },
   {
     "type": "function",
-    "name": "roundRange",
-    "inputs": [
-      {
-        "name": "round",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "start",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "end",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "updateRandomSeed",
     "inputs": [
       {
@@ -219,7 +176,7 @@ export const LOVE20RandomAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "modifierAddress",
+        "name": "verifierAddress",
         "type": "address",
         "indexed": true,
         "internalType": "address"

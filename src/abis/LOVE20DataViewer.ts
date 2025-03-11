@@ -15,66 +15,44 @@ export const LOVE20DataViewerAbi = [
   },
   {
     "type": "function",
-    "name": "accountPair",
+    "name": "actionRewardRoundsByAccount",
     "inputs": [
-      {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
-      },
       {
         "name": "tokenAddress",
         "type": "address",
         "internalType": "address"
       },
       {
-        "name": "parentTokenAddress",
+        "name": "accountAddress",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "startRound",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "endRound",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [
       {
-        "name": "pairInfo",
-        "type": "tuple",
-        "internalType": "struct AccountPairInfo",
-        "components": [
-          {
-            "name": "pairAddress",
-            "type": "address",
-            "internalType": "address"
-          },
-          {
-            "name": "balanceOfToken",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "balanceOfParentToken",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "allowanceOfToken",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "allowanceOfParentToken",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "pairReserveToken",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "pairReserveParentToken",
-            "type": "uint256",
-            "internalType": "uint256"
-          }
-        ]
+        "name": "rounds",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      },
+      {
+        "name": "rewards",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
       }
     ],
     "stateMutability": "view"
@@ -839,6 +817,72 @@ export const LOVE20DataViewerAbi = [
           },
           {
             "name": "totalExtraRefunded",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "tokenPairInfoWithAccount",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "parentTokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "pairInfo",
+        "type": "tuple",
+        "internalType": "struct PairInfoWithAccount",
+        "components": [
+          {
+            "name": "pairAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "balanceOfToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "balanceOfParentToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "allowanceOfToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "allowanceOfParentToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "pairReserveToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "pairReserveParentToken",
             "type": "uint256",
             "internalType": "uint256"
           }

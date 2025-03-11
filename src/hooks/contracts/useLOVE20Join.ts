@@ -23,27 +23,6 @@ export const useCurrentRound = () => {
 };
 
 /**
- * Hook for joinedAmount
- */
-export const useJoinedAmount = (tokenAddress: `0x${string}`) => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20JoinAbi,
-    functionName: 'totalAmount',
-    args: [tokenAddress],
-    query: {
-      enabled: !!tokenAddress,
-    },
-  });
-
-  return {
-    joinedAmount: data as bigint | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
  * Hook for joinedAmountByActionId tokenAddress => actionId => amount
  */
 export const useJoinedAmountByActionId = (tokenAddress: `0x${string}`, actionId: bigint) => {
@@ -119,25 +98,6 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
   });
 
   return { round: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook for roundRange
- */
-export const useRoundRange = (round: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20JoinAbi,
-    functionName: 'roundRange',
-    args: [round],
-  });
-
-  return {
-    start: data?.[0] as bigint | undefined,
-    end: data?.[1] as bigint | undefined,
-    isPending,
-    error,
-  };
 };
 
 /**

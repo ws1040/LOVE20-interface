@@ -9,7 +9,6 @@ export const LOVE20JoinErrorsMap: Record<string, string> = {
   CannotGenerateAtCurrentRound: '不能在当前轮次生成',
   LastBlocksOfRoundCannotJoin: `每轮最后${process.env.NEXT_PUBLIC_JOIN_END_ROUND_BLOCKS}个区块不能加入`,
   ActionNotVoted: '该行动本轮没有投票',
-  TransferFailed: '转账失败',
   InvalidToAddress: '目标地址无效',
   JoinedAmountIsZero: '加入数量为0',
   NotInWhiteList: '该地址不在白名单',

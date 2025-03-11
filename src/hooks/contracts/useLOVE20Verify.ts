@@ -54,40 +54,6 @@ export const useAbstentionScoreWithReward = (account: `0x${string}`, someNumber:
 };
 
 /**
- * Hook for actionIdsVerified
- */
-export const useActionIdsVerified = (tokenAddress: `0x${string}`, round: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'actionIdsVerified',
-    args: [tokenAddress, round],
-    query: {
-      enabled: !!tokenAddress && round !== undefined,
-    },
-  });
-
-  return { actionIdsVerified: data as bigint[] | undefined, isPending, error };
-};
-
-/**
- * Hook for actionIdsWithReward
- */
-export const useActionIdsWithReward = (tokenAddress: `0x${string}`, round: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'actionIdsWithReward',
-    args: [tokenAddress, round],
-    query: {
-      enabled: !!tokenAddress && round !== undefined,
-    },
-  });
-
-  return { actionIdsWithReward: data as bigint[] | undefined, isPending, error };
-};
-
-/**
  * Hook for currentRound
  */
 export const useCurrentRound = () => {
@@ -184,23 +150,6 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
   });
 
   return { roundByBlockNumber: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook for roundRange
- */
-export const useRoundRange = (round: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'roundRange',
-    args: [round],
-    query: {
-      enabled: round !== undefined,
-    },
-  });
-
-  return { roundRange: data as { start: bigint; end: bigint } | undefined, isPending, error };
 };
 
 /**

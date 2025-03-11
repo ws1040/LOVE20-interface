@@ -67,20 +67,6 @@ export const useTokenSymbolLength = () => {
 };
 
 /**
- * Hook for allocatingAmount
- */
-export const useAllocatingAmount = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'allocatingAmount',
-    args: [tokenAddress, accountAddress],
-  });
-
-  return { allocatingAmount: data as bigint | undefined, isPending, error };
-};
-
-/**
  * Hook for canDeployToken
  */
 export const useCanDeployToken = (accountAddress: `0x${string}`, parentTokenAddress: `0x${string}`) => {

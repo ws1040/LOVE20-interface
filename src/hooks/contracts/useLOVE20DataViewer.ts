@@ -310,7 +310,7 @@ export const useGovData = (tokenAddress: `0x${string}`) => {
   return { govData: data as GovData, isPending, error };
 };
 
-export const useAccountPair = (
+export const useTokenPairInfoWithAccount = (
   account: `0x${string}`,
   tokenAddress: `0x${string}`,
   parentTokenAddress: `0x${string}`,
@@ -318,7 +318,7 @@ export const useAccountPair = (
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20DataViewerAbi,
-    functionName: 'accountPair',
+    functionName: 'tokenPairInfoWithAccount',
     args: [account, tokenAddress, parentTokenAddress],
     query: {
       enabled: !!account && !!tokenAddress && !!parentTokenAddress,
