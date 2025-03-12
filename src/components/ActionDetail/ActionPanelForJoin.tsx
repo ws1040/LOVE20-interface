@@ -73,7 +73,6 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
     (token?.address as `0x${string}`) || '',
     actionId,
     (account as `0x${string}`) || '',
-    isJoined as boolean,
   );
 
   // 错误处理
