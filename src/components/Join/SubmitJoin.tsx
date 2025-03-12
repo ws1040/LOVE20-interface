@@ -72,14 +72,13 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   // 获取验证信息
   const {
     verificationKeys,
-    verificationInfos,
+    verificationInfos: oldUserVerificationInfos,
     isPending: isPendingVerificationInfo,
     error: errorVerificationInfo,
   } = useVerificationInfosByAccount(
     (token?.address as `0x${string}`) || '',
     BigInt(actionInfo.head.id),
     accountAddress as `0x${string}`,
-    !!myStakedAmount,
   );
 
   // 定义授权状态变量：是否已完成代币授权
@@ -87,9 +86,6 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
 
   // 计算剩余可质押
   const maxStake = BigInt(actionInfo.body.maxStake) - (myStakedAmount || 0n);
-
-  // 这里构造 "verificationInfos" 字段的默认值；长度与 verificationKeys 一致
-  const defaultVerificationInfos = actionInfo.body.verificationKeys.map(() => '');
 
   // 动态构造 zod schema
   const formSchema = z.object({
@@ -136,6 +132,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   // ------------------------------
   //  表单实例
   // ------------------------------
+  const defaultVerificationInfos = actionInfo.body.verificationKeys.map(() => '');
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -147,11 +144,11 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
 
   // 修改后的 useEffect：将 verificationKeys 和 verificationInfos 生成映射字典，再构造最终数组填入表单
   useEffect(() => {
-    if (myStakedAmount && verificationInfos && verificationInfos.length > 0 && verificationKeys) {
+    if (oldUserVerificationInfos && oldUserVerificationInfos.length > 0 && verificationKeys) {
       // 构造映射字典：key 为 verificationKeys 中的值，value 为对应位置的 verificationInfos
       const verificationMap: Record<string, string> = {};
       verificationKeys.forEach((key, index) => {
-        verificationMap[key] = verificationInfos[index];
+        verificationMap[key] = oldUserVerificationInfos[index];
       });
 
       // 根据 actionInfo.body.verificationKeys 的顺序构造最终数组，如果找不到则填空字符串
@@ -161,7 +158,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
 
       form.setValue('verificationInfos', finalVerificationInfos);
     }
-  }, [myStakedAmount, verificationInfos, verificationKeys, form, actionInfo.body.verificationKeys]);
+  }, [oldUserVerificationInfos, verificationKeys, form, actionInfo.body.verificationKeys]);
 
   // ------------------------------
   //  授权(approve)
@@ -240,11 +237,43 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
     }
 
     try {
+      // 检查用户是否之前填写过验证信息
+      const isFirstTimeSubmit =
+        !oldUserVerificationInfos || oldUserVerificationInfos.every((info) => !info || info.trim() === '');
+
+      // 检查当前表单值是否与原有值完全相同
+      let verificationInfosToSubmit = values.verificationInfos;
+
+      if (!isFirstTimeSubmit && oldUserVerificationInfos && verificationKeys) {
+        // 比较新旧值是否完全相同
+        const isSameAsOld =
+          verificationKeys.length === values.verificationInfos.length &&
+          (verificationKeys as string[]).every((key, index) => {
+            const oldMapIndex = (verificationKeys as string[]).indexOf(key);
+            return oldMapIndex >= 0 && oldUserVerificationInfos[oldMapIndex] === values.verificationInfos[index];
+          });
+
+        // 如果完全相同，提交空数组
+        if (isSameAsOld) {
+          verificationInfosToSubmit = [];
+        }
+      } else if (isFirstTimeSubmit) {
+        // 首次提交，检查是否所有项都已填写
+        const hasEmptyFields = values.verificationInfos.some((info) => !info || info.trim() === '');
+        if (hasEmptyFields) {
+          toast.error('首次提交需要填写所有验证信息');
+          return;
+        }
+      }
+
+      //打印 verificationInfosToSubmit
+      console.log('verificationInfosToSubmit', verificationInfosToSubmit);
+
       await join(
         token?.address as `0x${string}`,
         BigInt(actionInfo.head.id),
         parseUnits(values.additionalStakeAmount) ?? 0n,
-        values.verificationInfos,
+        verificationInfosToSubmit,
         accountAddress as `0x${string}`,
       );
     } catch (error) {
