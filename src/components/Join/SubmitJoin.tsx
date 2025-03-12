@@ -266,9 +266,6 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
         }
       }
 
-      //打印 verificationInfosToSubmit
-      console.log('verificationInfosToSubmit', verificationInfosToSubmit);
-
       await join(
         token?.address as `0x${string}`,
         BigInt(actionInfo.head.id),
