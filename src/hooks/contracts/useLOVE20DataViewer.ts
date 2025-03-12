@@ -267,7 +267,6 @@ export const useVerificationInfosByAccount = (
   tokenAddress: `0x${string}`,
   actionId: bigint,
   account: `0x${string}`,
-  isJoined: boolean,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -275,18 +274,9 @@ export const useVerificationInfosByAccount = (
     functionName: 'verificationInfosByAccount',
     args: [tokenAddress, actionId, account],
     query: {
-      enabled: isJoined && !!tokenAddress && !!account && actionId !== undefined,
+      enabled: !!tokenAddress && !!account && actionId !== undefined,
     },
   });
-
-  if (!isJoined) {
-    return {
-      verificationKeys: [],
-      verificationInfos: [],
-      isPending: false,
-      error: undefined,
-    };
-  }
 
   return {
     verificationKeys: data?.[0] as string[],
