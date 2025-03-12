@@ -55,7 +55,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
 
   // 表单 & 计算票数
   const [scores, setScores] = useState<{ [address: string]: string }>({});
-  const totalPercentage = Object.values(scores).reduce((sum, val) => sum + (parseInt(val) || 0), 0);
+  const totalPercentage = Object.values(scores).reduce((sum, val) => sum + (parseFloat(val) || 0), 0);
   const abstainPercentage = 100 - totalPercentage;
 
   const handleScoreChange = (address: string, value: string) => {
@@ -79,11 +79,11 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       return;
     }
     const scoresArray = verificationInfos.map((info) => {
-      const percentage = parseInt(scores[info.account] || '0');
-      return (BigInt(percentage) * remainingVotes) / 100n;
+      const percentage = parseFloat(scores[info.account] || '0');
+      return (BigInt(Math.round(percentage * 100)) * remainingVotes) / 10000n;
     });
 
-    const abstainVotes = (BigInt(abstainPercentage) * remainingVotes) / 100n;
+    const abstainVotes = (BigInt(Math.round(abstainPercentage * 100)) * remainingVotes) / 10000n;
     verify(token?.address as `0x${string}`, actionId, abstainVotes, scoresArray);
   };
 
@@ -142,6 +142,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                     type="number"
                     min="0"
                     max="100"
+                    step="0.01"
                     value={scores[info.account] || ''}
                     onChange={(e) => handleScoreChange(info.account, e.target.value)}
                     className="w-13 px-1 py-1 border rounded"
@@ -166,7 +167,8 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                   type="number"
                   min="0"
                   max="100"
-                  value={abstainPercentage}
+                  step="0.01"
+                  value={abstainPercentage.toFixed(2)}
                   className="w-13 px-1 py-1 border rounded"
                   disabled={true}
                 />
