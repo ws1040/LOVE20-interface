@@ -14,6 +14,7 @@ import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import Round from '@/src/components/Common/Round';
 import { useHandleContractError } from '@/src/lib/errorUtils';
+import { calculateAPY } from '@/src/lib/domainUtils';
 
 const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
@@ -34,45 +35,55 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
   }
 
   return (
-    <div className="px-4 pb-4">
+    <div className="px-4">
       <Round currentRound={currentRound} roundType="vote" />
 
       <div className="border rounded-lg mt-4 p-0">
-        <div className="stats w-full">
-          <div className="stat place-items-center pb-0">
-            <div className="stat-title text-base">总治理票数</div>
-            <div className="stat-value text-secondary text-2xl">
+        <div className="stats w-full grid grid-cols-2 divide-x-0">
+          <div className="stat place-items-center pt-4 pb-1">
+            <div className="stat-title text-sm">总治理票数</div>
+            <div className="stat-value text-secondary text-xl">
               {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.govVotes || BigInt(0), 2)}
             </div>
-            <div className="stat-desc text-xs">
-              <Button variant="link" size="sm" className="w-full text-gray-400" asChild>
-                <Link href={`/gov/liquid?symbol=${token?.symbol}`}>流动性质押数据&gt;&gt;</Link>
-              </Button>
+          </div>
+          <div className="stat place-items-center pt-4 pb-1">
+            <div className="stat-title text-sm">预计年化收益率（APY）</div>
+            <div className="stat-value text-secondary text-xl">
+              {isPending ? (
+                <LoadingIcon />
+              ) : (
+                calculateAPY(govData?.rewardAvailable, govData?.tokenAmountForSl, govData?.stAmount)
+              )}
             </div>
           </div>
         </div>
-        <div className="stats w-full grid grid-cols-2 divide-x-0">
-          <div className="stat place-items-center pt-2 pb-0 mb-0">
-            <div className="stat-title text-sm">流动性质押sl{token.symbol}</div>
-            <div className="stat-value text-xl">
-              {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.slAmount || BigInt(0), 2)}
-            </div>
-            <div className="stat-desc text-xs">
-              <Button variant="link" className="text-secondary font-normal border-secondary" asChild>
-                <Link href={`/gov/stakelp/?symbol=${token.symbol}`}>质押&获取治理票&nbsp;&gt;&gt;</Link>
-              </Button>
-            </div>
+        <div className="w-full text-center">
+          <Button variant="link" size="sm" className="text-gray-400" asChild>
+            <Link href={`/gov/liquid?symbol=${token?.symbol}`}>流动性质押数据&gt;&gt;</Link>
+          </Button>
+        </div>
+      </div>
+      <div className="stats w-full grid grid-cols-2 divide-x-0">
+        <div className="stat place-items-center pb-0">
+          <div className="stat-title text-sm">流动性质押sl{token.symbol}</div>
+          <div className="stat-value text-xl">
+            {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.slAmount || BigInt(0), 2)}
           </div>
-          <div className="stat place-items-center pt-2 pb-0 mb-0">
-            <div className="stat-title text-sm">质押代币st{token.symbol}</div>
-            <div className="stat-value text-xl">
-              {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.stAmount || BigInt(0), 2)}
-            </div>
-            <div className="stat-desc text-xs">
-              <Button variant="link" className="text-secondary font-normal border-secondary" asChild>
-                <Link href={`/gov/staketoken?symbol=${token.symbol}`}>质押&增加收益&nbsp;&gt;&gt;</Link>
-              </Button>
-            </div>
+          <div className="stat-desc text-xs">
+            <Button variant="link" className="text-secondary font-normal border-secondary pt-0" asChild>
+              <Link href={`/gov/stakelp/?symbol=${token.symbol}`}>质押 获取治理票&nbsp;&gt;&gt;</Link>
+            </Button>
+          </div>
+        </div>
+        <div className="stat place-items-center pb-0">
+          <div className="stat-title text-sm">质押代币st{token.symbol}</div>
+          <div className="stat-value text-xl">
+            {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.stAmount || BigInt(0), 2)}
+          </div>
+          <div className="stat-desc text-xs">
+            <Button variant="link" className="text-secondary font-normal border-secondary pt-0" asChild>
+              <Link href={`/gov/staketoken?symbol=${token.symbol}`}>质押 增加收益&nbsp;&gt;&gt;</Link>
+            </Button>
           </div>
         </div>
       </div>

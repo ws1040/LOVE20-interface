@@ -33,7 +33,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: '#',
         items: [
           {
-            title: '社区首页',
+            title: '社区行动',
             url: `${basePath}/acting/?symbol=${token.symbol}`,
             isActive: false,
             icon: SmilePlus,
@@ -44,12 +44,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             isActive: false,
             icon: Landmark,
           },
-          {
-            title: '推举行动',
-            url: `${basePath}/vote/actions4submit?symbol=${token.symbol}`,
-            isActive: false,
-            icon: SatelliteDish,
-          },
+          // {
+          //   title: '推举行动',
+          //   url: `${basePath}/vote/actions4submit?symbol=${token.symbol}`,
+          //   isActive: false,
+          //   icon: SatelliteDish,
+          // },
         ],
       },
       {

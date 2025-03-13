@@ -83,7 +83,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       return (BigInt(Math.round(percentage * 100)) * remainingVotes) / 10000n;
     });
 
-    const abstainVotes = (BigInt(Math.round(abstainPercentage * 100)) * remainingVotes) / 10000n;
+    const abstainVotes = remainingVotes - scoresArray.reduce((sum, votes) => sum + votes, 0n);
     verify(token?.address as `0x${string}`, actionId, abstainVotes, scoresArray);
   };
 

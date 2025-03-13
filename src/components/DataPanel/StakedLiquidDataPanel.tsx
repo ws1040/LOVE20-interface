@@ -16,6 +16,9 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
+// my utils
+import { calculateAPY } from '@/src/lib/domainUtils';
+
 interface StakedLiquidDataPanelProps {}
 
 const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({}) => {
@@ -70,6 +73,31 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({}) => {
           </div>
         </div>
       </div>
+
+      <LeftTitle title="治理激励" />
+      <div className="stats border rounded-lg w-full grid grid-cols-2 divide-x-0 mt-2 mb-6">
+        <div className="stat place-items-center pb-3">
+          <div className="stat-title text-sm">预计新增 {token?.symbol} 铸币</div>
+          <div className="stat-value text-xl">
+            {isPendingTokenAmount ? (
+              <LoadingIcon />
+            ) : (
+              formatTokenAmount(govData?.rewardAvailable / 20000n || BigInt(0), 2)
+            )}
+          </div>
+        </div>
+        <div className="stat place-items-center pb-3">
+          <div className="stat-title text-sm">预计年化收益率（APY）</div>
+          <div className="stat-value text-xl">
+            {isPendingTokenAmount ? (
+              <LoadingIcon />
+            ) : (
+              calculateAPY(govData?.rewardAvailable, govData?.tokenAmountForSl, govData?.stAmount)
+            )}
+          </div>
+        </div>
+      </div>
+
       <LeftTitle title="待分配手续费" />
       <div className="stats border rounded-lg w-full grid grid-cols-2 divide-x-0 mt-2 mb-6">
         <div className="stat place-items-center pt-3">

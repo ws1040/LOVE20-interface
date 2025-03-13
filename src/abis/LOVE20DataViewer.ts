@@ -87,6 +87,21 @@ export const LOVE20DataViewerAbi = [
             "name": "stAmount",
             "type": "uint256",
             "internalType": "uint256"
+          },
+          {
+            "name": "tokenAmountForSl",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "parentTokenAmountForSl",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "rewardAvailable",
+            "type": "uint256",
+            "internalType": "uint256"
           }
         ]
       }

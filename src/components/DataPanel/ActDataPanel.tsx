@@ -14,6 +14,9 @@ import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import Round from '@/src/components/Common/Round';
 
+// my utils
+import { calculateActionAPY } from '@/src/lib/domainUtils';
+
 const JOIN_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN as `0x${string}`;
 
 interface ActDataPanelProps {
@@ -46,26 +49,34 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
     }
   }, [errorJoinedAmount, errorRewardAvailable]);
 
+  // 计算预计新增铸币
+  const expectedReward = ((rewardAvailable || BigInt(0)) * 99n) / 20000n;
+
   return (
     <div className="px-4">
       <Round currentRound={currentRound ? currentRound : 0n} roundType="act" />
 
-      <div className="stats w-full border grid grid-cols-2 divide-x-0">
-        <div className="stat place-items-center">
-          <div className="stat-title">预计新增铸币</div>
-          <div className="stat-value text-2xl">
-            {isPendingRewardAvailable || rewardAvailable === undefined ? (
-              <LoadingIcon />
-            ) : (
-              formatTokenAmount((rewardAvailable * 99n) / 10000n, 0)
-            )}
+      <div className="w-full border rounded-lg">
+        <div className="stats w-full grid grid-cols-2 divide-x-0">
+          <div className="stat place-items-center pb-2">
+            <div className="stat-title text-sm pb-1">预计新增铸币</div>
+            <div className="stat-value text-xl text-secondary">
+              {isPendingRewardAvailable || rewardAvailable === undefined ? (
+                <LoadingIcon />
+              ) : (
+                formatTokenAmount(expectedReward, 2)
+              )}
+            </div>
+          </div>
+          <div className="stat place-items-center pb-2">
+            <div className="stat-title text-sm pb-1">参与行动代币</div>
+            <div className="stat-value text-xl text-secondary">
+              {isPendingJoinedAmount ? <LoadingIcon /> : formatTokenAmount(joinedAmount || BigInt(0), 0)}
+            </div>
           </div>
         </div>
-        <div className="stat place-items-center">
-          <div className="stat-title">参与行动代币</div>
-          <div className="stat-value text-2xl">
-            {isPendingJoinedAmount ? <LoadingIcon /> : formatTokenAmount(joinedAmount || BigInt(0), 0)}
-          </div>
+        <div className="text-center text-xs mb-2 text-greyscale-500">
+          预估年化收益率（APY）：{calculateActionAPY(expectedReward, joinedAmount)}
         </div>
       </div>
     </div>
