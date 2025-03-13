@@ -636,7 +636,7 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "error",
-    "name": "LastBlocksOfRoundCannotJoin",
+    "name": "LastBlocksOfPhaseCannotJoin",
     "inputs": []
   },
   {

@@ -105,9 +105,16 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
         )}
         <div className="flex justify-center">
           {submitted || isConfirmed ? (
-            <Button className="w-1/2" disabled>
-              已推举
-            </Button>
+            <div className="flex space-x-4 justify-center w-full">
+              <Button disabled className="w-1/2">
+                已推举
+              </Button>
+              {submitted && !isConfirmed && (
+                <Button onClick={() => router.push(`/vote/?symbol=${token?.symbol}`)} className="w-1/2">
+                  去投票
+                </Button>
+              )}
+            </div>
           ) : (
             <Button onClick={handleSubmit} className="w-1/2" disabled={isWriting || isConfirming || !hasEnoughVotes}>
               {isWriting && '提交中...'}

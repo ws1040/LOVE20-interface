@@ -58,6 +58,9 @@ export interface GovData {
   govVotes: bigint;
   slAmount: bigint;
   stAmount: bigint;
+  tokenAmountForSl: bigint;
+  parentTokenAmountForSl: bigint;
+  rewardAvailable: bigint;
 }
 
 export interface TokenInfo {
