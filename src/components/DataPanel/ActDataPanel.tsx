@@ -59,6 +59,12 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
       <div className="w-full border rounded-lg mt-4 p-0">
         <div className="stats w-full grid grid-cols-2 divide-x-0">
           <div className="stat place-items-center pb-2">
+            <div className="stat-title text-sm pb-1">参与行动代币</div>
+            <div className="stat-value text-xl text-secondary">
+              {isPendingJoinedAmount ? <LoadingIcon /> : formatTokenAmount(joinedAmount || BigInt(0), 0)}
+            </div>
+          </div>
+          <div className="stat place-items-center pb-2">
             <div className="stat-title text-sm pb-1">预计新增铸币</div>
             <div className="stat-value text-xl text-secondary">
               {isPendingRewardAvailable || rewardAvailable === undefined ? (
@@ -66,12 +72,6 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
               ) : (
                 formatTokenAmount(expectedReward, 2)
               )}
-            </div>
-          </div>
-          <div className="stat place-items-center pb-2">
-            <div className="stat-title text-sm pb-1">参与行动代币</div>
-            <div className="stat-value text-xl text-secondary">
-              {isPendingJoinedAmount ? <LoadingIcon /> : formatTokenAmount(joinedAmount || BigInt(0), 0)}
             </div>
           </div>
         </div>
