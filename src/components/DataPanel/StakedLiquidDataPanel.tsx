@@ -64,36 +64,12 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({}) => {
         </div>
         <div className="stats rounded-lg w-full grid grid-cols-2 divide-x-0 mt-2">
           <div className="stat place-items-center pt-3 ">
-            <div className="stat-title text-sm">质押 {token?.symbol} 总数</div>
+            <div className="stat-title text-sm">对应 {token?.symbol} 质押数</div>
             <div className="stat-value text-xl">{formatTokenAmount(tokenAmount || BigInt(0), 2)}</div>
           </div>
           <div className="stat place-items-center pt-3 ">
-            <div className="stat-title text-sm">质押 {token?.parentTokenSymbol} 总数</div>
+            <div className="stat-title text-sm">对应 {token?.parentTokenSymbol} 质押数</div>
             <div className="stat-value text-xl">{formatTokenAmount(parentTokenAmount || BigInt(0), 2)}</div>
-          </div>
-        </div>
-      </div>
-
-      <LeftTitle title="治理激励" />
-      <div className="stats border rounded-lg w-full grid grid-cols-2 divide-x-0 mt-2 mb-6">
-        <div className="stat place-items-center pb-3">
-          <div className="stat-title text-sm">预计新增 {token?.symbol} 铸币</div>
-          <div className="stat-value text-xl">
-            {isPendingTokenAmount ? (
-              <LoadingIcon />
-            ) : (
-              formatTokenAmount(govData?.rewardAvailable / 20000n || BigInt(0), 2)
-            )}
-          </div>
-        </div>
-        <div className="stat place-items-center pb-3">
-          <div className="stat-title text-sm">预计年化收益率（APY）</div>
-          <div className="stat-value text-xl">
-            {isPendingTokenAmount ? (
-              <LoadingIcon />
-            ) : (
-              calculateAPY(govData?.rewardAvailable, govData?.tokenAmountForSl, govData?.stAmount)
-            )}
           </div>
         </div>
       </div>
