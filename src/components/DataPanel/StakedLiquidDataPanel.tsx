@@ -16,9 +16,6 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
-// my utils
-import { calculateAPY } from '@/src/lib/domainUtils';
-
 interface StakedLiquidDataPanelProps {}
 
 const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({}) => {

@@ -26,14 +26,17 @@ export const calculateAPY = (
   }
 
   // 本轮治理激励
-  const rewardForPhase = rewardAvailable ? rewardAvailable / 20000n : BigInt(0);
+  const rewardForPhase = rewardAvailable ? (rewardAvailable * 99n * 99n) / 2000000n : BigInt(0);
   // 所有质押资产总和
-  const totalStaked = (tokenAmountForSl || BigInt(0)) + (stAmount || BigInt(0));
+  const totalStaked = (tokenAmountForSl * 2n || BigInt(0)) + (stAmount || BigInt(0));
   // 避免除以零
   if (totalStaked === BigInt(0)) {
     return '0%';
   }
-
+  console.log('rewardForPhase', rewardForPhase);
+  console.log('totalStaked', totalStaked);
+  console.log('phaseBlocks', phaseBlocks);
+  console.log('blocksPerYear', blocksPerYear);
   // 计算APY: (reward / totalStaked) / (phaseBlocks / blocksPerYear) * 100%
   const apy = (Number(rewardForPhase) / Number(totalStaked) / (Number(phaseBlocks) / blocksPerYear)) * 100;
 

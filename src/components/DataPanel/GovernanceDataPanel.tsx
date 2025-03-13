@@ -35,6 +35,9 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
     return <LoadingIcon />;
   }
 
+  // 计算预计新增铸币
+  const expectedReward = ((govData?.rewardAvailable || BigInt(0)) * 99n * 99n) / 2000000n;
+
   return (
     <div className="px-4">
       <Round currentRound={currentRound} roundType="vote" />
@@ -50,7 +53,7 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
           <div className="stat place-items-center pb-2">
             <div className="stat-title text-sm pb-1">预计新增铸币</div>
             <div className="stat-value text-secondary text-xl">
-              {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.rewardAvailable / 20000n || BigInt(0), 2)}
+              {isPending ? <LoadingIcon /> : formatTokenAmount(expectedReward, 2)}
             </div>
           </div>
         </div>
