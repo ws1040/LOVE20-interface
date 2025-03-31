@@ -4,18 +4,12 @@ import { Abi } from 'abitype';
 export const LOVE20DataViewerAbi = [
   {
     "type": "constructor",
-    "inputs": [
-      {
-        "name": "initSetter_",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
+    "inputs": [],
     "stateMutability": "nonpayable"
   },
   {
     "type": "function",
-    "name": "actionRewardRoundsByAccount",
+    "name": "actionRewardsByAccountByActionIdByRounds",
     "inputs": [
       {
         "name": "tokenAddress",
@@ -45,14 +39,26 @@ export const LOVE20DataViewerAbi = [
     ],
     "outputs": [
       {
-        "name": "rounds",
-        "type": "uint256[]",
-        "internalType": "uint256[]"
-      },
-      {
         "name": "rewards",
-        "type": "uint256[]",
-        "internalType": "uint256[]"
+        "type": "tuple[]",
+        "internalType": "struct RewardInfo[]",
+        "components": [
+          {
+            "name": "round",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "minted",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "unminted",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
       }
     ],
     "stateMutability": "view"
@@ -137,7 +143,7 @@ export const LOVE20DataViewerAbi = [
       {
         "name": "rewards",
         "type": "tuple[]",
-        "internalType": "struct GovReward[]",
+        "internalType": "struct RewardInfo[]",
         "components": [
           {
             "name": "round",
@@ -199,13 +205,13 @@ export const LOVE20DataViewerAbi = [
   },
   {
     "type": "function",
-    "name": "initSetter",
+    "name": "initialized",
     "inputs": [],
     "outputs": [
       {
         "name": "",
-        "type": "address",
-        "internalType": "address"
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "stateMutability": "view"
@@ -359,47 +365,6 @@ export const LOVE20DataViewerAbi = [
   },
   {
     "type": "function",
-    "name": "joinableActions",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "round",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "tuple[]",
-        "internalType": "struct JoinableAction[]",
-        "components": [
-          {
-            "name": "actionId",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "votesNum",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "joinedAmount",
-            "type": "uint256",
-            "internalType": "uint256"
-          }
-        ]
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "joinedActions",
     "inputs": [
       {
@@ -459,19 +424,6 @@ export const LOVE20DataViewerAbi = [
       }
     ],
     "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "setInitSetter",
-    "inputs": [
-      {
-        "name": "newInitSetter",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -1018,7 +970,12 @@ export const LOVE20DataViewerAbi = [
             "internalType": "uint256"
           },
           {
-            "name": "reward",
+            "name": "minted",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "unminted",
             "type": "uint256",
             "internalType": "uint256"
           }

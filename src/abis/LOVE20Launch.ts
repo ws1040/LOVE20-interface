@@ -4,6 +4,19 @@ import { Abi } from 'abitype';
 export const LOVE20LaunchAbi = [
   {
     "type": "function",
+    "name": "CHILD_TOKEN_WAITING_BLOCKS",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "FIRST_PARENT_TOKEN_FUNDRAISING_GOAL",
     "inputs": [],
     "outputs": [
@@ -357,6 +370,11 @@ export const LOVE20LaunchAbi = [
       },
       {
         "name": "withdrawWaitingBlocks",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "childTokenWaitingBlocks",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -1211,6 +1229,11 @@ export const LOVE20LaunchAbi = [
   {
     "type": "error",
     "name": "NotEligibleToDeployToken",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotEnoughChildTokenWaitingBlocks",
     "inputs": []
   },
   {

@@ -67,7 +67,7 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
     if (!checkWalletConnection(accountChain)) {
       return;
     }
-    if (accountAddress && item.reward > 0 && token) {
+    if (accountAddress && item.unminted > 0 && token) {
       await mintActionReward(
         token?.address as `0x${string}`,
         selectedRound + BigInt(token.initialStakeRound) - 1n,
@@ -131,10 +131,10 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
                   <AddressWithCopyButton address={item.account} showCopyButton={false} />
                 </td>
                 <td>{formatTokenAmount(item.score)}</td>
-                <td>{formatTokenAmount(item.reward)}</td>
+                <td>{formatTokenAmount(item.minted || item.unminted || 0n)}</td>
                 <td className="text-center">
                   {item.account === accountAddress ? (
-                    item.reward > 0 ? (
+                    item.unminted > 0 ? (
                       <Button
                         variant="outline"
                         size="sm"

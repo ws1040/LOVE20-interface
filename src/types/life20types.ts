@@ -45,10 +45,11 @@ export interface JoinedAction {
 export interface VerifiedAddress {
   account: `0x${string}`;
   score: bigint;
-  reward: bigint;
+  minted: bigint;
+  unminted: bigint;
 }
 
-export interface GovReward {
+export interface RewardInfo {
   round: bigint;
   minted: bigint;
   unminted: bigint;

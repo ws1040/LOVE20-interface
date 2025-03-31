@@ -684,7 +684,7 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "error",
-    "name": "NotEnoughWaitingPhases",
+    "name": "NotEnoughWaitingBlocks",
     "inputs": []
   },
   {

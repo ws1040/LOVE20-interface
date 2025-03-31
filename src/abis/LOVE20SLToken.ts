@@ -24,9 +24,27 @@ export const LOVE20SLTokenAbi = [
         "name": "uniswapV2Pair_",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "maxWithdrawableToFeeRatio_",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "MAX_WITHDRAWABLE_TO_FEE_RATIO",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -524,6 +542,11 @@ export const LOVE20SLTokenAbi = [
   {
     "type": "error",
     "name": "InvalidAddress",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidRatio",
     "inputs": []
   },
   {
