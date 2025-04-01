@@ -77,7 +77,7 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
   };
   useEffect(() => {
     if (isConfirmedMint) {
-      setAddresses((prev) => prev.map((addr) => (addr.account === accountAddress ? { ...addr, reward: 0n } : addr)));
+      setAddresses((prev) => prev.map((addr) => (addr.account === accountAddress ? { ...addr, unminted: 0n } : addr)));
     }
   }, [isConfirmedMint]);
 
