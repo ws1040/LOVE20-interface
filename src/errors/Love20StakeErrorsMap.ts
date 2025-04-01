@@ -15,6 +15,7 @@ export const LOVE20StakeErrorsMap: Record<string, string> = {
   AlreadyUnstaked: '已解除质押，无需再次解除',
   UnableToUnstakeAtRoundZero: '无法在第0轮解除质押',
   NotEnoughWaitingPhases: '等待阶段数量不足',
+  NotEnoughWaitingBlocks: '等待区块数量不足',
   RoundHasNotStartedYet: '轮次尚未开始',
   TokenAmountNotEnough: '代币数量不足',
   'transfer amount exceeds balance': '转账数量超过余额',

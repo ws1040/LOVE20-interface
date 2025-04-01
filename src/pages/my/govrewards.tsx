@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 // my functions & types
 import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
-import { GovReward } from '@/src/types/life20types';
+import { RewardInfo } from '@/src/types/life20types';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -69,7 +69,7 @@ const GovRewardsPage: React.FC = () => {
     endRound,
   );
 
-  const [rewardList, setRewardList] = useState<GovReward[]>([]);
+  const [rewardList, setRewardList] = useState<RewardInfo[]>([]);
   useEffect(() => {
     if (rewards) {
       const sortedRewards = [...rewards].sort((a, b) => (a.round > b.round ? -1 : 1)); // 按 round 倒序排列
@@ -169,7 +169,7 @@ const GovRewardsPage: React.FC = () => {
               <thead>
                 <tr className="border-b border-gray-100">
                   <th>轮次</th>
-                  <th className="text-center">待领取奖励</th>
+                  <th className="text-center">奖励</th>
                   <th className="text-center">结果</th>
                 </tr>
               </thead>
@@ -177,7 +177,7 @@ const GovRewardsPage: React.FC = () => {
                 {rewardList.map((item) => (
                   <tr key={item.round.toString()} className="border-b border-gray-100">
                     <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
-                    <td className="text-center">{formatTokenAmount(item.unminted)}</td>
+                    <td className="text-center">{formatTokenAmount(item.unminted || item.minted || 0n)}</td>
                     <td className="text-center">
                       {item.unminted > 0n ? (
                         <Button

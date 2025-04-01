@@ -3,11 +3,10 @@
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { LOVE20DataViewerAbi } from '@/src/abis/LOVE20DataViewer';
 import {
-  JoinableAction,
   JoinedAction,
   LaunchInfo,
   VerifiedAddress,
-  GovReward,
+  RewardInfo,
   TokenInfo,
   VerificationInfo,
   JoinableActionDetail,
@@ -19,21 +18,6 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_DAT
 // =====================
 // === 读取 Hooks ===
 // =====================
-
-/**
- * Hook for initSetter
- * Reads the address of the current initSetter.
- */
-export const useInitSetter = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20DataViewerAbi,
-    functionName: 'initSetter',
-  });
-
-  return { initSetter: data as `0x${string}` | undefined, isPending, error };
-};
-
 /**
  * Hook for joinAddress
  * Reads the address of the join contract.
@@ -74,24 +58,6 @@ export const useMintAddress = () => {
   });
 
   return { mintAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * Hook for joinableActions
- * Reads the joinable actions based on tokenAddress and round.
- */
-export const useJoinableActions = (tokenAddress: `0x${string}`, round: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20DataViewerAbi,
-    functionName: 'joinableActions',
-    args: [tokenAddress, round],
-    query: {
-      enabled: !!tokenAddress,
-    },
-  });
-
-  return { actions: data as JoinableAction[] | undefined, isPending, error };
 };
 
 /**
@@ -247,7 +213,7 @@ export const useGovRewardsByAccountByRounds = (
     },
   });
 
-  return { rewards: data as GovReward[], isPending, error };
+  return { rewards: data as RewardInfo[], isPending, error };
 };
 
 export const useVerificationInfosByAction = (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
@@ -316,35 +282,4 @@ export const useTokenPairInfoWithAccount = (
   });
 
   return { pairInfo: data as PairInfo, isPending, error };
-};
-
-// =====================
-// === 写入 Hooks ===
-// =====================
-
-/**
- * Hook for setInitSetter
- * Updates the initSetter to a new address.
- */
-export const useSetInitSetter = () => {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
-
-  const setInitSetter = async (newInitSetter: `0x${string}`) => {
-    try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20DataViewerAbi,
-        functionName: 'setInitSetter',
-        args: [newInitSetter],
-      });
-    } catch (err) {
-      console.error('setInitSetter failed:', err);
-    }
-  };
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
-
-  return { setInitSetter, writeData, isWriting, writeError, isConfirming, isConfirmed };
 };
