@@ -51,7 +51,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
           <LoadingIcon />
         </div>
       )}
-      {!isPending && !joinableActionDetails?.length && (
+      {accountAddress && !isPending && !joinableActionDetails?.length && (
         <div className="text-sm mt-4 text-greyscale-500 text-center">本轮暂无行动</div>
       )}
       {!isPending && joinableActionDetails && joinableActionDetails.length > 0 && (
