@@ -118,5 +118,5 @@ module.exports = {
   daisyui: {
     themes: ['light'],
   },
-  plugins: [require('daisyui'), require('tailwindcss-animate')],
+  plugins: [require('daisyui'), require('tailwindcss-animate'), require('@tailwindcss/typography')],
 };
