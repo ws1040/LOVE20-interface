@@ -1,7 +1,17 @@
 'use client';
 import { useContext, useState } from 'react';
 import { TokenContext } from '@/src/contexts/TokenContext';
-import { SmilePlus, Home, Landmark, SatelliteDish, BadgeDollarSign, Rocket, List, TicketCheck } from 'lucide-react';
+import {
+  SmilePlus,
+  Home,
+  Landmark,
+  SatelliteDish,
+  BadgeDollarSign,
+  Rocket,
+  List,
+  TicketCheck,
+  User,
+} from 'lucide-react';
 
 import {
   Sidebar,
@@ -89,14 +99,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ],
       },
       {
+        title: 'LOVE20',
+        url: '#',
+        items: [
+          {
+            title: '协议首页',
+            url: `${basePath}/?symbol=${token.symbol}`,
+            isActive: false,
+            icon: Home,
+          },
+        ],
+      },
+      {
         title: '我的',
         url: '#',
         items: [
           {
-            title: '我的首页',
+            title: '个人中心',
             url: `${basePath}/my/?symbol=${token.symbol}`,
             isActive: false,
-            icon: Home,
+            icon: User,
           },
         ],
       },
