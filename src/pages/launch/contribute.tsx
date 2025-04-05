@@ -32,18 +32,19 @@ export default function ContributePage() {
     }
   }, [launchInfoError]);
 
-  if (isLaunchInfoPending) {
-    return <LoadingIcon />;
-  }
-  if (!launchInfo) {
-    return <div className="text-red-500">找不到发射信息</div>;
-  }
   return (
     <>
       <Header title="申购" />
       <main className="flex-grow">
-        <Contribute token={token} launchInfo={launchInfo} />
+        {isLaunchInfoPending ? (
+          <LoadingIcon />
+        ) : !launchInfo ? (
+          <div className="text-red-500">找不到发射信息</div>
+        ) : (
+          <Contribute token={token} launchInfo={launchInfo} />
+        )}
       </main>
     </>
   );
+}
 }

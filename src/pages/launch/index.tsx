@@ -43,10 +43,7 @@ export default function TokenFairLaunch() {
     }
   }, [launchInfo, token]);
 
-  if (isLaunchInfoPending) {
-    return <LoadingIcon />;
-  }
-  if (!launchInfo) {
+  if (!isLaunchInfoPending && !launchInfo) {
     return <div className="text-red-500">找不到发射信息</div>;
   }
 
@@ -55,9 +52,19 @@ export default function TokenFairLaunch() {
       <Header title="公平发射" />
       <main className="flex-grow">
         <TokenTab />
-        <LaunchStatus token={token} launchInfo={launchInfo} />
-        {!launchInfo.hasEnded && token && <ContributeInfo token={token} launchInfo={launchInfo} />}
-        {launchInfo.hasEnded && token && <Claim token={token} launchInfo={launchInfo} />}
+        {isLaunchInfoPending || !launchInfo ? (
+          <LoadingIcon />
+        ) : (
+          <>
+            <LaunchStatus token={token} launchInfo={launchInfo} />
+            {token &&
+              (launchInfo.hasEnded ? (
+                <Claim token={token} launchInfo={launchInfo} />
+              ) : (
+                <ContributeInfo token={token} launchInfo={launchInfo} />
+              ))}
+          </>
+        )}
       </main>
     </>
   );

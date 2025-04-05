@@ -42,19 +42,21 @@ const GovPage = () => {
     }
   }, [errorCurrentRound]);
 
-  if (!currentToken) {
-    return <LoadingIcon />;
-  }
-
   return (
     <>
       <Header title="治理首页" />
       <main className="flex-grow">
-        <TokenTab />
-        <GovernanceDataPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
-        <MyVotingPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
-        <MyVerifingPanel currentRound={currentVoteRound > 2 ? currentVoteRound - 2n : 0n} />
-        <Todeploy token={currentToken} />
+        {!currentToken ? (
+          <LoadingIcon />
+        ) : (
+          <>
+            <TokenTab />
+            <GovernanceDataPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
+            <MyVotingPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
+            <MyVerifingPanel currentRound={currentVoteRound > 2 ? currentVoteRound - 2n : 0n} />
+            <Todeploy token={currentToken} />
+          </>
+        )}
       </main>
     </>
   );
