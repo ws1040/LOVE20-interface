@@ -30,7 +30,6 @@ export default function BurnPage() {
     }
   }, [launchInfoError]);
 
-
   return (
     <>
       <Header title="底池销毁" />
@@ -45,5 +44,4 @@ export default function BurnPage() {
       </main>
     </>
   );
-}
 }
