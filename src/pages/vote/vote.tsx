@@ -180,93 +180,95 @@ const VotingSubmitPage = () => {
     }
   }, []);
 
-  if (!token || isPendingActionInfosByIds) {
-    return <LoadingIcon />;
-  }
-
   return (
     <>
       <Header title="投票" />
       <main className="flex-grow">
-        <div className="stats w-full">
-          <div className="stat place-items-center">
-            <div className="stat-title text-sm">我的剩余票数</div>
-            <div className="stat-value text-secondary mt-2">
-              {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
-                <LoadingIcon />
-              ) : (
-                formatTokenAmount(validGovVotes - votesNumByAccount || BigInt(0))
-              )}
-            </div>
-            <div className="stat-desc text-sm mt-2">
-              如需更多票数，请先{' '}
-              <Link href={`/gov/stakelp/?symbol=${token?.symbol}`} className="text-secondary">
-                获取治理票
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* 行动列表 */}
-        <div className="px-4">
-          <div className="space-y-4">
-            {actionInfos?.map((action: ActionInfo, index: number) => {
-              const isLast = index === actionInfos.length - 1;
-              const otherIds = idList.slice(0, -1);
-              const total = otherIds.reduce((sum, id) => sum + (percentages[id] || 0), 0);
-              const lastValue = 100 - total;
-
-              return (
-                <div key={action.head.id} className="p-4 rounded-lg mb-4 flex justify-between items-center">
-                  <Link
-                    href={`/action/${action.head.id}?type=vote&symbol=${token.symbol}`}
-                    key={action.head.id}
-                    className="flex-grow"
-                  >
-                    <div className="font-semibold mb-2">
-                      <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
-                      <span className="text-greyscale-900">{`${action.body.action}`}</span>
-                    </div>
-                    <p className="text-greyscale-500">{action.body.consensus}</p>
-                  </Link>
-                  <div className="flex items-center">
-                    <input
-                      type="number"
-                      min={isLast ? lastValue : 1}
-                      max="100"
-                      value={isLast ? lastValue : percentages[action.head.id] || ''}
-                      onChange={(e) => handlePercentageChange(action.head.id, Number(e.target.value))}
-                      className="p-2 border rounded w-16"
-                      disabled={idList.length === 1 || isLast}
-                      placeholder=""
-                    />
-                    %
-                  </div>
+        {!token || isPendingActionInfosByIds ? (
+          <LoadingIcon />
+        ) : (
+          <>
+            <div className="stats w-full">
+              <div className="stat place-items-center">
+                <div className="stat-title text-sm">我的剩余票数</div>
+                <div className="stat-value text-secondary mt-2">
+                  {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
+                    <LoadingIcon />
+                  ) : (
+                    formatTokenAmount(validGovVotes - votesNumByAccount || BigInt(0))
+                  )}
                 </div>
-              );
-            })}
-          </div>
-          <div className="flex justify-center mt-4">
-            <Button
-              className="w-1/2 focus:outline-none focus:ring-0"
-              onFocus={(e) => e.currentTarget.blur()}
-              onClick={handleSubmit}
-              disabled={isWriting || isConfirming || isConfirmed}
-            >
-              {isWriting ? '提交中...' : isConfirming ? '确认中...' : isConfirmed ? '已提交' : '提交投票'}
-            </Button>
-          </div>
-        </div>
-        <div className="flex flex-col w-full p-4 mt-4">
-          <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 mb-8 text-sm">
-            <div className="text-base font-bold text-greyscale-700 pb-1">注意：</div>
-            <div className="text-sm text-greyscale-500 pb-1">1、必须一次投完100%票数</div>
-            <div className="text-sm text-greyscale-500 pb-1">
-              2、投票时需持有完整数量的质押资产凭证：SL 类(流动性质押)、ST 类(代币质押)
+                <div className="stat-desc text-sm mt-2">
+                  如需更多票数，请先{' '}
+                  <Link href={`/gov/stakelp/?symbol=${token?.symbol}`} className="text-secondary">
+                    获取治理票
+                  </Link>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
+
+            {/* 行动列表 */}
+            <div className="px-4">
+              <div className="space-y-4">
+                {actionInfos?.map((action: ActionInfo, index: number) => {
+                  const isLast = index === actionInfos.length - 1;
+                  const otherIds = idList.slice(0, -1);
+                  const total = otherIds.reduce((sum, id) => sum + (percentages[id] || 0), 0);
+                  const lastValue = 100 - total;
+
+                  return (
+                    <div key={action.head.id} className="p-4 rounded-lg mb-4 flex justify-between items-center">
+                      <Link
+                        href={`/action/${action.head.id}?type=vote&symbol=${token.symbol}`}
+                        key={action.head.id}
+                        className="flex-grow"
+                      >
+                        <div className="font-semibold mb-2">
+                          <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
+                          <span className="text-greyscale-900">{`${action.body.action}`}</span>
+                        </div>
+                        <p className="text-greyscale-500">{action.body.consensus}</p>
+                      </Link>
+                      <div className="flex items-center">
+                        <input
+                          type="number"
+                          min={isLast ? lastValue : 1}
+                          max="100"
+                          value={isLast ? lastValue : percentages[action.head.id] || ''}
+                          onChange={(e) => handlePercentageChange(action.head.id, Number(e.target.value))}
+                          className="p-2 border rounded w-16"
+                          disabled={idList.length === 1 || isLast}
+                          placeholder=""
+                        />
+                        %
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex justify-center mt-4">
+                <Button
+                  className="w-1/2 focus:outline-none focus:ring-0"
+                  onFocus={(e) => e.currentTarget.blur()}
+                  onClick={handleSubmit}
+                  disabled={isWriting || isConfirming || isConfirmed}
+                >
+                  {isWriting ? '提交中...' : isConfirming ? '确认中...' : isConfirmed ? '已提交' : '提交投票'}
+                </Button>
+              </div>
+            </div>
+            <div className="flex flex-col w-full p-4 mt-4">
+              <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 mb-8 text-sm">
+                <div className="text-base font-bold text-greyscale-700 pb-1">注意：</div>
+                <div className="text-sm text-greyscale-500 pb-1">1、必须一次投完100%票数</div>
+                <div className="text-sm text-greyscale-500 pb-1">
+                  2、投票时需持有完整数量的质押资产凭证：SL 类(流动性质押)、ST 类(代币质押)
+                </div>
+              </div>
+            </div>
+            <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
+          </>
+        )}
       </main>
     </>
   );

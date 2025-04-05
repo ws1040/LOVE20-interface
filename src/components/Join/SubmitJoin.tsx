@@ -120,9 +120,9 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
       .refine(
         (val) => {
           const inputVal = parseUnits(val);
-          return inputVal !== null && tokenBalance ? inputVal <= tokenBalance : true;
+          return inputVal !== null && tokenBalance !== undefined && inputVal <= tokenBalance;
         },
-        { message: '参与代币数不能超过持有代币数' },
+        { message: '您的代币余额不足' },
       ),
 
     // 多项验证信息

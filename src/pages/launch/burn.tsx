@@ -30,18 +30,20 @@ export default function BurnPage() {
     }
   }, [launchInfoError]);
 
-  if (isLaunchInfoPending) {
-    return <LoadingIcon />;
-  }
-  if (!launchInfo) {
-    return <div className="text-red-500">找不到发射信息</div>;
-  }
+
   return (
     <>
       <Header title="底池销毁" />
       <main className="flex-grow">
-        <Burn token={token} launchInfo={launchInfo} />
+        {isLaunchInfoPending ? (
+          <LoadingIcon />
+        ) : !launchInfo ? (
+          <div className="text-red-500">找不到发射信息</div>
+        ) : (
+          <Burn token={token} launchInfo={launchInfo} />
+        )}
       </main>
     </>
   );
+}
 }

@@ -22,15 +22,11 @@ const VotePage = () => {
     }
   }, [errCurrentRound]);
 
-  if (isPendingCurrentRound) {
-    return <LoadingIcon />;
-  }
-
   return (
     <>
       <Header title="投票首页" />
       <main className="flex-grow">
-        <VotingActionList currentRound={currentRound} />
+        {isPendingCurrentRound ? <LoadingIcon /> : <VotingActionList currentRound={currentRound} />}
       </main>
     </>
   );

@@ -65,7 +65,7 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
       <div className="stats w-full grid grid-cols-2 divide-x-0 mt-4">
         <div className="stat place-items-center pb-0 pt-0">
           <div className="stat-title text-sm">流动性质押sl{token.symbol}</div>
-          <div className="stat-value text-xl">
+          <div className="stat-value text-lg text-gray-600">
             {isPending ? (
               <LoadingIcon />
             ) : (
@@ -86,7 +86,7 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
         </div>
         <div className="stat place-items-center pb-0 pt-0">
           <div className="stat-title text-sm">质押代币st{token.symbol}</div>
-          <div className="stat-value text-xl">
+          <div className="stat-value text-lg text-gray-600">
             {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.stAmount || BigInt(0), 2)}
           </div>
           <div className="stat-desc text-xs">

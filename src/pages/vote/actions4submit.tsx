@@ -39,15 +39,11 @@ const Actions4SubmitPage = () => {
     }
   }, [currentToken]);
 
-  if (isPending) {
-    return <LoadingIcon />;
-  }
-
   return (
     <>
       <Header title="推举" />
       <main className="flex-grow">
-        <SubmitingActionList currentRound={currentRound} />
+        {isPending ? <LoadingIcon /> : <SubmitingActionList currentRound={currentRound} />}
       </main>
     </>
   );

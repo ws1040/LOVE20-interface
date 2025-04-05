@@ -160,6 +160,10 @@ const Deposit: React.FC = () => {
     }
   }, [errBalance, errorBalanceOfERC20Token, errDeposit, handleContractError]);
 
+  if (isLoadingBalance || isPendingBalanceOfERC20Token) {
+    return <LoadingIcon />;
+  }
+
   return (
     <>
       <div className="p-6 pt-0">

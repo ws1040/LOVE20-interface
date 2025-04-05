@@ -48,38 +48,35 @@ const JoinPage = () => {
     }
   }, [errorCurrentRound, errorActionInfo]);
 
-  // 加载中
-  if (!id || Array.isArray(id)) {
-    return <LoadingIcon />;
-  }
-
-  if (isPendingActionInfo || isPendingCurrentRound) {
-    return <LoadingIcon />;
-  }
-
   return (
     <>
       <Header title="加入行动" />
       <main className="flex-grow">
-        <MyJoinInfoOfActionAbstract actionId={BigInt(actionId)} onStakedAmountChange={onStakedAmountChange} />
-        <SubmitJoin actionInfo={actionInfo} stakedAmount={stakedAmount} />
-        <div className="flex flex-col w-full rounded px-6 pb-4">
-          <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 mt-4 text-sm">
-            <div className="text-base font-bold text-greyscale-700 pb-1">行动激励：</div>
-            <div className="text-sm text-greyscale-500">
-              1、验证阶段会随机抽取地址验证打分，然后按得分比例给这些地址分配代币激励
+        {!id || Array.isArray(id) || isPendingActionInfo || isPendingCurrentRound ? (
+          <LoadingIcon />
+        ) : (
+          <>
+            <MyJoinInfoOfActionAbstract actionId={BigInt(actionId)} onStakedAmountChange={onStakedAmountChange} />
+            <SubmitJoin actionInfo={actionInfo} stakedAmount={stakedAmount} />
+            <div className="flex flex-col w-full rounded px-6 pb-4">
+              <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 mt-4 text-sm">
+                <div className="text-base font-bold text-greyscale-700 pb-1">行动激励：</div>
+                <div className="text-sm text-greyscale-500">
+                  1、验证阶段会随机抽取地址验证打分，然后按得分比例给这些地址分配代币激励
+                </div>
+                <div className="text-sm text-greyscale-500">
+                  2、只有当1个行动获得的验证票数，达到该轮总投票数5%时，参与该行动才有激励
+                </div>
+                <div className="text-base font-bold text-greyscale-700 pt-2 pb-1">参与代币：</div>
+                <div className="text-sm text-greyscale-500">1、参与代币越多，被选中验证并获得奖励的概率越大</div>
+                <div className="text-sm text-greyscale-500">
+                  2、参与的代币可随时取回，如不取回则自动参与此行动的后续轮次
+                </div>
+              </div>
             </div>
-            <div className="text-sm text-greyscale-500">
-              2、只有当1个行动获得的验证票数，达到该轮总投票数5%时，参与该行动才有激励
-            </div>
-            <div className="text-base font-bold text-greyscale-700 pt-2 pb-1">参与代币：</div>
-            <div className="text-sm text-greyscale-500">1、参与代币越多，被选中验证并获得奖励的概率越大</div>
-            <div className="text-sm text-greyscale-500">
-              2、参与的代币可随时取回，如不取回则自动参与此行动的后续轮次
-            </div>
-          </div>
-        </div>
-        <ActionDetail actionId={BigInt(actionId)} round={currentRound} showSubmitter={false} />
+            <ActionDetail actionId={BigInt(actionId)} round={currentRound} showSubmitter={false} />
+          </>
+        )}
       </main>
     </>
   );
