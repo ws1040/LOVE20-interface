@@ -54,9 +54,9 @@ const Home: NextPage<{ articles: Article[] }> = ({ articles }) => {
           <p className="mt-2">
             2. <strong>LOVE20 有以下特点：</strong>
           </p>
-          <p className="text-gray-700">① 公平发射</p>
-          <p className="">② 零预留代币</p>
-          <p className="">③ 完全去中心化</p>
+          <p className="ml-2">① 公平发射</p>
+          <p className="ml-2">② 零预留代币</p>
+          <p className="ml-2">③ 完全去中心化</p>
           <p className="mt-2">
             3. <strong>LOVE20 所有代码完全开源</strong>，前端代码下载后可以在本地直接运行，不需要依赖任何中心化服务器。
           </p>
