@@ -40,13 +40,18 @@ const ChangeRound: React.FC<{ currentRound: bigint; handleChangedRound: (round: 
             {Array.from({ length: Number(currentRound) }, (_, i) => {
               const round = Number(currentRound) - i;
               return (
-                <div
+                <Button
                   key={round}
-                  className="p-2 text-center cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleSelectRound(round)}
+                  variant="ghost"
+                  className="w-full p-2 text-center rounded-none hover:bg-gray-100"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleSelectRound(round);
+                  }}
                 >
-                  第 {round} 轮
-                </div>
+                  <span className="text-lg">第 {round} 轮</span>
+                </Button>
               );
             })}
           </div>

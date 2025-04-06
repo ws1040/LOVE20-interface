@@ -52,7 +52,7 @@ const selectedChain = CHAIN_MAP[selectedChainName] || mainnet;
 
 // 通过 RainbowKit 获取连接器
 const { connectors } = getDefaultWallets({
-  appName: 'Life20 DApp',
+  appName: 'LOVE20 DAPP',
 
   // WalletConnect Cloud Project ID
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '',

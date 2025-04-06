@@ -47,19 +47,6 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     initTokenBySymbol(router.query.symbol as string);
   }, [router.isReady, router.query.symbol]);
 
-  // 【仅供 Github Pages 静态路径路由. 暂未使用】
-  // Step 1. 获取当前token symbol: Github Pages只支持静态导出部署，所以从 window.location 获取 symbol
-  // useEffect(() => {
-  //   if (!process.env.NEXT_PUBLIC_BASE_PATH || typeof window == 'undefined') {
-  //     return;
-  //   }
-  //   const pathSegments = window.location.pathname.split('/');
-  //   const basePath = process.env.NEXT_PUBLIC_BASE_PATH.replace(/^\/|\/$/g, '');
-  //   const basePathIndex = pathSegments.indexOf(basePath);
-  //   const symbol = pathSegments[basePathIndex + 1];
-  //   initTokenBySymbol(symbol);
-  // }, []);
-
   // Step 2. 根据 symbol 初始化 token，逻辑：
   // (1)如果localstorage有该tokenSymbol缓存，直接从缓存中加载（不设置symbolToGetDetail）
   // (2)否则设置symbolToGetDetail，用hook从合约获取token信息
