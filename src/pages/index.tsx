@@ -42,31 +42,28 @@ export async function getStaticProps() {
 }
 
 const Home: NextPage<{ articles: Article[] }> = ({ articles }) => {
-  // useEffect(() => {
-  //   if (!token || hasRedirected) {
-  //     return;
-  //   }
-
-  //   const symbol = token.symbol;
-  //   if (symbol) {
-  //     setHasRedirected(true);
-  //     const target = token.hasEnded ? `/acting/?symbol=${symbol}` : `/launch/?symbol=${symbol}`;
-  //     router.push(target).catch((err) => {
-  //       console.log('路由跳转被取消或出错：', err);
-  //     });
-  //   }
-  // }, [token, router, hasRedirected]);
-
   return (
     <div className="container mx-auto px-4 py-8">
-      <LeftTitle title="LOVE20 测试声明" />
-      <div className="grid gap-6">
-        <div className="p-6">
-          <p className="text-gray-700">
-            LOVE20 是一个实验，旨在帮助社群铸造真正属于自己社群的代币，也让社群成员享受社群发展带来的经济价值。
+      <LeftTitle title="LOVE20 协议介绍" />
+      <div className="grid gap-6 mb-2">
+        <div className="p-2 text-gray-700">
+          <p className="">
+            1. LOVE20 协议是一个基于 "可验证共识行动" 和“流动性质押获取治理权” 的 <strong>去中心化社群铸币协议</strong>
+            ，目的是帮助社群，铸造真正属于自己的代币。
           </p>
-          <p className="text-gray-700 mt-2 text-red-500">不鼓励大家将之作为投机工具，请大家注意风险，谨慎投资。</p>
-
+          <p className="mt-2">
+            2. <strong>LOVE20 有以下特点：</strong>
+          </p>
+          <p className="ml-2">① 公平发射</p>
+          <p className="ml-2">② 零预留代币</p>
+          <p className="ml-2">③ 完全去中心化</p>
+          <p className="mt-2">
+            3. <strong>LOVE20 所有代码完全开源</strong>，前端代码下载后可以在本地直接运行，不需要依赖任何中心化服务器。
+          </p>
+          <p className="mt-2 text-red-500">
+            声明：LOVE20
+            是一个社会实验，旨在帮助大家拥抱更美好的生活，不鼓励大家将之作为投机工具，请大家注意风险，谨慎投资。
+          </p>
           <div className="w-full text-center my-4">
             <Button variant="outline" size="sm" className="mt-2 w-1/2 text-secondary border-secondary" asChild>
               <Link href={`/acting/`}>进入社群首页</Link>

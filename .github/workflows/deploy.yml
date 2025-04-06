@@ -36,7 +36,7 @@ jobs:
           ASSET_PREFIX: /interface
           NEXT_PUBLIC_CHAIN: thinkium801
           NEXT_PUBLIC_BLOCK_TIME: 3
-          NEXT_PUBLIC_SEPOLIA_RPC_URL: https://eth-sepolia.g.alchemy.com/v2/lbm2CtlP-tYuSEpPr8k0QhvFLqrXX9em
+          NEXT_PUBLIC_SEPOLIA_RPC_URL:
           NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: 3e08c0ee570fce9c29473eb34b0532c3
           NEXT_PUBLIC_FOUNDRY_CORE_ABI_PATH: ../LOVE20-core/out/
           NEXT_PUBLIC_FOUNDRY_PERIPHERAL_ABI_PATH: ../LOVE20-peripheral/out/
