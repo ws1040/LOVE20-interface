@@ -29,6 +29,11 @@ export default function SwapPage() {
       <Header title="兑换代币" />
       <main className="flex-grow">
         <SwapPanel />
+        <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mt-0 m-6">
+          <p className="mb-1">说明：</p>
+          <p>1. 本交易功能基于 Uniswap V2 协议实现，合约代码为官方最新版本；</p>
+          <p>2. 手续费为 0.3%，滑点上限为 5.5%；</p>
+        </div>
       </main>
     </>
   );
