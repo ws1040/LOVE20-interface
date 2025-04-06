@@ -237,7 +237,17 @@ const Deposit: React.FC = () => {
           </form>
         </Form>
       </div>
-
+      <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mt-0 m-6">
+        <p className="mb-1">说明：</p>
+        <p>
+          1. {process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL} 是用 WETH9 协议，将 {balance?.symbol} 包装的符合 ERC20
+          协议的代币
+        </p>
+        <p>
+          2. 存入的 {balance?.symbol} 会被协议锁定，随时可以通过提现功能，将{' '}
+          {process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL} 转回 {balance?.symbol}
+        </p>
+      </div>
       <LoadingOverlay
         isLoading={isPendingDeposit || isConfirmingDeposit}
         text={isPendingDeposit ? '提交交易...' : '确认交易...'}
