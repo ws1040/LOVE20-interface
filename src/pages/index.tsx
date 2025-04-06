@@ -43,7 +43,7 @@ export async function getStaticProps() {
 
 const Home: NextPage<{ articles: Article[] }> = ({ articles }) => {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 pt-8">
       <LeftTitle title="LOVE20 协议介绍" />
       <div className="grid gap-6 mb-2">
         <div className="p-2 text-gray-700">
