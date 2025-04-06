@@ -72,18 +72,15 @@ const Home: NextPage<{ articles: Article[] }> = ({ articles }) => {
         </div>
       </div>
       <LeftTitle title="LOVE20 介绍文章" />
-      <div className="grid gap-6 mt-4">
+      <div className="grid grid-cols-1 mt-2">
         {articles.map((article: Article) => (
           <Link
             href={`/articles/${article.slug}`}
             key={article.slug}
-            className="block p-6 border rounded-lg hover:shadow-md transition-shadow"
+            className="flex items-center justify-between py-3"
           >
-            <h2 className="text-xl font-semibold mb-2">{article.title}</h2>
-            {article.date && (
-              <p className="text-sm text-gray-500 mb-2">{new Date(article.date).toLocaleDateString()}</p>
-            )}
-            {article.description && <p className="text-gray-700">{article.description}</p>}
+            <h2 className="font-medium text-primary">《{article.title}》</h2>
+            <span className="text-primary text-sm">→</span>
           </Link>
         ))}
       </div>
