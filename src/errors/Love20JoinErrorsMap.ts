@@ -13,5 +13,5 @@ export const LOVE20JoinErrorsMap: Record<string, string> = {
   InvalidToAddress: '目标地址无效',
   JoinedAmountIsZero: '加入数量为0',
   NotInWhiteList: '该地址不在白名单',
-  JoinAmountExceedsMaxStake: '加入数量超过最大质押数量',
+  JoinAmountLessThanMinStake: '加入数量小于最小参与代币数',
 };

@@ -104,7 +104,7 @@ export const LOVE20SubmitAbi = [
             "internalType": "struct ActionBody",
             "components": [
               {
-                "name": "maxStake",
+                "name": "minStake",
                 "type": "uint256",
                 "internalType": "uint256"
               },
@@ -199,7 +199,7 @@ export const LOVE20SubmitAbi = [
             "internalType": "struct ActionBody",
             "components": [
               {
-                "name": "maxStake",
+                "name": "minStake",
                 "type": "uint256",
                 "internalType": "uint256"
               },
@@ -304,7 +304,7 @@ export const LOVE20SubmitAbi = [
             "internalType": "struct ActionBody",
             "components": [
               {
-                "name": "maxStake",
+                "name": "minStake",
                 "type": "uint256",
                 "internalType": "uint256"
               },
@@ -622,7 +622,7 @@ export const LOVE20SubmitAbi = [
         "internalType": "struct ActionBody",
         "components": [
           {
-            "name": "maxStake",
+            "name": "minStake",
             "type": "uint256",
             "internalType": "uint256"
           },
@@ -708,7 +708,7 @@ export const LOVE20SubmitAbi = [
         "internalType": "struct ActionBody",
         "components": [
           {
-            "name": "maxStake",
+            "name": "minStake",
             "type": "uint256",
             "internalType": "uint256"
           },
@@ -810,7 +810,7 @@ export const LOVE20SubmitAbi = [
   },
   {
     "type": "error",
-    "name": "MaxStakeZero",
+    "name": "MinStakeZero",
     "inputs": []
   },
   {

@@ -626,7 +626,7 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "error",
-    "name": "JoinAmountExceedsMaxStake",
+    "name": "JoinAmountLessThanMinStake",
     "inputs": []
   },
   {

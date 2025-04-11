@@ -97,8 +97,8 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
       <div className="mx-auto p-4 pb-2">
         <div className="mb-6">
           <div className="mb-4">
-            <h3 className="text-sm font-bold">参与资产上限</h3>
-            <p className="text-greyscale-500">{formatTokenAmount(actionInfo?.body.maxStake || BigInt(0))}</p>
+            <h3 className="text-sm font-bold">最小参与代币数</h3>
+            <p className="text-greyscale-500">{formatTokenAmount(actionInfo?.body.minStake || BigInt(0))}</p>
           </div>
 
           <div className="mb-4">
