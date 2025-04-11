@@ -84,9 +84,6 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   // 定义授权状态变量：是否已完成代币授权
   const [isTokenApproved, setIsTokenApproved] = useState(false);
 
-  // 计算剩余可质押
-  const maxStake = BigInt(actionInfo.body.maxStake) - (myStakedAmount || 0n);
-
   // 动态构造 zod schema
   const formSchema = z.object({
     // 参与数量
@@ -112,9 +109,9 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
       .refine(
         (val) => {
           const inputVal = parseUnits(val);
-          return inputVal !== null && inputVal <= maxStake;
+          return inputVal !== null && inputVal >= BigInt(actionInfo.body.minStake);
         },
-        { message: '参与代币数不能超过活动最大限制' },
+        { message: '参与代币数不能小于最小参与限制' },
       )
       // 检查输入的数值不能超过持有代币数
       .refine(
@@ -340,14 +337,12 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
                   <FormControl>
                     <Input
                       placeholder={
-                        maxStake > 0n
-                          ? myStakedAmount
-                            ? `最大可追加 ${formatTokenAmount(maxStake)}`
-                            : `最大 ${formatTokenAmount(maxStake)}`
-                          : `已到最大${formatTokenAmount(BigInt(actionInfo.body.maxStake))}，不能再追加`
+                        myStakedAmount
+                          ? `最大可追加 ${formatTokenAmount(tokenBalance || 0n)}`
+                          : `最小参与代币数 ${formatTokenAmount(BigInt(actionInfo.body.minStake))}`
                       }
                       type="number"
-                      disabled={maxStake <= 0n}
+                      disabled={!tokenBalance || tokenBalance <= 0n}
                       className="!ring-secondary-foreground"
                       {...field}
                     />

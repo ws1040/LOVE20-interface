@@ -254,7 +254,7 @@ export function useSubmitNewAction() {
   const submitNewAction = async (
     tokenAddress: `0x${string}`,
     actionBody: {
-      maxStake: bigint;
+      minStake: bigint;
       maxRandomAccounts: bigint;
       whiteList: `0x${string}`[];
       action: string;

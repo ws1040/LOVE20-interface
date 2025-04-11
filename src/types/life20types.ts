@@ -5,7 +5,7 @@ export interface ActionHead {
 }
 
 export interface ActionBody {
-  maxStake: number;
+  minStake: number;
   maxRandomAccounts: number;
   whiteList: string[];
   action: string;

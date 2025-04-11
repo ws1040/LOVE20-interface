@@ -54,10 +54,10 @@ const FormSchema = z.object({
     .min(1, { message: '奖励地址数不能为空' })
     .refine((val) => Number(val) > 0, { message: '奖励地址数必须大于0' }),
 
-  maxStake: z
+  minStake: z
     .string()
-    .min(1, { message: '最大质押不能为空' })
-    .refine((val) => Number(val) > 0, { message: '最大质押必须大于0' }),
+    .min(1, { message: '最小参与代币数不能为空' })
+    .refine((val) => Number(val) > 0, { message: '最小参与代币数必须大于0' }),
 
   whiteList: z.string().optional(),
 });
@@ -77,7 +77,7 @@ export default function NewAction() {
       verificationRule: '',
       verificationPairs: [{ key: '', value: '' }], // 初始仅1组
       rewardAddressCount: '',
-      maxStake: '',
+      minStake: '',
       whiteList: '',
     },
     mode: 'onChange',
@@ -126,7 +126,7 @@ export default function NewAction() {
     const verificationInfoGuides = values.verificationPairs.map((p) => p.value);
 
     const actionBody = {
-      maxStake: values.maxStake ? parseUnits(values.maxStake) : 0n,
+      minStake: values.minStake ? parseUnits(values.minStake) : 0n,
       maxRandomAccounts: values.rewardAddressCount ? BigInt(values.rewardAddressCount) : 0n,
       whiteList: values.whiteList ? (values.whiteList.split(',').map((addr) => addr.trim()) as `0x${string}`[]) : [],
       action: values.actionName,
@@ -308,17 +308,17 @@ export default function NewAction() {
               )}
             />
 
-            {/* 最大质押 */}
+            {/* 最小参与资产 */}
             <FormField
               control={form.control}
-              name="maxStake"
+              name="minStake"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>最大质押</FormLabel>
+                  <FormLabel>最小参与代币数</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="最大质押数必须大于0"
+                      placeholder="最小参与代币数必须大于0"
                       className="!ring-secondary-foreground"
                       {...field}
                     />

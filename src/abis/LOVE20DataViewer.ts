@@ -288,7 +288,7 @@ export const LOVE20DataViewerAbi = [
                 "internalType": "struct ActionBody",
                 "components": [
                   {
-                    "name": "maxStake",
+                    "name": "minStake",
                     "type": "uint256",
                     "internalType": "uint256"
                   },
