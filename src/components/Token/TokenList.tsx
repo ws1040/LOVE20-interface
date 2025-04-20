@@ -15,7 +15,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 import { Token, TokenContext } from '@/src/contexts/TokenContext';
 
 // my types
-import { TokenInfo } from '@/src/types/life20types';
+import { TokenInfo } from '@/src/types/love20types';
 
 // my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';

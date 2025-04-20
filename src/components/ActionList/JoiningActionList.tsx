@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useAccount } from 'wagmi';
 import { ChevronRight } from 'lucide-react';
 
-import { ActionInfo, JoinableActionDetail } from '@/src/types/life20types';
+import { ActionInfo, JoinableActionDetail } from '@/src/types/love20types';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { formatTokenAmount } from '@/src/lib/format';
 import { TokenContext } from '@/src/contexts/TokenContext';

@@ -19,7 +19,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
-import { LaunchInfo } from '@/src/types/life20types';
+import { LaunchInfo } from '@/src/types/love20types';
 import { useContribute, useContributed } from '@/src/hooks/contracts/useLOVE20Launch';
 import { useAllowance, useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import { useError } from '@/src/contexts/ErrorContext';

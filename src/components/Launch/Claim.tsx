@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 // my hooks
 import { formatTokenAmount } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
-import { LaunchInfo } from '@/src/types/life20types';
+import { LaunchInfo } from '@/src/types/love20types';
 import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
 import { useContributed, useClaimed, useExtraRefunded, useClaim } from '@/src/hooks/contracts/useLOVE20Launch';
 

@@ -12,7 +12,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my components
-import { ActionInfo } from '@/src/types/life20types';
+import { ActionInfo } from '@/src/types/love20types';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 

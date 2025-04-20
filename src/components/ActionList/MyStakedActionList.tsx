@@ -14,7 +14,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 import { Token } from '@/src/contexts/TokenContext';
 
 // my types & funcs
-import { JoinedAction } from '@/src/types/life20types';
+import { JoinedAction } from '@/src/types/love20types';
 import { formatTokenAmount } from '@/src/lib/format';
 
 // my components

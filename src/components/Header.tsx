@@ -34,8 +34,8 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
   return (
     <>
       <Head>
-        <title>{`${title} - LIFE20`}</title>
-        <meta name={`${title} - LIFE20`} content="A Web3 DApp for Life20 token management" />
+        <title>{`${title} - LOVE20`}</title>
+        <meta name={`${title} - LOVE20`} content="A Web3 DApp for LOVE20 token management" />
       </Head>
 
       <header className="flex justify-between items-center py-2 px-4">

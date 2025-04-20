@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 // my functions & types
 import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
-import { RewardInfo } from '@/src/types/life20types';
+import { RewardInfo } from '@/src/types/love20types';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';

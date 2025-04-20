@@ -11,7 +11,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my types & funcs
 import { formatTokenAmount } from '@/src/lib/format';
-import { LaunchInfo } from '@/src/types/life20types';
+import { LaunchInfo } from '@/src/types/love20types';
 
 // my contexts
 import { Token } from '@/src/contexts/TokenContext';

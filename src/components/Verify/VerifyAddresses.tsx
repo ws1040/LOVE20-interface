@@ -6,7 +6,7 @@ import React, { useState, useEffect, useContext } from 'react';
 
 // my types & funcs
 import { checkWalletConnection } from '@/src/lib/web3';
-import { ActionInfo } from '@/src/types/life20types';
+import { ActionInfo } from '@/src/types/love20types';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';

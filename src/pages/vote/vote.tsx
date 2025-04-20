@@ -14,7 +14,7 @@ import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my types & functions
-import { ActionInfo } from '@/src/types/life20types';
+import { ActionInfo } from '@/src/types/love20types';
 import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount } from '@/src/lib/format';
 

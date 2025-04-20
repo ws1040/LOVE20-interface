@@ -15,7 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { checkWalletConnection } from '@/src/lib/web3';
 import { useHandleContractError } from '@/src/lib/errorUtils';
-import { LaunchInfo } from '@/src/types/life20types';
+import { LaunchInfo } from '@/src/types/love20types';
 import { useBalanceOf, useBurnForParentToken, useTotalSupply } from '@/src/hooks/contracts/useLOVE20Token';
 
 import { Token } from '@/src/contexts/TokenContext';
