@@ -8,7 +8,7 @@ import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Verify';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my types
-import { ActionInfo } from '@/src/types/life20types';
+import { ActionInfo } from '@/src/types/love20types';
 
 // my components
 import Header from '@/src/components/Header';

@@ -2,7 +2,7 @@
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { LOVE20LaunchAbi } from '@/src/abis/LOVE20Launch';
-import { LaunchInfo } from '@/src/types/life20types';
+import { LaunchInfo } from '@/src/types/love20types';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x${string}`;
 

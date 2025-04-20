@@ -11,7 +11,7 @@ import { useVerifiedAddressesByAction } from '@/src/hooks/contracts/useLOVE20Dat
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my types
-import { VerifiedAddress } from '@/src/types/life20types';
+import { VerifiedAddress } from '@/src/types/love20types';
 
 // my components
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';

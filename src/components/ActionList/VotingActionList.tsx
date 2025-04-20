@@ -7,7 +7,7 @@ import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
 
 // my hooks
-import { ActionInfo, ActionSubmit } from '@/src/types/life20types';
+import { ActionInfo, ActionSubmit } from '@/src/types/love20types';
 import { useActionSubmits, useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useVotesNums } from '@/src/hooks/contracts/useLOVE20Vote';

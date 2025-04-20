@@ -12,7 +12,7 @@ import {
   JoinableActionDetail,
   GovData,
   PairInfo,
-} from '@/src/types/life20types';
+} from '@/src/types/love20types';
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_DATAVIEWER as `0x${string}`;
 
 // =====================

@@ -9,7 +9,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my types & funcs
-import { ActionInfo, ActionSubmit } from '@/src/types/life20types';
+import { ActionInfo, ActionSubmit } from '@/src/types/love20types';
 import { formatTokenAmount } from '@/src/lib/format';
 
 // my components

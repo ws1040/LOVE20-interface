@@ -24,7 +24,7 @@ import { useJoin } from '@/src/hooks/contracts/useLOVE20Join';
 import { useVerificationInfosByAccount } from '@/src/hooks/contracts/useLOVE20DataViewer';
 
 // contexts / types / etc
-import { ActionInfo } from '@/src/types/life20types';
+import { ActionInfo } from '@/src/types/love20types';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my components

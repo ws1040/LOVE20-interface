@@ -1,7 +1,7 @@
 import { formatIntegerStringWithCommas, formatTokenAmount, removeExtraZeros } from '@/src/lib/format';
 import { useBlockNumber } from 'wagmi';
 // my contexts
-import { LaunchInfo } from '@/src/types/life20types';
+import { LaunchInfo } from '@/src/types/love20types';
 import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
 
 // my contexts
