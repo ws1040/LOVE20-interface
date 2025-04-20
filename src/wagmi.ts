@@ -60,7 +60,7 @@ const { connectors } = getDefaultWallets({
 
 // 创建存储
 const storage = createStorage({
-  key: 'Life20-dapp',
+  key: 'LOVE20-dapp',
   storage: typeof window !== 'undefined' ? localStorage : undefined,
 });
 
