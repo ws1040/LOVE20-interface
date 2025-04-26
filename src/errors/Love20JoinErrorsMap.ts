@@ -6,7 +6,6 @@ export const LOVE20JoinErrorsMap: Record<string, string> = {
   AlreadyInitialized: '已初始化',
   AmountIsZero: '数量不能为0',
   AddressCannotBeZero: '地址不能为空',
-  CannotGenerateAtCurrentRound: '不能在当前轮次生成',
   LastBlocksOfPhaseCannotJoin: `每轮最后${process.env.NEXT_PUBLIC_JOIN_END_ROUND_BLOCKS}个区块不能加入`,
 
   ActionNotVoted: '该行动本轮没有投票',
