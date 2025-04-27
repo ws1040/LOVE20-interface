@@ -50,9 +50,6 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
           setLastNetworkErrorTime(currentTime);
           setHasRefreshed(true);
 
-          // 显示提示并延迟刷新
-          toast.error('校正网络中...');
-
           setTimeout(() => {
             localStorage.setItem('networkAutoRefreshed', 'true');
             window.location.reload();
