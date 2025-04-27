@@ -31,7 +31,10 @@ const thinkium801: Chain = {
   id: 801,
   name: 'thinkium801',
   nativeCurrency: { name: 'TestTKM', symbol: 'TKM', decimals: 18 },
-  rpcUrls: { default: { http: [process.env.NEXT_PUBLIC_THINKIUM_RPC_URL || 'https://rpc-testnet.ruleos.com'] } },
+  rpcUrls: {
+    default: { http: [process.env.NEXT_PUBLIC_THINKIUM_RPC_URL || 'https://rpc-testnet.ruleos.com'] },
+    public: { http: [process.env.NEXT_PUBLIC_THINKIUM_RPC_URL || 'https://rpc-testnet.ruleos.com'] },
+  },
   testnet: true,
 };
 
