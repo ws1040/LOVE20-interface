@@ -27,7 +27,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <WagmiProvider config={config}>
       <QueryClientProvider client={client}>
         <TokenProvider>
-          <RainbowKitProvider modalSize="compact" coolMode>
+          <RainbowKitProvider modalSize="compact">
             <SidebarProvider>
               <ErrorProvider>
                 <AppSidebar />
