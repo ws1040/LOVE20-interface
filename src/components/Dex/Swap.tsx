@@ -537,7 +537,7 @@ const SwapPanel = () => {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-greyscale-400">滑点上限 (自动)：</span>
-              <span>5.5%</span>
+              <span>0.5%</span>
             </div>
           </div>
         )}
