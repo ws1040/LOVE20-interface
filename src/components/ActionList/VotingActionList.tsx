@@ -117,9 +117,14 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
         <div className="flex justify-between items-center mb-4">
           <LeftTitle title="投票中的行动" />
           {token && (
-            <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
-              <Link href={`/vote/actions4submit?symbol=${token?.symbol}`}>推举其他行动</Link>
-            </Button>
+            <div className="flex space-x-2">
+              <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
+                <Link href={`/action/new/?symbol=${token?.symbol}`}>推举新行动</Link>
+              </Button>
+              <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
+                <Link href={`/vote/actions4submit?symbol=${token?.symbol}`}>推举历史行动</Link>
+              </Button>
+            </div>
           )}
         </div>
         <div className="space-y-4">
@@ -178,7 +183,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
               </div>
             </>
           ) : (
-            <div className="text-sm text-greyscale-500 text-center mt-8">本轮没有行动，请先推举</div>
+            <div className="text-sm text-greyscale-500 text-center mt-8">还没推举行动，请先推举</div>
           )}
         </div>
       </div>
