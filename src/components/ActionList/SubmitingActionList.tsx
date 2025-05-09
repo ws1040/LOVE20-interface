@@ -54,7 +54,7 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <LeftTitle title="所有行动" />
-        <Button variant="link" className="text-secondary border-secondary" asChild>
+        <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
           <Link href={`/action/new?symbol=${token.symbol}`}>发起新行动</Link>
         </Button>
       </div>
