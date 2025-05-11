@@ -86,11 +86,7 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
           <div className="stat place-items-center">
             <div className="stat-title">我的已投票数</div>
             <div className="stat-value text-2xl">
-              {isPendingVotesNumByAccountByActionId ? (
-                <LoadingIcon />
-              ) : (
-                formatTokenAmount(votesNumByAccountByActionId / 10000n)
-              )}
+              {isPendingVotesNumByAccountByActionId ? <LoadingIcon /> : formatTokenAmount(votesNumByAccountByActionId)}
             </div>
           </div>
           <div className="stat place-items-center">

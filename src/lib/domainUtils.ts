@@ -33,10 +33,7 @@ export const calculateAPY = (
   if (totalStaked === BigInt(0)) {
     return '0%';
   }
-  console.log('rewardForPhase', rewardForPhase);
-  console.log('totalStaked', totalStaked);
-  console.log('phaseBlocks', phaseBlocks);
-  console.log('blocksPerYear', blocksPerYear);
+
   // 计算APY: (reward / totalStaked) / (phaseBlocks / blocksPerYear) * 100%
   const apy = (Number(rewardForPhase) / Number(totalStaked) / (Number(phaseBlocks) / blocksPerYear)) * 100;
 

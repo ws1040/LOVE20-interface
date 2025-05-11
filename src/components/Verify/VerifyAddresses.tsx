@@ -41,25 +41,57 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     error: errorVerificationInfosByAction,
   } = useVerificationInfosByAction(token?.address as `0x${string}`, currentRound, actionId);
 
-  // 初始化百分比
+  // 表单状态
+  const [scores, setScores] = useState<{ [address: string]: string }>({});
+  const [abstainScore, setAbstainScore] = useState<string>('0');
+
+  // 初始化打分值
   useEffect(() => {
     if (verificationInfos && verificationInfos.length > 0) {
-      const equalPercentage = Math.floor(100 / verificationInfos.length).toString();
       const initialScores: { [address: string]: string } = {};
       verificationInfos.forEach((info) => {
-        initialScores[info.account] = equalPercentage;
+        initialScores[info.account] = '3';
       });
       setScores(initialScores);
+      setAbstainScore('0');
     }
   }, [verificationInfos]);
 
-  // 表单 & 计算票数
-  const [scores, setScores] = useState<{ [address: string]: string }>({});
-  const totalPercentage = Object.values(scores).reduce((sum, val) => sum + (parseFloat(val) || 0), 0);
-  const abstainPercentage = 100 - totalPercentage;
+  // 计算百分比
+  const calculatePercentages = () => {
+    const addressScores = Object.values(scores).map((val) => parseInt(val) || 0);
+    const abstainScoreValue = parseInt(abstainScore) || 0;
+    const totalScore = addressScores.reduce((sum, val) => sum + val, 0) + abstainScoreValue;
 
+    if (totalScore === 0) return { addressPercentages: {}, abstainPercentage: 0 };
+
+    const addressPercentages: { [address: string]: number } = {};
+    Object.keys(scores).forEach((address) => {
+      const score = parseInt(scores[address]) || 0;
+      addressPercentages[address] = (score / totalScore) * 100;
+    });
+
+    const abstainPercentage = (abstainScoreValue / totalScore) * 100;
+
+    return { addressPercentages, abstainPercentage };
+  };
+
+  const { addressPercentages, abstainPercentage } = calculatePercentages();
+
+  // 处理分数变化
   const handleScoreChange = (address: string, value: string) => {
-    setScores({ ...scores, [address]: value });
+    // 只允许整数或0
+    if (value === '' || /^[0-9]+$/.test(value)) {
+      setScores({ ...scores, [address]: value });
+    }
+  };
+
+  // 处理弃权分数变化
+  const handleAbstainScoreChange = (value: string) => {
+    // 只允许整数或0
+    if (value === '' || /^[0-9]+$/.test(value)) {
+      setAbstainScore(value);
+    }
   };
 
   // 提交验证
@@ -72,14 +104,27 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       toast.error('剩余票数不足，无法验证');
       return false;
     }
+    const allScoresZero =
+      Object.values(scores).every((score) => parseInt(score) === 0 || score === '') &&
+      (parseInt(abstainScore) === 0 || abstainScore === '');
+
+    if (allScoresZero) {
+      toast.error('请至少给一个地址或弃权投票打分');
+      return false;
+    }
     return true;
   };
+
   const handleSubmit = () => {
     if (!checkInput()) {
       return;
     }
+
+    const { addressPercentages, abstainPercentage } = calculatePercentages();
+
     const scoresArray = verificationInfos.map((info) => {
-      const percentage = parseFloat(scores[info.account] || '0');
+      const percentage = addressPercentages[info.account] || 0;
+      console.log(percentage);
       return (BigInt(Math.round(percentage * 100)) * remainingVotes) / 10000n;
     });
 
@@ -137,18 +182,21 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                     </div>
                   )}
                 </div>
-                <div className="flex items-center">
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="0.01"
-                    value={scores[info.account] || ''}
-                    onChange={(e) => handleScoreChange(info.account, e.target.value)}
-                    className="w-13 px-1 py-1 border rounded"
-                    disabled={isWriting || isConfirmed}
-                  />
-                  %
+                <div className="flex items-center gap-1">
+                  <div className="flex items-center">
+                    <input
+                      type="number"
+                      min="0"
+                      value={scores[info.account] || ''}
+                      onChange={(e) => handleScoreChange(info.account, e.target.value)}
+                      className="w-10 px-1 py-1 border rounded"
+                      disabled={isWriting || isConfirmed}
+                    />
+                    <span className="ml-1 text-greyscale-500">分:</span>
+                  </div>
+                  <div className="w-10 text-right text-greyscale-500">
+                    {(addressPercentages[info.account] || 0).toFixed(2)}%
+                  </div>
                 </div>
               </li>
             ))
@@ -162,17 +210,19 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                   <span>弃权票数：</span>
                 </div>
               </div>
-              <div className="flex items-center">
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.01"
-                  value={abstainPercentage.toFixed(2)}
-                  className="w-13 px-1 py-1 border rounded"
-                  disabled={true}
-                />
-                %
+              <div className="flex items-center gap-1">
+                <div className="flex items-center">
+                  <input
+                    type="number"
+                    min="0"
+                    value={abstainScore}
+                    onChange={(e) => handleAbstainScoreChange(e.target.value)}
+                    className="w-10 px-1 py-1 border rounded"
+                    disabled={isWriting || isConfirmed}
+                  />
+                  <span className="ml-1 text-greyscale-500">分:</span>
+                </div>
+                <div className="w-10 text-right text-greyscale-500">{abstainPercentage.toFixed(2)}%</div>
               </div>
             </li>
           )}

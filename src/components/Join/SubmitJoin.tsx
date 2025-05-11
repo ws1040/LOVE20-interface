@@ -105,10 +105,13 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
         },
         { message: '参与代币数不能为 0' },
       )
-      // 检查输入的数值不能超过活动最大限制
+      // 检查输入的数值不小于活动最小限制。但是追加的话不用检查
       .refine(
         (val) => {
           const inputVal = parseUnits(val);
+          if (myStakedAmount && myStakedAmount > 0n) {
+            return inputVal !== null && inputVal > 0n;
+          }
           return inputVal !== null && inputVal >= BigInt(actionInfo.body.minStake);
         },
         { message: '参与代币数不能小于最小参与限制' },
