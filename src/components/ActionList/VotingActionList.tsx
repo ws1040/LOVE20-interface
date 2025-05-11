@@ -106,88 +106,86 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
     return <LoadingIcon />;
   }
 
-  // 如果只有1个投票，就直接跳到投票页面
-  if (uniqueActionIds.length === 1) {
-    router.push(`/vote/vote?ids=${uniqueActionIds[0]}&symbol=${token?.symbol}`);
-  }
+  // // 如果只有1个投票，就直接跳到投票页面
+  // if (uniqueActionIds.length === 1) {
+  //   router.push(`/vote/vote?ids=${uniqueActionIds[0]}&symbol=${token?.symbol}`);
+  // }
 
   return (
-    uniqueActionIds.length !== 1 && (
-      <div className="p-4">
-        <div className="flex justify-between items-center mb-4">
-          <LeftTitle title="投票中的行动" />
-          {token && (
-            <div className="flex space-x-2">
-              <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
-                <Link href={`/action/new/?symbol=${token?.symbol}`}>推举新行动</Link>
-              </Button>
-              <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
-                <Link href={`/vote/actions4submit?symbol=${token?.symbol}`}>推举历史行动</Link>
+    <div className="p-4">
+      <div className="flex justify-between items-center mb-4">
+        <LeftTitle title="投票中的行动" />
+        {token && (
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
+              <Link href={`/action/new/?symbol=${token?.symbol}`}>推举新行动</Link>
+            </Button>
+            <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
+              <Link href={`/vote/actions4submit?symbol=${token?.symbol}`}>推举历史行动</Link>
+            </Button>
+          </div>
+        )}
+      </div>
+      <div className="space-y-4">
+        {uniqueActionIds.length > 0 ? (
+          <>
+            {actionInfos?.map((action: ActionInfo, index: number) => {
+              const submitter = actionSubmits?.find(
+                (submit: ActionSubmit) => BigInt(submit.actionId) === BigInt(action.head.id),
+              )?.submitter;
+
+              return (
+                <Card key={action.head.id} className="shadow-none flex items-center">
+                  <input
+                    type="checkbox"
+                    className="checkbox accent-secondary ml-2"
+                    checked={selectedActions.has(BigInt(action.head.id))}
+                    onChange={() => handleCheckboxChange(BigInt(action.head.id))}
+                  />
+                  <Link
+                    href={`/action/${action.head.id}?type=vote&symbol=${token?.symbol}`}
+                    key={action.head.id}
+                    className="w-full"
+                  >
+                    <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
+                      <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
+                      <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
+                    </CardHeader>
+                    <CardContent className="px-3 pt-1 pb-2">
+                      <div className="text-greyscale-500">{action.body.consensus}</div>
+                      <div className="flex justify-between mt-1 text-sm">
+                        <span className="flex items-center">
+                          <span className="text-greyscale-400 mr-1">推举人</span>
+                          <span className="text-secondary">
+                            <AddressWithCopyButton address={submitter} showCopyButton={false} />
+                          </span>
+                        </span>
+                        <span>
+                          <span className="text-greyscale-400 mr-1">投票占比</span>
+                          <span className="text-secondary">
+                            {Number(votes?.[index] || 0n) === 0
+                              ? '0'
+                              : ((Number(votes?.[index] || 0n) * 100) / Number(totalVotes)).toFixed(1)}
+                            %
+                          </span>
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Link>
+                </Card>
+              );
+            })}
+            <div className="flex justify-center mt-4">
+              <Button variant="outline" className="w-1/2 text-secondary border-secondary" onClick={handleSubmit}>
+                给选中的行动投票
               </Button>
             </div>
-          )}
-        </div>
-        <div className="space-y-4">
-          {uniqueActionIds.length > 0 ? (
-            <>
-              {actionInfos?.map((action: ActionInfo, index: number) => {
-                const submitter = actionSubmits?.find(
-                  (submit: ActionSubmit) => BigInt(submit.actionId) === BigInt(action.head.id),
-                )?.submitter;
-
-                return (
-                  <Card key={action.head.id} className="shadow-none flex items-center">
-                    <input
-                      type="checkbox"
-                      className="checkbox accent-secondary ml-2"
-                      checked={selectedActions.has(BigInt(action.head.id))}
-                      onChange={() => handleCheckboxChange(BigInt(action.head.id))}
-                    />
-                    <Link
-                      href={`/action/${action.head.id}?type=vote&symbol=${token?.symbol}`}
-                      key={action.head.id}
-                      className="w-full"
-                    >
-                      <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
-                        <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
-                        <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
-                      </CardHeader>
-                      <CardContent className="px-3 pt-1 pb-2">
-                        <div className="text-greyscale-500">{action.body.consensus}</div>
-                        <div className="flex justify-between mt-1 text-sm">
-                          <span className="flex items-center">
-                            <span className="text-greyscale-400 mr-1">推举人</span>
-                            <span className="text-secondary">
-                              <AddressWithCopyButton address={submitter} showCopyButton={false} />
-                            </span>
-                          </span>
-                          <span>
-                            <span className="text-greyscale-400 mr-1">投票占比</span>
-                            <span className="text-secondary">
-                              {Number(votes?.[index] || 0n) === 0
-                                ? '0'
-                                : ((Number(votes?.[index] || 0n) * 100) / Number(totalVotes)).toFixed(1)}
-                              %
-                            </span>
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Link>
-                  </Card>
-                );
-              })}
-              <div className="flex justify-center mt-4">
-                <Button variant="outline" className="w-1/2 text-secondary border-secondary" onClick={handleSubmit}>
-                  给选中的行动投票
-                </Button>
-              </div>
-            </>
-          ) : (
-            <div className="text-sm text-greyscale-500 text-center mt-8">还没推举行动，请先推举</div>
-          )}
-        </div>
+          </>
+        ) : (
+          <div className="text-sm text-greyscale-500 text-center mt-8">还没推举行动，请先推举</div>
+        )}
       </div>
-    )
+    </div>
   );
 };
 
