@@ -558,25 +558,6 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "launchedTokens",
-    "inputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "launchedTokensByPage",
     "inputs": [
       {
@@ -746,7 +727,7 @@ export const LOVE20LaunchAbi = [
     "name": "launchingTokens",
     "inputs": [
       {
-        "name": "",
+        "name": "index",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -817,30 +798,6 @@ export const LOVE20LaunchAbi = [
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "participatedTokensByAccount",
-    "inputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
       }
     ],
     "stateMutability": "view"

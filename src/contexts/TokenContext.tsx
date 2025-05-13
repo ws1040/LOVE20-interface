@@ -38,6 +38,29 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   const router = useRouter();
   const [token, setToken] = useState<Token | null>(null);
   const [symbolToGetDetail, setSymbolToGetDetail] = useState<string | undefined>(undefined);
+  const currentAppVersion = process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0';
+
+  const checkAndClearCache = () => {
+    try {
+      const storedVersion = localStorage.getItem('app_version');
+
+      if (storedVersion !== currentAppVersion) {
+        console.log(`currentAppVersion: ${storedVersion || 'null'} -> ${currentAppVersion} ...`);
+        localStorage.clear();
+        localStorage.setItem('app_version', currentAppVersion);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('ERROR checkAndClearCache:', error);
+      return false;
+    }
+  };
+
+  // 初始化时检查版本并清理缓存
+  useEffect(() => {
+    checkAndClearCache();
+  }, []);
 
   // Step 1. 获取当前token symbol: 从动态路由获取 symbol
   useEffect(() => {
@@ -56,16 +79,19 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
     try {
       if (ifNoSymbol) {
-        // 没有指定token时, 清掉 localStorage。这个是解决协议地址变化，导致token缓存出错。回头看看可不可以优化。
-        localStorage.removeItem('currentToken');
+        // 没有指定token时, 清掉 localStorage
+        clearToken();
       } else {
-        // 从 Local Storage 加载 token
-        const storedToken = localStorage.getItem('currentToken');
-        if (storedToken && JSON.parse(storedToken)) {
-          const _token = JSON.parse(storedToken);
-          if (ifNoSymbol || tokenSymbol === _token.symbol) {
-            setToken(_token);
-            return;
+        const cacheCleared = checkAndClearCache();
+        if (!cacheCleared) {
+          // 从 Local Storage 加载 token
+          const storedToken = localStorage.getItem('currentToken');
+          if (storedToken && JSON.parse(storedToken)) {
+            const _token = JSON.parse(storedToken);
+            if (ifNoSymbol || tokenSymbol === _token.symbol) {
+              setToken(_token);
+              return; // 从 Local Storage 中找到了token，直接返回
+            }
           }
         }
       }
@@ -151,6 +177,10 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
           setToken(JSON.parse(event.newValue));
         } else {
           setToken(null);
+        }
+      } else if (event.key === 'app_version') {
+        if (event.newValue !== event.oldValue) {
+          clearToken();
         }
       }
     };

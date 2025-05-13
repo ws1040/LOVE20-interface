@@ -6,7 +6,6 @@ import Link from 'next/link';
 import React from 'react';
 
 // my hooks
-import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useJoinedActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
@@ -33,25 +32,13 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
     error: errorJoinedActions,
   } = useJoinedActions((token?.address as `0x${string}`) || '', accountAddress as `0x${string}`);
 
-  const {
-    actionInfos,
-    isPending: isPendingActionInfosByIds,
-    error: errorActionInfosByIds,
-  } = useActionInfosByIds(
-    (token?.address as `0x${string}`) || '',
-    joinedActions?.map((action) => action.actionId) || [],
-  );
-
   // 错误处理
   const { handleContractError } = useHandleContractError();
   if (errorJoinedActions) {
     handleContractError(errorJoinedActions, 'dataViewer');
   }
-  if (errorActionInfosByIds) {
-    handleContractError(errorActionInfosByIds, 'submit');
-  }
 
-  if (isPendingJoinedActions || (joinedActions && joinedActions.length > 0 && isPendingActionInfosByIds)) {
+  if (isPendingJoinedActions) {
     return (
       <>
         <div className="pt-4 px-4">
@@ -72,23 +59,36 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
       ) : (
         <div className="mt-4 space-y-4">
           {joinedActions?.map((action: JoinedAction, index: number) => (
-            <Card key={action.actionId} className="shadow-none">
+            <Card key={action.action.head.id} className="shadow-none">
               <Link
-                href={`/my/actrewards?id=${action.actionId}&symbol=${token?.symbol}`}
-                key={action.actionId}
+                href={`/my/actrewards?id=${action.action.head.id}&symbol=${token?.symbol}`}
+                key={action.action.head.id}
                 className="relative block"
               >
-                <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
-                  <span className="text-greyscale-400 text-sm mr-1">{`No.${action.actionId}`}</span>
-                  <span className="font-bold text-greyscale-800">{`${actionInfos?.[index]?.body.action}`}</span>
+                <CardHeader className="px-3 pt-2 pb-1 flex-row justify-between items-baseline">
+                  <div className="flex items-baseline">
+                    <span className="text-greyscale-400 text-sm mr-1">{`No.${action.action.head.id}`}</span>
+                    <span className="font-bold text-greyscale-800">{`${action.action.body.action}`}</span>
+                  </div>
+                  {action.votesNum > 0 ? (
+                    <span className="text-secondary text-xs">进行中</span>
+                  ) : (
+                    <span className="text-error text-xs">未投票</span>
+                  )}
                 </CardHeader>
                 <CardContent className="px-3 pt-1 pb-2">
-                  <div className="text-greyscale-500">{actionInfos?.[index]?.body.consensus}</div>
+                  <div className="text-greyscale-500">{action.action.body.consensus}</div>
                   <div className="flex justify-between mt-1 text-sm">
                     <span>
-                      <span className="text-greyscale-400 mr-1">参与代币数</span>
+                      <span className="text-greyscale-400 mr-1">我参与代币</span>
                       <span className="text-secondary">{formatTokenAmount(action.stakedAmount)}</span>
                     </span>
+                    {action.votesNum > 0 && (
+                      <span>
+                        <span className="text-greyscale-400 mr-1">投票占比</span>
+                        <span className="text-secondary">{`${(Number(action.votePercent) / 100).toFixed(1)}%`}</span>
+                      </span>
+                    )}
                   </div>
                 </CardContent>
                 <ChevronRight className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-greyscale-400 pointer-events-none" />

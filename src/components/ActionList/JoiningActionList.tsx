@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useAccount } from 'wagmi';
 import { ChevronRight } from 'lucide-react';
 
-import { ActionInfo, JoinableActionDetail } from '@/src/types/love20types';
+import { JoinableActionDetail } from '@/src/types/love20types';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { formatTokenAmount } from '@/src/lib/format';
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -59,7 +59,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
           {joinableActionDetails.map((actionDetail: JoinableActionDetail, index: number) => {
             // 判断当前账户是否已经加入该行动
             const isJoined = joinedActions?.some(
-              (joinedAction) => joinedAction.actionId === BigInt(actionDetail.action.head.id),
+              (joinedAction) => joinedAction.action.head.id === actionDetail.action.head.id,
             );
 
             // 根据是否已加入，设置不同的链接
@@ -89,7 +89,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                       <span>
                         <span className="text-greyscale-400 mr-1">参与代币数</span>
                         <span className="text-secondary">
-                          {formatTokenAmount(joinableActionDetails[index].joinedAmount || 0n)}
+                          {formatTokenAmount(joinableActionDetails[index].joinedAmount || 0n, 0)}
                         </span>
                       </span>
                     </div>

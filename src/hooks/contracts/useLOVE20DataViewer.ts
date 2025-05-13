@@ -75,7 +75,7 @@ export const useJoinedActions = (tokenAddress: `0x${string}`, account: `0x${stri
     },
   });
 
-  return { joinedActions: data as JoinedAction[], isPending, error };
+  return { joinedActions: data ? [...(data as unknown as JoinedAction[])] : [], isPending, error };
 };
 
 /**
