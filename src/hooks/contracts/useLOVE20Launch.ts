@@ -254,20 +254,6 @@ export const useLaunchedTokenNum = () => {
 };
 
 /**
- * Hook for launchedTokens
- */
-export const useLaunchedTokens = (index: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'launchedTokens',
-    args: [index],
-  });
-
-  return { launchedToken: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
  * Hook for launchedTokensByPage
  */
 export const useLaunchedTokensByPage = (start: bigint, end: bigint, reverse: boolean) => {
@@ -414,20 +400,6 @@ export const useParticipatedTokenNum = (walletAddress: `0x${string}`) => {
   });
 
   return { participatedTokenNum: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook for participatedTokensByAccount
- */
-export const useParticipatedTokensByAccount = (walletAddress: `0x${string}`, index: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'participatedTokensByAccount',
-    args: [walletAddress, index],
-  });
-
-  return { participatedToken: data as `0x${string}` | undefined, isPending, error };
 };
 
 /**
