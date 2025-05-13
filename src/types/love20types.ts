@@ -37,9 +37,10 @@ export interface JoinableActionDetail {
   joinedAmount: bigint;
 }
 export interface JoinedAction {
-  actionId: bigint;
-  lastJoinedRound: bigint;
+  action: ActionInfo;
   stakedAmount: bigint;
+  votesNum: bigint;
+  votePercent: bigint;
 }
 
 export interface VerifiedAddress {

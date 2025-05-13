@@ -349,12 +349,93 @@ export const LOVE20DataViewerAbi = [
         "internalType": "struct JoinedAction[]",
         "components": [
           {
-            "name": "actionId",
+            "name": "action",
+            "type": "tuple",
+            "internalType": "struct ActionInfo",
+            "components": [
+              {
+                "name": "head",
+                "type": "tuple",
+                "internalType": "struct ActionHead",
+                "components": [
+                  {
+                    "name": "id",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "author",
+                    "type": "address",
+                    "internalType": "address"
+                  },
+                  {
+                    "name": "createAtBlock",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  }
+                ]
+              },
+              {
+                "name": "body",
+                "type": "tuple",
+                "internalType": "struct ActionBody",
+                "components": [
+                  {
+                    "name": "minStake",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "maxRandomAccounts",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "whiteList",
+                    "type": "address[]",
+                    "internalType": "address[]"
+                  },
+                  {
+                    "name": "action",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "consensus",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "verificationRule",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "verificationKeys",
+                    "type": "string[]",
+                    "internalType": "string[]"
+                  },
+                  {
+                    "name": "verificationInfoGuides",
+                    "type": "string[]",
+                    "internalType": "string[]"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "stakedAmount",
             "type": "uint256",
             "internalType": "uint256"
           },
           {
-            "name": "stakedAmount",
+            "name": "votesNum",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "votePercent",
             "type": "uint256",
             "internalType": "uint256"
           }
@@ -385,12 +466,93 @@ export const LOVE20DataViewerAbi = [
         "internalType": "struct JoinedAction[]",
         "components": [
           {
-            "name": "actionId",
+            "name": "action",
+            "type": "tuple",
+            "internalType": "struct ActionInfo",
+            "components": [
+              {
+                "name": "head",
+                "type": "tuple",
+                "internalType": "struct ActionHead",
+                "components": [
+                  {
+                    "name": "id",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "author",
+                    "type": "address",
+                    "internalType": "address"
+                  },
+                  {
+                    "name": "createAtBlock",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  }
+                ]
+              },
+              {
+                "name": "body",
+                "type": "tuple",
+                "internalType": "struct ActionBody",
+                "components": [
+                  {
+                    "name": "minStake",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "maxRandomAccounts",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "whiteList",
+                    "type": "address[]",
+                    "internalType": "address[]"
+                  },
+                  {
+                    "name": "action",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "consensus",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "verificationRule",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "verificationKeys",
+                    "type": "string[]",
+                    "internalType": "string[]"
+                  },
+                  {
+                    "name": "verificationInfoGuides",
+                    "type": "string[]",
+                    "internalType": "string[]"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "stakedAmount",
             "type": "uint256",
             "internalType": "uint256"
           },
           {
-            "name": "stakedAmount",
+            "name": "votesNum",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "votePercent",
             "type": "uint256",
             "internalType": "uint256"
           }

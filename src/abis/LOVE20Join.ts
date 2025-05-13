@@ -616,11 +616,6 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "error",
-    "name": "CannotGenerateAtCurrentRound",
-    "inputs": []
-  },
-  {
-    "type": "error",
     "name": "InvalidToAddress",
     "inputs": []
   },

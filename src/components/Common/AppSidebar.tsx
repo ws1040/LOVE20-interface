@@ -84,12 +84,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: '交易',
         url: '#',
         items: [
-          {
-            title: '交易代币',
-            url: `${basePath}/dex/swap?symbol=${token.symbol}`,
-            isActive: false,
-            icon: BadgeDollarSign,
-          },
+          // {
+          //   title: '交易代币',
+          //   url: `${basePath}/dex/swap?symbol=${token.symbol}`,
+          //   isActive: false,
+          //   icon: BadgeDollarSign,
+          // },
           {
             title: `兑换${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`,
             url: `${basePath}/dex/deposit?symbol=${token.symbol}`,
