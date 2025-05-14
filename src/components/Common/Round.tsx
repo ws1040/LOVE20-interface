@@ -31,7 +31,7 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   const voteOriginBlocks = token ? Number(token.voteOriginBlocks) : 0;
   // 根据当前区块数计算初始剩余区块数及剩余时间（秒）
   const leftBlocksStatic = ROUND_BLOCKS - ((Number(blockNumber) - voteOriginBlocks) % ROUND_BLOCKS);
-  const initialTimeLeft = leftBlocksStatic > 0 ? leftBlocksStatic * BLOCK_TIME : 0;
+  const initialTimeLeft = leftBlocksStatic > 0 ? Math.ceil((leftBlocksStatic * BLOCK_TIME) / 100) : 0;
 
   // State: 保存倒计时剩余秒数，由 LeftTime 组件的 onTick 回调更新
   const [currentTimeLeft, setCurrentTimeLeft] = useState(initialTimeLeft);
@@ -40,7 +40,7 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   useEffect(() => {
     if (!blockNumber) return;
     const updatedLeftBlocks = ROUND_BLOCKS - ((Number(blockNumber) - voteOriginBlocks) % ROUND_BLOCKS);
-    const updatedTimeLeft = updatedLeftBlocks > 0 ? updatedLeftBlocks * BLOCK_TIME : 0;
+    const updatedTimeLeft = updatedLeftBlocks > 0 ? Math.ceil((updatedLeftBlocks * BLOCK_TIME) / 100) : 0;
     setCurrentTimeLeft(updatedTimeLeft);
   }, [blockNumber, ROUND_BLOCKS, BLOCK_TIME, voteOriginBlocks]);
 
@@ -69,7 +69,7 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
       </h1>
       <span className="text-sm mt-1 pt-0">
         <span className="text-greyscale-400 mr-1">剩余:</span>
-        <span className="text-secondary mr-1">{Math.ceil(currentTimeLeft / BLOCK_TIME)}</span>
+        <span className="text-secondary mr-1">{Math.ceil((currentTimeLeft * 100) / BLOCK_TIME)}</span>
         <span className="text-greyscale-400 mr-1">块, 约</span>
         <LeftTime initialTimeLeft={initialTimeLeft} onTick={setCurrentTimeLeft} />
       </span>

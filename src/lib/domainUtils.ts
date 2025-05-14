@@ -17,7 +17,7 @@ export const calculateAPY = (
   if (!rewardAvailable || !tokenAmountForSl) return '0%';
 
   // 年区块数 = 365天 * 86400秒/天 / 每个区块的秒数
-  const blocksPerYear = (365 * 86400) / Number(process.env.NEXT_PUBLIC_BLOCK_TIME || 0);
+  const blocksPerYear = (365 * 86400 * 100) / Number(process.env.NEXT_PUBLIC_BLOCK_TIME || 0);
   // 一个阶段的区块数
   const phaseBlocks = BigInt(process.env.NEXT_PUBLIC_PHASE_BLOCKS || 0);
   if (blocksPerYear === 0 || phaseBlocks === 0n) {
@@ -52,7 +52,7 @@ export const calculateActionAPY = (expectedReward?: bigint, joinedAmount?: bigin
   if (!expectedReward || !joinedAmount || joinedAmount === 0n) return '0%';
 
   // 年区块数 = 365天 * 86400秒/天 / 每个区块的秒数
-  const blocksPerYear = (365 * 86400) / Number(process.env.NEXT_PUBLIC_BLOCK_TIME || 0);
+  const blocksPerYear = (365 * 86400 * 100) / Number(process.env.NEXT_PUBLIC_BLOCK_TIME || 0);
   // 一个阶段的区块数
   const phaseBlocks = BigInt(process.env.NEXT_PUBLIC_PHASE_BLOCKS || 0);
 
