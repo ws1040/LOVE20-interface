@@ -125,9 +125,12 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
         </Button>
       ) : (
         <>
-          <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
-            <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
+          <Button type="button" className="w" disabled={true}>
+            第1次内测体验, 暂时关闭增加代币
           </Button>
+          {/* <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
+            <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
+          </Button> */}
           <div className="flex flex-col items-center mt-2">
             <div className="text-sm text-greyscale-600">
               {isPendingVerificationInfo && '加载中...'}
