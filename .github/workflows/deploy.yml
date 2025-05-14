@@ -35,7 +35,7 @@ jobs:
           BASE_PATH: /interface
           ASSET_PREFIX: /interface
           NEXT_PUBLIC_CHAIN: thinkium801
-          NEXT_PUBLIC_APP_VERSION: 1.0.1
+          NEXT_PUBLIC_APP_VERSION: 1.0.2
           NEXT_PUBLIC_BLOCK_TIME: 255
           NEXT_PUBLIC_SEPOLIA_RPC_URL:
           NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: 3e08c0ee570fce9c29473eb34b0532c3
