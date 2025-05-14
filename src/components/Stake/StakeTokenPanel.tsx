@@ -280,7 +280,10 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
 
           {/* 按钮组：1.授权；2.质押 */}
           <div className="flex justify-center space-x-4">
-            <Button
+            <Button type="button" className="w" disabled={true}>
+              第1次内测体验, 暂时关闭加速质押
+            </Button>
+            {/* <Button
               // 为授权按钮添加 ref
               ref={approveButtonRef}
               className="w-1/2"
@@ -311,7 +314,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
                 : isConfirmedStakeToken
                 ? '2.已质押'
                 : '2.质押'}
-            </Button>
+            </Button> */}
           </div>
         </form>
       </Form>
