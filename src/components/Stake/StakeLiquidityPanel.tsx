@@ -108,7 +108,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   const { setError } = useError();
   const { first: isFirstTimeStake } = useRouter().query;
 
-  // 使用 useTokenPairInfoWithAccount 替换 useBalanceOf 和 useAllowance
+  // 获取 pairInfo
   const {
     pairInfo,
     isPending: isPendingPair,
@@ -155,6 +155,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   // 2.1 获取质押状态
   // --------------------------------------------------
   const {
+    govVotes,
     promisedWaitingPhases,
     isPending: isPendingAccountStakeStatus,
     error: errAccountStakeStatus,
@@ -549,63 +550,72 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
             )}
           />
 
-          <div className="flex justify-center space-x-2 mt-4">
-            <Button
-              type="button"
-              className="w-1/3"
-              ref={approveTokenButtonRef}
-              disabled={isPendingApproveToken || isConfirmingApproveToken || isTokenApproved}
-              onClick={form.handleSubmit(onApproveToken)}
-            >
-              {isPendingApproveToken
-                ? `1.提交中...`
-                : isConfirmingApproveToken
-                ? `1.确认中...`
-                : isTokenApproved
-                ? `1.${token?.symbol}已授权`
-                : `1.授权${token?.symbol}`}
-            </Button>
+          {govVotes && (
+            <div className="flex justify-center space-x-2 mt-4">
+              <Button type="button" className="w" disabled={true}>
+                第1次内测体验, 暂时关闭追加治理票
+              </Button>
+            </div>
+          )}
+          {!govVotes && (
+            <div className="flex justify-center space-x-2 mt-4">
+              <Button
+                type="button"
+                className="w-1/3"
+                ref={approveTokenButtonRef}
+                disabled={isPendingApproveToken || isConfirmingApproveToken || isTokenApproved}
+                onClick={form.handleSubmit(onApproveToken)}
+              >
+                {isPendingApproveToken
+                  ? `1.提交中...`
+                  : isConfirmingApproveToken
+                  ? `1.确认中...`
+                  : isTokenApproved
+                  ? `1.${token?.symbol}已授权`
+                  : `1.授权${token?.symbol}`}
+              </Button>
 
-            <Button
-              type="button"
-              className="w-1/3"
-              disabled={
-                !isTokenApproved ||
-                isPendingApproveParentToken ||
-                isConfirmingApproveParentToken ||
-                isParentTokenApproved
-              }
-              onClick={form.handleSubmit(onApproveParentToken)}
-            >
-              {isPendingApproveParentToken
-                ? `2.提交中...`
-                : isConfirmingApproveParentToken
-                ? `2.确认中...`
-                : isParentTokenApproved
-                ? `2.${token?.parentTokenSymbol}已授权`
-                : `2.授权${token?.parentTokenSymbol}`}
-            </Button>
+              <Button
+                type="button"
+                className="w-1/3"
+                disabled={
+                  !isTokenApproved ||
+                  isPendingApproveParentToken ||
+                  isConfirmingApproveParentToken ||
+                  isParentTokenApproved
+                }
+                onClick={form.handleSubmit(onApproveParentToken)}
+              >
+                {isPendingApproveParentToken
+                  ? `2.提交中...`
+                  : isConfirmingApproveParentToken
+                  ? `2.确认中...`
+                  : isParentTokenApproved
+                  ? `2.${token?.parentTokenSymbol}已授权`
+                  : `2.授权${token?.parentTokenSymbol}`}
+              </Button>
 
-            <Button
-              type="submit"
-              className="w-1/3"
-              disabled={
-                !isTokenApproved ||
-                !isParentTokenApproved ||
-                isPendingStakeLiquidity ||
-                isConfirmingStakeLiquidity ||
-                isConfirmedStakeLiquidity
-              }
-            >
-              {isPendingStakeLiquidity
-                ? '3.质押中...'
-                : isConfirmingStakeLiquidity
-                ? '3.确认中...'
-                : isConfirmedStakeLiquidity
-                ? '3.已质押'
-                : '3.质押'}
-            </Button>
-          </div>
+              <Button
+                type="submit"
+                className="w-1/3"
+                disabled={
+                  !isTokenApproved ||
+                  !isParentTokenApproved ||
+                  isPendingStakeLiquidity ||
+                  isConfirmingStakeLiquidity ||
+                  isConfirmedStakeLiquidity
+                }
+              >
+                {isPendingStakeLiquidity
+                  ? '3.质押中...'
+                  : isConfirmingStakeLiquidity
+                  ? '3.确认中...'
+                  : isConfirmedStakeLiquidity
+                  ? '3.已质押'
+                  : '3.质押'}
+              </Button>
+            </div>
+          )}
         </form>
       </Form>
 
