@@ -31,7 +31,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // others
 import { checkWalletConnection } from '@/src/lib/web3';
-import { parseUnits } from '@/src/lib/format';
+import { formatTokenAmount, parseUnits } from '@/src/lib/format';
 
 // 获取环境变量
 const SUBMIT_MIN_PERCENTAGE = Number(process.env.NEXT_PUBLIC_SUBMIT_MIN_PER_THOUSAND || '0') / 1000;
@@ -167,7 +167,7 @@ export default function NewAction() {
             type="error"
             message={`有效治理票，须达到总治理票的${(SUBMIT_PERCENTAGE * 100).toFixed(
               1,
-            )}%，才能新建、推举行动（您当前有效治理票为${validGovVotes.toString()}）`}
+            )}%，才能新建、推举行动（您当前有效治理票为${formatTokenAmount(validGovVotes, 2)}）`}
             className="mb-4"
           />
         )}
