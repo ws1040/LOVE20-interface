@@ -551,14 +551,14 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
             )}
           />
 
-          {govVotes && (
+          {govVotes && govVotes >= 22207680000000000000000n && (
             <div className="flex justify-center space-x-2 mt-4">
               <Button type="button" className="w" disabled={true}>
                 第1次内测体验, 暂时关闭追加治理票
               </Button>
             </div>
           )}
-          {!govVotes && (
+          {(!govVotes || govVotes < 22207680000000000000000n) && (
             <div className="flex justify-center space-x-2 mt-4">
               <Button
                 type="button"
