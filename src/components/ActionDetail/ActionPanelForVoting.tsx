@@ -1,7 +1,9 @@
 'use client';
 import React, { useEffect, useContext } from 'react';
-import { BaseError, useAccount } from 'wagmi';
+import { useRouter } from 'next/router';
+import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
+import toast from 'react-hot-toast';
 
 // my hooks
 import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
@@ -24,6 +26,7 @@ interface ActionPanelForVoteProps {
 const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRoundChange }) => {
   const { address: account } = useAccount();
   const { token } = useContext(TokenContext) || {};
+  const router = useRouter();
 
   // 获取当前轮次, 并设置状态给父组件
   const { currentRound, isPending: isPendingCurrentRound, error: errCurrentRound } = useCurrentRound();
@@ -78,6 +81,18 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
       handleContractError(errValidGovVotes, 'stake');
     }
   }, [errorVote, errCurrentRound, errVotesNumByAccountByActionId, errValidGovVotes]);
+
+  // 提交成功
+  useEffect(() => {
+    if (isConfirmedVote && !errorVote) {
+      toast.success('提交成功', {
+        duration: 2000, // 2秒
+      });
+      setTimeout(() => {
+        router.push(`/vote/actions/?symbol=${token?.symbol}`);
+      }, 2000);
+    }
+  }, [isConfirmedVote, errorVote]);
 
   return (
     <>
