@@ -92,6 +92,7 @@ export default function NewAction() {
   // 检查是否可以提交（替换原有的两个hooks）
   const {
     hasEnoughVotes,
+    percentage: accountPercentage,
     validGovVotes,
     govData: totalGovVotes,
     SUBMIT_MIN_PERCENTAGE: SUBMIT_PERCENTAGE,
@@ -116,7 +117,9 @@ export default function NewAction() {
       const percentage = (SUBMIT_PERCENTAGE * 100).toFixed(2);
       form.setError('actionName', {
         type: 'manual',
-        message: `有效治理票，须达到总治理票的${percentage}%，才能新建、推举行动（您当前有效治理票为${validGovVotes}）`,
+        message: `有效治理票，须达到总治理票的${percentage}%，才能新建、推举行动（您当前有效治理票为${validGovVotes}，占比${(
+          accountPercentage * 100
+        ).toFixed(2)}%）`,
       });
       return;
     }
@@ -167,7 +170,9 @@ export default function NewAction() {
             type="error"
             message={`有效治理票，须达到总治理票的${(SUBMIT_PERCENTAGE * 100).toFixed(
               1,
-            )}%，才能新建、推举行动（您当前有效治理票为${formatTokenAmount(validGovVotes, 2)}）`}
+            )}%，才能新建、推举行动（您当前有效治理票为${formatTokenAmount(validGovVotes, 2)}，占比${(
+              accountPercentage * 100
+            ).toFixed(2)}%））`}
             className="mb-4"
           />
         )}

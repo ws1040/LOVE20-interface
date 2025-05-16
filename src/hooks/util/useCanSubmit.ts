@@ -20,17 +20,19 @@ export const useCanSubmit = () => {
   // 使用 useGovData 获取治理数据
   const { govData, isPending: isPendingGovData, error: errorGovData } = useGovData(token?.address as `0x${string}`);
 
+  // 计算治理票百分比
+  const percentage = useMemo(() => {
+    if (!validGovVotes || !govData?.govVotes || govData.govVotes === 0n) return 0;
+    return Number(validGovVotes) / Number(govData.govVotes);
+  }, [validGovVotes, govData?.govVotes]);
+
   // 检查是否有足够的治理票权
   const hasEnoughVotes = useMemo(() => {
-    if (!validGovVotes || !govData?.govVotes || govData.govVotes === 0n) return false;
-
-    // 计算百分比
-    const percentage = Number(validGovVotes) / Number(govData.govVotes);
     return percentage >= SUBMIT_MIN_PERCENTAGE;
-  }, [validGovVotes, govData?.govVotes]);
+  }, [percentage]);
 
   const isPending = isPendingValidGovVotes || isPendingGovData;
   const error = errorValidGovVotes ?? errorGovData;
 
-  return { hasEnoughVotes, validGovVotes, govData, SUBMIT_MIN_PERCENTAGE, isPending, error };
+  return { hasEnoughVotes, percentage, validGovVotes, govData, SUBMIT_MIN_PERCENTAGE, isPending, error };
 };
