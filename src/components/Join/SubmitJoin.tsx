@@ -368,7 +368,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
                       className="text-secondary p-0 ml-6"
                       disabled={!tokenBalance || tokenBalance <= 0n}
                     >
-                      最高
+                      全部
                     </Button>
                   </FormDescription>
                 </FormItem>

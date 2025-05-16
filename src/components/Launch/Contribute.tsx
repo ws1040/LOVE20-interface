@@ -280,7 +280,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
                 disabled={hasStartedApproving || (balanceOfParentToken || 0n) <= 0n}
                 className="text-secondary"
               >
-                最高
+                全部
               </Button>
               {token.parentTokenSymbol === process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL && (
                 <Link href={`/dex/deposit?symbol=${token.symbol}`}>

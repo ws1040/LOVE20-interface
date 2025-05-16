@@ -199,7 +199,7 @@ const Withdraw: React.FC = () => {
                       className="text-secondary p-0 ml-2"
                       disabled={isLoadingBalance || isPendingWithdraw || isConfirmingWithdraw}
                     >
-                      最高
+                      全部
                     </Button>
                   </FormDescription>
                 </FormItem>
