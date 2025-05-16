@@ -169,7 +169,7 @@ const VotingSubmitPage = () => {
         duration: 2000, // 2秒
       });
       setTimeout(() => {
-        router.push(`/gov?symbol=${token?.symbol}`);
+        router.push(`/vote/actions/?symbol=${token?.symbol}`);
       }, 2000);
     }
   }, [isConfirmed, submitVoteError]);

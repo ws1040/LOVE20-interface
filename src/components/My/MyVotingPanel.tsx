@@ -71,7 +71,12 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
 
   return (
     <div className="flex-col items-center px-4 py-2">
-      <LeftTitle title="行动投票" />
+      <div className="flex justify-between items-center mb-2">
+        <LeftTitle title="行动投票" />
+        <Button variant="link" className="text-secondary border-secondary" asChild>
+          <Link href={`/vote/actions/?symbol=${token?.symbol}`}>投票中的行动</Link>
+        </Button>
+      </div>
       <div className="stats w-full grid grid-cols-2 mt-2 divide-x-0">
         <div className="stat place-items-center pt-1 pb-2">
           <div className="stat-title text-sm">我的已投票数</div>

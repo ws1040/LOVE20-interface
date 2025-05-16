@@ -8,7 +8,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my components
 import Header from '@/src/components/Header';
-import ActionListToVote from '@/src/components/ActionList/ActionListToVote';
+import VotingActionList from '@/src/components/ActionList/VotingActionList';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const VotePage = () => {
@@ -24,9 +24,9 @@ const VotePage = () => {
 
   return (
     <>
-      <Header title="投票首页" />
+      <Header title="投票中的行动" />
       <main className="flex-grow">
-        {isPendingCurrentRound ? <LoadingIcon /> : <ActionListToVote currentRound={currentRound} />}
+        {isPendingCurrentRound ? <LoadingIcon /> : <VotingActionList currentRound={currentRound} />}
       </main>
     </>
   );
