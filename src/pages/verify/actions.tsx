@@ -8,7 +8,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my components
 import Header from '@/src/components/Header';
-import ActionListToVerify from '@/src/components/ActionList/ActionListToVerify';
+import VerifingActionList from '@/src/components/ActionList/VerifingActionList';
 
 const VerifyPage = () => {
   const { currentRound, error: errorCurrentRound } = useCurrentRound();
@@ -22,9 +22,9 @@ const VerifyPage = () => {
 
   return (
     <>
-      <Header title="验证" />
+      <Header title="验证中的行动" />
       <main className="flex-grow">
-        <ActionListToVerify currentRound={currentRound} />
+        <VerifingActionList currentRound={currentRound} />
       </main>
     </>
   );

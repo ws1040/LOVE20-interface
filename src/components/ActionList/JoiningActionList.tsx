@@ -8,10 +8,11 @@ import { JoinableActionDetail } from '@/src/types/love20types';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { formatTokenAmount } from '@/src/lib/format';
 import { TokenContext } from '@/src/contexts/TokenContext';
-import { useJoinableActionDetailsWithJoinedInfos } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useJoinableActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import { useHandleContractError } from '@/src/lib/errorUtils';
 
 interface JoiningActionListProps {
   currentRound: bigint;
@@ -22,7 +23,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   const { address: accountAddress } = useAccount();
 
   // 使用合并后的钩子，一次性获取所有相关数据
-  const { joinableActionDetails, joinedActions, isPending, error } = useJoinableActionDetailsWithJoinedInfos(
+  const { joinableActionDetails, joinedActions, isPending, error } = useJoinableActions(
     (token?.address as `0x${string}`) || '',
     currentRound ? currentRound : 0n,
     accountAddress as `0x${string}`,
