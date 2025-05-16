@@ -231,7 +231,7 @@ export const LOVE20DataViewerAbi = [
   },
   {
     "type": "function",
-    "name": "joinableActionDetailsWithJoinedInfos",
+    "name": "joinableActions",
     "inputs": [
       {
         "name": "tokenAddress",
@@ -1148,6 +1148,123 @@ export const LOVE20DataViewerAbi = [
   },
   {
     "type": "function",
+    "name": "verifingActionsByAccount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple[]",
+        "internalType": "struct MyVerifyingAction[]",
+        "components": [
+          {
+            "name": "action",
+            "type": "tuple",
+            "internalType": "struct ActionInfo",
+            "components": [
+              {
+                "name": "head",
+                "type": "tuple",
+                "internalType": "struct ActionHead",
+                "components": [
+                  {
+                    "name": "id",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "author",
+                    "type": "address",
+                    "internalType": "address"
+                  },
+                  {
+                    "name": "createAtBlock",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  }
+                ]
+              },
+              {
+                "name": "body",
+                "type": "tuple",
+                "internalType": "struct ActionBody",
+                "components": [
+                  {
+                    "name": "minStake",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "maxRandomAccounts",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "whiteList",
+                    "type": "address[]",
+                    "internalType": "address[]"
+                  },
+                  {
+                    "name": "action",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "consensus",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "verificationRule",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "verificationKeys",
+                    "type": "string[]",
+                    "internalType": "string[]"
+                  },
+                  {
+                    "name": "verificationInfoGuides",
+                    "type": "string[]",
+                    "internalType": "string[]"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "myVotesNum",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalVotesNum",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "verifyAddress",
     "inputs": [],
     "outputs": [
@@ -1155,6 +1272,128 @@ export const LOVE20DataViewerAbi = [
         "name": "",
         "type": "address",
         "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "verifyingActions",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple[]",
+        "internalType": "struct VerifyingAction[]",
+        "components": [
+          {
+            "name": "action",
+            "type": "tuple",
+            "internalType": "struct ActionInfo",
+            "components": [
+              {
+                "name": "head",
+                "type": "tuple",
+                "internalType": "struct ActionHead",
+                "components": [
+                  {
+                    "name": "id",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "author",
+                    "type": "address",
+                    "internalType": "address"
+                  },
+                  {
+                    "name": "createAtBlock",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  }
+                ]
+              },
+              {
+                "name": "body",
+                "type": "tuple",
+                "internalType": "struct ActionBody",
+                "components": [
+                  {
+                    "name": "minStake",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "maxRandomAccounts",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                  },
+                  {
+                    "name": "whiteList",
+                    "type": "address[]",
+                    "internalType": "address[]"
+                  },
+                  {
+                    "name": "action",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "consensus",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "verificationRule",
+                    "type": "string",
+                    "internalType": "string"
+                  },
+                  {
+                    "name": "verificationKeys",
+                    "type": "string[]",
+                    "internalType": "string[]"
+                  },
+                  {
+                    "name": "verificationInfoGuides",
+                    "type": "string[]",
+                    "internalType": "string[]"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "votesNum",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "verificationScore",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "myVotesNum",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
       }
     ],
     "stateMutability": "view"

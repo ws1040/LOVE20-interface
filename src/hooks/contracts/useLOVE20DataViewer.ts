@@ -12,6 +12,8 @@ import {
   JoinableActionDetail,
   GovData,
   PairInfo,
+  VerifyingAction,
+  MyVerifyingAction,
 } from '@/src/types/love20types';
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_DATAVIEWER as `0x${string}`;
 
@@ -82,17 +84,13 @@ export const useJoinedActions = (tokenAddress: `0x${string}`, account: `0x${stri
  * Hook for joinableActionDetailsWithJoinedInfos
  * Reads the joinable action details with joined infos.
  */
-export const useJoinableActionDetailsWithJoinedInfos = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  account: `0x${string}`,
-) => {
+export const useJoinableActions = (tokenAddress: `0x${string}`, round: bigint, account: `0x${string}`) => {
   const enableRead = !!tokenAddress && !!account;
 
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20DataViewerAbi,
-    functionName: 'joinableActionDetailsWithJoinedInfos',
+    functionName: 'joinableActions',
     args: [tokenAddress, round, account],
     query: {
       enabled: enableRead,
@@ -107,6 +105,60 @@ export const useJoinableActionDetailsWithJoinedInfos = (
   return {
     joinableActionDetails: data && data[0] ? [...(data[0] as unknown as JoinableActionDetail[])] : [],
     joinedActions: data && data[1] ? [...(data[1] as unknown as JoinedAction[])] : [],
+    isPending,
+    error,
+  };
+};
+
+/**
+ * Hook for verifyingActions
+ */
+export const useVerifyingActions = (tokenAddress: `0x${string}`, round: bigint, account: `0x${string}`) => {
+  const enableRead = !!tokenAddress && !!account;
+
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'verifyingActions',
+    args: [tokenAddress, round, account],
+    query: {
+      enabled: enableRead,
+    },
+  });
+
+  if (round === 0n || !enableRead) {
+    return { verifyingActions: [], isPending: false, error: undefined };
+  }
+
+  return {
+    verifyingActions: data ? [...(data as unknown as VerifyingAction[])] : [],
+    isPending,
+    error,
+  };
+};
+
+/**
+ * Hook for verifingActionsByAccount
+ */
+export const useVerifingActionsByAccount = (tokenAddress: `0x${string}`, round: bigint, account: `0x${string}`) => {
+  const enableRead = !!tokenAddress && !!account;
+
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'verifingActionsByAccount',
+    args: [tokenAddress, round, account],
+    query: {
+      enabled: enableRead,
+    },
+  });
+
+  if (round === 0n || !enableRead) {
+    return { myVerifyingActions: [], isPending: false, error: undefined };
+  }
+
+  return {
+    myVerifyingActions: data ? [...(data as unknown as MyVerifyingAction[])] : [],
     isPending,
     error,
   };

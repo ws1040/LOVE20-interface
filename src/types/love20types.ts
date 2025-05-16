@@ -43,6 +43,19 @@ export interface JoinedAction {
   votePercent: bigint;
 }
 
+export interface VerifyingAction {
+  action: ActionInfo;
+  votesNum: bigint;
+  verificationScore: bigint;
+  myVotesNum: bigint;
+}
+
+export interface MyVerifyingAction {
+  action: ActionInfo;
+  myVotesNum: bigint;
+  totalVotesNum: bigint;
+}
+
 export interface VerifiedAddress {
   account: `0x${string}`;
   score: bigint;
