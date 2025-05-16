@@ -428,7 +428,7 @@ const SwapPanel = () => {
                   onClick={setMaxAmount}
                   disabled={isPendingBalanceOfToken || isPendingBalanceOfParentToken || isApproved}
                 >
-                  最高
+                  全部
                 </Button>
               </div>
             </div>

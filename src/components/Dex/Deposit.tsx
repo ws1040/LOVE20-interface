@@ -206,7 +206,7 @@ const Deposit: React.FC = () => {
                       className="text-secondary p-0 ml-2"
                       disabled={isLoadingBalance || isPendingDeposit || isConfirmingDeposit}
                     >
-                      最高
+                      全部
                     </Button>
                   </FormDescription>
                 </FormItem>
