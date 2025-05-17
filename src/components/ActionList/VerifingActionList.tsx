@@ -2,6 +2,7 @@
 import React, { useContext, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -55,7 +56,12 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
 
   return (
     <div className="p-4">
-      <LeftTitle title="所有验证中行动" />
+      <div className="flex justify-between items-center mb-4">
+        <LeftTitle title="所有验证中行动" />
+        <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
+          <Link href={`/gov?symbol=${token?.symbol}`}>返回治理首页</Link>
+        </Button>
+      </div>
       {!verifyingActions?.length && (
         <div className="text-sm mt-4 text-greyscale-500 text-center">本轮没有行动要验证</div>
       )}
