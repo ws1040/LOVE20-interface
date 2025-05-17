@@ -130,9 +130,6 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     const scoresArrayForSubmit: bigint[] = [];
     let allocatedVotes = 0n;
 
-    // 记录每个地址的余数和原始索引，用于后续分配剩余票数
-    const remainders: { remainder: number; index: number }[] = [];
-
     // 计算每个地址的票数（整数部分）
     verificationInfos.forEach((info, index) => {
       const score = parseInt(scores[info.account]) || 0;
@@ -140,29 +137,16 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       const exactVotes = Number(remainingVotes) * ratio;
       const votes = BigInt(Math.floor(exactVotes));
 
-      scoresArrayForSubmit.push(votes);
+      // 误差处理，避免验证票数超过剩余票数
       allocatedVotes += votes;
-
-      // 得分大于0的地址才加入余数分配列表
-      if (score > 0) {
-        remainders.push({
-          remainder: exactVotes - Number(votes),
-          index,
-        });
+      if (allocatedVotes > remainingVotes) {
+        const leftoverVotes = allocatedVotes - remainingVotes;
+        allocatedVotes -= leftoverVotes;
+        scoresArrayForSubmit.push(votes - leftoverVotes);
+      } else {
+        scoresArrayForSubmit.push(votes);
       }
     });
-
-    // 计算剩余未分配的票数
-    const leftoverVotes = remainingVotes - allocatedVotes;
-
-    // 按余数大小排序
-    remainders.sort((a, b) => b.remainder - a.remainder);
-
-    // 将剩余票数分配给余数最大的几个地址
-    for (let i = 0; i < Number(leftoverVotes); i++) {
-      const index = remainders[i % remainders.length].index;
-      scoresArrayForSubmit[index] += 1n;
-    }
 
     // 计算弃权票数
     console.log('remainingVotes', remainingVotes);
@@ -171,7 +155,8 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     const scoresArrayTotal = scoresArrayForSubmit.reduce((sum, votes) => sum + votes, 0n);
     console.log('scoresArrayTotal', scoresArrayTotal);
 
-    const abstainVotes = remainingVotes > scoresArrayTotal ? remainingVotes - scoresArrayTotal : 0n;
+    const abstainVotes =
+      parseInt(abstainScore) > 0 && remainingVotes > scoresArrayTotal ? remainingVotes - scoresArrayTotal : 0n;
     console.log('abstainVotes', abstainVotes);
 
     verify(token?.address as `0x${string}`, actionId, abstainVotes, scoresArrayForSubmit);
