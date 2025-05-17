@@ -21,6 +21,9 @@ import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
+// my utils
+import { LinkIfUrl } from '@/src/lib/stringUtils';
+
 interface VerifyAddressesProps {
   currentRound: bigint;
   actionId: bigint;
@@ -137,7 +140,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       const exactVotes = Number(remainingVotes) * ratio;
       const votes = BigInt(Math.floor(exactVotes));
 
-      // 误差处理，避免验证票数超过剩余票数
+      // 误差处理，避免验证票数超过剩余票数(ratio有可能最后1位五入了)
       allocatedVotes += votes;
       if (allocatedVotes > remainingVotes) {
         const leftoverVotes = allocatedVotes - remainingVotes;
@@ -148,18 +151,32 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       }
     });
 
-    // 计算弃权票数
+    // 计算弃权票数并提交
+    const scoresArrayTotal = scoresArrayForSubmit.reduce((sum, votes) => sum + votes, 0n);
+
     console.log('remainingVotes', remainingVotes);
+    console.log('scoresArrayTotal', scoresArrayTotal);
     console.log('scoresArrayForSubmit', scoresArrayForSubmit);
 
-    const scoresArrayTotal = scoresArrayForSubmit.reduce((sum, votes) => sum + votes, 0n);
-    console.log('scoresArrayTotal', scoresArrayTotal);
+    // if 有弃权票
+    if (parseInt(abstainScore) > 0) {
+      const abstainVotes = remainingVotes > scoresArrayTotal ? remainingVotes - scoresArrayTotal : 0n;
+      console.log('abstainVotes', abstainVotes);
+      verify(token?.address as `0x${string}`, actionId, abstainVotes, scoresArrayForSubmit);
+    } else {
+      // else 无弃权票
 
-    const abstainVotes =
-      parseInt(abstainScore) > 0 && remainingVotes > scoresArrayTotal ? remainingVotes - scoresArrayTotal : 0n;
-    console.log('abstainVotes', abstainVotes);
+      // 误差处理：如果误差丢掉了一些票，则简单将这些票分配给第一个得分不为0的地址
+      if (scoresArrayTotal < remainingVotes) {
+        const firstNonZeroIndex = scoresArrayForSubmit.findIndex((votes) => votes > 0n);
+        if (firstNonZeroIndex !== -1) {
+          scoresArrayForSubmit[firstNonZeroIndex] += remainingVotes - scoresArrayTotal;
+        }
+      }
 
-    verify(token?.address as `0x${string}`, actionId, abstainVotes, scoresArrayForSubmit);
+      console.log('abstainVotes', 0n);
+      verify(token?.address as `0x${string}`, actionId, 0n, scoresArrayForSubmit);
+    }
   };
 
   // 提交成功
@@ -206,7 +223,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                     <div className="text-sm text-greyscale-800">
                       {actionInfo.body.verificationKeys.map((key, i) => (
                         <div key={i}>
-                          {key}: {info.infos[i]}
+                          {key}: <LinkIfUrl text={info.infos[i]} />
                         </div>
                       ))}
                     </div>
