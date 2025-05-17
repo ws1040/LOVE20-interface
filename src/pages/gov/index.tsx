@@ -1,46 +1,51 @@
-'use client';
+import React from 'react';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
-import { useContext, useEffect } from 'react';
-import { useRouter } from 'next/router';
-
-// my context
+// 导入TokenContext相关组件
 import { TokenContext } from '@/src/contexts/TokenContext';
+import { useContext } from 'react';
 
-// my hooks
-import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Vote';
-import { useHandleContractError } from '@/src/lib/errorUtils';
+// 导入hooks
+import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
 
-// my components
+// 导入组件
 import Header from '@/src/components/Header';
+import TokenTab from '@/src/components/Token/TokenTab';
 import GovernanceDataPanel from '@/src/components/DataPanel/GovernanceDataPanel';
-import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import MyVotingPanel from '@/src/components/My/MyVotingPanel';
 import MyVerifingPanel from '@/src/components/My/MyVerifingPanel';
-import TokenTab from '@/src/components/Token/TokenTab';
 import Todeploy from '@/src/components/Launch/Todeploy';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 
 const GovPage = () => {
-  const router = useRouter();
-  const { currentRound: currentVoteRound, error: errorCurrentRound } = useCurrentRound();
+  // 当前token
   const { token: currentToken } = useContext(TokenContext) || {};
+  const { address: accountAddress } = useAccount();
 
-  useEffect(() => {
-    if (currentToken && !currentToken.hasEnded) {
-      // 如果发射未结束，跳转到发射页面
-      router.push(`/launch?symbol=${currentToken.symbol}`);
-    } else if (currentToken && !currentToken.initialStakeRound) {
-      // 如果还没有人质押，跳转到质押页面
-      router.push(`/gov/stakelp/?symbol=${currentToken.symbol}&first=true`);
-    }
-  }, [currentToken]);
+  // 获取当前轮次
+  const { currentRound: currentVoteRound } = useCurrentRound();
+
+  // 获取用户的治理票数
+  const {
+    validGovVotes,
+    isPending: isPendingValidGovVotes,
+    error: errorValidGovVotes,
+  } = useValidGovVotes((currentToken?.address as `0x${string}`) || '', (accountAddress as `0x${string}`) || '');
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
-  useEffect(() => {
-    if (errorCurrentRound) {
-      handleContractError(errorCurrentRound, 'vote');
+  React.useEffect(() => {
+    if (errorValidGovVotes) {
+      handleContractError(errorValidGovVotes, 'stake');
     }
-  }, [errorCurrentRound]);
+  }, [errorValidGovVotes]);
+
+  // 判断是否需要显示治理组件
+  const shouldShowGovComponents = validGovVotes > 0n;
 
   return (
     <>
@@ -52,9 +57,31 @@ const GovPage = () => {
           <>
             <TokenTab />
             <GovernanceDataPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
-            <MyVotingPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
-            <MyVerifingPanel currentRound={currentVoteRound > 2 ? currentVoteRound - 2n : 0n} />
-            <Todeploy token={currentToken} />
+
+            {isPendingValidGovVotes ? (
+              <div className="flex justify-center p-4">
+                <LoadingIcon />
+              </div>
+            ) : shouldShowGovComponents ? (
+              // 有治理票时显示三个治理组件
+              <>
+                <MyVotingPanel
+                  currentRound={currentVoteRound ? currentVoteRound : 0n}
+                  validGovVotes={validGovVotes}
+                  isPendingValidGovVotes={isPendingValidGovVotes}
+                />
+                <MyVerifingPanel currentRound={currentVoteRound > 2 ? currentVoteRound - 2n : 0n} />
+                <Todeploy token={currentToken} />
+              </>
+            ) : (
+              // 无治理票时显示质押按钮
+              <div className="flex flex-col items-center p-4 mt-4">
+                <div className="text-center mb-4 text-greyscale-500">您当前没有治理票，获取治理票后才能治理</div>
+                <Button className="w-1/2" asChild>
+                  <Link href={`/stake?symbol=${currentToken?.symbol}`}>质押获取治理票</Link>
+                </Button>
+              </div>
+            )}
           </>
         )}
       </main>

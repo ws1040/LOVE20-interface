@@ -10,7 +10,6 @@ import { formatTokenAmount } from '@/src/lib/format';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
-import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useVotesNumByAccount } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
@@ -20,18 +19,17 @@ import LeftTitle from '@/src/components/Common/LeftTitle';
 
 interface MyVotingPanelProps {
   currentRound: bigint;
+  validGovVotes?: bigint; // 可选参数，如果父组件传入则使用，否则自行获取
+  isPendingValidGovVotes?: boolean; // 可选参数，表示是否正在加载治理票数
 }
 
-const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
+const MyVotingPanel: React.FC<MyVotingPanelProps> = ({
+  currentRound,
+  validGovVotes: externalValidGovVotes,
+  isPendingValidGovVotes: externalIsPendingValidGovVotes,
+}) => {
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress } = useAccount();
-
-  // 我的治理票&总有效票数
-  const {
-    validGovVotes,
-    isPending: isPendingValidGovVotes,
-    error: errorValidGovVotes,
-  } = useValidGovVotes((token?.address as `0x${string}`) || '', (accountAddress as `0x${string}`) || '');
 
   // 我的投票数
   const {
@@ -50,10 +48,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
     if (errorVotesNumByAccount) {
       handleContractError(errorVotesNumByAccount, 'vote');
     }
-    if (errorValidGovVotes) {
-      handleContractError(errorValidGovVotes, 'stake');
-    }
-  }, [errorVotesNumByAccount, errorValidGovVotes]);
+  }, [errorVotesNumByAccount]);
 
   if (!token) {
     return '';
@@ -68,6 +63,9 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({ currentRound }) => {
       </>
     );
   }
+
+  const isPendingValidGovVotes = externalIsPendingValidGovVotes || false;
+  const validGovVotes = externalValidGovVotes || 0n;
 
   return (
     <div className="flex-col items-center px-4 py-2">
