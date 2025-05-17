@@ -41,19 +41,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   // 检查当前URL是否匹配菜单项
   const isActiveUrl = (url: string) => {
-    // 移除查询参数进行比较
     const urlPath = url.split('?')[0];
+    const normalizedUrlPath = urlPath.endsWith('/') ? urlPath : `${urlPath}/`;
+
     const currentPath = pathname.split('?')[0];
+    const normalizedCurrentPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
 
-    console.log('检查URL匹配:', { urlPath, currentPath });
+    console.log('检查URL匹配:', { normalizedUrlPath, normalizedCurrentPath });
 
-    // 直接比较完整路径
-    if (currentPath === urlPath) return true;
+    if (normalizedCurrentPath === normalizedUrlPath) return true;
 
     // 如果basePath存在且不为空，处理子路径情况
     if (basePath && basePath.length > 0) {
-      const pathWithoutBase = currentPath.startsWith(basePath) ? currentPath.substring(basePath.length) : currentPath;
-      const urlWithoutBase = urlPath.startsWith(basePath) ? urlPath.substring(basePath.length) : urlPath;
+      const pathWithoutBase = normalizedCurrentPath.startsWith(basePath)
+        ? normalizedCurrentPath.substring(basePath.length)
+        : normalizedCurrentPath;
+
+      const urlWithoutBase = normalizedUrlPath.startsWith(basePath)
+        ? normalizedUrlPath.substring(basePath.length)
+        : normalizedUrlPath;
 
       console.log('移除basePath后比较:', { pathWithoutBase, urlWithoutBase });
 
