@@ -62,20 +62,14 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     const addressScores = Object.values(scores).map((val) => parseInt(val) || 0);
     const abstainScoreValue = parseInt(abstainScore) || 0;
     const totalScore = addressScores.reduce((sum, val) => sum + val, 0) + abstainScoreValue;
-    console.log('totalScore', totalScore);
-    console.log('addressScores', addressScores);
-    console.log('abstainScoreValue', abstainScoreValue);
+
     if (totalScore === 0) return { addressPercentages: {}, abstainPercentage: 0 };
 
     const addressPercentages: { [address: string]: number } = {};
     Object.keys(scores).forEach((address) => {
       const score = parseInt(scores[address]) || 0;
-      console.log('score', score);
-      console.log('totalScore', totalScore);
       addressPercentages[address] = (score / totalScore) * 100;
-      console.log('addressPercentages[address]', addressPercentages[address]);
     });
-    console.log('addressPercentages', addressPercentages);
     const abstainPercentage = (abstainScoreValue / totalScore) * 100;
 
     return { addressPercentages, abstainPercentage };
@@ -125,30 +119,31 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       return;
     }
 
-    // 获取分数总和
+    // 获取打分总和
     const scoreSum =
       Object.values(scores).reduce((sum, score) => sum + (parseInt(score) || 0), 0) + (parseInt(abstainScore) || 0);
+
+    console.log('-------handleSubmit()-------');
     console.log('scoreSum', scoreSum);
 
     // 计算每个地址的票数（整数部分）
-    const scoresArray: bigint[] = [];
+    const scoresArrayForSubmit: bigint[] = [];
     let allocatedVotes = 0n;
 
     // 记录每个地址的余数和原始索引，用于后续分配剩余票数
     const remainders: { remainder: number; index: number }[] = [];
 
+    // 计算每个地址的票数（整数部分）
     verificationInfos.forEach((info, index) => {
       const score = parseInt(scores[info.account]) || 0;
-      // 计算比例（保留更多小数位精度）
       const ratio = score / scoreSum;
-      // 计算应得票数
       const exactVotes = Number(remainingVotes) * ratio;
-      // 取整
       const votes = BigInt(Math.floor(exactVotes));
-      scoresArray.push(votes);
+
+      scoresArrayForSubmit.push(votes);
       allocatedVotes += votes;
 
-      // 只有得分大于0的地址才加入余数分配列表
+      // 得分大于0的地址才加入余数分配列表
       if (score > 0) {
         remainders.push({
           remainder: exactVotes - Number(votes),
@@ -166,43 +161,20 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     // 将剩余票数分配给余数最大的几个地址
     for (let i = 0; i < Number(leftoverVotes); i++) {
       const index = remainders[i % remainders.length].index;
-      scoresArray[index] += 1n;
+      scoresArrayForSubmit[index] += 1n;
     }
-    console.log('-------3-------');
-    console.log('scoresArray', scoresArray);
+
     // 计算弃权票数
     console.log('remainingVotes', remainingVotes);
-    console.log(
-      'scoresTotal',
-      scoresArray.reduce((sum, votes) => sum + votes, 0n),
-    );
-    const abstainVotes = remainingVotes - scoresArray.reduce((sum, votes) => sum + votes, 0n);
+    console.log('scoresArrayForSubmit', scoresArrayForSubmit);
+
+    const scoresArrayTotal = scoresArrayForSubmit.reduce((sum, votes) => sum + votes, 0n);
+    console.log('scoresArrayTotal', scoresArrayTotal);
+
+    const abstainVotes = remainingVotes > scoresArrayTotal ? remainingVotes - scoresArrayTotal : 0n;
     console.log('abstainVotes', abstainVotes);
 
-    verify(token?.address as `0x${string}`, actionId, abstainVotes, scoresArray);
-  };
-  const handleSubmitOld = () => {
-    if (!checkInput()) {
-      return;
-    }
-    console.log('-------1-------');
-    const { addressPercentages, abstainPercentage } = calculatePercentages();
-    console.log('-------2-------');
-    const scoresArray = verificationInfos.map((info) => {
-      const percentage = addressPercentages[info.account] || 0;
-      console.log(percentage);
-      return (BigInt(Math.round(percentage * 100)) * remainingVotes) / 10000n;
-    });
-
-    console.log('remainingVotes', remainingVotes);
-    console.log(
-      'scoresTotal',
-      scoresArray.reduce((sum, votes) => sum + votes, 0n),
-    );
-    const abstainVotes = remainingVotes - scoresArray.reduce((sum, votes) => sum + votes, 0n);
-    console.log('scoresArray', scoresArray);
-    console.log('abstainVotes', abstainVotes);
-    verify(token?.address as `0x${string}`, actionId, abstainVotes, scoresArray);
+    verify(token?.address as `0x${string}`, actionId, abstainVotes, scoresArrayForSubmit);
   };
 
   // 提交成功
