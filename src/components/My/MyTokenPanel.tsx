@@ -64,9 +64,10 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
     <div className="flex-col items-center px-4 py-2">
       <div className="flex justify-between items-center">
         <LeftTitle title="我的代币" />
-        <Button variant="link" className="text-secondary border-secondary" asChild>
+        {/* todo: 内测时屏蔽了交易 */}
+        {/* <Button variant="link" className="text-secondary border-secondary" asChild>
           <Link href={`/dex/swap?symbol=${token.symbol}`}>交易代币</Link>
-        </Button>
+        </Button> */}
       </div>
       <div className="stats bg-gray-100 w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center pb-3">

@@ -1,6 +1,8 @@
 'use client';
 import { useContext, useState } from 'react';
 import { TokenContext } from '@/src/contexts/TokenContext';
+import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
 import {
   SmilePlus,
   Home,
@@ -29,11 +31,21 @@ import {
 // 修改后的 AppSidebar 组件
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { token } = useContext(TokenContext) || {};
+  const pathname = usePathname();
+
   if (!token) {
     return null;
   }
 
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
+  // 检查当前URL是否匹配菜单项
+  const isActiveUrl = (url: string) => {
+    // 移除查询参数进行比较
+    const urlPath = url.split('?')[0];
+    const currentPath = pathname.split('?')[0];
+    return currentPath === urlPath;
+  };
 
   // 动态生成导航数据
   const data = {
@@ -45,13 +57,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {
             title: '社区行动',
             url: `${basePath}/acting/?symbol=${token.symbol}`,
-            isActive: false,
+            isActive: isActiveUrl(`${basePath}/acting/`),
             icon: SmilePlus,
           },
           {
             title: '社区治理',
             url: `${basePath}/gov/?symbol=${token.symbol}`,
-            isActive: false,
+            isActive: isActiveUrl(`${basePath}/gov/`),
             icon: Landmark,
           },
           // {
@@ -69,13 +81,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {
             title: '发射平台',
             url: `${basePath}/launch/?symbol=${token.symbol}`,
-            isActive: false,
+            isActive: isActiveUrl(`${basePath}/launch/`),
             icon: Rocket,
           },
           {
             title: '代币列表',
             url: `${basePath}/tokens/?symbol=${token.symbol}`,
-            isActive: false,
+            isActive: isActiveUrl(`${basePath}/tokens/`),
             icon: List,
           },
         ],
@@ -93,7 +105,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {
             title: `兑换${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`,
             url: `${basePath}/dex/deposit?symbol=${token.symbol}`,
-            isActive: false,
+            isActive: isActiveUrl(`${basePath}/dex/deposit`),
             icon: TicketCheck,
           },
         ],
@@ -105,7 +117,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {
             title: '协议首页',
             url: `${basePath}/?symbol=${token.symbol}`,
-            isActive: false,
+            isActive: pathname === basePath || pathname === `${basePath}/`,
             icon: Home,
           },
         ],
@@ -117,7 +129,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {
             title: '个人中心',
             url: `${basePath}/my/?symbol=${token.symbol}`,
-            isActive: false,
+            isActive: isActiveUrl(`${basePath}/my/`),
             icon: User,
           },
         ],
@@ -135,9 +147,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarGroupContent>
               <SidebarMenu>
                 {item.items.map((subItem) => (
-                  <SidebarMenuItem key={subItem.title} className="flex items-center">
-                    {subItem.icon && <subItem.icon className="w-4 h-4" />}
-                    <SidebarMenuButton asChild isActive={subItem.isActive || false}>
+                  <SidebarMenuItem
+                    key={subItem.title}
+                    className={cn('flex items-center', subItem.isActive && '!bg-blue-800 rounded-md')}
+                  >
+                    {subItem.icon && <subItem.icon className={cn('w-4 h-4 ml-2', subItem.isActive && 'text-white')} />}
+                    <SidebarMenuButton
+                      asChild
+                      isActive={subItem.isActive || false}
+                      className={cn(subItem.isActive && '!bg-transparent !text-white font-bold')}
+                    >
                       <a href={subItem.url}>
                         <span className="text-base">{subItem.title}</span>
                       </a>
