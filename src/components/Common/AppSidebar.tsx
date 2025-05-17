@@ -44,7 +44,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     // 移除查询参数进行比较
     const urlPath = url.split('?')[0];
     const currentPath = pathname.split('?')[0];
-    return currentPath === urlPath;
+
+    console.log('检查URL匹配:', { urlPath, currentPath });
+
+    // 直接比较完整路径
+    if (currentPath === urlPath) return true;
+
+    // 如果basePath存在且不为空，处理子路径情况
+    if (basePath && basePath.length > 0) {
+      const pathWithoutBase = currentPath.startsWith(basePath) ? currentPath.substring(basePath.length) : currentPath;
+      const urlWithoutBase = urlPath.startsWith(basePath) ? urlPath.substring(basePath.length) : urlPath;
+
+      console.log('移除basePath后比较:', { pathWithoutBase, urlWithoutBase });
+
+      return pathWithoutBase === urlWithoutBase;
+    }
+
+    return false;
   };
 
   // 动态生成导航数据
