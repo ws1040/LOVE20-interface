@@ -20,6 +20,9 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
+// my utils
+import { LinkIfUrl } from '@/src/lib/stringUtils';
+
 interface ActionPanelForJoinProps {
   actionId: bigint;
   onRoundChange: (currentRound: bigint) => void;
@@ -138,7 +141,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
                 <div>
                   {verificationKeys.map((key, index) => (
                     <div key={index}>
-                      {key}: {verificationInfos[index]}
+                      {key}: <LinkIfUrl text={verificationInfos[index]} />
                     </div>
                   ))}
                 </div>
