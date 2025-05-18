@@ -43,7 +43,12 @@ const ActRewardsPage = () => {
           <>
             <MyJoinInfoOfActionPancel actionId={BigInt(actId || 0)} />
             <VerifiedAddressesByAction currentJoinRound={currentJoinRound} actionId={BigInt(actId || 0)} />
-            <ActionDetail actionId={BigInt(actId || 0)} round={currentJoinRound} showSubmitter={false} />
+            <ActionDetail
+              actionId={BigInt(actId || 0)}
+              round={currentJoinRound}
+              showSubmitter={false}
+              showVerifyHistory={false}
+            />
           </>
         )}
       </main>

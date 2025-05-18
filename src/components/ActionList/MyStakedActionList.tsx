@@ -55,7 +55,7 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
     <div className="pt-4 px-4">
       <LeftTitle title="我参与的行动" />
       {!joinedActions?.length ? (
-        <div className="text-sm text-greyscale-500 text-center">没有行动</div>
+        <div className="text-sm text-greyscale-500 text-center my-6">没有参与行动，请先参与</div>
       ) : (
         <div className="mt-4 space-y-4">
           {joinedActions?.map((action: JoinedAction, index: number) => (

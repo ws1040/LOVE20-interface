@@ -1,5 +1,7 @@
 'use client';
 import React, { useContext, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 // my hooks
 import { useActionInfo, useActionSubmits } from '@/src/hooks/contracts/useLOVE20Submit';
@@ -21,10 +23,17 @@ interface ActivityDetailProps {
   actionId: bigint;
   round: bigint;
   showSubmitter: boolean;
+  showVerifyHistory?: boolean;
   onActionInfo?: (actionInfo: ActionInfo) => void;
 }
 
-const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubmitter, onActionInfo }) => {
+const ActionDetail: React.FC<ActivityDetailProps> = ({
+  actionId,
+  round,
+  showSubmitter,
+  showVerifyHistory = true,
+  onActionInfo,
+}) => {
   const { token } = useContext(TokenContext) || {};
 
   // 行动详情
@@ -68,7 +77,14 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({ actionId, round, showSubm
   return (
     <>
       <div className="mx-auto p-4 pb-2 border-t border-greyscale-100">
-        <LeftTitle title="行动详情" />
+        <div className="flex justify-between items-center mb-2">
+          <LeftTitle title="行动详情" />
+          {showVerifyHistory && (
+            <Button variant="link" className="text-secondary border-secondary" asChild>
+              <Link href={`/my/actrewards/?id=${actionId}&symbol=${token?.symbol}`}>查看历史验证结果 &gt;&gt;</Link>
+            </Button>
+          )}
+        </div>
       </div>
       <div className="mx-auto p-4 pb-2 ">
         <div className="flex flex-col">
