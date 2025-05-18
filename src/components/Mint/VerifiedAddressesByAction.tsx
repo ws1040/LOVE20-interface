@@ -120,7 +120,7 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
             <tr className="border-b border-gray-100">
               <th>地址</th>
               <th>得分</th>
-              <th>待领取奖励</th>
+              <th>待铸造奖励</th>
               <th className="text-center">结果</th>
             </tr>
           </thead>
@@ -130,8 +130,8 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
                 <td>
                   <AddressWithCopyButton address={item.account} showCopyButton={false} />
                 </td>
-                <td>{formatTokenAmount(item.score)}</td>
-                <td>{formatTokenAmount(item.minted || item.unminted || 0n)}</td>
+                <td>{formatTokenAmount(item.score, 0)}</td>
+                <td>{formatTokenAmount(item.minted || item.unminted || 0n, 0)}</td>
                 <td className="text-center">
                   {item.account === accountAddress ? (
                     item.unminted > 0 ? (
@@ -142,10 +142,10 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
                         onClick={() => handleClaim(item)}
                         disabled={isMinting || isConfirmingMint}
                       >
-                        领取
+                        铸造
                       </Button>
                     ) : item.score > 0 ? (
-                      <span className="text-greyscale-500">已领</span>
+                      <span className="text-greyscale-500">已铸造</span>
                     ) : (
                       ''
                     )

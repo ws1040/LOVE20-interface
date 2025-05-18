@@ -47,8 +47,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const currentPath = pathname.split('?')[0];
     const normalizedCurrentPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
 
-    console.log('检查URL匹配:', { normalizedUrlPath, normalizedCurrentPath });
-
     if (normalizedCurrentPath === normalizedUrlPath) return true;
 
     // 如果basePath存在且不为空，处理子路径情况
@@ -60,8 +58,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       const urlWithoutBase = normalizedUrlPath.startsWith(basePath)
         ? normalizedUrlPath.substring(basePath.length)
         : normalizedUrlPath;
-
-      console.log('移除basePath后比较:', { pathWithoutBase, urlWithoutBase });
 
       return pathWithoutBase === urlWithoutBase;
     }
