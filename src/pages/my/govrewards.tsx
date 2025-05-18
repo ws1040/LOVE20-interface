@@ -168,7 +168,7 @@ const GovRewardsPage: React.FC = () => {
                 <thead>
                   <tr className="border-b border-gray-100">
                     <th>轮次</th>
-                    <th className="text-center">奖励</th>
+                    <th className="text-center">激励</th>
                     <th className="text-center">结果</th>
                   </tr>
                 </thead>
