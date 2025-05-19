@@ -96,8 +96,8 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
 
   return (
     <>
-      <div className="flex flex-col items-center space-y-6 p-4 mb-4">
-        <div className="stats w-full border grid grid-cols-2 divide-x-0">
+      <div className="flex flex-col items-center space-y-3 p-4 mb-2">
+        <div className="stats w-full border grid grid-cols-2 divide-x-0 mb-2">
           <div className="stat place-items-center">
             <div className="stat-title">我的已投票数</div>
             <div className="stat-value text-2xl">
@@ -110,7 +110,7 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
               {isPendingValidGovVotes || isPendingVotesNumByAccountByActionId ? (
                 <LoadingIcon />
               ) : (
-                formatTokenAmount(validGovVotes - votesNumByAccountByActionId)
+                formatTokenAmount(validGovVotes - votesNumByAccountByActionId, 2)
               )}
             </div>
           </div>
@@ -125,7 +125,13 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
             您已投票
           </Button>
         )}
+        {!isPendingValidGovVotes && (
+          <div className="text-sm text-greyscale-500 text-center">
+            提示: 每轮最大可投票数，等于您的治理票数 ({formatTokenAmount(validGovVotes, 2)})
+          </div>
+        )}
       </div>
+
       <LoadingOverlay
         isLoading={isWritingVote || isConfirmingVote}
         text={isWritingVote ? '提交交易...' : '确认交易...'}
