@@ -30,12 +30,12 @@ const ChangeRound: React.FC<{ currentRound: bigint; handleChangedRound: (round: 
           切换轮次
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="z-[100] min-h-[25vh]">
         <DrawerHeader>
           <DrawerTitle></DrawerTitle>
           <DrawerDescription></DrawerDescription>
         </DrawerHeader>
-        <div className="px-4">
+        <div className="px-4 flex-grow">
           <div className="max-h-64 overflow-y-auto">
             {Array.from({ length: Number(currentRound) }, (_, i) => {
               const round = Number(currentRound) - i;
