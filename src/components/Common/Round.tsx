@@ -52,7 +52,7 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   }, [currentRound, token]);
 
   // 计算轮次名称
-  const roundName = roundType === 'vote' ? '投票' : '行动';
+  const roundName = roundType === 'vote' ? '投票' : roundType === 'verify' ? '验证' : '行动';
 
   // 如果 currentRound 为空，则设置默认值，否则转换为字符串
   const displayRound = currentTokenRound != null ? currentTokenRound.toString() : '0';

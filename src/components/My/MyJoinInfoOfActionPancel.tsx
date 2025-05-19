@@ -149,15 +149,18 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
       <div className="flex flex-col items-center mt-2">
         <div className="text-sm text-greyscale-600">
           {isPendingVerificationInfo && '加载中...'}
-          {verificationKeys && verificationKeys.length > 0 && (
-            <div>
-              {verificationKeys.map((key, index) => (
-                <div key={index}>
-                  {key}: <LinkIfUrl text={verificationInfos[index]} />
-                </div>
-              ))}
-            </div>
-          )}
+          {joinedAmountByActionIdByAccount != undefined &&
+            joinedAmountByActionIdByAccount > 2n &&
+            verificationKeys &&
+            verificationKeys.length > 0 && (
+              <div>
+                {verificationKeys.map((key, index) => (
+                  <div key={index}>
+                    {key}: <LinkIfUrl text={verificationInfos[index]} />
+                  </div>
+                ))}
+              </div>
+            )}
         </div>
       </div>
       <LoadingOverlay

@@ -113,6 +113,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
           )}
         </div>
       )}
+      <div className="mt-2 text-sm text-greyscale-500 text-center">提示: 每轮最大可验证票数，等于您该轮的投票数</div>
     </div>
   );
 };
