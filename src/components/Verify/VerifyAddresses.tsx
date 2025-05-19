@@ -53,10 +53,10 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     if (verificationInfos && verificationInfos.length > 0) {
       const initialScores: { [address: string]: string } = {};
       verificationInfos.forEach((info) => {
-        initialScores[info.account] = '3';
+        initialScores[info.account] = '';
       });
       setScores(initialScores);
-      setAbstainScore('0');
+      setAbstainScore('');
     }
   }, [verificationInfos]);
 
@@ -235,6 +235,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                       type="number"
                       min="0"
                       value={scores[info.account] || ''}
+                      placeholder="0"
                       onChange={(e) => handleScoreChange(info.account, e.target.value)}
                       className="w-10 px-1 py-1 border rounded"
                       disabled={isWriting || isConfirmed}
@@ -263,6 +264,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                     type="number"
                     min="0"
                     value={abstainScore}
+                    placeholder="0"
                     onChange={(e) => handleAbstainScoreChange(e.target.value)}
                     className="w-10 px-1 py-1 border rounded"
                     disabled={isWriting || isConfirmed}

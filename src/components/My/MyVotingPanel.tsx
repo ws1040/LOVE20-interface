@@ -108,6 +108,9 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({
           </Button>
         )}
       </div>
+      <div className="mt-2 text-sm text-greyscale-500 text-center">
+        提示: 每轮最大可投票数，等于您的治理票数 ({formatTokenAmount(validGovVotes, 2)})
+      </div>
     </div>
   );
 };
