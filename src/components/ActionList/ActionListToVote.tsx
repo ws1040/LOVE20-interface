@@ -180,6 +180,7 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
                 给选中的行动投票
               </Button>
             </div>
+            <div className="mt-2 text-sm text-greyscale-500 text-center">提示: 每轮最大可投票数，等于您的治理票数</div>
           </>
         ) : (
           <div className="text-sm text-greyscale-500 text-center mt-8">还没推举行动，请先推举</div>
