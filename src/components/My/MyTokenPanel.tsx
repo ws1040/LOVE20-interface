@@ -17,6 +17,8 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 // my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LeftTitle from '@/src/components/Common/LeftTitle';
+import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
+import AddToMetamask from '@/src/components/Common/AddToMetamask';
 
 const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) => {
   const { address: accountAddress } = useAccount();
@@ -71,7 +73,15 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
       </div>
       <div className="stats bg-gray-100 w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center pb-3">
-          <div className="stat-title text-sm mb-1">持有 {token?.symbol} 数</div>
+          <div className="stat-title text-sm flex items-center">
+            持有 {token?.symbol}
+            <AddressWithCopyButton address={token.address as `0x${string}`} showAddress={false} />
+            <AddToMetamask
+              tokenAddress={token.address as `0x${string}`}
+              tokenSymbol={token.symbol}
+              tokenDecimals={token.decimals}
+            />
+          </div>
           <div className="stat-value text-xl">
             {isPendingBalance ? <LoadingIcon /> : formatTokenAmount(balance || BigInt(0), 0)}
           </div>
