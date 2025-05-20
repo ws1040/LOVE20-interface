@@ -55,7 +55,7 @@ function buildFormSchema(parentTokenBalance: bigint, tokenBalance: bigint) {
       },
       z
         .string()
-        .regex(/^\d+(\.\d{1,12})?$/, '请输入合法数值，最多支持12位小数')
+        .regex(/^\d+(\.\d{1,18})?$/, '请输入合法数值，最多支持18位小数') // 修改为18位小数
         .refine((val) => {
           const parsed = parseUnits(val);
           return parsed !== null && parsed > 0n;
@@ -77,7 +77,7 @@ function buildFormSchema(parentTokenBalance: bigint, tokenBalance: bigint) {
       },
       z
         .string()
-        .regex(/^\d+(\.\d{1,12})?$/, '请输入合法数值，最多支持12位小数')
+        .regex(/^\d+(\.\d{1,18})?$/, '请输入合法数值，最多支持18位小数') // 修改为18位小数
         .refine((val) => {
           const parsed = parseUnits(val);
           return parsed !== null && parsed > 0n;
@@ -452,7 +452,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
             name="parentToken"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>质押父币数</FormLabel>
+                <FormLabel>质押父币数：</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -469,10 +469,24 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                 <FormMessage />
                 <FormDescription className="flex justify-between items-center">
                   <span>
-                    持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(parentTokenBalance)}</span>
-                    {token?.parentTokenSymbol}
+                    <span>
+                      持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(parentTokenBalance)}</span>
+                      {token?.parentTokenSymbol}
+                    </span>
+                    <Button
+                      variant="link"
+                      size="sm"
+                      type="button"
+                      onClick={() => {
+                        form.setValue('parentToken', formatUnits(parentTokenBalance || 0n));
+                        setIsParentTokenChangedByUser(true);
+                      }}
+                      disabled={hadStartedApprove || (parentTokenBalance || 0n) <= 0n}
+                      className="text-secondary mr-2"
+                    >
+                      全部
+                    </Button>
                   </span>
-
                   {token.parentTokenSymbol === process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL && (
                     <Link href="/dex/deposit/" className="text-secondary-400 ml-2">
                       去获取 {token?.parentTokenSymbol}
@@ -488,18 +502,18 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
             name="stakeToken"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>质押 token 数</FormLabel>
+                <FormLabel className="text-sm">质押{`${token?.symbol}`}数：</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     placeholder={`输入 ${token?.symbol} 数量`}
+                    className="!ring-secondary-foreground"
                     {...field}
                     disabled={hadStartedApprove}
                     onChange={(e) => {
                       field.onChange(e);
                       setIsTokenChangedByUser(true);
                     }}
-                    className="!ring-secondary-foreground"
                   />
                 </FormControl>
                 <FormMessage />
@@ -507,6 +521,19 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                   <span>
                     持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(tokenBalance)}</span>
                     {token?.symbol}
+                    <Button
+                      variant="link"
+                      size="sm"
+                      type="button"
+                      onClick={() => {
+                        form.setValue('stakeToken', formatUnits(tokenBalance || 0n));
+                        setIsTokenChangedByUser(true);
+                      }}
+                      disabled={tokenBalance <= 0n}
+                      className="text-secondary mr-2"
+                    >
+                      全部
+                    </Button>
                   </span>
                   {!isFirstTimeStake && (
                     <Link href={`/dex/swap/?symbol=${token?.symbol}`} className="text-secondary-400">
@@ -523,7 +550,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
             name="releasePeriod"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>释放等待阶段</FormLabel>
+                <FormLabel>释放等待阶段：</FormLabel>
                 <FormControl>
                   <Select
                     disabled={hadStartedApprove}
@@ -534,8 +561,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                       <SelectValue placeholder="选择释放等待阶段" />
                     </SelectTrigger>
                     <SelectContent>
-                      {/* {Array.from({ length: 9 }, (_, i) => i + 4) */}
-                      {Array.from({ length: 1 }, (_, i) => i + 4)
+                      {Array.from({ length: 9 }, (_, i) => i + 4)
                         .filter((item) => item >= promisedWaitingPhases)
                         .map((item) => (
                           <SelectItem key={item} value={String(item)}>
@@ -551,72 +577,71 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
             )}
           />
 
-          {govVotes && govVotes >= 22207670000000000000000n && (
+          {/* {govVotes && govVotes >= 22207670000000000000000n && (
             <div className="flex justify-center space-x-2 mt-4">
               <Button type="button" className="w" disabled={true}>
                 第1次内测体验, 暂时关闭追加治理票
               </Button>
             </div>
-          )}
-          {(!govVotes || govVotes < 22207670000000000000000n) && (
-            <div className="flex justify-center space-x-2 mt-4">
-              <Button
-                type="button"
-                className="w-1/3"
-                ref={approveTokenButtonRef}
-                disabled={isPendingApproveToken || isConfirmingApproveToken || isTokenApproved}
-                onClick={form.handleSubmit(onApproveToken)}
-              >
-                {isPendingApproveToken
-                  ? `1.提交中...`
-                  : isConfirmingApproveToken
-                  ? `1.确认中...`
-                  : isTokenApproved
-                  ? `1.${token?.symbol}已授权`
-                  : `1.授权${token?.symbol}`}
-              </Button>
+          )} */}
 
-              <Button
-                type="button"
-                className="w-1/3"
-                disabled={
-                  !isTokenApproved ||
-                  isPendingApproveParentToken ||
-                  isConfirmingApproveParentToken ||
-                  isParentTokenApproved
-                }
-                onClick={form.handleSubmit(onApproveParentToken)}
-              >
-                {isPendingApproveParentToken
-                  ? `2.提交中...`
-                  : isConfirmingApproveParentToken
-                  ? `2.确认中...`
-                  : isParentTokenApproved
-                  ? `2.${token?.parentTokenSymbol}已授权`
-                  : `2.授权${token?.parentTokenSymbol}`}
-              </Button>
+          <div className="flex justify-center space-x-2 mt-4">
+            <Button
+              type="button"
+              className="w-1/3"
+              ref={approveTokenButtonRef}
+              disabled={isPendingApproveToken || isConfirmingApproveToken || isTokenApproved}
+              onClick={form.handleSubmit(onApproveToken)}
+            >
+              {isPendingApproveToken
+                ? `1.提交中...`
+                : isConfirmingApproveToken
+                ? `1.确认中...`
+                : isTokenApproved
+                ? `1.${token?.symbol}已授权`
+                : `1.授权${token?.symbol}`}
+            </Button>
 
-              <Button
-                type="submit"
-                className="w-1/3"
-                disabled={
-                  !isTokenApproved ||
-                  !isParentTokenApproved ||
-                  isPendingStakeLiquidity ||
-                  isConfirmingStakeLiquidity ||
-                  isConfirmedStakeLiquidity
-                }
-              >
-                {isPendingStakeLiquidity
-                  ? '3.质押中...'
-                  : isConfirmingStakeLiquidity
-                  ? '3.确认中...'
-                  : isConfirmedStakeLiquidity
-                  ? '3.已质押'
-                  : '3.质押'}
-              </Button>
-            </div>
-          )}
+            <Button
+              type="button"
+              className="w-1/3"
+              disabled={
+                !isTokenApproved ||
+                isPendingApproveParentToken ||
+                isConfirmingApproveParentToken ||
+                isParentTokenApproved
+              }
+              onClick={form.handleSubmit(onApproveParentToken)}
+            >
+              {isPendingApproveParentToken
+                ? `2.提交中...`
+                : isConfirmingApproveParentToken
+                ? `2.确认中...`
+                : isParentTokenApproved
+                ? `2.${token?.parentTokenSymbol}已授权`
+                : `2.授权${token?.parentTokenSymbol}`}
+            </Button>
+
+            <Button
+              type="submit"
+              className="w-1/3"
+              disabled={
+                !isTokenApproved ||
+                !isParentTokenApproved ||
+                isPendingStakeLiquidity ||
+                isConfirmingStakeLiquidity ||
+                isConfirmedStakeLiquidity
+              }
+            >
+              {isPendingStakeLiquidity
+                ? '3.质押中...'
+                : isConfirmingStakeLiquidity
+                ? '3.确认中...'
+                : isConfirmedStakeLiquidity
+                ? '3.已质押'
+                : '3.质押'}
+            </Button>
+          </div>
         </form>
       </Form>
 
