@@ -15,7 +15,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Loader2 } from 'lucide-react';
 // my funcs
 import { checkWalletConnection } from '@/src/lib/web3';
-import { formatTokenAmount, parseUnits } from '@/src/lib/format';
+import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 
 // my hooks
 import { useAccountStakeStatus, useStakeToken } from '@/src/hooks/contracts/useLOVE20Stake';
@@ -228,13 +228,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
             name="stakeTokenAmount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm text-greyscale-500">
-                  质押数 (当前持有数量：
-                  <span className="text-secondary">
-                    {formatTokenAmount(tokenBalance)} {token?.symbol}
-                  </span>
-                  )
-                </FormLabel>
+                <FormLabel className="text-sm">质押数：</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -243,7 +237,24 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
                     {...field}
                   />
                 </FormControl>
-                <FormDescription />
+                <FormDescription className="flex justify-between items-center">
+                  <span>
+                    持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(tokenBalance)}</span>
+                    {token?.symbol}
+                  </span>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    type="button"
+                    onClick={() => {
+                      form.setValue('stakeTokenAmount', formatUnits(tokenBalance || 0n));
+                    }}
+                    disabled={tokenBalance <= 0n}
+                    className="text-secondary mr-2"
+                  >
+                    全部
+                  </Button>
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -255,15 +266,15 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
             name="releasePeriod"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>释放等待阶段</FormLabel>
+                <FormLabel>释放等待阶段：</FormLabel>
                 <FormControl>
                   <Select onValueChange={(value) => field.onChange(value)} value={field.value}>
                     <SelectTrigger className="w-full !ring-secondary-foreground">
                       <SelectValue placeholder="选择释放等待阶段" />
                     </SelectTrigger>
                     <SelectContent>
-                      {/* {Array.from({ length: 9 }, (_, i) => i + 4) */}
-                      {Array.from({ length: 1 }, (_, i) => i + 4)
+                      {Array.from({ length: 9 }, (_, i) => i + 4)
+                        /* {Array.from({ length: 1 }, (_, i) => i + 4) */
                         .filter((item) => item >= promisedWaitingPhases)
                         .map((item) => (
                           <SelectItem key={item} value={String(item)}>
@@ -281,10 +292,10 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
 
           {/* 按钮组：1.授权；2.质押 */}
           <div className="flex justify-center space-x-4">
-            <Button type="button" className="w" disabled={true}>
+            {/* <Button type="button" className="w" disabled={true}>
               第1次内测体验, 暂时关闭加速质押
-            </Button>
-            {/* <Button
+            </Button> */}
+            <Button
               // 为授权按钮添加 ref
               ref={approveButtonRef}
               className="w-1/2"
@@ -315,7 +326,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
                 : isConfirmedStakeToken
                 ? '2.已质押'
                 : '2.质押'}
-            </Button> */}
+            </Button>
           </div>
         </form>
       </Form>
