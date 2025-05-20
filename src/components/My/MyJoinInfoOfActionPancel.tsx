@@ -113,7 +113,7 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
         <div className="stat place-items-center">
           <div className="stat-title">我参与的代币数</div>
           <div className="stat-value text-2xl text-secondary">
-            {formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0))}
+            {formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0), 0)}
           </div>
         </div>
       </div>

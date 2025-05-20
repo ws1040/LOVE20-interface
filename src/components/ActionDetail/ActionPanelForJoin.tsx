@@ -109,7 +109,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
               {isPendingJoinedAmount ? (
                 <LoadingIcon />
               ) : (
-                formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0))
+                formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0), 0)
               )}
             </div>
             <div className="stat-desc text-sm mt-2">参与本行动的代币</div>
