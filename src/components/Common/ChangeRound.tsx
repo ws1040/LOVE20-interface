@@ -30,7 +30,7 @@ const ChangeRound: React.FC<{ currentRound: bigint; handleChangedRound: (round: 
           切换轮次
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="z-[100] min-h-[25vh]">
+      <DrawerContent className="z-[9999] min-h-[25vh]">
         <DrawerHeader>
           <DrawerTitle></DrawerTitle>
           <DrawerDescription></DrawerDescription>
@@ -43,12 +43,13 @@ const ChangeRound: React.FC<{ currentRound: bigint; handleChangedRound: (round: 
                 <Button
                   key={round}
                   variant="ghost"
-                  className="w-full p-2 text-center rounded-none hover:bg-gray-100"
+                  className="w-full p-2 text-center rounded-none hover:bg-gray-100 touch-manipulation"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     handleSelectRound(round);
                   }}
+                  style={{ touchAction: 'manipulation' }}
                 >
                   <span className="text-lg">第 {round} 轮</span>
                 </Button>
