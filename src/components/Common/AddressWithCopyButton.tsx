@@ -9,6 +9,7 @@ import { abbreviateAddress } from '@/src/lib/format';
 
 interface AddressWithCopyButtonProps {
   address: `0x${string}`;
+  word?: string;
   showCopyButton?: boolean;
   showAddress?: boolean;
   colorClassName?: string;
@@ -16,6 +17,7 @@ interface AddressWithCopyButtonProps {
 
 const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
   address,
+  word,
   showCopyButton = true,
   showAddress = true,
   colorClassName = '',
@@ -37,6 +39,7 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
 
   return (
     <span className="flex items-center space-x-2">
+      {word && <span className="text-xs">{word}</span>}
       {showAddress && (
         <span className={`text-xs ${colorClassName ?? 'text-greyscale-500'}`}>{abbreviateAddress(address)}</span>
       )}
