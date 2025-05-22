@@ -123,7 +123,7 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
         </Button> */}
         {joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= 2n ? (
           <Button variant="outline" className="w-1/3 text-secondary border-secondary" disabled>
-            已取回
+            取回
           </Button>
         ) : (
           <Button
