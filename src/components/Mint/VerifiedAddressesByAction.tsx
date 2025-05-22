@@ -121,8 +121,8 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
           <thead>
             <tr className="border-b border-gray-100">
               <th>被抽中地址</th>
-              <th>获得验证票</th>
-              <th>可铸造激励</th>
+              <th className="px-1">获得验证票</th>
+              <th className="px-1">可铸造激励</th>
               <th className="text-center"></th>
             </tr>
           </thead>
