@@ -120,21 +120,28 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
         <table className="table w-full">
           <thead>
             <tr className="border-b border-gray-100">
-              <th>地址</th>
-              <th>得分</th>
-              <th>激励</th>
+              <th>被抽中地址</th>
+              <th>获得验证票</th>
+              <th>可铸造激励</th>
               <th className="text-center"></th>
             </tr>
           </thead>
           <tbody>
             {addresses.map((item) => (
-              <tr key={item.account} className="border-b border-gray-100">
-                <td>
-                  <AddressWithCopyButton address={item.account} showCopyButton={true} />
+              <tr
+                key={item.account}
+                className={`border-b border-gray-100 ${item.account === accountAddress ? 'text-secondary' : ''}`}
+              >
+                <td className="px-1">
+                  <AddressWithCopyButton
+                    address={item.account}
+                    showCopyButton={true}
+                    word={item.account === accountAddress ? '(我)' : ''}
+                  />
                 </td>
-                <td>{formatTokenAmount(item.score, 0)}</td>
-                <td>{formatTokenAmount(item.minted || item.unminted || 0n, 0)}</td>
-                <td className="text-center">
+                <td className="px-1">{formatTokenAmount(item.score, 0)}</td>
+                <td className="px-1">{formatTokenAmount(item.minted || item.unminted || 0n, 0)}</td>
+                <td className="px-1 text-center">
                   {item.account === accountAddress ? (
                     item.unminted > 0 ? (
                       <Button
@@ -147,7 +154,7 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
                         铸造
                       </Button>
                     ) : item.score > 0 ? (
-                      <span className="text-greyscale-500">已铸</span>
+                      <span className="text-greyscale-500">已铸造</span>
                     ) : (
                       ''
                     )
