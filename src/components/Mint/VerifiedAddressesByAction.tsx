@@ -77,9 +77,11 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
   };
   useEffect(() => {
     if (isConfirmedMint) {
-      setAddresses((prev) => prev.map((addr) => (addr.account === accountAddress ? { ...addr, unminted: 0n } : addr)));
+      setAddresses((prev) =>
+        prev.map((addr) => (addr.account === accountAddress ? { ...addr, minted: addr.unminted, unminted: 0n } : addr)),
+      );
     }
-  }, [isConfirmedMint]);
+  }, [isConfirmedMint, accountAddress]);
 
   const handleChangedRound = (round: number) => {
     setSelectedRound(BigInt(round));
@@ -128,7 +130,7 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
             {addresses.map((item) => (
               <tr key={item.account} className="border-b border-gray-100">
                 <td>
-                  <AddressWithCopyButton address={item.account} showCopyButton={false} />
+                  <AddressWithCopyButton address={item.account} showCopyButton={true} />
                 </td>
                 <td>{formatTokenAmount(item.score, 0)}</td>
                 <td>{formatTokenAmount(item.minted || item.unminted || 0n, 0)}</td>
@@ -145,7 +147,7 @@ const VerifiedAddressesByAction: React.FC<{ currentJoinRound: bigint; actionId: 
                         铸造
                       </Button>
                     ) : item.score > 0 ? (
-                      <span className="text-greyscale-500">已铸造</span>
+                      <span className="text-greyscale-500">已铸</span>
                     ) : (
                       ''
                     )
