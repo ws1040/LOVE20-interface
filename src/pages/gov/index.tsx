@@ -27,7 +27,11 @@ const GovPage = () => {
   const { address: accountAddress } = useAccount();
 
   // 获取当前轮次
-  const { currentRound: currentVoteRound } = useCurrentRound();
+  const {
+    currentRound: currentVoteRound,
+    error: errorCurrentRound,
+    isPending: isPendingCurrentRound,
+  } = useCurrentRound();
 
   // 获取用户的治理票数
   const {
@@ -42,10 +46,21 @@ const GovPage = () => {
     if (errorValidGovVotes) {
       handleContractError(errorValidGovVotes, 'stake');
     }
-  }, [errorValidGovVotes]);
+    if (errorCurrentRound) {
+      handleContractError(errorCurrentRound, 'vote');
+    }
+  }, [errorValidGovVotes, errorCurrentRound]);
 
   // 判断是否需要显示治理组件
   const shouldShowGovComponents = validGovVotes > 0n;
+
+  if (isPendingCurrentRound || isPendingValidGovVotes) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <LoadingIcon />
+      </div>
+    );
+  }
 
   return (
     <>

@@ -58,7 +58,13 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   const displayRound = currentTokenRound != null ? currentTokenRound.toString() : '0';
 
   // 当尚未加载相关数据时，返回加载中状态
-  if (isLoading) {
+  if (isLoading || currentTokenRound == null || currentTokenRound < 0n) {
+    if (currentTokenRound == null || currentTokenRound < 0n) {
+      console.log('currentTokenRound', currentTokenRound);
+      console.log('currentRound', currentRound);
+      console.log('token.initialStakeRound', token?.initialStakeRound);
+      console.log('token', token);
+    }
     return <LoadingIcon />;
   }
 
