@@ -470,7 +470,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                 <FormDescription className="flex justify-between items-center">
                   <span>
                     <span>
-                      持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(parentTokenBalance)}</span>
+                      当前持有 <span className="mr-2">{formatTokenAmount(parentTokenBalance)}</span>
                       {token?.parentTokenSymbol}
                     </span>
                     <Button
@@ -519,7 +519,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                 <FormMessage />
                 <FormDescription className="flex justify-between items-center">
                   <span>
-                    持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(tokenBalance)}</span>
+                    当前持有 <span className="mr-2">{formatTokenAmount(tokenBalance)}</span>
                     {token?.symbol}
                     <Button
                       variant="link"
