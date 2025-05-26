@@ -16,7 +16,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 // my components
 import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import LoadingOverlay from '../Common/LoadingOverlay';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 interface ActionPanelForVoteProps {
   actionId: bigint;

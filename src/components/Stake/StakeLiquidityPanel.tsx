@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { checkWalletConnection } from '@/src/lib/web3';
 import { extractErrorMessage } from '@/src/lib/utils';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
+import { formatPhaseText } from '@/src/lib/domainUtils';
 
 // my contexts
 import { TokenContext, Token } from '@/src/contexts/TokenContext';
@@ -55,7 +56,7 @@ function buildFormSchema(parentTokenBalance: bigint, tokenBalance: bigint) {
       },
       z
         .string()
-        .regex(/^\d+(\.\d{1,18})?$/, '请输入合法数值，最多支持18位小数') // 修改为18位小数
+        .regex(/^\d+(\.\d{1,18})?$/, '请输入合法数值，最多支持18位小数')
         .refine((val) => {
           const parsed = parseUnits(val);
           return parsed !== null && parsed > 0n;
@@ -77,7 +78,7 @@ function buildFormSchema(parentTokenBalance: bigint, tokenBalance: bigint) {
       },
       z
         .string()
-        .regex(/^\d+(\.\d{1,18})?$/, '请输入合法数值，最多支持18位小数') // 修改为18位小数
+        .regex(/^\d+(\.\d{1,18})?$/, '请输入合法数值，最多支持18位小数')
         .refine((val) => {
           const parsed = parseUnits(val);
           return parsed !== null && parsed > 0n;
@@ -88,8 +89,8 @@ function buildFormSchema(parentTokenBalance: bigint, tokenBalance: bigint) {
         }, '质押 token 数不能超过当前持有'),
     ),
 
-    // 释放期可直接用 string，也可用 z.coerce.number() 转 number
-    releasePeriod: z.string(),
+    // 修改解锁期验证规则，要求必须选择
+    releasePeriod: z.string().min(1, '请选择解锁期'),
   });
 }
 
@@ -139,14 +140,14 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   } = useInitialStakeRound(token?.address as `0x${string}`);
 
   // --------------------------------------------------
-  // 2.0 使用 React Hook Form
+  // 2.1 使用 React Hook Form
   // --------------------------------------------------
   const form = useForm<z.infer<ReturnType<typeof buildFormSchema>>>({
     resolver: zodResolver(buildFormSchema(parentTokenBalance || 0n, tokenBalance || 0n)),
     defaultValues: {
       parentToken: '',
       stakeToken: '',
-      releasePeriod: '4',
+      releasePeriod: '',
     },
     mode: 'onChange',
   });
@@ -419,12 +420,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     }
   }, [tokenBalance, parentTokenBalance, token, isPendingPair]);
 
-  useEffect(() => {
-    if (promisedWaitingPhases !== undefined && promisedWaitingPhases > 0) {
-      form.setValue('releasePeriod', String(promisedWaitingPhases));
-    }
-  }, [promisedWaitingPhases]);
-
   const approveTokenButtonRef = useRef<HTMLButtonElement>(null);
   const prevIsPendingApproveToken = useRef<boolean>(isPendingApproveToken);
 
@@ -550,7 +545,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
             name="releasePeriod"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>释放等待阶段：</FormLabel>
+                <FormLabel>解锁期：</FormLabel>
                 <FormControl>
                   <Select
                     disabled={hadStartedApprove}
@@ -558,7 +553,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                     value={field.value}
                   >
                     <SelectTrigger className="w-full !ring-secondary-foreground">
-                      <SelectValue placeholder="选择释放等待阶段" />
+                      <SelectValue placeholder="选择解锁期长度" />
                     </SelectTrigger>
                     <SelectContent>
                       {/* {Array.from({ length: 9 }, (_, i) => i + 4) */}
@@ -566,25 +561,17 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                         .filter((item) => item >= promisedWaitingPhases)
                         .map((item) => (
                           <SelectItem key={item} value={String(item)}>
-                            {item}
+                            {formatPhaseText(item)}
                           </SelectItem>
                         ))}
                     </SelectContent>
                   </Select>
                 </FormControl>
-                <FormDescription>含义：申请解除质押后，几个阶段之后可以取回代币</FormDescription>
+                <FormDescription>提示：取消质押后，需等解锁期过后才能取回代币</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          {/* {govVotes && govVotes >= 22207670000000000000000n && (
-            <div className="flex justify-center space-x-2 mt-4">
-              <Button type="button" className="w" disabled={true}>
-                第1次内测体验, 暂时关闭追加治理票
-              </Button>
-            </div>
-          )} */}
 
           <div className="flex justify-center space-x-2 mt-4">
             <Button

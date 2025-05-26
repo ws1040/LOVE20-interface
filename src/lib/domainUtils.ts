@@ -67,3 +67,29 @@ export const calculateActionAPY = (expectedReward?: bigint, joinedAmount?: bigin
   // 格式化APY，显示整数加2位小数，如果小数最后是0，则去掉
   return `${apy.toFixed(2).replace(/\.?0+$/, '')}%`;
 };
+
+/**
+ * 格式化阶段显示文本
+ * @param phases 阶段数
+ * @returns 格式化后的阶段文本，如"4阶段（1,000区块，约7天）"
+ */
+export const formatPhaseText = (phases: number, onlyBlockTime = false): string => {
+  // 从环境变量获取配置
+  const PHASE_BLOCKS = Number(process.env.NEXT_PUBLIC_PHASE_BLOCKS) || 0;
+  const BLOCK_TIME = Number(process.env.NEXT_PUBLIC_BLOCK_TIME) || 0; // 单位：百分之一秒
+
+  // 计算总区块数
+  const totalBlocks = phases * PHASE_BLOCKS;
+
+  // 计算总时间（秒）
+  const totalSeconds = Math.ceil((totalBlocks * BLOCK_TIME) / 100);
+
+  // 计算天数
+  const days = Math.ceil(totalSeconds / (24 * 60 * 60));
+
+  let result = `${totalBlocks.toLocaleString()}区块，约${days}天`;
+  if (!onlyBlockTime) {
+    result = `${phases}阶段（${result})`;
+  }
+  return result;
+};

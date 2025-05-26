@@ -16,7 +16,7 @@ const StakePage = () => {
           <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 mb-8 text-sm">
             <div className="text-base font-bold text-greyscale-700 pb-2">治理票</div>
             <div className="text-sm text-greyscale-500">1、质押后，代币对将自动注入 Uniswap V2 流动性池</div>
-            <div className="text-sm text-greyscale-500">2、所得治理票数 = SL数量 * 释放等待阶段数</div>
+            <div className="text-sm text-greyscale-500">2、所得治理票数 = SL数量 * 解锁期阶段数</div>
             <div className="text-base font-bold text-greyscale-700 pt-2 pb-1">治理激励</div>
             <div className="text-sm text-greyscale-500 pb-1">1、当轮所得治理激励 = 验证激励 + 加速激励</div>
             <div className="text-sm text-greyscale-500 pb-1">

@@ -7,6 +7,7 @@ import Link from 'next/link';
 // my funcs
 import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
+import { formatPhaseText } from '@/src/lib/domainUtils';
 
 // my hooks
 import { useHandleContractError } from '@/src/lib/errorUtils';
@@ -279,12 +280,17 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
           <div className="stat-value text-xl">
             {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || 0n, 2)}
           </div>
+          <div className="stat-desc text-xs my-2">注意：解锁期内治理票数为0</div>
         </div>
         <div className="stat place-items-center pt-0">
-          <div className="stat-title text-sm">承诺释放间隔轮数</div>
+          <div className="stat-title text-sm">我承诺的解锁期</div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingPhases || 0n}`}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingPhases || 0n} 阶段`}
           </div>
+          <div className="stat-desc text-xs my-2">{`${formatPhaseText(
+            Number(promisedWaitingPhases || 0n),
+            true,
+          )}`}</div>
         </div>
       </div>
       <div className="stats w-full grid grid-cols-2 divide-x-0">
