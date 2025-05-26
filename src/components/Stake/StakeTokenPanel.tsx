@@ -16,6 +16,7 @@ import { Loader2 } from 'lucide-react';
 // my funcs
 import { checkWalletConnection } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
+import { formatPhaseText } from '@/src/lib/domainUtils';
 
 // my hooks
 import { useAccountStakeStatus, useStakeToken } from '@/src/hooks/contracts/useLOVE20Stake';
@@ -28,6 +29,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 // my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
+import LoadingIcon from '../Common/LoadingIcon';
 
 interface StakeTokenPanelProps {
   tokenBalance: bigint;
@@ -36,7 +38,7 @@ interface StakeTokenPanelProps {
 // 1. 定义 Zod 校验规则
 //   - 质押代币数不能为0
 //   - 质押代币数不能大于持有代币数
-//   - releasePeriod 默认 "4"
+//   - releasePeriod 必须选择
 function stakeSchemaFactory(tokenBalance: bigint) {
   return z.object({
     stakeTokenAmount: z
@@ -50,7 +52,8 @@ function stakeSchemaFactory(tokenBalance: bigint) {
       .refine((val) => parseUnits(val) <= tokenBalance, {
         message: '质押代币数不能大于持有代币数',
       }),
-    releasePeriod: z.string().default('4'),
+    // 修改解锁期验证规则，要求必须选择
+    releasePeriod: z.string().min(1, '请选择解锁期'),
   });
 }
 
@@ -77,7 +80,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     writeError: errStakeToken,
   } = useStakeToken();
 
-  // 0. 获取质押状态(释放轮次)
+  // 0. 获取质押状态(解锁期)
   const {
     promisedWaitingPhases,
     isPending: isPendingAccountStakeStatus,
@@ -113,7 +116,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     resolver: zodResolver(stakeSchemaFactory(tokenBalance)),
     defaultValues: {
       stakeTokenAmount: '',
-      releasePeriod: '4',
+      releasePeriod: '', // 移除默认值
     },
     mode: 'onChange',
   });
@@ -174,13 +177,6 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     }
   }, [isConfirmedStakeToken, form, token?.symbol]);
 
-  useEffect(() => {
-    // 确保 promisedWaitingPhases 有效，再设置初始值（注意转换为 string）
-    if (promisedWaitingPhases !== undefined && promisedWaitingPhases > 0) {
-      form.setValue('releasePeriod', String(promisedWaitingPhases));
-    }
-  }, [promisedWaitingPhases]);
-
   // 监听用户输入的质押数量以及 allowance 值，动态判断是否已授权
   const stakeTokenAmountValue = form.watch('stakeTokenAmount');
   useEffect(() => {
@@ -210,7 +206,18 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     if (errAllowanceToken) {
       handleContractError(errAllowanceToken, 'token');
     }
-  }, [errStakeToken, errApproveToken, errAllowanceToken]);
+    if (errAccountStakeStatus) {
+      handleContractError(errAccountStakeStatus, 'stake');
+    }
+  }, [errStakeToken, errApproveToken, errAllowanceToken, errAccountStakeStatus]);
+
+  if (isPendingAccountStakeStatus) {
+    return (
+      <div className="w-full flex flex-col items-center pt-0 p-6">
+        <LoadingIcon />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col items-center pt-0 p-6">
@@ -239,7 +246,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
                 </FormControl>
                 <FormDescription className="flex justify-between items-center">
                   <span>
-                    持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(tokenBalance)}</span>
+                    持有 <span className="mr-2">{formatTokenAmount(tokenBalance)}</span>
                     {token?.symbol}
                   </span>
                   <Button
@@ -260,17 +267,16 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
             )}
           />
 
-          {/* 释放期 */}
           <FormField
             control={form.control}
             name="releasePeriod"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>释放等待阶段：</FormLabel>
+                <FormLabel>解锁期：</FormLabel>
                 <FormControl>
                   <Select onValueChange={(value) => field.onChange(value)} value={field.value}>
                     <SelectTrigger className="w-full !ring-secondary-foreground">
-                      <SelectValue placeholder="选择释放等待阶段" />
+                      <SelectValue placeholder="选择解锁期长度" />
                     </SelectTrigger>
                     <SelectContent>
                       {/* {Array.from({ length: 9 }, (_, i) => i + 4) */}
@@ -278,13 +284,13 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
                         .filter((item) => item >= promisedWaitingPhases)
                         .map((item) => (
                           <SelectItem key={item} value={String(item)}>
-                            {item}
+                            {formatPhaseText(item)}
                           </SelectItem>
                         ))}
                     </SelectContent>
                   </Select>
                 </FormControl>
-                <FormDescription>含义：申请解除质押后，几个阶段之后可以取回代币</FormDescription>
+                <FormDescription>提示：取消质押后，需等待解锁期过后才能取回代币</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
