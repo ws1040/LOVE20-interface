@@ -89,7 +89,7 @@ export const formatPhaseText = (phases: number, onlyBlockTime = false): string =
 
   let result = `${totalBlocks.toLocaleString()}区块，约${days}天`;
   if (!onlyBlockTime) {
-    result = `${phases}阶段（${result})`;
+    result = `${phases}个阶段（${result})`;
   }
   return result;
 };
