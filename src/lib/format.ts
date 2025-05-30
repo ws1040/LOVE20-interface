@@ -7,7 +7,7 @@ export const abbreviateAddress = (address: string): string => {
   return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
 };
 
-// 格式化代币数量：将最小单位转换为可读数字并带有逗号分隔 例如从 1000000000000000000 转换为 1.0000
+// 【显示函数】从wei到eth 并带有逗号分隔 例如从 1000000000000000000 转换为 1.0000
 export const formatTokenAmount = (balance: bigint, maximumFractionDigits_ = 4): string => {
   const formatted = formatUnits(balance);
   const numberFormatted = Number(formatted);
@@ -17,20 +17,53 @@ export const formatTokenAmount = (balance: bigint, maximumFractionDigits_ = 4): 
     return '0';
   }
 
-  // 如果数字小于0.0001，则显示<0.0001
-  if (numberFormatted < 0.0001) {
-    return '<0.0001';
+  // 根据数值大小使用不同的格式化规则
+  if (numberFormatted >= 100000) {
+    return new Intl.NumberFormat('en-US', {
+      maximumFractionDigits: 0,
+    }).format(numberFormatted);
+  } else if (numberFormatted >= 1000) {
+    return new Intl.NumberFormat('en-US', {
+      maximumFractionDigits: 2,
+    }).format(numberFormatted);
+  } else if (numberFormatted >= 1) {
+    return new Intl.NumberFormat('en-US', {
+      maximumFractionDigits: 4,
+    }).format(numberFormatted);
+  } else if (numberFormatted >= 0.001) {
+    return new Intl.NumberFormat('en-US', {
+      maximumFractionDigits: 4,
+    }).format(numberFormatted);
+  } else {
+    // 数字 < 0.001：使用折叠显示，例如 0.0000229 显示为 0.0{4}229
+    if (numberFormatted === 0) return '0';
+
+    // 为了确保获取足够多的小数位，使用 toFixed 获取更多精度
+    const extraPrecision = 10;
+    const fixedStr = numberFormatted.toFixed(4 + extraPrecision);
+    const parts = fixedStr.split('.');
+    if (parts.length < 2) return fixedStr;
+
+    const fractionalPart = parts[1];
+
+    // 计算小数部分前导 0 的个数
+    let zeroCount = 0;
+    for (const ch of fractionalPart) {
+      if (ch === '0') {
+        zeroCount++;
+      } else {
+        break;
+      }
+    }
+
+    // 截取从第一个非 0 数字开始后的 4 位有效数字
+    const significant = fractionalPart.slice(zeroCount, zeroCount + 4);
+
+    return `0.{${zeroCount}}${significant}`;
   }
-
-  // 使用 Intl.NumberFormat 格式化数字，添加逗号
-  const formattedWithCommas = new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: maximumFractionDigits_, // 保留小数位
-  }).format(numberFormatted);
-
-  return formattedWithCommas;
 };
 
-// to wei/BigInt
+// 【转换函数】从eth到wei
 export const parseUnits = (value: string): bigint => {
   const decimals = parseInt(process.env.NEXT_PUBLIC_TOKEN_DECIMALS || '18', 10);
   try {
@@ -42,7 +75,7 @@ export const parseUnits = (value: string): bigint => {
   }
 };
 
-// from wei/BigInt
+// 【转换函数】从wei到eth
 export const formatUnits = (value: bigint): string => {
   const decimals = parseInt(process.env.NEXT_PUBLIC_TOKEN_DECIMALS || '18', 10);
   return viemFormatUnits(value, decimals);

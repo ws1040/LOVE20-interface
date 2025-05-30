@@ -1,8 +1,9 @@
 'use client';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import {
   SmilePlus,
   Home,
@@ -26,12 +27,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from '@/components/ui/sidebar';
 
 // 修改后的 AppSidebar 组件
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { token } = useContext(TokenContext) || {};
   const pathname = usePathname();
+  const { setOpenMobile, isMobile } = useSidebar();
 
   if (!token) {
     return null;
@@ -63,6 +66,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
 
     return false;
+  };
+
+  // 处理链接点击，在移动端自动关闭侧边栏
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
   };
 
   // 动态生成导航数据
@@ -175,9 +185,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       isActive={subItem.isActive || false}
                       className={cn(subItem.isActive && '!bg-transparent !text-white font-bold')}
                     >
-                      <a href={subItem.url}>
+                      <Link href={subItem.url} onClick={handleLinkClick}>
                         <span className="text-base">{subItem.title}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
