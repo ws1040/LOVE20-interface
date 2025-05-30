@@ -43,6 +43,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
   // 检查当前URL是否匹配菜单项
+  // const isActiveUrl = (url: string) => {
+  //   const urlPath = url.split('?')[0];
+  //   const normalizedUrlPath = urlPath.endsWith('/') ? urlPath : `${urlPath}/`;
+
+  //   const currentPath = pathname.split('?')[0];
+  //   const normalizedCurrentPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
+
+  //   if (normalizedCurrentPath === normalizedUrlPath) return true;
+
+  //   // 如果basePath存在且不为空，处理子路径情况
+  //   if (basePath && basePath.length > 0) {
+  //     const pathWithoutBase = normalizedCurrentPath.startsWith(basePath)
+  //       ? normalizedCurrentPath.substring(basePath.length)
+  //       : normalizedCurrentPath;
+
+  //     const urlWithoutBase = normalizedUrlPath.startsWith(basePath)
+  //       ? normalizedUrlPath.substring(basePath.length)
+  //       : normalizedUrlPath;
+
+  //     return pathWithoutBase === urlWithoutBase;
+  //   }
+
+  //   return false;
+  // };
   const isActiveUrl = (url: string) => {
     const urlPath = url.split('?')[0];
     const normalizedUrlPath = urlPath.endsWith('/') ? urlPath : `${urlPath}/`;
@@ -50,24 +74,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const currentPath = pathname.split('?')[0];
     const normalizedCurrentPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
 
-    if (normalizedCurrentPath === normalizedUrlPath) return true;
-
-    // 如果basePath存在且不为空，处理子路径情况
-    if (basePath && basePath.length > 0) {
-      const pathWithoutBase = normalizedCurrentPath.startsWith(basePath)
-        ? normalizedCurrentPath.substring(basePath.length)
-        : normalizedCurrentPath;
-
-      const urlWithoutBase = normalizedUrlPath.startsWith(basePath)
-        ? normalizedUrlPath.substring(basePath.length)
-        : normalizedUrlPath;
-
-      return pathWithoutBase === urlWithoutBase;
-    }
-
-    return false;
+    return normalizedCurrentPath === normalizedUrlPath;
   };
-
   // 处理链接点击，在移动端自动关闭侧边栏
   const handleLinkClick = () => {
     if (isMobile) {
@@ -84,19 +92,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: '社区行动',
-            url: `${basePath}/acting/?symbol=${token.symbol}`,
+            url: `/acting/?symbol=${token.symbol}`,
             isActive: isActiveUrl(`${basePath}/acting/`),
             icon: SmilePlus,
           },
           {
             title: '社区治理',
-            url: `${basePath}/gov/?symbol=${token.symbol}`,
+            url: `/gov/?symbol=${token.symbol}`,
             isActive: isActiveUrl(`${basePath}/gov/`),
             icon: Landmark,
           },
           // {
           //   title: '推举行动',
-          //   url: `${basePath}/vote/actions4submit?symbol=${token.symbol}`,
+          //   url: `/vote/actions4submit?symbol=${token.symbol}`,
           //   isActive: false,
           //   icon: SatelliteDish,
           // },
@@ -108,13 +116,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: '发射平台',
-            url: `${basePath}/launch/?symbol=${token.symbol}`,
+            url: `/launch/?symbol=${token.symbol}`,
             isActive: isActiveUrl(`${basePath}/launch/`),
             icon: Rocket,
           },
           {
             title: '代币列表',
-            url: `${basePath}/tokens/?symbol=${token.symbol}`,
+            url: `/tokens/?symbol=${token.symbol}`,
             isActive: isActiveUrl(`${basePath}/tokens/`),
             icon: List,
           },
@@ -126,13 +134,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           // {
           //   title: '交易代币',
-          //   url: `${basePath}/dex/swap?symbol=${token.symbol}`,
+          //   url: `/dex/swap?symbol=${token.symbol}`,
           //   isActive: false,
           //   icon: BadgeDollarSign,
           // },
           {
             title: `兑换${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`,
-            url: `${basePath}/dex/deposit?symbol=${token.symbol}`,
+            url: `/dex/deposit?symbol=${token.symbol}`,
             isActive: isActiveUrl(`${basePath}/dex/deposit`),
             icon: TicketCheck,
           },
@@ -144,7 +152,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: '协议首页',
-            url: `${basePath}/?symbol=${token.symbol}`,
+            url: `/?symbol=${token.symbol}`,
             isActive: pathname === basePath || pathname === `${basePath}/`,
             icon: Home,
           },
@@ -156,7 +164,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: '个人中心',
-            url: `${basePath}/my/?symbol=${token.symbol}`,
+            url: `/my/?symbol=${token.symbol}`,
             isActive: isActiveUrl(`${basePath}/my/`),
             icon: User,
           },
