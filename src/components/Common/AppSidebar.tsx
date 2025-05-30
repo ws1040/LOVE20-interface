@@ -43,30 +43,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
   // 检查当前URL是否匹配菜单项
-  // const isActiveUrl = (url: string) => {
-  //   const urlPath = url.split('?')[0];
-  //   const normalizedUrlPath = urlPath.endsWith('/') ? urlPath : `${urlPath}/`;
-
-  //   const currentPath = pathname.split('?')[0];
-  //   const normalizedCurrentPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
-
-  //   if (normalizedCurrentPath === normalizedUrlPath) return true;
-
-  //   // 如果basePath存在且不为空，处理子路径情况
-  //   if (basePath && basePath.length > 0) {
-  //     const pathWithoutBase = normalizedCurrentPath.startsWith(basePath)
-  //       ? normalizedCurrentPath.substring(basePath.length)
-  //       : normalizedCurrentPath;
-
-  //     const urlWithoutBase = normalizedUrlPath.startsWith(basePath)
-  //       ? normalizedUrlPath.substring(basePath.length)
-  //       : normalizedUrlPath;
-
-  //     return pathWithoutBase === urlWithoutBase;
-  //   }
-
-  //   return false;
-  // };
   const isActiveUrl = (url: string) => {
     const urlPath = url.split('?')[0];
     const normalizedUrlPath = urlPath.endsWith('/') ? urlPath : `${urlPath}/`;
@@ -74,8 +50,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const currentPath = pathname.split('?')[0];
     const normalizedCurrentPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
 
-    return normalizedCurrentPath === normalizedUrlPath;
+    if (normalizedCurrentPath === normalizedUrlPath) return true;
+
+    // 如果basePath存在且不为空，处理子路径情况
+    if (basePath && basePath.length > 0) {
+      const pathWithoutBase = normalizedCurrentPath.startsWith(basePath)
+        ? normalizedCurrentPath.substring(basePath.length)
+        : normalizedCurrentPath;
+
+      const urlWithoutBase = normalizedUrlPath.startsWith(basePath)
+        ? normalizedUrlPath.substring(basePath.length)
+        : normalizedUrlPath;
+
+      return pathWithoutBase === urlWithoutBase;
+    }
+
+    return false;
   };
+
+  // const isActiveUrl = (url: string) => {
+  //   const urlPath = url.split('?')[0];
+  //   const normalizedUrlPath = urlPath.endsWith('/') ? urlPath : `${urlPath}/`;
+
+  //   const currentPath = pathname.split('?')[0];
+  //   const normalizedCurrentPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
+
+  //   return normalizedCurrentPath === normalizedUrlPath;
+  // };
+
   // 处理链接点击，在移动端自动关闭侧边栏
   const handleLinkClick = () => {
     if (isMobile) {
