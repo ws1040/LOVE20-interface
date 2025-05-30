@@ -284,7 +284,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         </div>
         <div className="stat place-items-center pt-0">
           <div className="stat-title text-sm">我承诺的解锁期</div>
-          <div className="stat-value text-xl">
+          <div className="stat-value text-lg">
             {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingPhases || 0n} 阶段`}
           </div>
           <div className="stat-desc text-xs my-2">{`${formatPhaseText(
