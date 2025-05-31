@@ -19,9 +19,13 @@ const StakePage = () => {
               <HelpCircle className="w-4 h-4" />
               帮助信息
             </div>
+            <div className="text-base font-bold text-blue-700 pt-2 pb-1">SL代币：</div>
+            <div className="text-sm text-blue-700">
+              代币对儿由质押合约注入 Uniswap V2 流动性池，并铸造SL代币作为流动性质押凭证
+            </div>
+
             <div className="text-base font-bold text-blue-700 pt-2 pb-1">治理票：</div>
-            <div className="text-sm text-blue-700">1、质押后，代币对将自动注入 Uniswap V2 流动性池</div>
-            <div className="text-sm text-blue-700">2、所得治理票数 = SL数量 * 解锁期阶段数</div>
+            <div className="text-sm text-blue-700">所得治理票数 = SL代币数量 * 解锁期阶段数</div>
             <div className="text-base font-bold text-blue-700 pt-2 pb-1">治理激励：</div>
             <div className="text-sm text-blue-700 pb-1">1、当轮所得治理激励 = 验证激励 + 加速激励</div>
             <div className="text-sm text-blue-700 pb-1">

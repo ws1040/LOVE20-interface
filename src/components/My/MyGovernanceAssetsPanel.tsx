@@ -285,7 +285,8 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         <div className="stat place-items-center pt-0">
           <div className="stat-title text-sm">我承诺的解锁期</div>
           <div className="stat-value text-lg">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingPhases || 0n} 阶段`}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingPhases || 0n} `}
+            <span className="text-sm"> 阶段</span>
           </div>
           <div className="stat-desc text-xs my-2">{`${formatPhaseText(
             Number(promisedWaitingPhases || 0n),
@@ -381,12 +382,14 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
                     : '3.取消质押'}
                 </Button>
               </div>
-              <div className="text-center mt-2 text-sm text-greyscale-600">
-                取消质押后，投票轮第
+              <div className="text-center mt-4 text-sm text-greyscale-600">
+                解锁期，是从取消质押的阶段结束时开始计算
+                <br />
+                （现在取消质押后，投票轮第
                 <span className="text-secondary mx-1">{`${
                   formatRoundForDisplay(currentRound, token) + (promisedWaitingPhases || 0n) + 1n
                 } `}</span>
-                轮才能取回代币
+                轮才能取回代币）
               </div>
             </>
           )}

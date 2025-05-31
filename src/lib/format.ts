@@ -59,7 +59,7 @@ export const formatTokenAmount = (balance: bigint, maximumFractionDigits_ = 4): 
     // 截取从第一个非 0 数字开始后的 4 位有效数字
     const significant = fractionalPart.slice(zeroCount, zeroCount + 4);
 
-    return `0.{${zeroCount}}${significant}`;
+    return `0.0{${zeroCount}}${significant}`;
   }
 };
 
