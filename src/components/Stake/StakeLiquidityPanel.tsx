@@ -668,7 +668,9 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                               </SelectContent>
                             </Select>
                           </FormControl>
-                          <FormDescription>提示：解锁期是指，取消质押后多久才能取回代币</FormDescription>
+                          <FormDescription>
+                            “解锁期” 是指，取消质押后多久才能取回代币 (注意：是从取消质押的阶段结束时开始计算)
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}

@@ -68,16 +68,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return false;
   };
 
-  // const isActiveUrl = (url: string) => {
-  //   const urlPath = url.split('?')[0];
-  //   const normalizedUrlPath = urlPath.endsWith('/') ? urlPath : `${urlPath}/`;
-
-  //   const currentPath = pathname.split('?')[0];
-  //   const normalizedCurrentPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
-
-  //   return normalizedCurrentPath === normalizedUrlPath;
-  // };
-
   // 处理链接点击，在移动端自动关闭侧边栏
   const handleLinkClick = () => {
     if (isMobile) {
