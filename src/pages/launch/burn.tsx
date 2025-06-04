@@ -6,7 +6,7 @@ import { useContext, useEffect } from 'react';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
-import { useLaunches } from '@/src/hooks/contracts/useLOVE20Launch';
+import { useLaunchInfo } from '@/src/hooks/contracts/useLOVE20Launch';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my components
@@ -20,7 +20,7 @@ export default function BurnPage() {
     launchInfo,
     isPending: isLaunchInfoPending,
     error: launchInfoError,
-  } = useLaunches(token ? token.address : '0x0');
+  } = useLaunchInfo(token ? token.address : '0x0');
 
   // 错误处理
   const { handleContractError } = useHandleContractError();

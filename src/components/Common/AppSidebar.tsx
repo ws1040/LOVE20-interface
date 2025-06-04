@@ -132,7 +132,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           // },
           {
             title: `兑换代币`,
-            url: `/dex/swap?symbol=${token.symbol}&from=${process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL}&to=${token.symbol}`,
+            url: `/dex/swap?symbol=${token.symbol}&from=${process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL}`,
             isActive: isActiveUrl(`${basePath}/dex/swap`),
             icon: TicketCheck,
           },

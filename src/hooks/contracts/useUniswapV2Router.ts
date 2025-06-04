@@ -102,7 +102,7 @@ export function useSwapExactETHForTokens() {
         value, // 发送的 ETH 数量
       });
     } catch (err) {
-      console.error('ETH 兑换代币失败:', err);
+      console.error('swapExactETHForTokens 兑换代币失败:', err);
       throw err;
     }
   };
@@ -135,7 +135,7 @@ export function useSwapExactTokensForETH() {
         args: [amountIn, amountOutMin, path, to, deadline],
       });
     } catch (err) {
-      console.error('代币兑换 ETH 失败:', err);
+      console.error('代币兑换 swapExactTokensForETH 失败:', err);
       throw err;
     }
   };

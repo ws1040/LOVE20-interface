@@ -22,6 +22,11 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
     return <LoadingIcon />;
   }
 
+  const parentTokenSymbol =
+    token.parentTokenSymbol == process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL
+      ? process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL
+      : token.parentTokenSymbol;
+
   return (
     <div className="flex-col items-center px-4">
       <div className="grid place-items-center">
@@ -32,7 +37,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
       <div className="stats w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center pb-1">
           <div className="stat-title text-sm">
-            <span>{token.parentTokenSymbol} </span>
+            <span>{parentTokenSymbol}</span>
             筹集目标
           </div>
           <div className="stat-value text-xl">{formatTokenAmount(launchInfo.parentTokenFundraisingGoal)}</div>
@@ -46,7 +51,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
         </div>
       </div>
       <div className="text-center text-xs mb-4 text-greyscale-500">
-        兑换比例：1 {token.parentTokenSymbol} ={' '}
+        兑换比例：1 {parentTokenSymbol} ={' '}
         {formatIntegerStringWithCommas(
           removeExtraZeros(
             (Number(TOKEN_CONFIG.fairLaunch) / Number(launchInfo.parentTokenFundraisingGoal)).toLocaleString('en-US', {
@@ -62,7 +67,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
           <div className="stat-title text-sm mr-6 ">累计申购</div>
           <div className="stat-value">
             <span className="text-3xl text-secondary">{formatTokenAmount(launchInfo.totalContributed)}</span>
-            <span className="text-greyscale-500 font-normal text-sm ml-2">{token.parentTokenSymbol}</span>
+            <span className="text-greyscale-500 font-normal text-sm ml-2">{parentTokenSymbol}</span>
           </div>
           <div className="mt-2 rounded-lg text-sm">
             <p className="mt-2 mb-1 font-medium">发射结束条件：</p>

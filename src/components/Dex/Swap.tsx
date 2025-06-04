@@ -52,7 +52,12 @@ interface TokenConfig {
   isWETH?: boolean;
 }
 
-const buildSupportedTokens = (token: any): TokenConfig[] => {
+// 添加 SwapPanel 的 Props 接口
+interface SwapPanelProps {
+  showCurrentToken?: boolean; // 是否显示当前 token，默认为 true
+}
+
+const buildSupportedTokens = (token: any, showCurrentToken: boolean = true): TokenConfig[] => {
   const supportedTokens: TokenConfig[] = [];
 
   // 1. 原生代币 - 确保symbol不为空
@@ -79,10 +84,15 @@ const buildSupportedTokens = (token: any): TokenConfig[] => {
     });
   }
 
-  // 3. 添加当前 token 和其 parentToken（如果不重复）
+  // 3. 添加当前 token 和其 parentToken（如果不重复且允许显示当前token）
   if (token) {
-    // 当前 token - 确保symbol和address有效
-    if (token.symbol && token.address && !supportedTokens.find((t) => t.address === token.address)) {
+    // 当前 token - 只有在 showCurrentToken 为 true 时才添加
+    if (
+      showCurrentToken &&
+      token.symbol &&
+      token.address &&
+      !supportedTokens.find((t) => t.address === token.address)
+    ) {
       supportedTokens.push({
         symbol: token.symbol,
         address: token.address,
@@ -202,7 +212,7 @@ type SwapFormValues = z.infer<ReturnType<typeof getSwapFormSchema>>;
 // ================================================
 // 主组件
 // ================================================
-const SwapPanel = () => {
+const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   const router = useRouter();
   const { address: account, chain: accountChain } = useAccount();
   const { token } = useTokenContext();
@@ -210,7 +220,7 @@ const SwapPanel = () => {
   // --------------------------------------------------
   // 1. 构建支持的代币列表
   // --------------------------------------------------
-  const supportedTokens = useMemo(() => buildSupportedTokens(token), [token]);
+  const supportedTokens = useMemo(() => buildSupportedTokens(token, showCurrentToken), [token, showCurrentToken]);
 
   // 选中的代币状态 - 使用 useEffect 来正确初始化
   const [fromToken, setFromToken] = useState<TokenConfig>({
@@ -326,9 +336,13 @@ const SwapPanel = () => {
           }
         }
 
-        // 如果还没找到，使用第二个代币（即使相同也要有默认值）
+        // 如果还没找到，并且第二个代币不是fromToken
         if (!preferredToToken && supportedTokens.length > 1) {
-          preferredToToken = supportedTokens[1];
+          if (supportedTokens[1].address !== finalFromToken?.address) {
+            preferredToToken = supportedTokens[1];
+          } else if (supportedTokens[0].address !== finalFromToken?.address) {
+            preferredToToken = supportedTokens[0];
+          }
         }
 
         if (preferredToToken) {
@@ -694,7 +708,7 @@ const SwapPanel = () => {
       // 预检查2：验证交换路径
       if (swapMethod === 'UniswapV2_ETH_TO_TOKEN') {
         if (swapPath.length !== 2) {
-          console.error('❌ ETH to Token 路径长度错误:', swapPath);
+          console.error('❌ Native to Token 路径长度错误:', swapPath);
           toast.error('交换路径配置错误');
           return;
         }
