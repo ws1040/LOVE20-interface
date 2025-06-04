@@ -154,6 +154,6 @@ export const formatIntegerStringWithCommas = (
     // 截取从第一个非 0 数字开始后的部分
     const significant = fractionalPart.slice(zeroCount);
 
-    return `0.{${zeroCount}}${significant}`;
+    return `0.0{${zeroCount}}${significant}`;
   }
 };

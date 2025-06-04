@@ -7,7 +7,7 @@ import { toast } from 'react-hot-toast';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, HelpCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -478,7 +478,9 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                   className="text-xl border-none p-0 h-auto bg-transparent focus:ring-0 focus:outline-none mr-2"
                                 />
                                 <div className="flex items-center gap-2">
-                                  <span className="font-medium">{token?.parentTokenSymbol}</span>
+                                  <div className="bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors ">
+                                    <span className="font-medium text-gray-800">{token?.parentTokenSymbol}</span>
+                                  </div>
                                 </div>
                               </div>
                               <div className="flex items-center justify-between">
@@ -546,7 +548,9 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                   className="text-xl border-none p-0 h-auto bg-transparent focus:ring-0 focus:outline-none mr-2"
                                 />
                                 <div className="flex items-center gap-2">
-                                  <span className="font-medium">{token?.symbol}</span>
+                                  <div className="bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors">
+                                    <span className="font-medium text-gray-800">{token?.symbol}</span>
+                                  </div>
                                 </div>
                               </div>
                               <div className="flex items-center justify-between">
@@ -596,7 +600,10 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
 
                   {pairExists && (
                     <div className="space-y-1 text-sm mt-2">
-                      <div className="text-gray-600">备注：比例按当前价格计算</div>
+                      <div className="text-gray-600 flex items-center gap-1">
+                        <HelpCircle className="w-4 h-4" />
+                        质押比例按当前价格计算：
+                      </div>
                       <div className="flex items-center gap-2">
                         <div className="text-gray-600">
                           {showTokenToParent ? (
@@ -669,7 +676,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                             </Select>
                           </FormControl>
                           <FormDescription>
-                            “解锁期” 是指，取消质押后多久才能取回代币 (注意：是从取消质押的阶段结束时开始计算)
+                            "解锁期" 是指，取消质押后多久才能取回代币 (注意：是从取消质押的阶段结束时开始计算)
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
