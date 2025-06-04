@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
+// import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-// 导入TokenContext相关组件
+// 导入context
 import { TokenContext } from '@/src/contexts/TokenContext';
-import { useContext } from 'react';
 
 // 导入hooks
-import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useValidGovVotes, useCurrentRound } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // 导入组件
 import Header from '@/src/components/Header';
@@ -18,10 +19,10 @@ import MyVotingPanel from '@/src/components/My/MyVotingPanel';
 import MyVerifingPanel from '@/src/components/My/MyVerifingPanel';
 import Todeploy from '@/src/components/Launch/Todeploy';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Stake';
-import { useHandleContractError } from '@/src/lib/errorUtils';
 
 const GovPage = () => {
+  // const router = useRouter();
+
   // 当前token
   const { token: currentToken } = useContext(TokenContext) || {};
   const { address: accountAddress } = useAccount();
@@ -39,6 +40,16 @@ const GovPage = () => {
     isPending: isPendingValidGovVotes,
     error: errorValidGovVotes,
   } = useValidGovVotes((currentToken?.address as `0x${string}`) || '', (accountAddress as `0x${string}`) || '');
+
+  // useEffect(() => {
+  //   if (currentToken && !currentToken.hasEnded) {
+  //     // 如果发射未结束，跳转到发射页面
+  //     router.push(`/launch?symbol=${currentToken.symbol}`);
+  //   } else if (currentToken && !currentToken.initialStakeRound) {
+  //     // 如果还没有人质押，跳转到质押页面
+  //     router.push(`/gov/stakelp/?symbol=${currentToken.symbol}&first=true`);
+  //   }
+  // }, [currentToken]);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
