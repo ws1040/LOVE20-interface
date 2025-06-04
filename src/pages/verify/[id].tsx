@@ -14,6 +14,7 @@ import { ActionInfo } from '@/src/types/love20types';
 import Header from '@/src/components/Header';
 import ActionDetail from '@/src/components/ActionDetail/ActionDetail';
 import MyActionVerifingPanel from '@/src/components/My/MyActionVerifingPanel';
+import Round from '@/src/components/Common/Round';
 import VerifyAddresses from '@/src/components/Verify/VerifyAddresses';
 
 const VerifyPage = () => {
@@ -44,17 +45,22 @@ const VerifyPage = () => {
     <>
       <Header title="验证" />
       <main className="flex-grow">
-        <div className="flex flex-col items-center p-4 mb-4">
-          <MyActionVerifingPanel
-            currentRound={currentRound}
-            actionId={actionId}
-            onRemainingVotesChange={onRemainingVotesChange}
-          />
+        <div className="px-4">
+          <Round currentRound={currentRound} roundType="verify" />
+        </div>
+        <div className="flex flex-col items-center p-4">
           <VerifyAddresses
             currentRound={currentRound}
             actionId={actionId}
             actionInfo={actionInfo}
             remainingVotes={remainingVotes}
+          />
+        </div>
+        <div className="mb-6">
+          <MyActionVerifingPanel
+            currentRound={currentRound}
+            actionId={actionId}
+            onRemainingVotesChange={onRemainingVotesChange}
           />
         </div>
         <ActionDetail

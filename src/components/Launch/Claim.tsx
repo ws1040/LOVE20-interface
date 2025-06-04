@@ -99,6 +99,14 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
   if (isClaimedPending) {
     return <LoadingIcon />;
   }
+  if (!token) {
+    return <LoadingIcon />;
+  }
+
+  const parentTokenSymbol =
+    token.parentTokenSymbol == process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL
+      ? process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL
+      : token.parentTokenSymbol;
 
   return (
     <div className="p-6">
@@ -148,10 +156,8 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
       {Number(contributed) > 0 && claimed && (
         <div className="text-center text-sm my-2 text-greyscale-400">
           我共申购了 <span className="text-secondary">{formatTokenAmount(contributed ?? 0n)} </span>
-          {token.parentTokenSymbol}， 申购成功{' '}
-          <span className="text-secondary">{formatTokenAmount((contributed ?? 0n) - (extraRefunded ?? 0n))}</span>{' '}
-          {token.parentTokenSymbol}，申购返还了{' '}
-          <span className="text-secondary">{formatTokenAmount(extraRefunded ?? 0n)}</span> {token.parentTokenSymbol}
+          {parentTokenSymbol}，申购返还了{' '}
+          <span className="text-secondary">{formatTokenAmount(extraRefunded ?? 0n)}</span> {parentTokenSymbol}
         </div>
       )}
 

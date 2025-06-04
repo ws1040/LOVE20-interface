@@ -1,10 +1,10 @@
 'use client';
 import { useRouter } from 'next/router';
-import { ChevronRight } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 // my hooks
 import { ActionInfo, ActionSubmit } from '@/src/types/love20types';
@@ -20,14 +20,11 @@ import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
-// my lib
-import { formatTokenAmount } from '@/src/lib/format';
-
 interface VotingActionListProps {
   currentRound: bigint;
 }
 
-const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => {
+const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
   const router = useRouter();
 
@@ -54,8 +51,32 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
     error: errorActionInfosByIds,
   } = useActionInfosByIds((token?.address as `0x${string}`) || '', uniqueActionIds);
 
+  // 选择复选框
+  const [selectedActions, setSelectedActions] = useState<Set<bigint>>(new Set());
+  const handleCheckboxChange = (actionId: bigint) => {
+    setSelectedActions((prevSelected) => {
+      const newSelected = new Set(prevSelected);
+      if (newSelected.has(actionId)) {
+        newSelected.delete(actionId);
+      } else {
+        newSelected.add(actionId);
+      }
+      return newSelected;
+    });
+  };
+
   // 计算投票总数： 累计
   const totalVotes = votes?.reduce((acc, vote) => acc + vote, 0n) || 0n;
+
+  // 投票
+  const handleSubmit = () => {
+    const selectedIds = Array.from(selectedActions).join(',');
+    if (selectedIds.length === 0) {
+      toast.error('请选择行动');
+      return;
+    }
+    router.push(`/vote/vote?ids=${selectedIds}&symbol=${token?.symbol}`);
+  };
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -85,6 +106,11 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
     return <LoadingIcon />;
   }
 
+  // // 如果只有1个投票，就直接跳到投票页面
+  // if (uniqueActionIds.length === 1) {
+  //   router.push(`/vote/vote?ids=${uniqueActionIds[0]}&symbol=${token?.symbol}`);
+  // }
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
@@ -92,10 +118,10 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
         {token && (
           <div className="flex space-x-2">
             <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
-              <Link href={`/vote/actions4submit?symbol=${token?.symbol}`}>推举其他行动</Link>
+              <Link href={`/action/new/?symbol=${token?.symbol}`}>推举新行动</Link>
             </Button>
             <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
-              <Link href={`/gov?symbol=${token?.symbol}`}>返回治理首页</Link>
+              <Link href={`/vote/actions4submit?symbol=${token?.symbol}`}>推举历史行动</Link>
             </Button>
           </div>
         )}
@@ -109,7 +135,13 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
               )?.submitter;
 
               return (
-                <Card key={action.head.id} className="shadow-none flex items-center relative">
+                <Card key={action.head.id} className="shadow-none flex items-center">
+                  <input
+                    type="checkbox"
+                    className="checkbox accent-secondary ml-2"
+                    checked={selectedActions.has(BigInt(action.head.id))}
+                    onChange={() => handleCheckboxChange(BigInt(action.head.id))}
+                  />
                   <Link
                     href={`/action/${action.head.id}?type=vote&symbol=${token?.symbol}`}
                     key={action.head.id}
@@ -129,11 +161,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
                           </span>
                         </span>
                         <span>
-                          <span className="text-greyscale-400 mr-1">投票数</span>
-                          <span className="text-secondary">{formatTokenAmount(votes?.[index] || 0n, 0)}</span>
-                        </span>
-                        <span>
-                          <span className="text-greyscale-400 mr-1">占比</span>
+                          <span className="text-greyscale-400 mr-1">投票占比</span>
                           <span className="text-secondary">
                             {Number(votes?.[index] || 0n) === 0
                               ? '0'
@@ -143,11 +171,16 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
                         </span>
                       </div>
                     </CardContent>
-                    <ChevronRight className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-greyscale-400 pointer-events-none" />
                   </Link>
                 </Card>
               );
             })}
+            <div className="flex justify-center mt-4">
+              <Button variant="outline" className="w-1/2 text-secondary border-secondary" onClick={handleSubmit}>
+                给选中的行动投票
+              </Button>
+            </div>
+            <div className="mt-2 text-sm text-greyscale-500 text-center">提示: 每轮最大可投票数，等于您的治理票数</div>
           </>
         ) : (
           <div className="text-sm text-greyscale-500 text-center mt-8">还没推举行动，请先推举</div>
@@ -157,4 +190,4 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
   );
 };
 
-export default VotingActionList;
+export default ActionListToVote;

@@ -11,11 +11,13 @@ import { useGovData } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my components
-import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import Round from '@/src/components/Common/Round';
-import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my utils
 import { calculateAPY } from '@/src/lib/domainUtils';
+import { formatTokenAmount } from '@/src/lib/format';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 
 const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};

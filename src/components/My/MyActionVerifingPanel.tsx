@@ -85,6 +85,9 @@ const MyActionVerifingPanel: React.FC<MyActionVerifingPanelProps> = ({
           <span className="text-secondary">{formatTokenAmount(remainingVotes)}</span>
         )}
       </span>
+      <div className="mt-2 text-sm text-greyscale-500 text-center">
+        提示: 最大可验证票数，等于您本轮对该行动的投票数
+      </div>
     </div>
   );
 };

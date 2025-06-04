@@ -421,6 +421,77 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
+    "name": "launchInfo",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "info",
+        "type": "tuple",
+        "internalType": "struct ILOVE20Launch.LaunchInfo",
+        "components": [
+          {
+            "name": "parentTokenAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "parentTokenFundraisingGoal",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "secondHalfMinBlocks",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "launchAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "startBlock",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "secondHalfStartBlock",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "hasEnded",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "participantCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalContributed",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalExtraRefunded",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "launchInfos",
     "inputs": [
       {
@@ -581,77 +652,6 @@ export const LOVE20LaunchAbi = [
         "name": "",
         "type": "address[]",
         "internalType": "address[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "launches",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "launchInfo",
-        "type": "tuple",
-        "internalType": "struct ILOVE20Launch.LaunchInfo",
-        "components": [
-          {
-            "name": "parentTokenAddress",
-            "type": "address",
-            "internalType": "address"
-          },
-          {
-            "name": "parentTokenFundraisingGoal",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "secondHalfMinBlocks",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "launchAmount",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "startBlock",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "secondHalfStartBlock",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "hasEnded",
-            "type": "bool",
-            "internalType": "bool"
-          },
-          {
-            "name": "participantCount",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "totalContributed",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "totalExtraRefunded",
-            "type": "uint256",
-            "internalType": "uint256"
-          }
-        ]
       }
     ],
     "stateMutability": "view"

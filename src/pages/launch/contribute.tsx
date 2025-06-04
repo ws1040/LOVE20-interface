@@ -7,14 +7,13 @@ import dynamic from 'next/dynamic';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
-import { useLaunches } from '@/src/hooks/contracts/useLOVE20Launch';
+import { useLaunchInfo } from '@/src/hooks/contracts/useLOVE20Launch';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my components
 import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-
-const Contribute = dynamic(() => import('@/src/components/Launch/Contribute'), { ssr: false });
+import Contribute from '@/src/components/Launch/Contribute';
 
 export default function ContributePage() {
   const { token } = useContext(TokenContext) || {};
@@ -22,7 +21,7 @@ export default function ContributePage() {
     launchInfo,
     isPending: isLaunchInfoPending,
     error: launchInfoError,
-  } = useLaunches(token ? token.address : '0x0');
+  } = useLaunchInfo(token ? token.address : '0x0');
 
   // 错误处理
   const { handleContractError } = useHandleContractError();

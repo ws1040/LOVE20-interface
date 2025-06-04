@@ -1,7 +1,9 @@
 'use client';
 import React, { useEffect, useContext } from 'react';
-import { BaseError, useAccount } from 'wagmi';
+import { useRouter } from 'next/router';
+import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
+import toast from 'react-hot-toast';
 
 // my hooks
 import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
@@ -14,7 +16,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 // my components
 import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import LoadingOverlay from '../Common/LoadingOverlay';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 interface ActionPanelForVoteProps {
   actionId: bigint;
@@ -24,6 +26,7 @@ interface ActionPanelForVoteProps {
 const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRoundChange }) => {
   const { address: account } = useAccount();
   const { token } = useContext(TokenContext) || {};
+  const router = useRouter();
 
   // 获取当前轮次, 并设置状态给父组件
   const { currentRound, isPending: isPendingCurrentRound, error: errCurrentRound } = useCurrentRound();
@@ -79,10 +82,22 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
     }
   }, [errorVote, errCurrentRound, errVotesNumByAccountByActionId, errValidGovVotes]);
 
+  // 提交成功
+  useEffect(() => {
+    if (isConfirmedVote && !errorVote) {
+      toast.success('提交成功', {
+        duration: 2000, // 2秒
+      });
+      setTimeout(() => {
+        router.push(`/vote/actions/?symbol=${token?.symbol}`);
+      }, 2000);
+    }
+  }, [isConfirmedVote, errorVote]);
+
   return (
     <>
-      <div className="flex flex-col items-center space-y-6 p-4 mb-4">
-        <div className="stats w-full border grid grid-cols-2 divide-x-0">
+      <div className="flex flex-col items-center space-y-3 p-4 mb-2">
+        <div className="stats w-full border grid grid-cols-2 divide-x-0 mb-2">
           <div className="stat place-items-center">
             <div className="stat-title">我的已投票数</div>
             <div className="stat-value text-2xl">
@@ -95,7 +110,7 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
               {isPendingValidGovVotes || isPendingVotesNumByAccountByActionId ? (
                 <LoadingIcon />
               ) : (
-                formatTokenAmount(validGovVotes - votesNumByAccountByActionId)
+                formatTokenAmount(validGovVotes - votesNumByAccountByActionId, 2)
               )}
             </div>
           </div>
@@ -110,7 +125,13 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
             您已投票
           </Button>
         )}
+        {!isPendingValidGovVotes && (
+          <div className="text-sm text-greyscale-500 text-center">
+            提示: 每轮最大可投票数，等于您的治理票数 ({formatTokenAmount(validGovVotes, 2)})
+          </div>
+        )}
       </div>
+
       <LoadingOverlay
         isLoading={isWritingVote || isConfirmingVote}
         text={isWritingVote ? '提交交易...' : '确认交易...'}

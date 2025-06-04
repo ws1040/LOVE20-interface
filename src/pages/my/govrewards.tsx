@@ -168,7 +168,7 @@ const GovRewardsPage: React.FC = () => {
                 <thead>
                   <tr className="border-b border-gray-100">
                     <th>轮次</th>
-                    <th className="text-center">奖励</th>
+                    <th className="text-center">可铸造激励</th>
                     <th className="text-center">结果</th>
                   </tr>
                 </thead>
@@ -186,12 +186,12 @@ const GovRewardsPage: React.FC = () => {
                             onClick={() => handleClaim(item.round)}
                             disabled={isWriting || isConfirming}
                           >
-                            领取
+                            铸造
                           </Button>
                         ) : item.minted > 0n ? (
-                          <span className="text-secondary">已领取</span>
+                          <span className="text-greyscale-500">已铸造</span>
                         ) : (
-                          <span className="text-greyscale-500">无</span>
+                          <span className="text-greyscale-500">-</span>
                         )}
                       </td>
                     </tr>

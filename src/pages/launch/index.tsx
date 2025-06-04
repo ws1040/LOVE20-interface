@@ -6,7 +6,7 @@ import { useContext, useEffect } from 'react';
 import { Token, TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
-import { useLaunches } from '@/src/hooks/contracts/useLOVE20Launch';
+import { useLaunchInfo } from '@/src/hooks/contracts/useLOVE20Launch';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my components
@@ -16,7 +16,6 @@ import LaunchStatus from '@/src/components/Launch/LaunchStatus';
 import ContributeInfo from '@/src/components/Launch/ContributeInfo';
 import Claim from '@/src/components/Launch/Claim';
 import TokenTab from '@/src/components/Token/TokenTab';
-import Todeploy from '@/src/components/Launch/Todeploy';
 
 export default function TokenFairLaunch() {
   const { token, setToken } = useContext(TokenContext) || { token: null, setToken: null };
@@ -26,7 +25,7 @@ export default function TokenFairLaunch() {
     launchInfo,
     isPending: isLaunchInfoPending,
     error: launchInfoError,
-  } = useLaunches(token ? token.address : '0x0');
+  } = useLaunchInfo(token ? token.address : '0x0');
 
   // 错误处理
   const { handleContractError } = useHandleContractError();

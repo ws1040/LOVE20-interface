@@ -62,9 +62,6 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
         <LoadingIcon />
       ) : (
         <div className="space-y-4">
-          {/* 
-            如果 actionInfos 为空，则显示 "暂无行动"
-          */}
           {actionInfos?.length === 0 && <div className="text-sm mt-4 text-greyscale-500 text-center">暂无行动</div>}
 
           {actionInfos &&

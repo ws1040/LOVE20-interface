@@ -20,6 +20,9 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
+// my utils
+import { LinkIfUrl } from '@/src/lib/stringUtils';
+
 interface ActionPanelForJoinProps {
   actionId: bigint;
   onRoundChange: (currentRound: bigint) => void;
@@ -106,7 +109,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
               {isPendingJoinedAmount ? (
                 <LoadingIcon />
               ) : (
-                formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0))
+                formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0), 0)
               )}
             </div>
             <div className="stat-desc text-sm mt-2">参与本行动的代币</div>
@@ -125,12 +128,12 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
         </Button>
       ) : (
         <>
-          <Button type="button" className="w" disabled={true}>
+          {/* <Button type="button" className="w" disabled={true}>
             第1次内测体验, 暂时关闭增加代币
-          </Button>
-          {/* <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
-            <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
           </Button> */}
+          <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
+            <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
+          </Button>
           <div className="flex flex-col items-center mt-2">
             <div className="text-sm text-greyscale-600">
               {isPendingVerificationInfo && '加载中...'}
@@ -138,7 +141,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
                 <div>
                   {verificationKeys.map((key, index) => (
                     <div key={index}>
-                      {key}: {verificationInfos[index]}
+                      {key}: <LinkIfUrl text={verificationInfos[index]} />
                     </div>
                   ))}
                 </div>

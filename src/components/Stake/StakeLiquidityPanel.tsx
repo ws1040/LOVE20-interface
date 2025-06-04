@@ -7,17 +7,19 @@ import { toast } from 'react-hot-toast';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { ArrowUpDown, HelpCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import Link from 'next/link';
+import { Card, CardContent } from '@/components/ui/card';
 
 // my utils
 import { checkWalletConnection } from '@/src/lib/web3';
 import { extractErrorMessage } from '@/src/lib/utils';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
+import { formatPhaseText } from '@/src/lib/domainUtils';
 
 // my contexts
 import { TokenContext, Token } from '@/src/contexts/TokenContext';
@@ -55,7 +57,7 @@ function buildFormSchema(parentTokenBalance: bigint, tokenBalance: bigint) {
       },
       z
         .string()
-        .regex(/^\d+(\.\d{1,12})?$/, '请输入合法数值，最多支持12位小数')
+        .regex(/^\d+(\.\d{1,18})?$/, '请输入合法数值，最多支持18位小数')
         .refine((val) => {
           const parsed = parseUnits(val);
           return parsed !== null && parsed > 0n;
@@ -77,7 +79,7 @@ function buildFormSchema(parentTokenBalance: bigint, tokenBalance: bigint) {
       },
       z
         .string()
-        .regex(/^\d+(\.\d{1,12})?$/, '请输入合法数值，最多支持12位小数')
+        .regex(/^\d+(\.\d{1,18})?$/, '请输入合法数值，最多支持18位小数')
         .refine((val) => {
           const parsed = parseUnits(val);
           return parsed !== null && parsed > 0n;
@@ -88,8 +90,8 @@ function buildFormSchema(parentTokenBalance: bigint, tokenBalance: bigint) {
         }, '质押 token 数不能超过当前持有'),
     ),
 
-    // 释放期可直接用 string，也可用 z.coerce.number() 转 number
-    releasePeriod: z.string(),
+    // 修改解锁期验证规则，要求必须选择
+    releasePeriod: z.string().min(1, '请选择解锁期'),
   });
 }
 
@@ -139,14 +141,14 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   } = useInitialStakeRound(token?.address as `0x${string}`);
 
   // --------------------------------------------------
-  // 2.0 使用 React Hook Form
+  // 2.1 使用 React Hook Form
   // --------------------------------------------------
   const form = useForm<z.infer<ReturnType<typeof buildFormSchema>>>({
     resolver: zodResolver(buildFormSchema(parentTokenBalance || 0n, tokenBalance || 0n)),
     defaultValues: {
       parentToken: '',
       stakeToken: '',
-      releasePeriod: '4',
+      releasePeriod: '',
     },
     mode: 'onChange',
   });
@@ -419,12 +421,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     }
   }, [tokenBalance, parentTokenBalance, token, isPendingPair]);
 
-  useEffect(() => {
-    if (promisedWaitingPhases !== undefined && promisedWaitingPhases > 0) {
-      form.setValue('releasePeriod', String(promisedWaitingPhases));
-    }
-  }, [promisedWaitingPhases]);
-
   const approveTokenButtonRef = useRef<HTMLButtonElement>(null);
   const prevIsPendingApproveToken = useRef<boolean>(isPendingApproveToken);
 
@@ -435,200 +431,333 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     prevIsPendingApproveToken.current = isPendingApproveToken;
   }, [isPendingApproveToken]);
 
+  // 添加比例显示切换状态
+  const [showTokenToParent, setShowTokenToParent] = useState(false);
+
   if (!token || isPendingAccountStakeStatus || isPendingInitialStakeRound) {
     return <LoadingIcon />;
   }
 
   return (
-    <div className="w-full flex-col items-center p-6 pt-2">
-      <div className="w-full flex justify-between items-center">
-        <LeftTitle title="质押获取治理票" />
+    <div className="bg-white px-4">
+      <div className="w-full max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-full mx-auto space-y-4">
+        <div className="w-full flex justify-between items-center">
+          <LeftTitle title="质押获取治理票" />
+        </div>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onStake)} className="space-y-3">
+            {/* 存入代币部分 */}
+            <Card>
+              <CardContent className="p-3 md:p-6">
+                <div className="space-y-3">
+                  <div>
+                    <h2 className="text-lg font-semibold mb-2">第1步: 填写存入数量</h2>
+                    {/* <p className="text-sm text-gray-600 mb-4">确定要质押的代币数量</p> */}
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {/* 父币输入 */}
+                    <FormField
+                      control={form.control}
+                      name="parentToken"
+                      render={({ field }) => (
+                        <FormItem>
+                          <Card className="bg-[#f7f8f9] border-none">
+                            <CardContent className="py-4 px-2">
+                              <div className="flex items-center justify-between mb-3">
+                                <Input
+                                  type="number"
+                                  placeholder="0"
+                                  {...field}
+                                  disabled={hadStartedApprove}
+                                  onChange={(e) => {
+                                    field.onChange(e);
+                                    setIsParentTokenChangedByUser(true);
+                                  }}
+                                  className="text-xl border-none p-0 h-auto bg-transparent focus:ring-0 focus:outline-none mr-2"
+                                />
+                                <div className="flex items-center gap-2">
+                                  <div className="bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors ">
+                                    <span className="font-medium text-gray-800">{token?.parentTokenSymbol}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <div className="flex gap-1">
+                                  {[25, 50, 75].map((percentage) => (
+                                    <Button
+                                      key={percentage}
+                                      variant="outline"
+                                      size="sm"
+                                      type="button"
+                                      onClick={() => {
+                                        const amount = (parentTokenBalance * BigInt(percentage)) / 100n;
+                                        form.setValue('parentToken', formatUnits(amount));
+                                        setIsParentTokenChangedByUser(true);
+                                      }}
+                                      disabled={hadStartedApprove || parentTokenBalance <= 0n}
+                                      className="text-xs h-7 px-2 rounded-lg"
+                                    >
+                                      {percentage}%
+                                    </Button>
+                                  ))}
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    type="button"
+                                    onClick={() => {
+                                      form.setValue('parentToken', formatUnits(parentTokenBalance || 0n));
+                                      setIsParentTokenChangedByUser(true);
+                                    }}
+                                    disabled={hadStartedApprove || parentTokenBalance <= 0n}
+                                    className="text-xs h-7 px-2 rounded-lg"
+                                  >
+                                    最高
+                                  </Button>
+                                </div>
+                                <span className="text-sm text-gray-600">
+                                  {formatTokenAmount(parentTokenBalance)} {token?.parentTokenSymbol}
+                                </span>
+                              </div>
+                            </CardContent>
+                          </Card>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Token 输入 */}
+                    <FormField
+                      control={form.control}
+                      name="stakeToken"
+                      render={({ field }) => (
+                        <FormItem>
+                          <Card className="bg-[#f7f8f9] border-none">
+                            <CardContent className="py-4 px-2">
+                              <div className="flex items-center justify-between mb-3">
+                                <Input
+                                  type="number"
+                                  placeholder="0"
+                                  {...field}
+                                  disabled={hadStartedApprove}
+                                  onChange={(e) => {
+                                    field.onChange(e);
+                                    setIsTokenChangedByUser(true);
+                                  }}
+                                  className="text-xl border-none p-0 h-auto bg-transparent focus:ring-0 focus:outline-none mr-2"
+                                />
+                                <div className="flex items-center gap-2">
+                                  <div className="bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors">
+                                    <span className="font-medium text-gray-800">{token?.symbol}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <div className="flex gap-1">
+                                  {[25, 50, 75].map((percentage) => (
+                                    <Button
+                                      key={percentage}
+                                      variant="outline"
+                                      size="sm"
+                                      type="button"
+                                      onClick={() => {
+                                        const amount = (tokenBalance * BigInt(percentage)) / 100n;
+                                        form.setValue('stakeToken', formatUnits(amount));
+                                        setIsTokenChangedByUser(true);
+                                      }}
+                                      disabled={hadStartedApprove || tokenBalance <= 0n}
+                                      className="text-xs h-7 px-2 rounded-lg"
+                                    >
+                                      {percentage}%
+                                    </Button>
+                                  ))}
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    type="button"
+                                    onClick={() => {
+                                      form.setValue('stakeToken', formatUnits(tokenBalance || 0n));
+                                      setIsTokenChangedByUser(true);
+                                    }}
+                                    disabled={hadStartedApprove || tokenBalance <= 0n}
+                                    className="text-xs h-7 px-2 rounded-lg"
+                                  >
+                                    最高
+                                  </Button>
+                                </div>
+                                <span className="text-sm text-gray-600">
+                                  {formatTokenAmount(tokenBalance)} {token?.symbol}
+                                </span>
+                              </div>
+                            </CardContent>
+                          </Card>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {pairExists && (
+                    <div className="space-y-1 text-sm mt-2">
+                      <div className="text-gray-600 flex items-center gap-1">
+                        <HelpCircle className="w-4 h-4" />
+                        质押比例按当前价格计算：
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-gray-600">
+                          {showTokenToParent ? (
+                            <>
+                              1 {token?.symbol} ={' '}
+                              {formatTokenAmount(
+                                (pairInfo!.pairReserveParentToken * 10n ** 18n) / pairInfo!.pairReserveToken,
+                              )}{' '}
+                              {token?.parentTokenSymbol}
+                            </>
+                          ) : (
+                            <>
+                              1 {token?.parentTokenSymbol} ={' '}
+                              {formatTokenAmount(
+                                (pairInfo!.pairReserveToken * 10n ** 18n) / pairInfo!.pairReserveParentToken,
+                              )}{' '}
+                              {token?.symbol}
+                            </>
+                          )}
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowTokenToParent(!showTokenToParent)}
+                          className="h-6 w-6 p-0 hover:bg-gray-100 transition-colors"
+                          title="切换比例显示"
+                        >
+                          <ArrowUpDown className="h-3 w-3 text-gray-500" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 解锁期设置 */}
+            <Card>
+              <CardContent className="p-3 md:p-6">
+                <div className="space-y-4">
+                  <div>
+                    <h2 className="text-lg font-semibold mb-2">第2步: 授权并存入</h2>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+                    <FormField
+                      control={form.control}
+                      name="releasePeriod"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Select
+                              disabled={hadStartedApprove}
+                              onValueChange={(value) => field.onChange(value)}
+                              value={field.value}
+                            >
+                              <SelectTrigger className="w-full !ring-secondary-foreground">
+                                <SelectValue placeholder="选择解锁期" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {Array.from({ length: 9 }, (_, i) => i + 4)
+                                  .filter((item) => item >= promisedWaitingPhases)
+                                  .map((item) => (
+                                    <SelectItem key={item} value={String(item)}>
+                                      {formatPhaseText(item)}
+                                    </SelectItem>
+                                  ))}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormDescription>
+                            "解锁期" 是指，取消质押后多久才能取回代币 (注意：是从取消质押的阶段结束时开始计算)
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="flex justify-center lg:justify-end space-x-2">
+                      <Button
+                        type="button"
+                        className="flex-1 lg:w-auto lg:px-4"
+                        ref={approveTokenButtonRef}
+                        disabled={isPendingApproveToken || isConfirmingApproveToken || isTokenApproved}
+                        onClick={form.handleSubmit(onApproveToken)}
+                      >
+                        {isPendingApproveToken
+                          ? `1.提交中...`
+                          : isConfirmingApproveToken
+                          ? `1.确认中...`
+                          : isTokenApproved
+                          ? `1.${token?.symbol}已授权`
+                          : `1.授权${token?.symbol}`}
+                      </Button>
+
+                      <Button
+                        type="button"
+                        className="flex-1 lg:w-auto lg:px-4"
+                        disabled={
+                          !isTokenApproved ||
+                          isPendingApproveParentToken ||
+                          isConfirmingApproveParentToken ||
+                          isParentTokenApproved
+                        }
+                        onClick={form.handleSubmit(onApproveParentToken)}
+                      >
+                        {isPendingApproveParentToken
+                          ? `2.提交中...`
+                          : isConfirmingApproveParentToken
+                          ? `2.确认中...`
+                          : isParentTokenApproved
+                          ? `2.${token?.parentTokenSymbol}已授权`
+                          : `2.授权${token?.parentTokenSymbol}`}
+                      </Button>
+
+                      <Button
+                        type="submit"
+                        className="flex-1 lg:w-auto lg:px-4"
+                        disabled={
+                          !isTokenApproved ||
+                          !isParentTokenApproved ||
+                          isPendingStakeLiquidity ||
+                          isConfirmingStakeLiquidity ||
+                          isConfirmedStakeLiquidity
+                        }
+                      >
+                        {isPendingStakeLiquidity
+                          ? '3.提交中...'
+                          : isConfirmingStakeLiquidity
+                          ? '3.确认中...'
+                          : isConfirmedStakeLiquidity
+                          ? '3.已提交'
+                          : '3.提交'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </form>
+        </Form>
+
+        <LoadingOverlay
+          isLoading={
+            isApproving ||
+            isApproveConfirming ||
+            isPendingStakeLiquidity ||
+            isConfirmingStakeLiquidity ||
+            (isPendingInitialStakeRound && updatedInitialStakeRound)
+          }
+          text={isApproving || isPendingStakeLiquidity ? '提交交易...' : '确认交易...'}
+        />
       </div>
-
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onStake)} className="w-full max-w-md mt-4 space-y-4">
-          <FormField
-            control={form.control}
-            name="parentToken"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>质押父币数</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder={`输入 ${token?.parentTokenSymbol} 数量`}
-                    {...field}
-                    disabled={hadStartedApprove}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      setIsParentTokenChangedByUser(true);
-                    }}
-                    className="!ring-secondary-foreground"
-                  />
-                </FormControl>
-                <FormMessage />
-                <FormDescription className="flex justify-between items-center">
-                  <span>
-                    持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(parentTokenBalance)}</span>
-                    {token?.parentTokenSymbol}
-                  </span>
-
-                  {token.parentTokenSymbol === process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL && (
-                    <Link href="/dex/deposit/" className="text-secondary-400 ml-2">
-                      去获取 {token?.parentTokenSymbol}
-                    </Link>
-                  )}
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="stakeToken"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>质押 token 数</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder={`输入 ${token?.symbol} 数量`}
-                    {...field}
-                    disabled={hadStartedApprove}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      setIsTokenChangedByUser(true);
-                    }}
-                    className="!ring-secondary-foreground"
-                  />
-                </FormControl>
-                <FormMessage />
-                <FormDescription className="flex justify-between items-center">
-                  <span>
-                    持有 <span className="text-secondary-400 mr-2">{formatTokenAmount(tokenBalance)}</span>
-                    {token?.symbol}
-                  </span>
-                  {!isFirstTimeStake && (
-                    <Link href={`/dex/swap/?symbol=${token?.symbol}`} className="text-secondary-400">
-                      去获取{token?.symbol}
-                    </Link>
-                  )}
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="releasePeriod"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>释放等待阶段</FormLabel>
-                <FormControl>
-                  <Select
-                    disabled={hadStartedApprove}
-                    onValueChange={(value) => field.onChange(value)}
-                    value={field.value}
-                  >
-                    <SelectTrigger className="w-full !ring-secondary-foreground">
-                      <SelectValue placeholder="选择释放等待阶段" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: 9 }, (_, i) => i + 4)
-                        .filter((item) => item >= promisedWaitingPhases)
-                        .map((item) => (
-                          <SelectItem key={item} value={String(item)}>
-                            {item}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormDescription>含义：申请解除质押后，几个阶段之后可以取回代币</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {govVotes && (
-            <div className="flex justify-center space-x-2 mt-4">
-              <Button type="button" className="w" disabled={true}>
-                第1次内测体验, 暂时关闭追加治理票
-              </Button>
-            </div>
-          )}
-          {!govVotes && (
-            <div className="flex justify-center space-x-2 mt-4">
-              <Button
-                type="button"
-                className="w-1/3"
-                ref={approveTokenButtonRef}
-                disabled={isPendingApproveToken || isConfirmingApproveToken || isTokenApproved}
-                onClick={form.handleSubmit(onApproveToken)}
-              >
-                {isPendingApproveToken
-                  ? `1.提交中...`
-                  : isConfirmingApproveToken
-                  ? `1.确认中...`
-                  : isTokenApproved
-                  ? `1.${token?.symbol}已授权`
-                  : `1.授权${token?.symbol}`}
-              </Button>
-
-              <Button
-                type="button"
-                className="w-1/3"
-                disabled={
-                  !isTokenApproved ||
-                  isPendingApproveParentToken ||
-                  isConfirmingApproveParentToken ||
-                  isParentTokenApproved
-                }
-                onClick={form.handleSubmit(onApproveParentToken)}
-              >
-                {isPendingApproveParentToken
-                  ? `2.提交中...`
-                  : isConfirmingApproveParentToken
-                  ? `2.确认中...`
-                  : isParentTokenApproved
-                  ? `2.${token?.parentTokenSymbol}已授权`
-                  : `2.授权${token?.parentTokenSymbol}`}
-              </Button>
-
-              <Button
-                type="submit"
-                className="w-1/3"
-                disabled={
-                  !isTokenApproved ||
-                  !isParentTokenApproved ||
-                  isPendingStakeLiquidity ||
-                  isConfirmingStakeLiquidity ||
-                  isConfirmedStakeLiquidity
-                }
-              >
-                {isPendingStakeLiquidity
-                  ? '3.质押中...'
-                  : isConfirmingStakeLiquidity
-                  ? '3.确认中...'
-                  : isConfirmedStakeLiquidity
-                  ? '3.已质押'
-                  : '3.质押'}
-              </Button>
-            </div>
-          )}
-        </form>
-      </Form>
-
-      <LoadingOverlay
-        isLoading={
-          isApproving ||
-          isApproveConfirming ||
-          isPendingStakeLiquidity ||
-          isConfirmingStakeLiquidity ||
-          (isPendingInitialStakeRound && updatedInitialStakeRound)
-        }
-        text={isApproving || isPendingStakeLiquidity ? '提交交易...' : '确认交易...'}
-      />
     </div>
   );
 };

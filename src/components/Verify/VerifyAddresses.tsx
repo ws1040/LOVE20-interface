@@ -21,6 +21,9 @@ import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
+// my utils
+import { LinkIfUrl } from '@/src/lib/stringUtils';
+
 interface VerifyAddressesProps {
   currentRound: bigint;
   actionId: bigint;
@@ -32,7 +35,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
   const { token } = useContext(TokenContext) || {};
   const { chain: accountChain } = useAccount();
   const router = useRouter();
-  const { auto: autoQuery } = router.query;
+  // const { auto: autoQuery } = router.query;
 
   // 获取参与验证的地址
   const {
@@ -50,10 +53,10 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     if (verificationInfos && verificationInfos.length > 0) {
       const initialScores: { [address: string]: string } = {};
       verificationInfos.forEach((info) => {
-        initialScores[info.account] = '3';
+        initialScores[info.account] = '';
       });
       setScores(initialScores);
-      setAbstainScore('0');
+      setAbstainScore('');
     }
   }, [verificationInfos]);
 
@@ -70,7 +73,6 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       const score = parseInt(scores[address]) || 0;
       addressPercentages[address] = (score / totalScore) * 100;
     });
-
     const abstainPercentage = (abstainScoreValue / totalScore) * 100;
 
     return { addressPercentages, abstainPercentage };
@@ -120,16 +122,61 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       return;
     }
 
-    const { addressPercentages, abstainPercentage } = calculatePercentages();
+    // 获取打分总和
+    const scoreSum =
+      Object.values(scores).reduce((sum, score) => sum + (parseInt(score) || 0), 0) + (parseInt(abstainScore) || 0);
 
-    const scoresArray = verificationInfos.map((info) => {
-      const percentage = addressPercentages[info.account] || 0;
-      console.log(percentage);
-      return (BigInt(Math.round(percentage * 100)) * remainingVotes) / 10000n;
+    console.log('-------handleSubmit()-------');
+    console.log('scoreSum', scoreSum);
+
+    // 计算每个地址的票数（整数部分）
+    const scoresArrayForSubmit: bigint[] = [];
+    let allocatedVotes = 0n;
+
+    // 计算每个地址的票数（整数部分）
+    verificationInfos.forEach((info, index) => {
+      const score = parseInt(scores[info.account]) || 0;
+      const ratio = score / scoreSum;
+      const exactVotes = Number(remainingVotes) * ratio;
+      const votes = BigInt(Math.floor(exactVotes));
+
+      // 误差处理，避免验证票数超过剩余票数(ratio有可能最后1位五入了)
+      allocatedVotes += votes;
+      if (allocatedVotes > remainingVotes) {
+        const leftoverVotes = allocatedVotes - remainingVotes;
+        allocatedVotes -= leftoverVotes;
+        scoresArrayForSubmit.push(votes - leftoverVotes);
+      } else {
+        scoresArrayForSubmit.push(votes);
+      }
     });
 
-    const abstainVotes = remainingVotes - scoresArray.reduce((sum, votes) => sum + votes, 0n);
-    verify(token?.address as `0x${string}`, actionId, abstainVotes, scoresArray);
+    // 计算弃权票数并提交
+    const scoresArrayTotal = scoresArrayForSubmit.reduce((sum, votes) => sum + votes, 0n);
+
+    console.log('remainingVotes', remainingVotes);
+    console.log('scoresArrayTotal', scoresArrayTotal);
+    console.log('scoresArrayForSubmit', scoresArrayForSubmit);
+
+    // if 有弃权票
+    if (parseInt(abstainScore) > 0) {
+      const abstainVotes = remainingVotes > scoresArrayTotal ? remainingVotes - scoresArrayTotal : 0n;
+      console.log('abstainVotes', abstainVotes);
+      verify(token?.address as `0x${string}`, actionId, abstainVotes, scoresArrayForSubmit);
+    } else {
+      // else 无弃权票
+
+      // 误差处理：如果误差丢掉了一些票，则简单将这些票分配给第一个得分不为0的地址
+      if (scoresArrayTotal < remainingVotes) {
+        const firstNonZeroIndex = scoresArrayForSubmit.findIndex((votes) => votes > 0n);
+        if (firstNonZeroIndex !== -1) {
+          scoresArrayForSubmit[firstNonZeroIndex] += remainingVotes - scoresArrayTotal;
+        }
+      }
+
+      console.log('abstainVotes', 0n);
+      verify(token?.address as `0x${string}`, actionId, 0n, scoresArrayForSubmit);
+    }
   };
 
   // 提交成功
@@ -139,11 +186,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
         duration: 2000, // 2秒
       });
       setTimeout(() => {
-        if (!autoQuery) {
-          router.push(`/verify?symbol=${token?.symbol}`);
-        } else {
-          router.push(`/gov?symbol=${token?.symbol}`); //仅有1个行动需要验证时，自动跳转到gov页面
-        }
+        router.push(`/verify/actions/?symbol=${token?.symbol}`);
       }, 2000);
     }
   }, [isConfirmed, submitError]);
@@ -158,6 +201,10 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       handleContractError(errorVerificationInfosByAction, 'dataViewer');
     }
   }, [submitError, errorVerificationInfosByAction]);
+
+  if (remainingVotes <= 0) {
+    return <></>;
+  }
 
   // 渲染
   return (
@@ -176,7 +223,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                     <div className="text-sm text-greyscale-800">
                       {actionInfo.body.verificationKeys.map((key, i) => (
                         <div key={i}>
-                          {key}: {info.infos[i]}
+                          {key}: <LinkIfUrl text={info.infos[i]} />
                         </div>
                       ))}
                     </div>
@@ -188,6 +235,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                       type="number"
                       min="0"
                       value={scores[info.account] || ''}
+                      placeholder="0"
                       onChange={(e) => handleScoreChange(info.account, e.target.value)}
                       className="w-10 px-1 py-1 border rounded"
                       disabled={isWriting || isConfirmed}
@@ -216,6 +264,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                     type="number"
                     min="0"
                     value={abstainScore}
+                    placeholder="0"
                     onChange={(e) => handleAbstainScoreChange(e.target.value)}
                     className="w-10 px-1 py-1 border rounded"
                     disabled={isWriting || isConfirmed}
@@ -242,6 +291,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
           已验证
         </Button>
       )}
+
       <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
     </>
   );

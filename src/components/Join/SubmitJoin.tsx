@@ -17,7 +17,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, For
 
 // my hooks
 import { checkWalletConnection } from '@/src/lib/web3';
-import { formatTokenAmount, parseUnits } from '@/src/lib/format';
+import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useApprove, useBalanceOf, useAllowance } from '@/src/hooks/contracts/useLOVE20Token';
 import { useJoin } from '@/src/hooks/contracts/useLOVE20Join';
@@ -351,9 +351,25 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
                     />
                   </FormControl>
                   <FormMessage />
-                  <FormDescription>
-                    当前持有：<span className="text-secondary">{formatTokenAmount(tokenBalance || 0n)}</span>{' '}
-                    {token?.symbol}
+                  <FormDescription className="flex items-center">
+                    <span>
+                      当前持有：<span className="text-secondary">{formatTokenAmount(tokenBalance || 0n)}</span>{' '}
+                      {token?.symbol}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="link"
+                      size="sm"
+                      onClick={() => {
+                        if (tokenBalance && tokenBalance > 0n) {
+                          form.setValue('additionalStakeAmount', formatUnits(tokenBalance));
+                        }
+                      }}
+                      className="text-secondary p-0 ml-6"
+                      disabled={!tokenBalance || tokenBalance <= 0n}
+                    >
+                      全部
+                    </Button>
                   </FormDescription>
                 </FormItem>
               )}

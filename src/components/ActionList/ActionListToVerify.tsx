@@ -2,12 +2,11 @@
 import React, { useContext, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 // my hooks
-import { useVerifyingActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useVerifingActionsByAccount } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -25,14 +24,14 @@ interface VerifingActionListProps {
   currentRound: bigint;
 }
 
-// 所有需要验证的行动列表
-const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound }) => {
+// 【某个地址】待验证行动列表
+const ActionListToVerify: React.FC<VerifingActionListProps> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
   const { address } = useAccount();
   const router = useRouter();
 
-  // 获取数据
-  const { verifyingActions, isPending, error } = useVerifyingActions(
+  // 使用 useVerifyingActions 获取待验证行动列表
+  const { myVerifyingActions, isPending, error } = useVerifingActionsByAccount(
     (token?.address as `0x${string}`) || '',
     currentRound,
     address as `0x${string}`,
@@ -46,6 +45,13 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
     }
   }, [error]);
 
+  // 如果只有1个行动，直接跳转到行动详情页
+  if (myVerifyingActions && myVerifyingActions.length === 1) {
+    const actionId = myVerifyingActions[0].action.head.id;
+    router.push(`/verify/${actionId}?symbol=${token?.symbol}&auto=true`);
+    return null;
+  }
+
   if (!token || isPending) {
     return (
       <div className="p-4 flex justify-center items-center">
@@ -56,18 +62,11 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
 
   return (
     <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <LeftTitle title="所有验证中行动" />
-        <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
-          <Link href={`/gov?symbol=${token?.symbol}`}>返回治理首页</Link>
-        </Button>
-      </div>
-      {!verifyingActions?.length && (
-        <div className="text-sm mt-4 text-greyscale-500 text-center">本轮没有行动要验证</div>
-      )}
-      {verifyingActions && verifyingActions.length > 0 && (
+      <LeftTitle title="我需验证的行动" />
+      {!myVerifyingActions?.length && <div className="text-sm mt-4 text-greyscale-500 text-center">没有待验证行动</div>}
+      {myVerifyingActions && myVerifyingActions.length > 0 && (
         <div className="mt-4 space-y-4">
-          {verifyingActions?.map((verifyingAction) => (
+          {myVerifyingActions?.map((verifyingAction) => (
             <Card key={verifyingAction.action.head.id} className="shadow-none">
               <Link
                 className="relative block"
@@ -80,12 +79,12 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
                 <CardContent className="px-3 pt-1 pb-2">
                   <div className="text-greyscale-500">{verifyingAction.action.body.consensus}</div>
                   <div className="text-xs text-greyscale-400 mt-2 flex justify-between">
-                    <span>总票数: {formatTokenAmount(verifyingAction.votesNum, 2)}</span>
-                    <span>已验证票数: {formatTokenAmount(verifyingAction.verificationScore, 2)}</span>
+                    <span>总票数: {formatTokenAmount(verifyingAction.totalVotesNum, 2)}</span>
+                    <span>我的票数: {formatTokenAmount(verifyingAction.myVotesNum, 2)}</span>
                     <span>
-                      进度:{' '}
-                      {verifyingAction.votesNum > 0n
-                        ? `${Number((verifyingAction.verificationScore * 100n) / verifyingAction.votesNum)}%`
+                      我的占比:{' '}
+                      {verifyingAction.totalVotesNum > 0n
+                        ? `${Number((verifyingAction.myVotesNum * 100n) / verifyingAction.totalVotesNum)}%`
                         : '0%'}
                     </span>
                   </div>
@@ -100,4 +99,4 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
   );
 };
 
-export default VerifingActionList;
+export default ActionListToVerify;

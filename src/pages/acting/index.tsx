@@ -2,6 +2,7 @@
 
 import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 // my context
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -18,7 +19,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 
 const ActingPage = () => {
   const router = useRouter();
-  const { currentRound, error: errorCurrentRound } = useCurrentRound();
+  const { currentRound, error: errorCurrentRound, isPending: isPendingCurrentRound } = useCurrentRound();
   const { token: currentToken } = useContext(TokenContext) || {};
 
   // 错误处理
@@ -38,6 +39,14 @@ const ActingPage = () => {
       router.push(`/gov/stakelp/?symbol=${currentToken.symbol}&first=true`);
     }
   }, [currentToken]);
+
+  if (isPendingCurrentRound) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <LoadingIcon />
+      </div>
+    );
+  }
 
   return (
     <>

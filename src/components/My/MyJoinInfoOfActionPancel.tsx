@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 // my hooks
 import { useJoinedAmountByActionIdByAccount, useWithdraw } from '@/src/hooks/contracts/useLOVE20Join';
+import { useVerificationInfosByAccount } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my funcs
@@ -20,6 +21,9 @@ import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
+// my utils
+import { LinkIfUrl } from '@/src/lib/stringUtils';
+
 interface MyJoinInfoOfActionPancelProps {
   actionId: bigint;
 }
@@ -27,6 +31,18 @@ interface MyJoinInfoOfActionPancelProps {
 const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ actionId }) => {
   const { address: account, chain: accountChain } = useAccount();
   const { token } = useContext(TokenContext) || {};
+
+  // 获取验证信息
+  const {
+    verificationKeys,
+    verificationInfos,
+    isPending: isPendingVerificationInfo,
+    error: errorVerificationInfo,
+  } = useVerificationInfosByAccount(
+    (token?.address as `0x${string}`) || '',
+    actionId,
+    (account as `0x${string}`) || '',
+  );
 
   // 获取我参与的代币数
   const {
@@ -75,10 +91,13 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
     if (errorWithdraw) {
       handleContractError(errorWithdraw, 'join');
     }
-  }, [errorStakedAmountByAccountByActionId, errorWithdraw]);
+    if (errorVerificationInfo) {
+      handleContractError(errorVerificationInfo, 'join');
+    }
+  }, [errorStakedAmountByAccountByActionId, errorWithdraw, errorVerificationInfo]);
 
   // 加载中
-  if (isPendingStakedAmountByAccountByActionId) {
+  if (isPendingStakedAmountByAccountByActionId || isPendingVerificationInfo) {
     return (
       <div className="px-4 pt-4 pb-2">
         <LeftTitle title="我的参与" />
@@ -94,17 +113,17 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
         <div className="stat place-items-center">
           <div className="stat-title">我参与的代币数</div>
           <div className="stat-value text-2xl text-secondary">
-            {formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0))}
+            {formatTokenAmount(joinedAmountByActionIdByAccount || BigInt(0), 0)}
           </div>
         </div>
       </div>
       <div className="flex justify-center space-x-4 mt-2">
-        <Button type="button" className="w" disabled={true}>
+        {/* <Button type="button" className="w" disabled={true}>
           第1次内测体验, 暂时关闭 取回和追加代币 功能
-        </Button>
-        {/* {joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= 2n ? (
+        </Button> */}
+        {joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= 2n ? (
           <Button variant="outline" className="w-1/3 text-secondary border-secondary" disabled>
-            已取回
+            取回
           </Button>
         ) : (
           <Button
@@ -122,10 +141,27 @@ const MyJoinInfoOfActionPancel: React.FC<MyJoinInfoOfActionPancelProps> = ({ act
               : '取回代币'}
           </Button>
         )}
-        
+
         <Button variant="outline" className="w-1/3 text-secondary border-secondary" asChild>
           <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
-        </Button> */}
+        </Button>
+      </div>
+      <div className="flex flex-col items-center mt-2">
+        <div className="text-sm text-greyscale-600">
+          {isPendingVerificationInfo && '加载中...'}
+          {joinedAmountByActionIdByAccount != undefined &&
+            joinedAmountByActionIdByAccount > 2n &&
+            verificationKeys &&
+            verificationKeys.length > 0 && (
+              <div>
+                {verificationKeys.map((key, index) => (
+                  <div key={index}>
+                    {key}: <LinkIfUrl text={verificationInfos[index]} />
+                  </div>
+                ))}
+              </div>
+            )}
+        </div>
       </div>
       <LoadingOverlay
         isLoading={isPendingWithdraw || isConfirmingWithdraw}

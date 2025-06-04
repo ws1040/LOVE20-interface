@@ -9,8 +9,7 @@ import { useForm } from 'react-hook-form';
 import { useAccount, useBalance } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-
+import { Form, FormControl, FormDescription, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { toast } from 'react-hot-toast';
 
 // my funcs
@@ -164,7 +163,7 @@ const Withdraw: React.FC = () => {
     <>
       <div className="p-6 pt-0">
         <div className="mb-4 flex items-center space-x-2">
-          <LeftTitle title={`存入${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL} 提现 ${balance?.symbol}`} />
+          <LeftTitle title={`${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL} 兑换 ${balance?.symbol}`} />
         </div>
 
         {/* 4. 使用 Form 组件包裹并渲染  */}
@@ -175,7 +174,6 @@ const Withdraw: React.FC = () => {
               name="withdrawAmount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>提现数量：</FormLabel>
                   <FormControl>
                     <Input
                       placeholder={`填写 ${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL ?? ''} 数量`}
@@ -199,7 +197,7 @@ const Withdraw: React.FC = () => {
                       className="text-secondary p-0 ml-2"
                       disabled={isLoadingBalance || isPendingWithdraw || isConfirmingWithdraw}
                     >
-                      最高
+                      全部
                     </Button>
                   </FormDescription>
                 </FormItem>

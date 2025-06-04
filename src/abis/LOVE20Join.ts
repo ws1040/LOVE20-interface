@@ -33,6 +33,35 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
+    "name": "accountToIndex",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "actionIdsByAccount",
     "inputs": [
       {
@@ -147,6 +176,35 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
+    "name": "indexToAccount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "initialize",
     "inputs": [
       {
@@ -221,6 +279,30 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
+    "name": "numOfAccounts",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "originBlocks",
     "inputs": [],
     "outputs": [
@@ -236,6 +318,35 @@ export const LOVE20JoinAbi = [
     "type": "function",
     "name": "phaseBlocks",
     "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "prefixSum",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "outputs": [
       {
         "name": "",
@@ -425,22 +536,27 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
-    "name": "verificationInfos",
+    "name": "verificationInfoByRound",
     "inputs": [
       {
-        "name": "",
+        "name": "tokenAddress",
         "type": "address",
         "internalType": "address"
       },
       {
-        "name": "",
+        "name": "accountAddress",
         "type": "address",
         "internalType": "address"
       },
       {
-        "name": "",
+        "name": "verificationKey",
         "type": "string",
         "internalType": "string"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [
@@ -549,6 +665,12 @@ export const LOVE20JoinAbi = [
         "internalType": "string"
       },
       {
+        "name": "round",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
         "name": "verificationInfo",
         "type": "string",
         "indexed": false,
@@ -612,6 +734,11 @@ export const LOVE20JoinAbi = [
   {
     "type": "error",
     "name": "AmountIsZero",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "CannotGenerateAtCurrentRound",
     "inputs": []
   },
   {

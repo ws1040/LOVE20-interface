@@ -593,6 +593,11 @@ export const LOVE20VerifyAbi = [
   },
   {
     "type": "error",
+    "name": "AlreadyVerified",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "RoundNotStarted",
     "inputs": []
   },

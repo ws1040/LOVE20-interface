@@ -3,7 +3,7 @@
 /** LOVE20Stake 合约自定义错误 -> 前端展示文案
  */
 export const LOVE20StakeErrorsMap: Record<string, string> = {
-  NotAllowedToStakeAtRoundZero: '不允许在0轮进行质押',
+  NotAllowedToStakeAtRoundZero: '不允许在第0轮进行质押',
   InvalidToAddress: '无效的接收地址',
   StakeAmountMustBeSet: '质押数量必须大于0',
   ReleaseAlreadyRequested: '已请求释放',
