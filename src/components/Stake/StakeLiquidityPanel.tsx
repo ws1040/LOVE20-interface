@@ -3,6 +3,7 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -451,9 +452,14 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
             <Card>
               <CardContent className="p-3 md:p-6">
                 <div className="space-y-3">
-                  <div>
-                    <h2 className="text-lg font-semibold mb-2">第1步: 填写存入数量</h2>
-                    {/* <p className="text-sm text-gray-600 mb-4">确定要质押的代币数量</p> */}
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-lg font-semibold">第1步: 填写存入数量</h2>
+                    <Link
+                      href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/dex/swap`}
+                      className="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                    >
+                      获取代币
+                    </Link>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

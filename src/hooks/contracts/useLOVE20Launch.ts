@@ -514,6 +514,9 @@ export const useLastContributedBlock = (tokenAddress: `0x${string}`, accountAddr
     abi: LOVE20LaunchAbi,
     functionName: 'lastContributedBlock',
     args: [tokenAddress, accountAddress],
+    query: {
+      enabled: !!tokenAddress && !!accountAddress,
+    },
   });
 
   return { lastContributedBlock: data as bigint | undefined, isPending, error };

@@ -53,7 +53,7 @@ const getFormSchema = (balance: bigint) =>
   });
 
 const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
-  const { address: account, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain, isConnected } = useAccount();
   const router = useRouter();
 
   // 1. 读取ETH余额
@@ -123,7 +123,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   // 4. 如果 ETH 余额为 0，则提示用户获取
   const { setError } = useError();
   useEffect(() => {
-    if (!isPendingETHBalance && ethBalanceValue !== undefined && ethBalanceValue <= 0n) {
+    if (isConnected && !isPendingETHBalance && ethBalanceValue !== undefined && ethBalanceValue <= 0n) {
       setError({
         name: '余额不足',
         message: `请先获取 ${parentTokenSymbol}，再来申购`,
@@ -144,6 +144,14 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
       handleContractError(errorETHBalance, 'balance');
     }
   }, [errContributeToken, contributedError, errorETHBalance, handleContractError]);
+
+  if (!isConnected) {
+    return (
+      <div className="flex flex-col items-center p-4 mt-4">
+        <div className="text-center mb-4 text-greyscale-500">没有链接钱包，请先连接钱包</div>
+      </div>
+    );
+  }
 
   if (!token || isPendingETHBalance || isContributedPending) {
     return <LoadingIcon />;

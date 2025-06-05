@@ -76,9 +76,20 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
             </p>
             <p className="text-greyscale-600">
               2. 最后一笔申购，距离首笔达成 50%募资目标的所在区块
-              {!launchInfo.hasEnded && ratio >= 0.5 && `（第 ${launchInfo.secondHalfStartBlock.toString()}区块）`}
-              ，至少{launchInfo.secondHalfMinBlocks.toString()}个区块
-              {!launchInfo.hasEnded && `（当前区块：${blockNumber}）`}
+              {!launchInfo.hasEnded &&
+                ratio >= 0.5 &&
+                (() => {
+                  const targetBlock = Number(launchInfo.secondHalfStartBlock) + Number(launchInfo.secondHalfMinBlocks);
+                  const currentBlock = Number(blockNumber || 0);
+                  const blocksRemaining = targetBlock - currentBlock;
+
+                  if (blocksRemaining <= 0) {
+                    return `（第 ${launchInfo.secondHalfStartBlock.toString()}区块），至少${launchInfo.secondHalfMinBlocks.toString()}个区块（已满足条件，任意一笔新的申购将触发公平发射结束）`;
+                  } else {
+                    return `（第 ${launchInfo.secondHalfStartBlock.toString()}区块），至少${launchInfo.secondHalfMinBlocks.toString()}个区块（当前区块：第${currentBlock}区块，还需等待${blocksRemaining}个区块）`;
+                  }
+                })()}
+              {!launchInfo.hasEnded && ratio < 0.5 && `，至少${launchInfo.secondHalfMinBlocks.toString()}个区块`}
             </p>
           </div>
         </div>
