@@ -90,6 +90,8 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
                   }
                 })()}
               {!launchInfo.hasEnded && ratio < 0.5 && `，至少${launchInfo.secondHalfMinBlocks.toString()}个区块`}
+              {launchInfo.hasEnded &&
+                `（第 ${launchInfo.secondHalfStartBlock.toString()}区块），至少${launchInfo.secondHalfMinBlocks.toString()}个区块`}
             </p>
           </div>
         </div>
