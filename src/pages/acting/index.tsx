@@ -22,11 +22,9 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 const ActingPage = () => {
   const { isConnected } = useAccount();
   const { token: currentToken } = useContext(TokenContext) || {};
-  const {
-    currentRound,
-    error: errorCurrentRound,
-    isPending: isPendingCurrentRound,
-  } = useCurrentRound(isConnected && currentToken?.hasEnded);
+
+  const shouldCall = isConnected && currentToken?.hasEnded === true;
+  const { currentRound, error: errorCurrentRound, isPending: isPendingCurrentRound } = useCurrentRound(shouldCall);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -36,7 +34,7 @@ const ActingPage = () => {
     }
   }, [errorCurrentRound]);
 
-  if (isConnected && !currentToken?.hasEnded && isPendingCurrentRound) {
+  if (shouldCall && isPendingCurrentRound) {
     return (
       <div className="flex justify-center items-center h-screen">
         <LoadingIcon />
