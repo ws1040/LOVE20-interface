@@ -7,7 +7,7 @@ export const LOVE20StakeErrorsMap: Record<string, string> = {
   NotAllowedToStakeAtRoundZero: '不允许在第0轮进行质押',
   InvalidToAddress: '无效的接收地址',
   StakeAmountMustBeSet: '质押数量必须大于0',
-  ReleaseAlreadyRequested: '已申请取消质押，还未过解锁期，不能再次质押',
+  ReleaseAlreadyRequested: '已取消质押，还未过解锁期或未取走资产，不能再次质押',
   ReleaseNotRequested: '未请求释放',
   PromisedWaitingRoundsOutOfRange: '承诺等待的轮次超出许可范围',
   PromisedWaitingRoundsMustBeGreaterOrEqualThanBefore: '承诺等待的轮次必须大于或等于之前的轮次',
