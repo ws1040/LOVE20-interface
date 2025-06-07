@@ -5,5 +5,5 @@
 export const LOVE20STTokenErrorsMap: Record<string, string> = {
   NotEligibleToMint: '不符合铸造代币的条件',
   InvalidAddress: '无效的地址',
-  NoTokensToBurn: '没有代币可销毁',
+  AmountIsGreaterThanReserve: '数量超过储备金',
 };
