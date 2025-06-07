@@ -12,11 +12,14 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN as `0x${s
 /**
  * Hook for currentRound
  */
-export const useCurrentRound = () => {
+export const useCurrentRound = (flag: boolean = true) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20JoinAbi,
     functionName: 'currentRound',
+    query: {
+      enabled: flag,
+    },
   });
 
   return { currentRound: data as bigint, isPending, error };

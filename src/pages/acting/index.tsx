@@ -20,9 +20,13 @@ import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Join';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 const ActingPage = () => {
-  const { currentRound, error: errorCurrentRound, isPending: isPendingCurrentRound } = useCurrentRound();
-  const { token: currentToken } = useContext(TokenContext) || {};
   const { isConnected } = useAccount();
+  const { token: currentToken } = useContext(TokenContext) || {};
+  const {
+    currentRound,
+    error: errorCurrentRound,
+    isPending: isPendingCurrentRound,
+  } = useCurrentRound(isConnected && currentToken?.hasEnded);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -32,7 +36,7 @@ const ActingPage = () => {
     }
   }, [errorCurrentRound]);
 
-  if (isPendingCurrentRound) {
+  if (isConnected && !currentToken?.hasEnded && isPendingCurrentRound) {
     return (
       <div className="flex justify-center items-center h-screen">
         <LoadingIcon />
