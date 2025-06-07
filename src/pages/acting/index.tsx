@@ -1,7 +1,9 @@
 'use client';
 
 import { useContext, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 // my context
@@ -18,9 +20,9 @@ import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Join';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 const ActingPage = () => {
-  const router = useRouter();
   const { currentRound, error: errorCurrentRound, isPending: isPendingCurrentRound } = useCurrentRound();
   const { token: currentToken } = useContext(TokenContext) || {};
+  const { isConnected } = useAccount();
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -29,16 +31,6 @@ const ActingPage = () => {
       handleContractError(errorCurrentRound, 'join');
     }
   }, [errorCurrentRound]);
-
-  useEffect(() => {
-    if (currentToken && !currentToken.hasEnded) {
-      // 如果发射未结束，跳转到发射页面
-      router.push(`/launch?symbol=${currentToken.symbol}`);
-    } else if (currentToken && !currentToken.initialStakeRound) {
-      // 如果还没有人质押，跳转到质押页面
-      router.push(`/gov/stakelp/?symbol=${currentToken.symbol}&first=true`);
-    }
-  }, [currentToken]);
 
   if (isPendingCurrentRound) {
     return (
@@ -52,9 +44,32 @@ const ActingPage = () => {
     <>
       <Header title="社区首页" />
       <main className="flex-grow">
-        <TokenTab />
-        <ActDataPanel currentRound={currentRound} />
-        <JoiningActionList currentRound={currentRound} />
+        {!isConnected ? (
+          // 未连接钱包时显示提示
+          <div className="flex flex-col items-center p-4 mt-4">
+            <div className="text-center mb-4 text-greyscale-500">没有链接钱包，请先连接钱包</div>
+          </div>
+        ) : !currentToken ? (
+          <LoadingIcon />
+        ) : currentToken && !currentToken.hasEnded ? (
+          // 公平发射未结束时显示提示
+          <>
+            <TokenTab />
+            <div className="flex flex-col items-center p-4 mt-4">
+              <div className="text-center mb-4 text-greyscale-500">公平发射未结束，还不能参与社区行动</div>
+              <Button className="w-1/2" asChild>
+                <Link href={`/launch?symbol=${currentToken.symbol}`}>查看公平发射</Link>
+              </Button>
+            </div>
+          </>
+        ) : (
+          // 正常显示社区内容
+          <>
+            <TokenTab />
+            <ActDataPanel currentRound={currentRound} />
+            <JoiningActionList currentRound={currentRound} />
+          </>
+        )}
       </main>
     </>
   );
