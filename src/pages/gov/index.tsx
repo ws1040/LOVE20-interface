@@ -1,5 +1,4 @@
-import React, { useEffect, useContext } from 'react';
-// import { useRouter } from 'next/router';
+import React, { useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -21,8 +20,6 @@ import Todeploy from '@/src/components/Launch/Todeploy';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const GovPage = () => {
-  // const router = useRouter();
-
   // 当前token
   const { token: currentToken } = useContext(TokenContext) || {};
   const { address: accountAddress, isConnected } = useAccount();
@@ -40,19 +37,6 @@ const GovPage = () => {
     isPending: isPendingValidGovVotes,
     error: errorValidGovVotes,
   } = useValidGovVotes((currentToken?.address as `0x${string}`) || '', (accountAddress as `0x${string}`) || '');
-
-  console.log('validGovVotes', validGovVotes);
-  console.log('isPendingValidGovVotes', isPendingValidGovVotes);
-
-  // useEffect(() => {
-  //   if (currentToken && !currentToken.hasEnded) {
-  //     // 如果发射未结束，跳转到发射页面
-  //     router.push(`/launch?symbol=${currentToken.symbol}`);
-  //   } else if (currentToken && !currentToken.initialStakeRound) {
-  //     // 如果还没有人质押，跳转到质押页面
-  //     router.push(`/gov/stakelp/?symbol=${currentToken.symbol}&first=true`);
-  //   }
-  // }, [currentToken]);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
