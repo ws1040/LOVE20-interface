@@ -3,11 +3,12 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, HelpCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -451,9 +452,14 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
             <Card>
               <CardContent className="p-3 md:p-6">
                 <div className="space-y-3">
-                  <div>
-                    <h2 className="text-lg font-semibold mb-2">第1步: 填写存入数量</h2>
-                    {/* <p className="text-sm text-gray-600 mb-4">确定要质押的代币数量</p> */}
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-lg font-semibold">第1步: 填写存入数量</h2>
+                    <Link
+                      href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/dex/swap`}
+                      className="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                    >
+                      获取代币
+                    </Link>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -478,7 +484,9 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                   className="text-xl border-none p-0 h-auto bg-transparent focus:ring-0 focus:outline-none mr-2"
                                 />
                                 <div className="flex items-center gap-2">
-                                  <span className="font-medium">{token?.parentTokenSymbol}</span>
+                                  <div className="bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors ">
+                                    <span className="font-medium text-gray-800">{token?.parentTokenSymbol}</span>
+                                  </div>
                                 </div>
                               </div>
                               <div className="flex items-center justify-between">
@@ -546,7 +554,9 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                   className="text-xl border-none p-0 h-auto bg-transparent focus:ring-0 focus:outline-none mr-2"
                                 />
                                 <div className="flex items-center gap-2">
-                                  <span className="font-medium">{token?.symbol}</span>
+                                  <div className="bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors">
+                                    <span className="font-medium text-gray-800">{token?.symbol}</span>
+                                  </div>
                                 </div>
                               </div>
                               <div className="flex items-center justify-between">
@@ -596,7 +606,10 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
 
                   {pairExists && (
                     <div className="space-y-1 text-sm mt-2">
-                      <div className="text-gray-600">备注：比例按当前价格计算</div>
+                      <div className="text-gray-600 flex items-center gap-1">
+                        <HelpCircle className="w-4 h-4" />
+                        质押比例按当前价格计算：
+                      </div>
                       <div className="flex items-center gap-2">
                         <div className="text-gray-600">
                           {showTokenToParent ? (
@@ -658,7 +671,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                 <SelectValue placeholder="选择解锁期" />
                               </SelectTrigger>
                               <SelectContent>
-                                {Array.from({ length: 1 }, (_, i) => i + 4)
+                                {Array.from({ length: 9 }, (_, i) => i + 4)
                                   .filter((item) => item >= promisedWaitingPhases)
                                   .map((item) => (
                                     <SelectItem key={item} value={String(item)}>
@@ -669,7 +682,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                             </Select>
                           </FormControl>
                           <FormDescription>
-                            “解锁期” 是指，取消质押后多久才能取回代币 (注意：是从取消质押的阶段结束时开始计算)
+                            "解锁期" 是指，取消质押后多久才能取回代币 (注意：是从取消质押的阶段结束时开始计算)
                           </FormDescription>
                           <FormMessage />
                         </FormItem>

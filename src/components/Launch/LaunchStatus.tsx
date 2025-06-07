@@ -22,6 +22,11 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
     return <LoadingIcon />;
   }
 
+  const parentTokenSymbol =
+    token.parentTokenSymbol == process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL
+      ? process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL
+      : token.parentTokenSymbol;
+
   return (
     <div className="flex-col items-center px-4">
       <div className="grid place-items-center">
@@ -32,7 +37,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
       <div className="stats w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center pb-1">
           <div className="stat-title text-sm">
-            <span>{token.parentTokenSymbol} </span>
+            <span>{parentTokenSymbol}</span>
             筹集目标
           </div>
           <div className="stat-value text-xl">{formatTokenAmount(launchInfo.parentTokenFundraisingGoal)}</div>
@@ -46,7 +51,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
         </div>
       </div>
       <div className="text-center text-xs mb-4 text-greyscale-500">
-        兑换比例：1 {token.parentTokenSymbol} ={' '}
+        兑换比例：1 {parentTokenSymbol} ={' '}
         {formatIntegerStringWithCommas(
           removeExtraZeros(
             (Number(TOKEN_CONFIG.fairLaunch) / Number(launchInfo.parentTokenFundraisingGoal)).toLocaleString('en-US', {
@@ -62,7 +67,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
           <div className="stat-title text-sm mr-6 ">累计申购</div>
           <div className="stat-value">
             <span className="text-3xl text-secondary">{formatTokenAmount(launchInfo.totalContributed)}</span>
-            <span className="text-greyscale-500 font-normal text-sm ml-2">{token.parentTokenSymbol}</span>
+            <span className="text-greyscale-500 font-normal text-sm ml-2">{parentTokenSymbol}</span>
           </div>
           <div className="mt-2 rounded-lg text-sm">
             <p className="mt-2 mb-1 font-medium">发射结束条件：</p>
@@ -71,9 +76,26 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
             </p>
             <p className="text-greyscale-600">
               2. 最后一笔申购，距离首笔达成 50%募资目标的所在区块
-              {!launchInfo.hasEnded && ratio >= 0.5 && `（第 ${launchInfo.secondHalfStartBlock.toString()}区块）`}
-              ，至少{launchInfo.secondHalfMinBlocks.toString()}个区块
-              {!launchInfo.hasEnded && `（当前区块：${blockNumber}）`}
+              {!launchInfo.hasEnded &&
+                ratio >= 0.5 &&
+                (() => {
+                  const targetBlock = Number(launchInfo.secondHalfStartBlock) + Number(launchInfo.secondHalfMinBlocks);
+                  const currentBlock = Number(blockNumber || 0);
+                  const blocksRemaining = targetBlock - currentBlock;
+
+                  if (blocksRemaining <= 0) {
+                    if (ratio >= 1) {
+                      return `（第 ${launchInfo.secondHalfStartBlock.toString()}区块），至少${launchInfo.secondHalfMinBlocks.toString()}个区块（已满足条件，任意一笔新的申购将触发公平发射结束）`;
+                    } else {
+                      return `（第 ${launchInfo.secondHalfStartBlock.toString()}区块），至少${launchInfo.secondHalfMinBlocks.toString()}个区块（已满足条件）`;
+                    }
+                  } else {
+                    return `（第 ${launchInfo.secondHalfStartBlock.toString()}区块），至少${launchInfo.secondHalfMinBlocks.toString()}个区块（当前区块：第${currentBlock}区块，还需等待${blocksRemaining}个区块）`;
+                  }
+                })()}
+              {!launchInfo.hasEnded && ratio < 0.5 && `，至少${launchInfo.secondHalfMinBlocks.toString()}个区块`}
+              {launchInfo.hasEnded &&
+                `（第 ${launchInfo.secondHalfStartBlock.toString()}区块），至少${launchInfo.secondHalfMinBlocks.toString()}个区块`}
             </p>
           </div>
         </div>

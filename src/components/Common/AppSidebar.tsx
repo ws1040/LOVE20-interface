@@ -131,9 +131,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           //   icon: BadgeDollarSign,
           // },
           {
-            title: `兑换${process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}`,
-            url: `/dex/deposit?symbol=${token.symbol}`,
-            isActive: isActiveUrl(`${basePath}/dex/deposit`),
+            title: `兑换代币`,
+            url: `/dex/swap?symbol=${token.symbol}&from=${process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL}`,
+            isActive: isActiveUrl(`${basePath}/dex/swap`),
             icon: TicketCheck,
           },
         ],

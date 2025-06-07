@@ -270,11 +270,11 @@ export const useLaunchedTokensByPage = (start: bigint, end: bigint, reverse: boo
 /**
  * Hook for launches
  */
-export const useLaunches = (address: `0x${string}`) => {
+export const useLaunchInfo = (address: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
-    functionName: 'launches',
+    functionName: 'launchInfo',
     args: [address],
     query: {
       enabled: !!address,
@@ -514,6 +514,9 @@ export const useLastContributedBlock = (tokenAddress: `0x${string}`, accountAddr
     abi: LOVE20LaunchAbi,
     functionName: 'lastContributedBlock',
     args: [tokenAddress, accountAddress],
+    query: {
+      enabled: !!tokenAddress && !!accountAddress,
+    },
   });
 
   return { lastContributedBlock: data as bigint | undefined, isPending, error };

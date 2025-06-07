@@ -35,14 +35,14 @@ export const useAllowance = (
  * useBalanceOf Hook
  * @param account - Address of the account
  */
-export const useBalanceOf = (token: `0x${string}`, account: `0x${string}`) => {
+export const useBalanceOf = (token: `0x${string}`, account: `0x${string}`, flag: boolean = true) => {
   const { data, isPending, error } = useReadContract({
     address: token,
     abi: LOVE20TokenAbi,
     functionName: 'balanceOf',
     args: [account],
     query: {
-      enabled: !!token && !!account,
+      enabled: !!token && !!account && flag,
     },
   });
 

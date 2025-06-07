@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
+// import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-// 导入TokenContext相关组件
+// 导入context
 import { TokenContext } from '@/src/contexts/TokenContext';
-import { useContext } from 'react';
 
 // 导入hooks
-import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useValidGovVotes, useCurrentRound } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // 导入组件
 import Header from '@/src/components/Header';
@@ -18,13 +19,13 @@ import MyVotingPanel from '@/src/components/My/MyVotingPanel';
 import MyVerifingPanel from '@/src/components/My/MyVerifingPanel';
 import Todeploy from '@/src/components/Launch/Todeploy';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Stake';
-import { useHandleContractError } from '@/src/lib/errorUtils';
 
 const GovPage = () => {
+  // const router = useRouter();
+
   // 当前token
   const { token: currentToken } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
+  const { address: accountAddress, isConnected } = useAccount();
 
   // 获取当前轮次
   const {
@@ -40,6 +41,19 @@ const GovPage = () => {
     error: errorValidGovVotes,
   } = useValidGovVotes((currentToken?.address as `0x${string}`) || '', (accountAddress as `0x${string}`) || '');
 
+  console.log('validGovVotes', validGovVotes);
+  console.log('isPendingValidGovVotes', isPendingValidGovVotes);
+
+  // useEffect(() => {
+  //   if (currentToken && !currentToken.hasEnded) {
+  //     // 如果发射未结束，跳转到发射页面
+  //     router.push(`/launch?symbol=${currentToken.symbol}`);
+  //   } else if (currentToken && !currentToken.initialStakeRound) {
+  //     // 如果还没有人质押，跳转到质押页面
+  //     router.push(`/gov/stakelp/?symbol=${currentToken.symbol}&first=true`);
+  //   }
+  // }, [currentToken]);
+
   // 错误处理
   const { handleContractError } = useHandleContractError();
   React.useEffect(() => {
@@ -54,7 +68,7 @@ const GovPage = () => {
   // 判断是否需要显示治理组件
   const shouldShowGovComponents = validGovVotes > 0n;
 
-  if (isPendingCurrentRound || isPendingValidGovVotes) {
+  if (isConnected && (isPendingCurrentRound || isPendingValidGovVotes)) {
     return (
       <div className="flex justify-center items-center h-screen">
         <LoadingIcon />
@@ -66,8 +80,24 @@ const GovPage = () => {
     <>
       <Header title="治理首页" />
       <main className="flex-grow">
-        {!currentToken ? (
+        {!isConnected ? (
+          // 未连接钱包时显示提示
+          <div className="flex flex-col items-center p-4 mt-4">
+            <div className="text-center mb-4 text-greyscale-500">没有链接钱包，请先连接钱包</div>
+          </div>
+        ) : !currentToken ? (
           <LoadingIcon />
+        ) : currentToken && !currentToken.hasEnded ? (
+          // 公平发射未结束时显示提示
+          <>
+            <TokenTab />
+            <div className="flex flex-col items-center p-4 mt-4">
+              <div className="text-center mb-4 text-greyscale-500">公平发射未结束，还不能参与治理</div>
+              <Button className="w-1/2" asChild>
+                <Link href={`/launch?symbol=${currentToken.symbol}`}>查看公平发射</Link>
+              </Button>
+            </div>
+          </>
         ) : (
           <>
             <TokenTab />

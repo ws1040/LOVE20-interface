@@ -17,7 +17,7 @@ const StakePage = () => {
           <div className="bg-blue-50/30 border-l-4 border-l-blue-50 rounded-r-lg p-4 mb-8 text-sm">
             <div className="flex items-center gap-2 text-base font-bold text-blue-800 pb-2">
               <HelpCircle className="w-4 h-4" />
-              帮助信息
+              提示
             </div>
             <div className="text-base font-bold text-blue-700 pt-2 pb-1">SL代币：</div>
             <div className="text-sm text-blue-700">
