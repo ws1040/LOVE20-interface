@@ -3,6 +3,7 @@
 /** LOVE20Stake 合约自定义错误 -> 前端展示文案
  */
 export const LOVE20StakeErrorsMap: Record<string, string> = {
+  AlreadyInitialized: '已初始化，无需再次初始化',
   NotAllowedToStakeAtRoundZero: '不允许在第0轮进行质押',
   InvalidToAddress: '无效的接收地址',
   StakeAmountMustBeSet: '质押数量必须大于0',

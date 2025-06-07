@@ -1,6 +1,6 @@
 // src/utils/errorUtils.ts
 
-import { ContractErrorsMaps } from '@/src/errors';
+import { ContractErrorsMaps, getErrorNameFromSelector } from '@/src/errors';
 import { ErrorInfo } from '@/src/contexts/ErrorContext';
 import { useError } from '@/src/contexts/ErrorContext';
 import { useCallback } from 'react';
@@ -95,7 +95,49 @@ function _parseOriginalRevertMessage(errorLog: string): string {
 export function getReadableRevertErrMsg(error: string, contractKey: string): ErrorInfo {
   const rawMessage: string = error ?? '';
 
-  // 1.解析错误信息
+  // 1.优先检查是否是十六进制错误选择器格式，使用更精确的匹配模式
+  // 示例格式：
+  // - "Data:   0xd6e1a062 (4 bytes)"  (Viem 错误格式)
+  // - 'data: "0xa748da06"'            (JSON-RPC 错误格式)
+  // - "0xa748da06"                    (直接错误选择器)
+  // - "execution reverted, data: 0xa748da06"  (其他格式)
+
+  let selector = '';
+
+  // 匹配 Viem 格式：Data:   0xd6e1a062 (4 bytes)
+  const viemMatch = rawMessage.match(/Data:\s*0x([a-fA-F0-9]{8})\s*\(4 bytes\)/i);
+  if (viemMatch) {
+    selector = '0x' + viemMatch[1];
+  }
+
+  // 匹配 JSON-RPC 格式：data: "0xa748da06" 或 data: 0xa748da06
+  if (!selector) {
+    const jsonRpcMatch = rawMessage.match(/data:\s*"?0x([a-fA-F0-9]{8})"?/i);
+    if (jsonRpcMatch) {
+      selector = '0x' + jsonRpcMatch[1];
+    }
+  }
+
+  // 匹配独立的 4 字节选择器，但要确保它不是地址的一部分
+  // 地址是 40 个字符，选择器是 8 个字符
+  if (!selector) {
+    const standaloneMatch = rawMessage.match(/(?:^|[^a-fA-F0-9])0x([a-fA-F0-9]{8})(?:[^a-fA-F0-9]|$)/);
+    if (standaloneMatch) {
+      selector = '0x' + standaloneMatch[1];
+    }
+  }
+
+  if (selector) {
+    const errorName = getErrorNameFromSelector(selector, contractKey);
+    if (errorName) {
+      const errorMap = ContractErrorsMaps[contractKey];
+      if (errorMap && errorMap[errorName]) {
+        return { name: '交易错误', message: errorMap[errorName] };
+      }
+    }
+  }
+
+  // 2.解析传统格式的错误信息
   const matched = rawMessage.match(/(?:([A-Za-z0-9_]+)\()|(?:ERC20:\s*(.+))/);
   let errorName = '';
   if (matched && (matched[1] != undefined || matched[2] != undefined)) {
@@ -108,19 +150,19 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
     }
   }
 
-  // 2.根据合约key获取对应的错误映射
+  // 3.根据合约key获取对应的错误映射
   const errorMap = ContractErrorsMaps[contractKey];
   if (errorMap && errorMap[errorName]) {
     return { name: '交易错误', message: errorMap[errorName] };
   }
 
-  // 3.解析 MetaMask 错误
+  // 4.解析 MetaMask 错误
   const metaMaskError = _parseMetaMaskError(rawMessage);
   if (metaMaskError) {
     return { name: '交易提示', message: metaMaskError };
   }
 
-  // 4.如果找不到对应的错误文案，则返回默认的错误文案
+  // 5.如果找不到对应的错误文案，则返回默认的错误文案
   const originalRevertError = _parseOriginalRevertMessage(rawMessage);
   if (originalRevertError) {
     //打印原始错误
@@ -149,10 +191,46 @@ export const useHandleContractError = () => {
    */
   const handleContractError = useCallback(
     (error: any, context: string) => {
-      console.error('context', context);
-      console.error('error', error);
-      const errorMessage = getReadableRevertErrMsg(error.message, context);
-      setError(errorMessage);
+      console.error('Context:', context);
+      console.error('Error Object:', error);
+
+      // 尝试从多个可能的位置提取错误信息
+      let errorMessage = '';
+      let errorStringified = '';
+
+      // 安全地序列化 error 对象，处理 BigInt
+      try {
+        errorStringified = JSON.stringify(error, (key, value) => {
+          // 将 BigInt 转换为字符串
+          if (typeof value === 'bigint') {
+            return value.toString();
+          }
+          return value;
+        });
+      } catch (e) {
+        // 如果序列化失败，使用 toString 或默认值
+        errorStringified = error?.toString() || 'Error object cannot be stringified';
+      }
+
+      const sources = [error?.message, error?.cause?.message, error?.data, error?.reason, errorStringified];
+
+      for (const source of sources) {
+        if (source && typeof source === 'string') {
+          const parsedError = getReadableRevertErrMsg(source, context);
+          if (parsedError.message !== '交易失败，请稍后刷新重试') {
+            errorMessage = parsedError.message;
+            break;
+          }
+        }
+      }
+
+      const finalError = errorMessage
+        ? { name: '交易错误', message: errorMessage }
+        : getReadableRevertErrMsg(error?.message || errorStringified, context);
+
+      console.error('Final Error Message:', finalError);
+
+      setError(finalError);
     },
     [setError],
   );

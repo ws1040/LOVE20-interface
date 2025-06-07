@@ -3,6 +3,7 @@
 /** LOVE20Submit 合约自定义错误 -> 前端展示文案
  */
 export const LOVE20SubmitErrorsMap: Record<string, string> = {
+  AlreadyInitialized: '已初始化，无需再次初始化',
   CannotSubmitAction: '您没有权限提交提案，请先质押获取足够代理票数',
   ActionIdNotExist: '提案ID不存在',
   StartGreaterThanEnd: '开始时间大于结束时间',

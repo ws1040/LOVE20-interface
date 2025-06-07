@@ -671,7 +671,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                 <SelectValue placeholder="选择解锁期" />
                               </SelectTrigger>
                               <SelectContent>
-                                {Array.from({ length: 9 }, (_, i) => i + 4)
+                                {Array.from({ length: 2 }, (_, i) => i + 1)
                                   .filter((item) => item >= promisedWaitingPhases)
                                   .map((item) => (
                                     <SelectItem key={item} value={String(item)}>
