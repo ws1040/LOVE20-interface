@@ -20,7 +20,7 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   const token = context ? context.token : undefined;
 
   // 计算加载状态。注意：此处仅用于渲染判断，不影响 Hook 的调用顺序
-  const isLoading = !blockNumber || !token || token.voteOriginBlocks === undefined || !token.initialStakeRound;
+  const isLoading = !blockNumber || !token || token.voteOriginBlocks === undefined;
 
   const [currentTokenRound, setCurrentTokenRound] = useState(0n);
 
@@ -56,6 +56,10 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
 
   // 如果 currentRound 为空，则设置默认值，否则转换为字符串
   const displayRound = currentTokenRound != null ? currentTokenRound.toString() : '0';
+
+  if (!token?.initialStakeRound || currentTokenRound <= 0n) {
+    return <></>;
+  }
 
   // 当尚未加载相关数据时，返回加载中状态
   if (isLoading || currentTokenRound == null || currentTokenRound < 0n) {
