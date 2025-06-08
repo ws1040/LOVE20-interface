@@ -130,9 +130,16 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
   if (selector) {
     const errorName = getErrorNameFromSelector(selector, contractKey);
     if (errorName) {
+      // 先在对应合约的错误映射中查找
       const errorMap = ContractErrorsMaps[contractKey];
       if (errorMap && errorMap[errorName]) {
         return { name: '交易错误', message: errorMap[errorName] };
+      }
+
+      // 如果在对应合约中找不到，再在通用错误映射中查找
+      const commonErrorMap = ContractErrorsMaps.common;
+      if (commonErrorMap && commonErrorMap[errorName]) {
+        return { name: '交易错误', message: commonErrorMap[errorName] };
       }
     }
   }
