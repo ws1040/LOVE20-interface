@@ -142,16 +142,23 @@ const VerifiedAddressesByAction: React.FC<{
 
   return (
     <div className="relative px-4 py-4">
+      {selectedRound === 0n && (
+        <div className="flex items-center justify-center">
+          <div className="text-center text-sm text-greyscale-500">暂无验证结果</div>
+        </div>
+      )}
       <div className="flex items-center">
-        <LeftTitle title="验证结果" />
-        <span className="text-sm text-greyscale-500 ml-2">行动轮第</span>
-        <span className="text-sm text-secondary ml-1">{selectedRound.toString()}</span>
-        <span className="text-sm text-greyscale-500 ml-1">轮</span>
         {selectedRound > 0 && (
-          <ChangeRound
-            currentRound={token && currentJoinRound ? formatRoundForDisplay(currentJoinRound - 2n, token) : 0n}
-            handleChangedRound={handleChangedRound}
-          />
+          <>
+            <LeftTitle title="验证结果" />
+            <span className="text-sm text-greyscale-500 ml-2">行动轮第</span>
+            <span className="text-sm text-secondary ml-1">{selectedRound.toString()}</span>
+            <span className="text-sm text-greyscale-500 ml-1">轮</span>
+            <ChangeRound
+              currentRound={token && currentJoinRound ? formatRoundForDisplay(currentJoinRound - 2n, token) : 0n}
+              handleChangedRound={handleChangedRound}
+            />
+          </>
         )}
       </div>
       {isPendingVerifiedAddresses || isPendingVerificationInfosByAction ? (
@@ -159,7 +166,7 @@ const VerifiedAddressesByAction: React.FC<{
           <LoadingIcon />
         </div>
       ) : addresses.length === 0 ? (
-        <div className="text-center text-sm text-greyscale-400 p-4">没有地址参与行动</div>
+        selectedRound > 0n && <div className="text-center text-sm text-greyscale-400 p-4">没有地址参与行动</div>
       ) : (
         <table className="table w-full">
           <thead>
