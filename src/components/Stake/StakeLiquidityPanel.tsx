@@ -455,7 +455,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                   <div className="flex items-center justify-between mb-2">
                     <h2 className="text-lg font-semibold">第1步: 填写存入数量</h2>
                     <Link
-                      href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/dex/swap`}
+                      href="/dex/swap"
                       className="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
                     >
                       获取代币
