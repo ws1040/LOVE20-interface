@@ -10,11 +10,13 @@ import { LOVE20STTokenErrorsMap } from './Love20STTokenErrorsMap';
 import { LOVE20VerifyErrorsMap } from './Love20VerifyErrorsMap';
 import { LOVE20VoteErrorsMap } from './Love20VoteErrorsMap';
 import { UniswapV2RouterErrorsMap } from './UniswapV2RouterErrorsMap';
+import { CommonErrorsMap } from './CommonErrorsMap';
 
 /**
  * 全部合约错误映射的"总汇"。
  */
 export const ContractErrorsMaps: Record<string, Record<string, string>> = {
+  dataviewer: CommonErrorsMap, // DataViewer 使用通用错误映射
   launch: LOVE20LaunchErrorsMap,
   join: LOVE20JoinErrorsMap,
   mint: LOVE20MintErrorsMap,
@@ -41,10 +43,6 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
     '0xf55a5f82': 'NotEnoughWaitingBlocks',
     '0x54331660': 'NotEligibleToMint',
     '0xe6c4247b': 'InvalidAddress',
-  },
-
-  // IPhase 相关错误
-  phase: {
     '0x8e9c6e1c': 'RoundNotStarted',
   },
 
