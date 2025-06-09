@@ -45,7 +45,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
 
   return (
     <div className="p-4">
-      <LeftTitle title="进行中的行动" />
+      <LeftTitle title="本轮可参与的行动：" />
       {!accountAddress && <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>}
       {accountAddress && isPending && (
         <div className="p-4 flex justify-center items-center">
@@ -56,7 +56,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
         <div className="text-sm mt-4 text-greyscale-500 text-center">本轮暂无行动</div>
       )}
       {!isPending && joinableActionDetails && joinableActionDetails.length > 0 && (
-        <div className="mt-4 space-y-4">
+        <div className="mt-2 space-y-4">
           {joinableActionDetails.map((actionDetail: JoinableActionDetail, index: number) => {
             // 判断当前账户是否已经加入该行动
             const isJoined = joinedActions?.some(
