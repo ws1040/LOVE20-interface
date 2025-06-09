@@ -2,7 +2,8 @@
 
 // my components
 import Header from '@/src/components/Header';
-import SlTokenTab from '@/src/components/Token/SlTokenTab';
+// import SlTokenTab from '@/src/components/Token/SlTokenTab';
+import MyLiquidityStakePanel from '@/src/components/My/MyLiquidityStakePanel';
 import StakeLiquidityPanel from '@/src/components/Stake/StakeLiquidityPanel';
 import { HelpCircle } from 'lucide-react';
 
@@ -11,7 +12,7 @@ const StakePage = () => {
     <>
       <Header title="质押LP" />
       <main className="flex-grow">
-        {/* <SlTokenTab /> */}
+        <MyLiquidityStakePanel />
         <StakeLiquidityPanel />
         <div className="flex flex-col w-full p-4">
           <div className="bg-blue-50/30 border-l-4 border-l-blue-50 rounded-r-lg p-4 mb-8 text-sm">
@@ -35,7 +36,7 @@ const StakePage = () => {
               3、单个地址的加速激励：当轮治理总激励 * 50% * 该地址质押代币数量 / 质押代币总数量
             </div>
             <div className="text-sm text-blue-700">
-              4、溢出：单个地址的加速激励 超过投票激励 2 倍以上的部分，为溢出激励，自动销毁，归入未来总激励
+              4、溢出：单个地址的加速激励 超过验证激励 2 倍以上的部分，为溢出激励，自动销毁，归入未来总激励
             </div>
           </div>
         </div>

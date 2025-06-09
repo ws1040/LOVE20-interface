@@ -443,7 +443,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     <div className="bg-white px-4">
       <div className="w-full max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-full mx-auto space-y-4">
         <div className="w-full flex justify-between items-center">
-          <LeftTitle title="质押获取治理票" />
+          <LeftTitle title="质押获取治理票：" />
         </div>
 
         <Form {...form}>
@@ -453,7 +453,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
               <CardContent className="p-3 md:p-6">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between mb-2">
-                    <h2 className="text-lg font-semibold">第1步: 填写存入数量</h2>
+                    <h2 className="text-xl font-semibold">第1步: 填写质押数量</h2>
                     <Link
                       href="/dex/swap"
                       className="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
@@ -652,100 +652,109 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
               <CardContent className="p-3 md:p-6">
                 <div className="space-y-4">
                   <div>
-                    <h2 className="text-lg font-semibold mb-2">第2步: 授权并存入</h2>
+                    <h2 className="text-xl font-semibold mb-2">第2步: 选择解锁期</h2>
                   </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-                    <FormField
-                      control={form.control}
-                      name="releasePeriod"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Select
-                              disabled={hadStartedApprove}
-                              onValueChange={(value) => field.onChange(value)}
-                              value={field.value}
-                            >
-                              <SelectTrigger className="w-full !ring-secondary-foreground">
-                                <SelectValue placeholder="选择解锁期" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {Array.from({ length: 2 }, (_, i) => i + 1)
-                                  .filter((item) => item >= promisedWaitingPhases)
-                                  .map((item) => (
-                                    <SelectItem key={item} value={String(item)}>
-                                      {formatPhaseText(item)}
-                                    </SelectItem>
-                                  ))}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormDescription>
-                            "解锁期" 是指，取消质押后多久才能取回代币 (注意：是从取消质押的阶段结束时开始计算)
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <FormField
+                    control={form.control}
+                    name="releasePeriod"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Select
+                            disabled={hadStartedApprove}
+                            onValueChange={(value) => field.onChange(value)}
+                            value={field.value}
+                          >
+                            <SelectTrigger className="w-full !ring-secondary-foreground">
+                              <SelectValue placeholder="选择解锁期" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Array.from({ length: 2 }, (_, i) => i + 1)
+                                .filter((item) => item >= promisedWaitingPhases)
+                                .map((item) => (
+                                  <SelectItem key={item} value={String(item)}>
+                                    {formatPhaseText(item)}
+                                  </SelectItem>
+                                ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormDescription>
+                          "解锁期" 是指，取消质押后多久才能取回代币 (注意：是从取消质押的阶段结束时开始计算)
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
-                    <div className="flex justify-center lg:justify-end space-x-2">
-                      <Button
-                        type="button"
-                        className="flex-1 lg:w-auto lg:px-4"
-                        ref={approveTokenButtonRef}
-                        disabled={isPendingApproveToken || isConfirmingApproveToken || isTokenApproved}
-                        onClick={form.handleSubmit(onApproveToken)}
-                      >
-                        {isPendingApproveToken
-                          ? `1.提交中...`
-                          : isConfirmingApproveToken
-                          ? `1.确认中...`
-                          : isTokenApproved
-                          ? `1.${token?.symbol}已授权`
-                          : `1.授权${token?.symbol}`}
-                      </Button>
+            {/* 授权并存入 */}
+            <Card>
+              <CardContent className="p-3 md:p-6">
+                <div className="space-y-4">
+                  <div>
+                    <h2 className="text-xl font-semibold mb-2">第3步: 授权并存入</h2>
+                  </div>
 
-                      <Button
-                        type="button"
-                        className="flex-1 lg:w-auto lg:px-4"
-                        disabled={
-                          !isTokenApproved ||
-                          isPendingApproveParentToken ||
-                          isConfirmingApproveParentToken ||
-                          isParentTokenApproved
-                        }
-                        onClick={form.handleSubmit(onApproveParentToken)}
-                      >
-                        {isPendingApproveParentToken
-                          ? `2.提交中...`
-                          : isConfirmingApproveParentToken
-                          ? `2.确认中...`
-                          : isParentTokenApproved
-                          ? `2.${token?.parentTokenSymbol}已授权`
-                          : `2.授权${token?.parentTokenSymbol}`}
-                      </Button>
+                  <div className="flex justify-center lg:justify-start space-x-2">
+                    <Button
+                      type="button"
+                      className="flex-1 lg:w-auto lg:px-4"
+                      ref={approveTokenButtonRef}
+                      disabled={isPendingApproveToken || isConfirmingApproveToken || isTokenApproved}
+                      onClick={form.handleSubmit(onApproveToken)}
+                    >
+                      {isPendingApproveToken
+                        ? `1.提交中...`
+                        : isConfirmingApproveToken
+                        ? `1.确认中...`
+                        : isTokenApproved
+                        ? `1.${token?.symbol}已授权`
+                        : `1.授权${token?.symbol}`}
+                    </Button>
 
-                      <Button
-                        type="submit"
-                        className="flex-1 lg:w-auto lg:px-4"
-                        disabled={
-                          !isTokenApproved ||
-                          !isParentTokenApproved ||
-                          isPendingStakeLiquidity ||
-                          isConfirmingStakeLiquidity ||
-                          isConfirmedStakeLiquidity
-                        }
-                      >
-                        {isPendingStakeLiquidity
-                          ? '3.提交中...'
-                          : isConfirmingStakeLiquidity
-                          ? '3.确认中...'
-                          : isConfirmedStakeLiquidity
-                          ? '3.已提交'
-                          : '3.提交'}
-                      </Button>
-                    </div>
+                    <Button
+                      type="button"
+                      className="flex-1 lg:w-auto lg:px-4"
+                      disabled={
+                        !isTokenApproved ||
+                        isPendingApproveParentToken ||
+                        isConfirmingApproveParentToken ||
+                        isParentTokenApproved
+                      }
+                      onClick={form.handleSubmit(onApproveParentToken)}
+                    >
+                      {isPendingApproveParentToken
+                        ? `2.提交中...`
+                        : isConfirmingApproveParentToken
+                        ? `2.确认中...`
+                        : isParentTokenApproved
+                        ? `2.${token?.parentTokenSymbol}已授权`
+                        : `2.授权${token?.parentTokenSymbol}`}
+                    </Button>
+
+                    <Button
+                      type="submit"
+                      className="flex-1 lg:w-auto lg:px-4"
+                      disabled={
+                        !isTokenApproved ||
+                        !isParentTokenApproved ||
+                        isPendingStakeLiquidity ||
+                        isConfirmingStakeLiquidity ||
+                        isConfirmedStakeLiquidity
+                      }
+                    >
+                      {isPendingStakeLiquidity
+                        ? '3.提交中...'
+                        : isConfirmingStakeLiquidity
+                        ? '3.确认中...'
+                        : isConfirmedStakeLiquidity
+                        ? '3.已提交'
+                        : '3.提交'}
+                    </Button>
                   </div>
                 </div>
               </CardContent>

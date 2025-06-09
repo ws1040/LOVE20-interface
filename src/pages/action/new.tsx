@@ -217,7 +217,11 @@ export default function NewAction() {
                 <FormItem>
                   <FormLabel>验证规则</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="验证者验证的规则" className="!ring-secondary-foreground" {...field} />
+                    <Textarea
+                      placeholder="验证者，会根据这个规则来打分"
+                      className="!ring-secondary-foreground"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -228,7 +232,7 @@ export default function NewAction() {
                 多组 Key/Value (Card 样式)
             -----------------------------*/}
             <div>
-              <FormLabel>验证信息</FormLabel>
+              <FormLabel>行动者要提供的信息</FormLabel>
               <div className="space-y-4 mt-2">
                 {fields.map((item, index) => (
                   <Card key={item.id} className="overflow-hidden">
@@ -242,7 +246,11 @@ export default function NewAction() {
                             render={({ field }) => (
                               <FormItem className="flex-grow">
                                 <FormControl>
-                                  <Input placeholder="名称或关键词" className="!ring-secondary-foreground" {...field} />
+                                  <Input
+                                    placeholder="名称，比如 “微博地址”"
+                                    className="!ring-secondary-foreground"
+                                    {...field}
+                                  />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -266,7 +274,7 @@ export default function NewAction() {
                             <FormItem>
                               <FormControl>
                                 <Input
-                                  placeholder="给参与者的提示信息"
+                                  placeholder="提示信息，比如 “例如 https://weibo.com/12345678”"
                                   className="!ring-secondary-foreground"
                                   {...field}
                                 />
