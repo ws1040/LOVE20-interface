@@ -106,7 +106,7 @@ const ContributeInfo: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> 
       : token.parentTokenSymbol;
 
   return (
-    <div className="p-6">
+    <div className="px-6">
       <LeftTitle title="参与申购" />
       <div className="stats w-full">
         <div className="stat place-items-center">

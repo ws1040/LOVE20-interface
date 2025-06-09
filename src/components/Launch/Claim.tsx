@@ -109,8 +109,8 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
       : token.parentTokenSymbol;
 
   return (
-    <div className="p-6">
-      <LeftTitle title="我的领取" />
+    <div className="px-6">
+      <LeftTitle title="我的申购" />
 
       <div className="stats w-full">
         <div className="stat place-items-center">

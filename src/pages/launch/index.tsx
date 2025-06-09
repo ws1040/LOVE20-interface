@@ -55,13 +55,13 @@ export default function TokenFairLaunch() {
           <LoadingIcon />
         ) : (
           <>
-            <LaunchStatus token={token} launchInfo={launchInfo} />
             {token &&
               (launchInfo.hasEnded ? (
                 <Claim token={token} launchInfo={launchInfo} />
               ) : (
                 <ContributeInfo token={token} launchInfo={launchInfo} />
               ))}
+            <LaunchStatus token={token} launchInfo={launchInfo} />
           </>
         )}
       </main>

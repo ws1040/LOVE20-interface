@@ -297,7 +297,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
       <div className="stats w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center pt-0 pb-3">
           <div className="stat-title text-sm flex items-center">
-            流动性质押sl{token.symbol}
+            流动性质押凭证SL代币
             <AddressWithCopyButton address={token.slTokenAddress as `0x${string}`} showAddress={false} />
             <AddToMetamask
               tokenAddress={token.slTokenAddress as `0x${string}`}
@@ -316,7 +316,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         </div>
         <div className="stat place-items-center pt-0 pb-3">
           <div className="stat-title text-sm flex items-center">
-            质押代币st{token.symbol}
+            代币质押凭证ST代币
             <AddressWithCopyButton address={token.stTokenAddress as `0x${string}`} showAddress={false} />
             <AddToMetamask
               tokenAddress={token.stTokenAddress as `0x${string}`}
