@@ -122,7 +122,7 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
             </div>
             <div className="stat-desc text-xs">
               <Button variant="link" className="text-secondary font-normal border-secondary pt-0" asChild>
-                <Link href={`/gov/staketoken?symbol=${token.symbol}`}>质押 增加收益&nbsp;&gt;&gt;</Link>
+                <Link href={`/gov/staketoken?symbol=${token.symbol}`}>质押 增加治理收益&nbsp;&gt;&gt;</Link>
               </Button>
             </div>
           </div>
