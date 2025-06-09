@@ -35,48 +35,49 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
       {/* 分隔线 */}
       <div className="border-t border-gray-200 mx-4 mt-6 mb-4"></div>
       <div className="flex-col items-center px-4">
-        <div className="grid place-items-center">
+        <div className="grid place-items-center mb-2">
           <div className={`stat-title text-base mr-6 ${launchInfo.hasEnded ? 'text-red-500' : 'text-secondary'}`}>
             {launchInfo.hasEnded ? '公平发射已结束' : '公平发射进行中'}
           </div>
         </div>
-        <div className="stats w-full grid grid-cols-2 divide-x-0">
-          <div className="stat place-items-center pb-1">
-            <div className="stat-title text-sm">
-              <span>{parentTokenSymbol}</span>
-              筹集目标
-            </div>
-            <div className="stat-value text-xl">{formatTokenAmount(launchInfo.parentTokenFundraisingGoal)}</div>
-          </div>
-          <div className="stat place-items-center pb-1">
-            <div className="stat-title text-sm">
-              <span>{token.symbol} </span>
-              发射总量
-            </div>
-            <div className="stat-value text-xl">{`${formatTokenAmount(BigInt(TOKEN_CONFIG.fairLaunch))}`}</div>
-          </div>
-        </div>
-        <div className="text-center text-xs mb-4 text-greyscale-500">
-          兑换比例：1 {parentTokenSymbol} ={' '}
-          {formatIntegerStringWithCommas(
-            removeExtraZeros(
-              (Number(TOKEN_CONFIG.fairLaunch) / Number(launchInfo.parentTokenFundraisingGoal)).toLocaleString(
-                'en-US',
-                {
-                  maximumFractionDigits: 2,
-                  minimumFractionDigits: 2,
-                },
-              ),
-            ),
-          )}{' '}
-          {token.symbol}
-        </div>
+
         <div className="stats w-full border">
           <div className="stat place-items-center">
-            <div className="stat-title text-sm mr-6 ">累计申购</div>
+            <div className="stat-title text-sm mr-6 ">累计已申购</div>
             <div className="stat-value">
               <span className="text-3xl text-secondary">{formatTokenAmount(launchInfo.totalContributed)}</span>
               <span className="text-greyscale-500 font-normal text-sm ml-2">{parentTokenSymbol}</span>
+            </div>
+            <div className="stats w-full grid grid-cols-2 divide-x-0">
+              <div className="stat place-items-center pb-1 pl-0">
+                <div className="stat-title text-sm">
+                  <span>{parentTokenSymbol}</span>
+                  筹集目标
+                </div>
+                <div className="stat-value text-xl">{formatTokenAmount(launchInfo.parentTokenFundraisingGoal)}</div>
+              </div>
+              <div className="stat place-items-center pb-1 pl-0">
+                <div className="stat-title text-sm">
+                  <span>{token.symbol} </span>
+                  发射总量
+                </div>
+                <div className="stat-value text-xl">{`${formatTokenAmount(BigInt(TOKEN_CONFIG.fairLaunch))}`}</div>
+              </div>
+            </div>
+            <div className="text-center text-xs text-greyscale-500">
+              兑换比例：1 {parentTokenSymbol} ={' '}
+              {formatIntegerStringWithCommas(
+                removeExtraZeros(
+                  (Number(TOKEN_CONFIG.fairLaunch) / Number(launchInfo.parentTokenFundraisingGoal)).toLocaleString(
+                    'en-US',
+                    {
+                      maximumFractionDigits: 2,
+                      minimumFractionDigits: 2,
+                    },
+                  ),
+                ),
+              )}{' '}
+              {token.symbol}
             </div>
             <div className="mt-2 rounded-lg text-sm">
               <p className="mt-2 mb-1 font-medium">发射结束条件：</p>
