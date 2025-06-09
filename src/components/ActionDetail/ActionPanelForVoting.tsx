@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 // my hooks
 import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useCurrentRound, useVotesNumByAccountByActionId, useVote } from '@/src/hooks/contracts/useLOVE20Vote';
+import { useVotesNumByAccount } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -50,7 +51,17 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
     error: errVotesNumByAccountByActionId,
   } = useVotesNumByAccountByActionId(token?.address as `0x${string}`, currentRound, account as `0x${string}`, actionId);
 
+  // 我的总投票数
+  const {
+    votesNumByAccount,
+    isPending: isPendingVotesNumByAccount,
+    error: errorVotesNumByAccount,
+  } = useVotesNumByAccount((token?.address as `0x${string}`) || '', currentRound, (account as `0x${string}`) || '');
+
   // 投票
+  const isLoading = isPendingValidGovVotes || isPendingVotesNumByAccount || isPendingVotesNumByAccountByActionId;
+  const myLeftVotes = isLoading ? 0n : validGovVotes - votesNumByAccount;
+
   const {
     vote,
     isWriting: isWritingVote,
@@ -62,7 +73,7 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
     if (isWritingVote || isConfirmingVote) {
       return;
     }
-    vote(token?.address as `0x${string}`, [actionId], [validGovVotes]);
+    vote(token?.address as `0x${string}`, [actionId], [myLeftVotes]);
   };
 
   // 错误处理
@@ -80,7 +91,10 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
     if (errValidGovVotes) {
       handleContractError(errValidGovVotes, 'stake');
     }
-  }, [errorVote, errCurrentRound, errVotesNumByAccountByActionId, errValidGovVotes]);
+    if (errorVotesNumByAccount) {
+      handleContractError(errorVotesNumByAccount, 'vote');
+    }
+  }, [errorVote, errCurrentRound, errVotesNumByAccountByActionId, errValidGovVotes, errorVotesNumByAccount]);
 
   // 提交成功
   useEffect(() => {
@@ -99,30 +113,24 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
       <div className="flex flex-col items-center space-y-3 p-4 mb-2">
         <div className="stats w-full border grid grid-cols-2 divide-x-0 mb-2">
           <div className="stat place-items-center">
-            <div className="stat-title">我的已投票数</div>
+            <div className="stat-title">我已投本行动票数</div>
             <div className="stat-value text-2xl">
               {isPendingVotesNumByAccountByActionId ? <LoadingIcon /> : formatTokenAmount(votesNumByAccountByActionId)}
             </div>
           </div>
           <div className="stat place-items-center">
             <div className="stat-title">我的剩余票数</div>
-            <div className="stat-value text-2xl">
-              {isPendingValidGovVotes || isPendingVotesNumByAccountByActionId ? (
-                <LoadingIcon />
-              ) : (
-                formatTokenAmount(validGovVotes - votesNumByAccountByActionId, 2)
-              )}
-            </div>
+            <div className="stat-value text-2xl">{isLoading ? <LoadingIcon /> : formatTokenAmount(myLeftVotes, 2)}</div>
           </div>
         </div>
 
-        {!isPendingVotesNumByAccountByActionId && !votesNumByAccountByActionId ? (
+        {!isPendingVotesNumByAccountByActionId && myLeftVotes > 0n ? (
           <Button className="w-1/2" onClick={handleVote} disabled={isWritingVote || isConfirmingVote}>
             {isWritingVote || isConfirmingVote ? <LoadingIcon /> : '将100%票投给此行动'}
           </Button>
         ) : (
           <Button className="w-1/2" disabled>
-            您已投票
+            {isLoading ? <LoadingIcon /> : '没有剩余票数'}
           </Button>
         )}
         {!isPendingValidGovVotes && (
