@@ -11,7 +11,6 @@ import { Token } from '@/src/contexts/TokenContext';
 
 // my hooks
 import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
-import { useStakedAmountByAccount } from '@/src/hooks/contracts/useLOVE20Join';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my components
