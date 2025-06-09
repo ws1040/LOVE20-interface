@@ -38,8 +38,38 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
   }
 
   // 计算预计新增铸币
-  const expectedReward = ((govData?.rewardAvailable || BigInt(0)) * 99n * 99n) / 2000000n;
+  const displayRound = currentRound - BigInt(token.initialStakeRound) + 1n;
 
+  // 根据轮次计算预计新增铸币
+  let expectedReward = BigInt(0);
+  if (govData?.rewardAvailable) {
+    const rewardLeftRatio =
+      100n -
+      (BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || 5n) +
+        BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || 5n)) /
+        10n;
+    if (displayRound === 1n) {
+      // 第1轮：rewardAvailable * 0.01 / 2 (or 5 / 1000)
+      expectedReward =
+        (govData.rewardAvailable * BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) / 1000n;
+    } else if (displayRound === 2n) {
+      // 第2轮：rewardAvailable * 0.99 * 0.01 / 2 (or 99 * 5 / 100000)
+      expectedReward =
+        (govData.rewardAvailable *
+          rewardLeftRatio *
+          BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) /
+        100000n;
+    } else {
+      // >=第3轮：rewardAvailable * 0.99 * 0.99 * 0.01 / 2 (or 99 * 99 * 5 / 10000000)
+      expectedReward =
+        (govData.rewardAvailable *
+          rewardLeftRatio *
+          rewardLeftRatio *
+          BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) /
+        1000000n;
+    }
+  }
+  console.log('govData?.rewardAvailable', govData?.rewardAvailable);
   return (
     <div className="px-4 mb-2">
       <Round currentRound={currentRound} roundType="vote" />
