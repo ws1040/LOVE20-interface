@@ -43,7 +43,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
 
         <div className="stats w-full border">
           <div className="stat place-items-center">
-            <div className="stat-title text-sm mr-6 ">累计已申购</div>
+            <div className="stat-title text-sm mr-6 ">申购累计筹集到</div>
             <div className="stat-value">
               <span className="text-3xl text-secondary">{formatTokenAmount(launchInfo.totalContributed)}</span>
               <span className="text-greyscale-500 font-normal text-sm ml-2">{parentTokenSymbol}</span>

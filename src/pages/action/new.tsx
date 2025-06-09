@@ -232,7 +232,7 @@ export default function NewAction() {
                 多组 Key/Value (Card 样式)
             -----------------------------*/}
             <div>
-              <FormLabel>行动者要提供的信息</FormLabel>
+              <FormLabel>报名参加行动时，行动者要提供的信息</FormLabel>
               <div className="space-y-4 mt-2">
                 {fields.map((item, index) => (
                   <Card key={item.id} className="overflow-hidden">
