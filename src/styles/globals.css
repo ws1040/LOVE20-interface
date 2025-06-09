@@ -153,3 +153,41 @@ a {
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 }
+
+/* 移动端输入法优化 - 解决MetaMask等移动端浏览器输入法问题 */
+@media (max-width: 768px) {
+  input[type='text'],
+  input[type='number'],
+  textarea {
+    /* 防止输入时页面缩放 - iOS Safari 要求字体大小至少16px才不会自动缩放 */
+    font-size: 16px !important;
+    /* 确保输入法正常工作 */
+    -webkit-user-select: text;
+    user-select: text;
+    /* 防止iOS的自动缩放 */
+    -webkit-text-size-adjust: 100%;
+    /* 优化触摸响应 */
+    touch-action: manipulation;
+    /* 提高输入法兼容性 */
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  /* 特别针对MetaMask内置浏览器优化 */
+  input:focus,
+  textarea:focus {
+    /* 确保焦点状态正确 */
+    outline: none;
+    /* 防止输入时的视觉跳动 */
+    transform: none;
+    /* 优化输入法显示 */
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  /* 针对动态添加的输入框（useFieldArray生成的） */
+  .space-y-4 input[type='text'],
+  .space-y-4 textarea {
+    font-size: 16px !important;
+  }
+}

@@ -248,7 +248,8 @@ export default function NewAction() {
                                 <FormControl>
                                   <Input
                                     placeholder="名称，比如 “微博地址”"
-                                    className="!ring-secondary-foreground"
+                                    className="focus:ring-2 focus:ring-secondary-foreground"
+                                    inputMode="text"
                                     {...field}
                                   />
                                 </FormControl>
@@ -275,7 +276,8 @@ export default function NewAction() {
                               <FormControl>
                                 <Input
                                   placeholder="提示信息，比如 “例如 https://weibo.com/12345678”"
-                                  className="!ring-secondary-foreground"
+                                  className="focus:ring-2 focus:ring-secondary-foreground"
+                                  inputMode="text"
                                   {...field}
                                 />
                               </FormControl>
@@ -312,7 +314,9 @@ export default function NewAction() {
                     <Input
                       type="number"
                       placeholder="地址数必须大于0"
-                      className="!ring-secondary-foreground"
+                      className="focus:ring-2 focus:ring-secondary-foreground"
+                      autoComplete="off"
+                      inputMode="numeric"
                       {...field}
                     />
                   </FormControl>
@@ -332,7 +336,9 @@ export default function NewAction() {
                     <Input
                       type="number"
                       placeholder="最小参与代币数必须大于0"
-                      className="!ring-secondary-foreground"
+                      className="focus:ring-2 focus:ring-secondary-foreground"
+                      autoComplete="off"
+                      inputMode="numeric"
                       {...field}
                     />
                   </FormControl>
@@ -351,7 +357,8 @@ export default function NewAction() {
                   <FormControl>
                     <Input
                       placeholder="不填为不限，或多个地址用逗号分隔"
-                      className="!ring-secondary-foreground"
+                      className="focus:ring-2 focus:ring-secondary-foreground"
+                      inputMode="text"
                       {...field}
                     />
                   </FormControl>

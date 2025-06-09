@@ -127,7 +127,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
             <p className="text-greyscale-500 whitespace-pre-wrap">{actionInfo?.body.verificationRule}</p>
           </div>
           <div className="mb-4">
-            <h3 className="text-sm font-bold">验证信息</h3>
+            <h3 className="text-sm font-bold">报名参加行动时，行动者要提供的信息</h3>
             {actionInfo?.body.verificationKeys && actionInfo?.body.verificationKeys.length > 0 ? (
               <ul className="list-disc pl-5">
                 {actionInfo.body.verificationKeys.map((key: string, index: number) => (
