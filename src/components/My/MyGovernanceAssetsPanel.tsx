@@ -280,8 +280,8 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
           <div className="stat-value text-xl">
             {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || 0n, 2)}
           </div>
-          <div className="stat-desc text-xs my-2">
-            {requestedUnstakeRound && requestedUnstakeRound > 0n ? '注意：解锁期内治理票数为0' : '治理票用来投票治理'}
+          <div className="stat-desc text-xs mb-2 mt-1">
+            {requestedUnstakeRound && requestedUnstakeRound > 0n && '注意：解锁期内治理票数为0'}
           </div>
         </div>
         <div className="stat place-items-center pt-0">
@@ -290,7 +290,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingPhases || 0n} `}
             <span className="text-sm"> 阶段</span>
           </div>
-          <div className="stat-desc text-xs my-2">{`${formatPhaseText(
+          <div className="stat-desc text-xs mb-2 mt-1">{`${formatPhaseText(
             Number(promisedWaitingPhases || 0n),
             true,
           )}`}</div>
@@ -331,7 +331,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
           </div>
           <div className="stat-desc text-xs">
             <Button variant="link" className="text-secondary font-normal border-secondary" asChild>
-              <Link href={`/gov/staketoken?symbol=${token.symbol}`}>质押 增加收益&nbsp;&gt;&gt;</Link>
+              <Link href={`/gov/staketoken?symbol=${token.symbol}`}>质押 增加治理收益&nbsp;&gt;&gt;</Link>
             </Button>
           </div>
         </div>
