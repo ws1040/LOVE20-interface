@@ -50,7 +50,25 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
   }, [errorJoinedAmount, errorRewardAvailable]);
 
   // 计算预计新增铸币
-  const expectedReward = ((rewardAvailable || BigInt(0)) * 99n) / 20000n;
+  const displayRound = token ? currentRound - BigInt(token.initialStakeRound) + 1n : 0n;
+  let expectedReward = BigInt(0);
+  if (rewardAvailable) {
+    const rewardLeftRatio =
+      100n -
+      (BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || 5n) +
+        BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || 5n)) /
+        10n;
+    if (displayRound === 1n) {
+      // 第1轮：rewardAvailable * 0.01 / 2 (or 5 / 1000)
+      expectedReward =
+        (rewardAvailable * BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '0')) / 1000n;
+    } else {
+      // >=第2轮：rewardAvailable * 0.99 * 0.01 / 2 (or 99 * 5 / 100000)
+      expectedReward =
+        (rewardAvailable * rewardLeftRatio * BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '0')) /
+        100000n;
+    }
+  }
 
   return (
     <div className="px-4">
