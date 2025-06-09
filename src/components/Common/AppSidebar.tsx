@@ -107,7 +107,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: '#',
         items: [
           {
-            title: '发射平台',
+            title: '公平发射',
             url: `/launch/?symbol=${token.symbol}`,
             isActive: isActiveUrl(`${basePath}/launch/`),
             icon: Rocket,
