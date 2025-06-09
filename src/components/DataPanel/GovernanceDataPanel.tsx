@@ -69,7 +69,7 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
         1000000n;
     }
   }
-  console.log('govData?.rewardAvailable', govData?.rewardAvailable);
+
   return (
     <div className="px-4 mb-2">
       <Round currentRound={currentRound} roundType="vote" />

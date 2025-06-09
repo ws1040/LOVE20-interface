@@ -30,12 +30,12 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
     error: errorBalance,
   } = useBalanceOf(token?.address as `0x${string}`, accountAddress as `0x${string}`);
 
-  // 获取行动锁定代币总量
+  // 获取父币余额
   const {
-    stakedAmount,
-    isPending: isPendingStakedAmount,
-    error: errorStakedAmount,
-  } = useStakedAmountByAccount(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+    balance: parentTokenBalance,
+    isPending: isPendingParentTokenBalance,
+    error: errorParentTokenBalance,
+  } = useBalanceOf(token?.parentTokenAddress as `0x${string}`, accountAddress as `0x${string}`);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -43,10 +43,10 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
     if (errorBalance) {
       handleContractError(errorBalance, 'token');
     }
-    if (errorStakedAmount) {
-      handleContractError(errorStakedAmount, 'join');
+    if (errorParentTokenBalance) {
+      handleContractError(errorParentTokenBalance, 'token');
     }
-  }, [errorBalance, errorStakedAmount]);
+  }, [errorBalance, errorParentTokenBalance]);
 
   if (!token) {
     return <LoadingIcon />;
@@ -66,9 +66,9 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
     <div className="flex-col items-center px-4 py-2">
       <div className="flex justify-between items-center">
         <LeftTitle title="我的代币" />
-        {/* <Button variant="link" className="text-secondary border-secondary" asChild>
-          <Link href={`/dex/swap?symbol=${token.symbol}`}>交易代币</Link>
-        </Button> */}
+        <Button variant="link" className="text-secondary border-secondary" asChild>
+          <Link href={`/dex/swap?symbol=${token.symbol}`}>兑换代币</Link>
+        </Button>
       </div>
       <div className="stats bg-gray-100 w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center pb-3">
@@ -87,11 +87,19 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
           <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light">不含质押、锁定</div>
         </div>
         <div className="stat place-items-center pb-3">
-          <div className="stat-title text-sm">行动锁定 {token?.symbol} 数</div>
-          <div className="stat-value text-xl">
-            {isPendingStakedAmount ? <LoadingIcon /> : formatTokenAmount(stakedAmount || BigInt(0), 0)}
+          <div className="stat-title text-sm flex items-center">
+            持有 {token?.parentTokenSymbol}
+            <AddressWithCopyButton address={token.parentTokenAddress as `0x${string}`} showAddress={false} />
+            <AddToMetamask
+              tokenAddress={token.parentTokenAddress as `0x${string}`}
+              tokenSymbol={token.parentTokenSymbol}
+              tokenDecimals={token.decimals}
+            />
           </div>
-          <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light">随时可从行动取回</div>
+          <div className="stat-value text-xl">
+            {isPendingParentTokenBalance ? <LoadingIcon /> : formatTokenAmount(parentTokenBalance || BigInt(0), 0)}
+          </div>
+          <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light"></div>
         </div>
       </div>
     </div>

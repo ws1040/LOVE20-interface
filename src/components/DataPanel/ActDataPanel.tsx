@@ -58,7 +58,7 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
       (BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || 5n) +
         BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || 5n)) /
         10n;
-    if (displayRound === 1n) {
+    if (displayRound <= 1n) {
       // 第1轮：rewardAvailable * 0.01 / 2 (or 5 / 1000)
       expectedReward =
         (rewardAvailable * BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '0')) / 1000n;
