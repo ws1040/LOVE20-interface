@@ -38,7 +38,13 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   const router = useRouter();
   const [token, setToken] = useState<Token | null>(null);
   const [symbolToGetDetail, setSymbolToGetDetail] = useState<string | undefined>(undefined);
+  const [isProviderReady, setIsProviderReady] = useState(false);
   const currentAppVersion = process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0';
+
+  // 确保 Provider 准备就绪
+  useEffect(() => {
+    setIsProviderReady(true);
+  }, []);
 
   const checkAndClearCache = () => {
     try {
@@ -112,7 +118,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     token: tokenInfoBySymbol,
     launchInfo: launchInfoBySymbol,
     error: errorBySymbol,
-  } = useTokenDetailBySymbol(symbolToGetDetail as string);
+  } = useTokenDetailBySymbol(isProviderReady && symbolToGetDetail ? symbolToGetDetail : '');
 
   // 合约返回成功，更新 token
   useEffect(() => {
@@ -145,7 +151,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   }, [errorBySymbol]);
 
   // Step 4. 获取投票轮开始区块
-  const { originBlocks } = useOriginBlocks(!!token && !token.voteOriginBlocks);
+  const { originBlocks } = useOriginBlocks(isProviderReady && !!token && !token.voteOriginBlocks);
   useEffect(() => {
     if (originBlocks) {
       setToken(

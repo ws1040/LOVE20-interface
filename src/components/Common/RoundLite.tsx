@@ -12,9 +12,10 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 interface RoundProps {
   currentRound: bigint;
   roundType: string;
+  showCountdown?: boolean; // 可选参数，控制是否显示倒计时
 }
 
-const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
+const RoundLite: React.FC<RoundProps> = ({ currentRound, roundType, showCountdown = true }) => {
   const { data: blockNumber } = useBlockNumber();
   const context = useContext(TokenContext);
   const token = context ? context.token : undefined;
@@ -73,18 +74,31 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   }
 
   return (
-    <div className="flex justify-between items-center mb-2">
-      <h1 className="text-lg font-bold">
-        第 <span className="text-secondary">{displayRound}</span> 轮{roundName}
-      </h1>
-      <span className="text-sm mt-1 pt-0">
-        <span className="text-greyscale-400 mr-1">剩余:</span>
-        <span className="text-secondary mr-1">{Math.ceil((currentTimeLeft * 100) / BLOCK_TIME)}</span>
+    <div className="flex items-center mb-3">
+      <span className="text-sm text-greyscale-400">
+        ( 第<span className="text-greyscale-400">{displayRound}</span>轮{roundName}阶段，
+        <span className="text-greyscale-400">剩余</span>
+        <span className="text-greyscale-400">{Math.ceil((currentTimeLeft * 100) / BLOCK_TIME)}</span>
         <span className="text-greyscale-400 mr-1">块, 约</span>
-        <LeftTime initialTimeLeft={initialTimeLeft} onTick={setCurrentTimeLeft} />
+        {showCountdown ? (
+          <>
+            <LeftTime initialTimeLeft={initialTimeLeft} onTick={setCurrentTimeLeft} />
+          </>
+        ) : (
+          <span className="text-greyscale-400">
+            {currentTimeLeft < 60
+              ? `${currentTimeLeft}秒`
+              : currentTimeLeft <= 300
+              ? `${Math.floor(currentTimeLeft / 60)}分钟${currentTimeLeft % 60}秒`
+              : currentTimeLeft < 3600
+              ? `${Math.floor(currentTimeLeft / 60)}分钟`
+              : `${Math.floor(currentTimeLeft / 3600)}小时${Math.floor((currentTimeLeft % 3600) / 60)}分钟`}
+          </span>
+        )}
+        <span className="text-greyscale-400"> )</span>
       </span>
     </div>
   );
 };
 
-export default Round;
+export default RoundLite;

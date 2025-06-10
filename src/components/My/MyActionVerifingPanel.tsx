@@ -58,6 +58,7 @@ const MyActionVerifingPanel: React.FC<MyActionVerifingPanelProps> = ({
     !isPendingVotesNumByAccount && !isPendingScoreByVerifier
       ? votesNumByAccountByActionId - scoreByVerifierByActionId
       : BigInt(0);
+
   useEffect(() => {
     if (!isPendingVotesNumByAccount && !isPendingScoreByVerifier) {
       onRemainingVotesChange?.(remainingVotes);
@@ -74,6 +75,10 @@ const MyActionVerifingPanel: React.FC<MyActionVerifingPanelProps> = ({
       handleContractError(isScoreByVerifierError, 'verify');
     }
   }, [isVotesNumByAccountError, isScoreByVerifierError]);
+
+  if (remainingVotes <= 0) {
+    return <></>;
+  }
 
   return (
     <div className="mb-4 text-center">

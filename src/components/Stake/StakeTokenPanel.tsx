@@ -133,8 +133,9 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
         parseUnits(data.stakeTokenAmount),
       );
     } catch (error: any) {
-      toast.error(error?.message || '授权失败');
       console.error('Approve failed', error);
+      // 使用统一的错误处理
+      handleContractError(error, 'token');
     }
   };
 
@@ -161,6 +162,8 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
       );
     } catch (error) {
       console.error('Stake failed', error);
+      // 添加错误处理
+      handleContractError(error, 'stake');
     }
   };
 
@@ -209,7 +212,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     if (errAccountStakeStatus) {
       handleContractError(errAccountStakeStatus, 'stake');
     }
-  }, [errStakeToken, errApproveToken, errAllowanceToken, errAccountStakeStatus]);
+  }, [errStakeToken, errApproveToken, errAllowanceToken, errAccountStakeStatus, handleContractError]);
 
   if (isPendingAccountStakeStatus) {
     return (

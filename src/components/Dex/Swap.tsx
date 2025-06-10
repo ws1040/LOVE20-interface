@@ -563,7 +563,21 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   // 转换率计算
   const conversionRate = useMemo(() => {
     if (fromAmount > 0n && toAmount > 0n) {
-      return formatIntegerStringWithCommas(formatUnits((toAmount * 10n ** 18n) / fromAmount), 2, 4);
+      try {
+        const fromStr = formatUnits(fromAmount);
+        const toStr = formatUnits(toAmount);
+        const fromNum = parseFloat(fromStr);
+        const toNum = parseFloat(toStr);
+
+        if (fromNum > 0) {
+          const rate = toNum / fromNum;
+          return formatIntegerStringWithCommas(rate.toString(), 2, 4);
+        }
+        return '0';
+      } catch (error) {
+        console.warn('转换率计算出错:', error);
+        return '0';
+      }
     }
     return '0';
   }, [fromAmount, toAmount]);

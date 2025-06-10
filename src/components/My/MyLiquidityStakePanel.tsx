@@ -51,7 +51,7 @@ const MyLiquidityStakePanel: React.FC<MyLiquidityStakePanelProps> = ({ token: pr
   }
 
   if (!isPendingAccountStakeStatus && !slAmount) {
-    return <div className="text-sm mt-4 text-greyscale-500 text-center">您没有流动性质押</div>;
+    return <></>;
   }
 
   return (

@@ -295,7 +295,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
 
   return (
     <>
-      <div className="p-6">
+      <div className="px-4 mt-2">
         <LeftTitle title="参与申购" />
         <div className="stats w-full">
           <div className="stat place-items-center">
@@ -416,6 +416,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
           </form>
         </Form>
       </div>
+      <div className="border-t border-gray-200 mx-4 mt-2 mb-6"></div>
 
       <LoadingOverlay
         isLoading={

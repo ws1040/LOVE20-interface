@@ -12,7 +12,6 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 // my components
 import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import Round from '@/src/components/Common/Round';
 
 // my utils
 import { calculateActionAPY } from '@/src/lib/domainUtils';
@@ -72,9 +71,7 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
 
   return (
     <div className="px-4">
-      <Round currentRound={currentRound ? currentRound : 0n} roundType="act" />
-
-      <div className="w-full border rounded-lg mt-4 p-0">
+      <div className="w-full border rounded-lg p-0">
         <div className="stats w-full grid grid-cols-2 divide-x-0">
           <div className="stat place-items-center pb-2">
             <div className="stat-title text-sm pb-1">参与行动代币</div>

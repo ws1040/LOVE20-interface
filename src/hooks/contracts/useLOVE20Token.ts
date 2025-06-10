@@ -58,6 +58,9 @@ export const useDecimals = (token: `0x${string}`) => {
     abi: LOVE20TokenAbi,
     functionName: 'decimals',
     args: [],
+    query: {
+      enabled: !!token,
+    },
   });
 
   return { decimals: data as number | undefined, isPending, error };
@@ -72,6 +75,9 @@ export const useInitialized = (token: `0x${string}`) => {
     abi: LOVE20TokenAbi,
     functionName: 'initialized',
     args: [],
+    query: {
+      enabled: !!token,
+    },
   });
 
   return { initialized: data as boolean | undefined, isPending, error };
@@ -86,6 +92,9 @@ export const useMaxSupply = (token: `0x${string}`) => {
     abi: LOVE20TokenAbi,
     functionName: 'maxSupply',
     args: [],
+    query: {
+      enabled: !!token,
+    },
   });
 
   return { maxSupply: data as bigint | undefined, isPending, error };
@@ -100,6 +109,9 @@ export const useName = (token: `0x${string}`) => {
     abi: LOVE20TokenAbi,
     functionName: 'name',
     args: [],
+    query: {
+      enabled: !!token,
+    },
   });
 
   return { name: data as string | undefined, isPending, error };
@@ -114,6 +126,9 @@ export const useParentPool = (token: `0x${string}`) => {
     abi: LOVE20TokenAbi,
     functionName: 'parentPool',
     args: [],
+    query: {
+      enabled: !!token,
+    },
   });
 
   return { parentPool: data as bigint | undefined, isPending, error };
@@ -128,6 +143,9 @@ export const useParentTokenAddress = (token: `0x${string}`) => {
     abi: LOVE20TokenAbi,
     functionName: 'parentTokenAddress',
     args: [],
+    query: {
+      enabled: !!token,
+    },
   });
 
   return { parentTokenAddress: data as `0x${string}` | undefined, isPending, error };
@@ -142,6 +160,9 @@ export const useSymbol = (token: `0x${string}`) => {
     abi: LOVE20TokenAbi,
     functionName: 'symbol',
     args: [],
+    query: {
+      enabled: !!token,
+    },
   });
 
   return { symbol: data as string | undefined, isPending, error };

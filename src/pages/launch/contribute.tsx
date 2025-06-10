@@ -21,7 +21,7 @@ export default function ContributePage() {
     launchInfo,
     isPending: isLaunchInfoPending,
     error: launchInfoError,
-  } = useLaunchInfo(token ? token.address : '0x0');
+  } = useLaunchInfo(token ? token.address : '0x0000000000000000000000000000000000000000');
 
   // 错误处理
   const { handleContractError } = useHandleContractError();

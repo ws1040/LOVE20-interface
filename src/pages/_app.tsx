@@ -14,6 +14,9 @@ import { ErrorProvider } from '@/src/contexts/ErrorContext';
 import Footer from '@/src/components/Footer';
 import dynamic from 'next/dynamic';
 
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+
 import '../styles/globals.css';
 import '@rainbow-me/rainbowkit/styles.css';
 

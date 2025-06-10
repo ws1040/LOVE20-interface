@@ -14,6 +14,7 @@ import {
   List,
   TicketCheck,
   User,
+  Info,
 } from 'lucide-react';
 
 import {
@@ -112,24 +113,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             isActive: isActiveUrl(`${basePath}/launch/`),
             icon: Rocket,
           },
-          {
-            title: '代币列表',
-            url: `/tokens/?symbol=${token.symbol}`,
-            isActive: isActiveUrl(`${basePath}/tokens/`),
-            icon: List,
-          },
+          // {
+          //   title: '代币列表',
+          //   url: `/tokens/?symbol=${token.symbol}`,
+          //   isActive: isActiveUrl(`${basePath}/tokens/`),
+          //   icon: List,
+          // },
         ],
       },
       {
         title: '交易',
         url: '#',
         items: [
-          // {
-          //   title: '交易代币',
-          //   url: `/dex/swap?symbol=${token.symbol}`,
-          //   isActive: false,
-          //   icon: BadgeDollarSign,
-          // },
           {
             title: `兑换代币`,
             url: `/dex/swap?symbol=${token.symbol}&from=${process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL}`,
@@ -138,18 +133,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           },
         ],
       },
-      {
-        title: 'LOVE20',
-        url: '#',
-        items: [
-          {
-            title: '协议首页',
-            url: `/?symbol=${token.symbol}`,
-            isActive: pathname === basePath || pathname === `${basePath}/`,
-            icon: Home,
-          },
-        ],
-      },
+      // {
+      //   title: 'LOVE20',
+      //   url: '#',
+      //   items: [
+      //     {
+      //       title: '协议首页',
+      //       url: `/?symbol=${token.symbol}`,
+      //       isActive: pathname === basePath || pathname === `${basePath}/`,
+      //       icon: Home,
+      //     },
+      //   ],
+      // },
       {
         title: '我的',
         url: '#',
@@ -159,6 +154,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             url: `/my/?symbol=${token.symbol}`,
             isActive: isActiveUrl(`${basePath}/my/`),
             icon: User,
+          },
+          {
+            title: '关于协议',
+            url: `/about?symbol=${token.symbol}`,
+            isActive: isActiveUrl(`${basePath}/about`),
+            icon: Info,
           },
         ],
       },

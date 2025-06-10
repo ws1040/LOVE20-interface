@@ -129,7 +129,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   const allowanceParentToken = pairInfo?.allowanceOfParentToken ?? 0n;
 
   // 判断 pairReserve 是否有效
-  const pairExists = pairInfo && pairInfo.pairReserveToken > 0n && pairInfo.pairReserveParentToken > 0n;
+  const pairExists = pairInfo && BigInt(pairInfo.pairReserveToken) > 0n && BigInt(pairInfo.pairReserveParentToken) > 0n;
 
   // 是否是首次质押
   const [updatedInitialStakeRound, setUpdatedInitialStakeRound] = useState(false);
@@ -240,7 +240,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   useEffect(() => {
     if (pairExists && isParentTokenChangedByUser) {
       if (parsedParentToken !== null && parsedParentToken > 0n) {
-        const computedStakeToken = (parsedParentToken * pairInfo!.pairReserveToken) / pairInfo!.pairReserveParentToken;
+        const computedStakeToken =
+          (parsedParentToken * BigInt(pairInfo!.pairReserveToken)) / BigInt(pairInfo!.pairReserveParentToken);
         const computedStakeTokenStr = Number(formatUnits(computedStakeToken))
           .toFixed(12)
           .replace(/\.?0+$/, '');
@@ -255,7 +256,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   useEffect(() => {
     if (pairExists && isTokenChangedByUser) {
       if (parsedStakeToken !== null && parsedStakeToken > 0n) {
-        const computedParentToken = (parsedStakeToken * pairInfo!.pairReserveParentToken) / pairInfo!.pairReserveToken;
+        const computedParentToken =
+          (parsedStakeToken * BigInt(pairInfo!.pairReserveParentToken)) / BigInt(pairInfo!.pairReserveToken);
         const computedParentTokenStr = Number(formatUnits(computedParentToken))
           .toFixed(12)
           .replace(/\.?0+$/, '');
@@ -313,17 +315,19 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
       return;
     }
 
-    stakeLiquidity(
-      token?.address as `0x${string}`,
-      stakeAmount,
-      parentAmount,
-      BigInt(data.releasePeriod),
-      accountAddress as `0x${string}`,
-    ).catch((error) => {
-      const errorMessage = extractErrorMessage(error);
-      toast.error(errorMessage || '质押失败，请重试');
+    try {
+      await stakeLiquidity(
+        token?.address as `0x${string}`,
+        stakeAmount,
+        parentAmount,
+        BigInt(data.releasePeriod),
+        accountAddress as `0x${string}`,
+      );
+    } catch (error) {
       console.error('Stake failed', error);
-    });
+      // 使用统一的错误处理
+      handleContractError(error, 'stake');
+    }
   }
 
   function handleStakeSuccess() {
@@ -516,7 +520,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                       form.setValue('parentToken', formatUnits(parentTokenBalance || 0n));
                                       setIsParentTokenChangedByUser(true);
                                     }}
-                                    disabled={hadStartedApprove || parentTokenBalance <= 0n}
+                                    disabled={parentTokenBalance <= 0n}
                                     className="text-xs h-7 px-2 rounded-lg"
                                   >
                                     最高
@@ -546,7 +550,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                   type="number"
                                   placeholder="0"
                                   {...field}
-                                  disabled={hadStartedApprove}
+                                  disabled={tokenBalance <= 0n}
                                   onChange={(e) => {
                                     field.onChange(e);
                                     setIsTokenChangedByUser(true);
@@ -572,7 +576,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                         form.setValue('stakeToken', formatUnits(amount));
                                         setIsTokenChangedByUser(true);
                                       }}
-                                      disabled={hadStartedApprove || tokenBalance <= 0n}
+                                      disabled={tokenBalance <= 0n}
                                       className="text-xs h-7 px-2 rounded-lg"
                                     >
                                       {percentage}%
@@ -586,7 +590,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                       form.setValue('stakeToken', formatUnits(tokenBalance || 0n));
                                       setIsTokenChangedByUser(true);
                                     }}
-                                    disabled={hadStartedApprove || tokenBalance <= 0n}
+                                    disabled={tokenBalance <= 0n}
                                     className="text-xs h-7 px-2 rounded-lg"
                                   >
                                     最高
@@ -616,7 +620,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                             <>
                               1 {token?.symbol} ={' '}
                               {formatTokenAmount(
-                                (pairInfo!.pairReserveParentToken * 10n ** 18n) / pairInfo!.pairReserveToken,
+                                (BigInt(pairInfo!.pairReserveParentToken) * BigInt(10 ** 18)) /
+                                  BigInt(pairInfo!.pairReserveToken),
                               )}{' '}
                               {token?.parentTokenSymbol}
                             </>
@@ -624,7 +629,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                             <>
                               1 {token?.parentTokenSymbol} ={' '}
                               {formatTokenAmount(
-                                (pairInfo!.pairReserveToken * 10n ** 18n) / pairInfo!.pairReserveParentToken,
+                                (BigInt(pairInfo!.pairReserveToken) * BigInt(10 ** 18)) /
+                                  BigInt(pairInfo!.pairReserveParentToken),
                               )}{' '}
                               {token?.symbol}
                             </>
@@ -661,11 +667,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Select
-                            disabled={hadStartedApprove}
-                            onValueChange={(value) => field.onChange(value)}
-                            value={field.value}
-                          >
+                          <Select onValueChange={(value) => field.onChange(value)} value={field.value}>
                             <SelectTrigger className="w-full !ring-secondary-foreground">
                               <SelectValue placeholder="选择解锁期" />
                             </SelectTrigger>

@@ -23,7 +23,10 @@ export default function StTokenTab() {
     balance,
     isPending: isBalancePending,
     error: balanceError,
-  } = useBalanceOf((token?.stTokenAddress as `0x${string}`) || '', address || '0x0');
+  } = useBalanceOf(
+    (token?.stTokenAddress as `0x${string}`) || '',
+    address || '0x0000000000000000000000000000000000000000',
+  );
 
   // 错误处理
   const { handleContractError } = useHandleContractError();

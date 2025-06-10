@@ -229,6 +229,8 @@ export const useApprove = (address: `0x${string}`) => {
       });
     } catch (err) {
       console.error('Approve failed:', err);
+      // 重新抛出错误，让组件能够捕获
+      throw err;
     }
   };
 

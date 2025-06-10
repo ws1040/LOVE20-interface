@@ -85,7 +85,7 @@ export const useJoinedActions = (tokenAddress: `0x${string}`, account: `0x${stri
  * Reads the joinable action details with joined infos.
  */
 export const useJoinableActions = (tokenAddress: `0x${string}`, round: bigint, account: `0x${string}`) => {
-  const enableRead = !!tokenAddress && !!account;
+  const enableRead = !!tokenAddress && !!account && round !== undefined;
 
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -114,7 +114,7 @@ export const useJoinableActions = (tokenAddress: `0x${string}`, round: bigint, a
  * Hook for verifyingActions
  */
 export const useVerifyingActions = (tokenAddress: `0x${string}`, round: bigint, account: `0x${string}`) => {
-  const enableRead = !!tokenAddress && !!account;
+  const enableRead = !!tokenAddress && !!account && round !== undefined;
 
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -141,7 +141,7 @@ export const useVerifyingActions = (tokenAddress: `0x${string}`, round: bigint, 
  * Hook for verifingActionsByAccount
  */
 export const useVerifingActionsByAccount = (tokenAddress: `0x${string}`, round: bigint, account: `0x${string}`) => {
-  const enableRead = !!tokenAddress && !!account;
+  const enableRead = !!tokenAddress && !!account && round !== undefined;
 
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,

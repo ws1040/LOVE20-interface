@@ -54,7 +54,7 @@ export default function TokenTab() {
   }
 
   return (
-    <div className="px-4 pt-0 pb-6">
+    <div className="px-4 pt-0 pb-3">
       <div className="bg-gray-100 rounded-lg p-4 text-sm mt-4">
         <TokenLabel />
         <div className="mt-1 flex items-center" onClick={() => setIsOpen(true)}>
