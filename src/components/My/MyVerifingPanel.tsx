@@ -73,7 +73,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
   return (
     <div className="flex-col items-center px-4 pt-3 pb-2">
       <div className="flex justify-between items-center mb-2">
-        <LeftTitle title="我的验证票" />
+        <LeftTitle title="我的验证" />
         {showBtn && currentRound >= 2n && (
           <Button variant="link" className="text-secondary border-secondary" asChild>
             <Link href={`/verify/actions/?symbol=${token?.symbol}`}>验证中的行动</Link>

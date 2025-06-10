@@ -75,7 +75,7 @@ const Round: React.FC<RoundProps> = ({ currentRound, roundType }) => {
   return (
     <div className="flex justify-between items-center mb-2">
       <h1 className="text-lg font-bold">
-        第 <span className="text-secondary">{displayRound}</span> 轮{roundName}阶段
+        第 <span className="text-secondary">{displayRound}</span> 轮{roundName}
       </h1>
       <span className="text-sm mt-1 pt-0">
         <span className="text-greyscale-400 mr-1">剩余:</span>

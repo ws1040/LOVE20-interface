@@ -83,7 +83,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({
           </div>
         </div>
         <div className="stat place-items-center pt-1 pb-2">
-          <div className="stat-title text-sm">我的剩余票数</div>
+          <div className="stat-title text-sm">我的未投票数</div>
           <div className="stat-value text-xl">
             {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
               <LoadingIcon />

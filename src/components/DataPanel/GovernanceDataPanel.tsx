@@ -76,13 +76,13 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
 
       <div className="border rounded-lg mt-3 p-0">
         <div className="stats w-full grid grid-cols-2 divide-x-0">
-          <div className="stat place-items-center pb-2">
+          <div className="stat place-items-center pb-2 pl-1">
             <div className="stat-title text-sm pb-1">总治理票数</div>
             <div className="stat-value text-secondary text-xl">
               {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.govVotes || BigInt(0), 2)}
             </div>
           </div>
-          <div className="stat place-items-center pb-2">
+          <div className="stat place-items-center pb-2 pl-1">
             <div className="stat-title text-sm pb-1">预计新增铸币</div>
             <div className="stat-value text-secondary text-xl">
               {isPending ? <LoadingIcon /> : formatTokenAmount(expectedReward, 2)}
@@ -94,7 +94,7 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
         </div>
 
         <div className="stats w-full grid grid-cols-2 divide-x-0 mt-2">
-          <div className="stat place-items-center pb-0 pt-0">
+          <div className="stat place-items-center pb-0 pt-0 pl-1">
             <div className="stat-title text-sm">流动性质押凭证SL代币</div>
             <div className="stat-value text-lg text-gray-600">
               {isPending ? (
@@ -115,7 +115,7 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
               </Button>
             </div>
           </div>
-          <div className="stat place-items-center pb-0 pt-0">
+          <div className="stat place-items-center pb-0 pt-0 pl-1">
             <div className="stat-title text-sm">代币质押凭证ST代币</div>
             <div className="stat-value text-lg text-gray-600">
               {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.stAmount || BigInt(0), 2)}
