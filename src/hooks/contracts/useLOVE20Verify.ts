@@ -218,7 +218,7 @@ export const useScoreByVerifier = (tokenAddress: `0x${string}`, round: bigint, v
     functionName: 'scoreByVerifier',
     args: [tokenAddress, round, verifier],
     query: {
-      enabled: !!tokenAddress && !!verifier,
+      enabled: !!tokenAddress && !!verifier && round !== undefined,
     },
   });
   return { scoreByVerifier: data as bigint, isPending, error };

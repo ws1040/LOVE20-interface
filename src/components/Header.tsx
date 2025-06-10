@@ -33,9 +33,9 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
       localStorage.removeItem('networkAutoRefreshed');
     }
 
-    // 监听钱包连接错误
+    // 监听错误
     const handleError = (error: any) => {
-      console.error('钱包连接错误:', error);
+      console.error('handleError:', error);
 
       // 特别检测 "f is not a function" 错误
       if (

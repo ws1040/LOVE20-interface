@@ -16,6 +16,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 // my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LeftTitle from '@/src/components/Common/LeftTitle';
+import RoundLite from '@/src/components/Common/RoundLite';
 
 interface MyVotingPanelProps {
   currentRound: bigint;
@@ -75,14 +76,14 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({
           <Link href={`/vote/actions/?symbol=${token?.symbol}`}>投票中的行动</Link>
         </Button>
       </div>
-      <div className="stats w-full grid grid-cols-2 mt-2 divide-x-0">
+      <div className="stats w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center pt-1 pb-2">
           <div className="stat-title text-sm">我的已投票数</div>
           <div className="stat-value text-xl">
             {isPendingVotesNumByAccount ? <LoadingIcon /> : formatTokenAmount(votesNumByAccount || BigInt(0), 2)}
           </div>
         </div>
-        <div className="stat place-items-center pt-1 pb-2">
+        <div className="stat place-items-center pt-0 pb-2">
           <div className="stat-title text-sm">我的未投票数</div>
           <div className="stat-value text-xl">
             {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
@@ -107,6 +108,9 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({
             {validGovVotes > 0 ? '已投票' : '无治理票，不能投票'}
           </Button>
         )}
+      </div>
+      <div className="flex justify-center mt-2">
+        <RoundLite currentRound={currentRound} roundType="vote" showCountdown={false} />
       </div>
     </div>
   );

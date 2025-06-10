@@ -12,6 +12,7 @@ import { Token } from '@/src/contexts/TokenContext';
 
 // my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const ratio = Number(launchInfo.totalContributed) / Number(launchInfo.parentTokenFundraisingGoal);
@@ -32,16 +33,13 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
 
   return (
     <>
-      {/* 分隔线 */}
-      <div className="border-t border-gray-200 mx-4 mt-6 mb-4"></div>
-      <div className="flex-col items-center px-4">
-        <div className="grid place-items-center mb-2">
-          <div className={`stat-title text-base mr-6 ${launchInfo.hasEnded ? 'text-red-500' : 'text-secondary'}`}>
-            {launchInfo.hasEnded ? '公平发射已结束' : '公平发射进行中'}
-          </div>
+      <div className="flex-col items-center mb-2 mt-4 px-4">
+        <div className="flex items-center">
+          <LeftTitle title="公平发射" />
+          {launchInfo.hasEnded && <span className={`stat-title text-base text-red-500`}>（公平发射已结束）</span>}
         </div>
 
-        <div className="stats w-full border">
+        <div className="stats w-full">
           <div className="stat place-items-center">
             <div className="stat-title text-sm mr-6 ">申购累计筹集到</div>
             <div className="stat-value">

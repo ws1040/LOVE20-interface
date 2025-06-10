@@ -189,6 +189,9 @@ export const useGovRewardByAccount = (tokenAddress: `0x${string}`, round: bigint
     abi: LOVE20MintAbi,
     functionName: 'govRewardByAccount',
     args: [tokenAddress, round, accountAddress],
+    query: {
+      enabled: !!tokenAddress && !!accountAddress && round !== undefined,
+    },
   });
 
   return {

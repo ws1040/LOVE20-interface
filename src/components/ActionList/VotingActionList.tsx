@@ -34,9 +34,12 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
   // 投票数
   const {
     votes,
+    actionIds: votesActionIds,
     isPending: isPendingVotesNums,
     error: errorVotesNums,
   } = useVotesNums((token?.address as `0x${string}`) || '', currentRound);
+  console.log('votes', votes);
+  console.log('votesActionIds', votesActionIds);
 
   // 推举信息
   const {
@@ -53,6 +56,13 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
     isPending: isPendingActionInfosByIds,
     error: errorActionInfosByIds,
   } = useActionInfosByIds((token?.address as `0x${string}`) || '', uniqueActionIds);
+
+  // 创建一个根据actionId获取投票数的函数
+  const getVotesByActionId = (actionId: bigint): bigint => {
+    if (!votesActionIds || !votes) return 0n;
+    const index = votesActionIds.findIndex((id) => id === actionId);
+    return index !== -1 ? votes[index] : 0n;
+  };
 
   // 计算投票总数： 累计
   const totalVotes = votes?.reduce((acc, vote) => acc + vote, 0n) || 0n;
@@ -130,14 +140,19 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
                         </span>
                         <span>
                           <span className="text-greyscale-400 mr-1">投票数</span>
-                          <span className="text-secondary">{formatTokenAmount(votes?.[index] || 0n, 0)}</span>
+                          <span className="text-secondary">
+                            {formatTokenAmount(getVotesByActionId(BigInt(action.head.id)), 0)}
+                          </span>
                         </span>
                         <span>
                           <span className="text-greyscale-400 mr-1">占比</span>
                           <span className="text-secondary">
-                            {Number(votes?.[index] || 0n) === 0
+                            {Number(getVotesByActionId(BigInt(action.head.id))) === 0
                               ? '0'
-                              : ((Number(votes?.[index] || 0n) * 100) / Number(totalVotes)).toFixed(1)}
+                              : (
+                                  (Number(getVotesByActionId(BigInt(action.head.id))) * 100) /
+                                  Number(totalVotes)
+                                ).toFixed(1)}
                             %
                           </span>
                         </span>

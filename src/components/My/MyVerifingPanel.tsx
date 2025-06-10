@@ -17,6 +17,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 // my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LeftTitle from '@/src/components/Common/LeftTitle';
+import RoundLite from '@/src/components/Common/RoundLite';
 
 interface MyVerifingPanelProps {
   currentRound: bigint;
@@ -71,10 +72,10 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
   }
 
   return (
-    <div className="flex-col items-center px-4 pt-3 pb-2">
+    <div className="flex-col items-center px-4 pb-2">
       <div className="flex justify-between items-center mb-2">
         <LeftTitle title="我的验证" />
-        {showBtn && currentRound >= 2n && (
+        {showBtn && currentRound >= 1n && (
           <Button variant="link" className="text-secondary border-secondary" asChild>
             <Link href={`/verify/actions/?symbol=${token?.symbol}`}>验证中的行动</Link>
           </Button>
@@ -87,7 +88,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
             {isPendingScoreByVerifier ? <LoadingIcon /> : formatTokenAmount(scoreByVerifier || BigInt(0), 2)}
           </div>
         </div>
-        <div className="stat place-items-center pt-1 pb-2">
+        <div className="stat place-items-center pt-0 pb-2">
           <div className="stat-title text-sm">未验证票数</div>
           <div className={`stat-value text-xl ${!showBtn ? 'text-secondary' : ''}`}>
             {isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
@@ -113,6 +114,9 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
           )}
         </div>
       )}
+      <div className="flex justify-center mt-2">
+        <RoundLite currentRound={currentRound} roundType="verify" showCountdown={false} />
+      </div>
     </div>
   );
 };

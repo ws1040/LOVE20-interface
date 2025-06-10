@@ -12,7 +12,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import Round from '@/src/components/Common/Round';
+// import Round from '@/src/components/Common/Round';
 
 // my utils
 import { calculateAPY } from '@/src/lib/domainUtils';
@@ -72,9 +72,9 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
 
   return (
     <div className="px-4 mb-2">
-      <Round currentRound={currentRound} roundType="vote" />
+      {/* <Round currentRound={currentRound} roundType="vote" /> */}
 
-      <div className="border rounded-lg mt-3 p-0">
+      <div className="border rounded-lg p-0">
         <div className="stats w-full grid grid-cols-2 divide-x-0">
           <div className="stat place-items-center pb-2 pl-1">
             <div className="stat-title text-sm pb-1">总治理票数</div>

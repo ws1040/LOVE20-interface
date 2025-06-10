@@ -21,7 +21,7 @@ export default function WETHTab() {
     error: balanceError,
   } = useBalanceOf(
     (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN as `0x${string}`) || '',
-    address || '0x0',
+    address || '0x0000000000000000000000000000000000000000',
   );
 
   // 错误处理

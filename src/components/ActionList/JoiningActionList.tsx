@@ -11,6 +11,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { useJoinableActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
+import RoundLite from '@/src/components/Common/RoundLite';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
@@ -44,8 +45,9 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   }, [error]);
 
   return (
-    <div className="p-4">
+    <div className="px-4 py-6">
       <LeftTitle title="本轮可参与的行动：" />
+      <RoundLite currentRound={currentRound} roundType="act" />
       {!accountAddress && <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>}
       {accountAddress && isPending && (
         <div className="p-4 flex justify-center items-center">
@@ -80,7 +82,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                     <div className="flex justify-between mt-1 text-sm">
                       <span>
                         <span className="text-greyscale-400 mr-1">投票占比</span>
-                        <span className="text-secondary">
+                        <span className="text-greyscale-400">
                           {((Number(joinableActionDetails[index].votesNum || 0n) * 100) / Number(totalVotes)).toFixed(
                             1,
                           )}
@@ -89,7 +91,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                       </span>
                       <span>
                         <span className="text-greyscale-400 mr-1">参与代币数</span>
-                        <span className="text-secondary">
+                        <span className="text-greyscale-400">
                           {formatTokenAmount(joinableActionDetails[index].joinedAmount || 0n, 0)}
                         </span>
                       </span>

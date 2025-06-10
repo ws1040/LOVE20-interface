@@ -35,7 +35,6 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
   const { token } = useContext(TokenContext) || {};
   const { chain: accountChain } = useAccount();
   const router = useRouter();
-  // const { auto: autoQuery } = router.query;
 
   // 获取参与验证的地址
   const {
@@ -202,19 +201,19 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     }
   }, [submitError, errorVerificationInfosByAction]);
 
-  if (remainingVotes <= 0) {
-    return <></>;
-  }
-
   // 渲染
   return (
     <>
       <div className="w-full max-w-2xl">
         <ul className="space-y-4">
+          <li className="flex justify-between items-center p-4 bg-greyscale-50">
+            <div className="text-left font-semibold">被选中的行动参与者</div>
+            {remainingVotes > 0 && <div className="font-semibold">打分 (分数占比)</div>}
+          </li>
           {isPendingVerificationInfosByAction && <LoadingIcon />}
           {verificationInfos && verificationInfos.length > 0 ? (
             verificationInfos.map((info, index) => (
-              <li key={info.account} className="flex justify-between items-center p-4 border-b border-gray-100">
+              <li key={info.account} className="flex justify-between items-center px-2 py-1 border-b border-gray-100">
                 <div className="text-left">
                   <div className="font-mono">
                     <AddressWithCopyButton address={info.account} />
@@ -229,29 +228,31 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-1">
-                  <div className="flex items-center">
-                    <input
-                      type="number"
-                      min="0"
-                      value={scores[info.account] || ''}
-                      placeholder="0"
-                      onChange={(e) => handleScoreChange(info.account, e.target.value)}
-                      className="w-10 px-1 py-1 border rounded"
-                      disabled={isWriting || isConfirmed}
-                    />
-                    <span className="ml-1 text-greyscale-500">分:</span>
+                {remainingVotes > 0 && (
+                  <div className="flex items-center gap-1">
+                    <div className="flex items-center">
+                      <input
+                        type="number"
+                        min="0"
+                        value={scores[info.account] || ''}
+                        placeholder="0"
+                        onChange={(e) => handleScoreChange(info.account, e.target.value)}
+                        className="w-10 px-1 py-1 border rounded"
+                        disabled={isWriting || isConfirmed}
+                      />
+                      <span className="ml-1 text-greyscale-500">分:</span>
+                    </div>
+                    <div className="w-10 text-right text-greyscale-500">
+                      {(addressPercentages[info.account] || 0).toFixed(2)}%
+                    </div>
                   </div>
-                  <div className="w-10 text-right text-greyscale-500">
-                    {(addressPercentages[info.account] || 0).toFixed(2)}%
-                  </div>
-                </div>
+                )}
               </li>
             ))
           ) : (
             <div className="text-center text-greyscale-500">没有人参与活动</div>
           )}
-          {verificationInfos && (
+          {verificationInfos && remainingVotes > 0 && (
             <li className="flex justify-between items-center p-4 border-b border-gray-100">
               <div className="text-left">
                 <div className="text-sm text-greyscale-800">
@@ -286,11 +287,11 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
           {isConfirmed && '已验证'}
         </Button>
       )}
-      {!remainingVotes && (
+      {/* {!remainingVotes && (
         <Button disabled className="mt-6 w-1/2">
           已验证
         </Button>
-      )}
+      )} */}
 
       <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
     </>

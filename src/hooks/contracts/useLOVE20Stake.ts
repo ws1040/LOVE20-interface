@@ -18,6 +18,9 @@ export const useAccountStakeStatus = (token: `0x${string}`, account: `0x${string
     abi: LOVE20StakeAbi,
     functionName: 'accountStakeStatus',
     args: [token, account],
+    query: {
+      enabled: !!token && !!account,
+    },
   });
 
   return {
@@ -58,6 +61,9 @@ export const useCumulatedTokenAmount = (tokenAddress: `0x${string}`, round: bigi
     abi: LOVE20StakeAbi,
     functionName: 'cumulatedTokenAmount',
     args: [tokenAddress, round],
+    query: {
+      enabled: !!tokenAddress,
+    },
   });
 
   return { tokenAmount: data as bigint | undefined, isPending, error };
@@ -79,6 +85,9 @@ export const useCumulatedTokenAmountByAccount = (
     abi: LOVE20StakeAbi,
     functionName: 'cumulatedTokenAmountByAccount',
     args: [tokenAddress, round, accountAddress],
+    query: {
+      enabled: !!tokenAddress && !!accountAddress,
+    },
   });
 
   return { tokenAmount: data as bigint | undefined, isPending, error };
@@ -111,6 +120,9 @@ export const useInitialStakeRound = (tokenAddress: `0x${string}`) => {
     abi: LOVE20StakeAbi,
     functionName: 'initialStakeRound',
     args: [tokenAddress],
+    query: {
+      enabled: !!tokenAddress,
+    },
   });
 
   return { initialStakeRound: data as bigint | undefined, isPending, error };
@@ -126,6 +138,9 @@ export const useGovVotesNum = (token: `0x${string}`) => {
     abi: LOVE20StakeAbi,
     functionName: 'govVotesNum',
     args: [token],
+    query: {
+      enabled: !!token,
+    },
   });
 
   return { govVotesNum: data as bigint | undefined, isPending, error };
@@ -192,6 +207,9 @@ export const useStakeUpdateRoundsByPage = (
     abi: LOVE20StakeAbi,
     functionName: 'stakeUpdateRoundsByPage',
     args: [tokenAddress, start, end, reverse],
+    query: {
+      enabled: !!tokenAddress,
+    },
   });
 
   return { rounds: data as bigint[] | undefined, isPending, error };
@@ -242,6 +260,8 @@ export const useStakeLiquidity = () => {
       });
     } catch (err) {
       console.error('StakeLiquidity failed:', err);
+      // 重新抛出错误，让组件能够捕获
+      throw err;
     }
   };
 
@@ -287,6 +307,8 @@ export const useStakeToken = () => {
       });
     } catch (err) {
       console.error('StakeToken failed:', err);
+      // 重新抛出错误，让组件能够捕获
+      throw err;
     }
   };
 
@@ -320,6 +342,8 @@ export const useUnstake = () => {
       });
     } catch (err) {
       console.error('Unstake failed:', err);
+      // 重新抛出错误，让组件能够捕获
+      throw err;
     }
   };
 
@@ -350,6 +374,8 @@ export const useWithdraw = () => {
       });
     } catch (err) {
       console.error('Withdraw failed:', err);
+      // 重新抛出错误，让组件能够捕获
+      throw err;
     }
   };
 

@@ -33,7 +33,7 @@ const ActionListToVerify: React.FC<VerifingActionListProps> = ({ currentRound })
   // 使用 useVerifyingActions 获取待验证行动列表
   const { myVerifyingActions, isPending, error } = useVerifingActionsByAccount(
     (token?.address as `0x${string}`) || '',
-    currentRound,
+    currentRound || 0n,
     address as `0x${string}`,
   );
 

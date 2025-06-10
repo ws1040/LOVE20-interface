@@ -13,14 +13,33 @@ import { useCallback } from 'react';
  */
 function _parseMetaMaskError(error: string): string {
   /***
-   * 示例错误日志：
+   * 新版本错误格式示例：
+     TransactionExecutionError: User rejected the request.
+     Details: MetaMask Tx Signature: User denied transaction signature.
+   * 
+   * 旧版本错误格式示例：
      error TransactionExecutionError: User rejected the request.
       Details: MetaMask Tx Signature: User denied transaction signature.
    */
+
+  // 检查新版本格式：直接包含 "User rejected the request"
+  const userRejectedMatch = error.match(/User rejected the request/);
+  if (userRejectedMatch) {
+    return '用户取消了交易';
+  }
+
+  // 检查详细信息中的用户拒绝签名
   const errorMatch = error.match(/User denied transaction signature/);
   if (errorMatch) {
     return '用户取消了交易';
   }
+
+  // 检查其他可能的用户拒绝格式
+  const userDeniedMatch = error.match(/User denied|User rejected|rejected by user|denied by user/i);
+  if (userDeniedMatch) {
+    return '用户取消了交易';
+  }
+
   return '';
 }
 
@@ -86,6 +105,63 @@ function _parseOriginalRevertMessage(errorLog: string): string {
 }
 
 /**
+ * 检查是否为网络超时错误
+ */
+function _parseTimeoutError(error: string): string {
+  const timeoutPatterns = [
+    /took too long to respond/i,
+    /request timed out/i,
+    /The request took too long/i,
+    /timeout/i,
+    /ETIMEDOUT/i,
+    /Request timeout/i,
+  ];
+
+  for (const pattern of timeoutPatterns) {
+    if (pattern.test(error)) {
+      return '网络请求超时，这在移动端比较常见。请检查网络连接后重试，或稍后再试。';
+    }
+  }
+  return '';
+}
+
+/**
+ * 解析 TransactionExecutionError 格式的错误
+ * 新版本viem会产生这种格式的错误
+ */
+function _parseTransactionExecutionError(error: string): string {
+  /**
+   * 示例错误格式：
+   * TransactionExecutionError: User rejected the request.
+   *
+   * Request Arguments:
+   *   from:  0x6ce7A032693E5Ead4cD8B980026f1BA96A72C7ff
+   *   to:    0xD4506737c861697EB3B3616ee0E31c835a4432B2
+   *   data:  0xfe43a47e...
+   *
+   * Details: MetaMask Tx Signature: User denied transaction signature.
+   * Version: viem@2.17.0
+   */
+
+  // 检查是否是TransactionExecutionError
+  if (!error.includes('TransactionExecutionError')) {
+    return '';
+  }
+
+  // 提取主要错误信息（第一行的冒号后面的内容）
+  const lines = error.split('\n');
+  if (lines.length > 0) {
+    const firstLine = lines[0];
+    const match = firstLine.match(/TransactionExecutionError:\s*(.+)$/);
+    if (match && match[1]) {
+      return match[1].trim();
+    }
+  }
+
+  return '';
+}
+
+/**
  * 根据 solidity revert 自定义错误，返回可读的中文错误提示。
  *
  * @param error  错误信息
@@ -94,6 +170,29 @@ function _parseOriginalRevertMessage(errorLog: string): string {
  */
 export function getReadableRevertErrMsg(error: string, contractKey: string): ErrorInfo {
   const rawMessage: string = error ?? '';
+
+  // 0.优先检查网络超时错误
+  const timeoutError = _parseTimeoutError(rawMessage);
+  if (timeoutError) {
+    return { name: '网络超时', message: timeoutError };
+  }
+
+  // 0.5.检查TransactionExecutionError格式 (新增)
+  const transactionError = _parseTransactionExecutionError(rawMessage);
+  if (transactionError) {
+    // 如果是用户拒绝，返回特定提示
+    if (transactionError.includes('User rejected') || transactionError.includes('User denied')) {
+      return { name: '交易提示', message: '用户取消了交易' };
+    }
+    // 其他TransactionExecutionError，返回原始错误信息
+    return { name: '交易错误', message: transactionError };
+  }
+
+  // 0.6.检查用户取消错误
+  const metaMaskError = _parseMetaMaskError(rawMessage);
+  if (metaMaskError) {
+    return { name: '交易提示', message: metaMaskError };
+  }
 
   // 1.优先检查是否是十六进制错误选择器格式，使用更精确的匹配模式
   // 示例格式：
@@ -124,6 +223,22 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
     const standaloneMatch = rawMessage.match(/(?:^|[^a-fA-F0-9])0x([a-fA-F0-9]{8})(?:[^a-fA-F0-9]|$)/);
     if (standaloneMatch) {
       selector = '0x' + standaloneMatch[1];
+    }
+  }
+
+  // 匹配 anvil 测试链的错误格式：custom error 0x50cd778e
+  if (!selector) {
+    const anvilMatch = rawMessage.match(/custom error 0x([a-fA-F0-9]{8})/i);
+    if (anvilMatch) {
+      selector = '0x' + anvilMatch[1];
+    }
+  }
+
+  // 匹配其他可能的 reverted with 格式
+  if (!selector) {
+    const revertWithMatch = rawMessage.match(/reverted with:\s*custom error 0x([a-fA-F0-9]{8})/i);
+    if (revertWithMatch) {
+      selector = '0x' + revertWithMatch[1];
     }
   }
 
@@ -163,13 +278,7 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
     return { name: '交易错误', message: errorMap[errorName] };
   }
 
-  // 4.解析 MetaMask 错误
-  const metaMaskError = _parseMetaMaskError(rawMessage);
-  if (metaMaskError) {
-    return { name: '交易提示', message: metaMaskError };
-  }
-
-  // 5.如果找不到对应的错误文案，则返回默认的错误文案
+  // 4.如果找不到对应的错误文案，则返回默认的错误文案
   const originalRevertError = _parseOriginalRevertMessage(rawMessage);
   if (originalRevertError) {
     //打印原始错误
@@ -219,8 +328,30 @@ export const useHandleContractError = () => {
         errorStringified = error?.toString() || 'Error object cannot be stringified';
       }
 
-      const sources = [error?.message, error?.cause?.message, error?.data, error?.reason, errorStringified];
+      // 扩展错误信息来源，增加对新版本错误格式的支持
+      const sources = [
+        error?.message, // 主要错误信息
+        error?.cause?.message, // 原因错误信息
+        error?.data, // 错误数据
+        error?.reason, // 错误原因
+        error?.details, // 错误详情 (新增)
+        error?.cause?.details, // 原因错误详情 (新增)
+        error?.shortMessage, // 简短错误信息 (新增)
+        errorStringified, // 序列化后的完整错误
+      ];
 
+      // 优先检查是否为用户取消交易的错误
+      for (const source of sources) {
+        if (source && typeof source === 'string') {
+          const metaMaskError = _parseMetaMaskError(source);
+          if (metaMaskError) {
+            setError({ name: '交易提示', message: metaMaskError });
+            return;
+          }
+        }
+      }
+
+      // 再检查合约错误
       for (const source of sources) {
         if (source && typeof source === 'string') {
           const parsedError = getReadableRevertErrMsg(source, context);
@@ -244,3 +375,24 @@ export const useHandleContractError = () => {
 
   return { handleContractError };
 };
+
+// /**
+//  * 测试错误解析功能（仅用于开发调试）
+//  * @param testMessage 测试错误消息
+//  * @param contractKey 合约上下文
+//  */
+// export function testErrorParsing(testMessage: string, contractKey: string): void {
+//   if (process.env.NODE_ENV === 'development') {
+//     console.log('🧪 测试错误解析:', testMessage);
+//     const result = getReadableRevertErrMsg(testMessage, contractKey);
+//     console.log('📋 解析结果:', result);
+//   }
+// }
+
+// // 导出用于测试的函数（仅开发环境）
+// if (process.env.NODE_ENV === 'development') {
+//   // 测试 anvil 错误格式
+//   testErrorParsing('Error: reverted with: custom error 0x50cd778e', 'stake');
+//   testErrorParsing('custom error 0x50cd778e', 'stake');
+//   testErrorParsing('Transaction failed: custom error 0x50cd778e', 'stake');
+// }

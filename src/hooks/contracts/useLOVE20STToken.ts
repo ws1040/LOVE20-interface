@@ -31,6 +31,9 @@ export const useBalanceOf = (address: `0x${string}`, account: `0x${string}`) => 
     abi: LOVE20STTokenAbi,
     functionName: 'balanceOf',
     args: [account],
+    query: {
+      enabled: !!address && !!account,
+    },
   });
 
   return {
@@ -49,6 +52,9 @@ export const useDecimals = (address: `0x${string}`) => {
     abi: LOVE20STTokenAbi,
     functionName: 'decimals',
     args: [],
+    query: {
+      enabled: !!address,
+    },
   });
 
   return {
@@ -67,6 +73,9 @@ export const useName = (address: `0x${string}`) => {
     abi: LOVE20STTokenAbi,
     functionName: 'name',
     args: [],
+    query: {
+      enabled: !!address,
+    },
   });
 
   return {
@@ -85,6 +94,9 @@ export const useReserve = (address: `0x${string}`) => {
     abi: LOVE20STTokenAbi,
     functionName: 'reserve',
     args: [],
+    query: {
+      enabled: !!address,
+    },
   });
 
   return {
@@ -103,6 +115,9 @@ export const useSymbol = (address: `0x${string}`) => {
     abi: LOVE20STTokenAbi,
     functionName: 'symbol',
     args: [],
+    query: {
+      enabled: !!address,
+    },
   });
 
   return {
@@ -121,6 +136,9 @@ export const useTokenAddress = (address: `0x${string}`) => {
     abi: LOVE20STTokenAbi,
     functionName: 'tokenAddress',
     args: [],
+    query: {
+      enabled: !!address,
+    },
   });
 
   return {
@@ -139,6 +157,9 @@ export const useTotalSupply = (address: `0x${string}`) => {
     abi: LOVE20STTokenAbi,
     functionName: 'totalSupply',
     args: [],
+    query: {
+      enabled: !!address,
+    },
   });
 
   return {
@@ -168,6 +189,8 @@ export const useApprove = (address: `0x${string}`) => {
       });
     } catch (err) {
       console.error('Approve failed:', err);
+      // 重新抛出错误，让组件能够捕获
+      throw err;
     }
   };
 
