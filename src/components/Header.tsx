@@ -108,7 +108,12 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
 
       <header className="flex justify-between items-center py-2 px-4">
         <SidebarTrigger className="-ml-1" />
-        <ConnectButton />
+        <ConnectButton
+          showBalance={{
+            smallScreen: true,
+            largeScreen: true,
+          }}
+        />
       </header>
 
       <div className="px-4">
