@@ -118,7 +118,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
           </div>
 
           <div className="mb-4">
-            <h3 className="text-sm font-bold">随机奖励地址数</h3>
+            <h3 className="text-sm font-bold">最大抽取验证地址数</h3>
             <p className="text-greyscale-500">{actionInfo?.body.maxRandomAccounts.toString() || '-'}</p>
           </div>
 

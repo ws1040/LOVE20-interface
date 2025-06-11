@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useAccount } from 'wagmi';
+import { formatEther } from 'viem';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
@@ -23,7 +24,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // my funcs
 import { checkWalletConnection } from '@/src/lib/web3';
-import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
+import { formatRoundForDisplay, formatTokenAmountInteger } from '@/src/lib/format';
 import { LinkIfUrl } from '@/src/lib/stringUtils';
 
 const VerifiedAddressesByAction: React.FC<{
@@ -52,6 +53,7 @@ const VerifiedAddressesByAction: React.FC<{
     token && selectedRound ? selectedRound + BigInt(token.initialStakeRound) - 1n : 0n,
     actionId,
   );
+  console.log('verifiedAddresses', verifiedAddresses);
 
   // 获取验证地址的验证信息
   const {
@@ -130,6 +132,13 @@ const VerifiedAddressesByAction: React.FC<{
     }
   }, [addresses]);
 
+  // 创建排序后的地址数组用于渲染
+  const sortedAddresses = [...addresses].sort((a, b) => {
+    if (a.score > b.score) return -1;
+    if (a.score < b.score) return 1;
+    return 0;
+  });
+
   const toggleRow = (address: string) => {
     const newExpanded = new Set(expandedRows);
     if (newExpanded.has(address)) {
@@ -173,13 +182,13 @@ const VerifiedAddressesByAction: React.FC<{
             <tr className="border-b border-gray-100">
               <th></th>
               <th>被抽中地址</th>
-              <th className="px-1">获得验证票</th>
-              <th className="px-1">可铸造激励</th>
-              <th className="text-center"></th>
+              <th className="px-1 text-right">获得验证票</th>
+              <th className="px-1 text-right">可铸造激励</th>
+              <th className="text-right"></th>
             </tr>
           </thead>
           <tbody>
-            {addresses.map((item) => {
+            {sortedAddresses.map((item) => {
               const verificationInfo = verificationInfos?.find((info) => info.account === item.account);
               const isExpanded = expandedRows.has(item.account);
 
@@ -196,16 +205,16 @@ const VerifiedAddressesByAction: React.FC<{
                         </button>
                       )}
                     </td>
-                    <td className="px-1">
+                    <td className="px-1 ">
                       <AddressWithCopyButton
                         address={item.account}
                         showCopyButton={true}
                         word={item.account === accountAddress ? '(我)' : ''}
                       />
                     </td>
-                    <td className="px-1">{formatTokenAmount(item.score, 0)}</td>
-                    <td className="px-1">{formatTokenAmount(item.minted || item.unminted || 0n, 0)}</td>
-                    <td className="px-1 text-center">
+                    <td className="px-1 text-right">{formatTokenAmountInteger(item.score)}</td>
+                    <td className="px-1 text-right">{formatTokenAmountInteger(item.minted || item.unminted || 0n)}</td>
+                    <td className="px-1 text-right">
                       {item.account === accountAddress &&
                         (item.unminted > 0 ? (
                           <Button

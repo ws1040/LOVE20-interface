@@ -16,6 +16,9 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
 
+// my types
+import { ActionInfo } from '@/src/types/love20types';
+
 // my components
 import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
@@ -26,9 +29,10 @@ import { LinkIfUrl } from '@/src/lib/stringUtils';
 interface ActionPanelForJoinProps {
   actionId: bigint;
   onRoundChange: (currentRound: bigint) => void;
+  actionInfo: ActionInfo | undefined;
 }
 
-const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRoundChange }) => {
+const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRoundChange, actionInfo }) => {
   const { address: account } = useAccount();
   const { token } = useContext(TokenContext) || {};
 
@@ -63,7 +67,11 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
     joinedAmountByActionId &&
     joinedAmountByActionId > 0;
   const participationRatio = isJoined
-    ? `${parseFloat(((Number(joinedAmountByActionIdByAccount) / Number(joinedAmountByActionId)) * 100).toFixed(3))}%`
+    ? parseFloat(((Number(joinedAmountByActionIdByAccount) / Number(joinedAmountByActionId)) * 100).toFixed(3))
+    : 0;
+  const participationRatioStr = `${participationRatio.toFixed(1)}%`;
+  const probabilityStr = isJoined
+    ? `${Math.min(participationRatio * Number(actionInfo?.body.maxRandomAccounts), 100).toFixed(1)}%`
     : '0%';
 
   // 获取验证信息
@@ -116,8 +124,8 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
           </div>
           <div className="stat place-items-center">
             <div className="stat-title">我的占比</div>
-            <div className="stat-value text-2xl text-secondary">{participationRatio}</div>
-            <div className="stat-desc text-sm mt-2">占本行动总代币的比例</div>
+            <div className="stat-value text-2xl text-secondary">{participationRatioStr}</div>
+            <div className="stat-desc text-sm mt-2">被抽中验证概率 {probabilityStr}</div>
           </div>
         </div>
       )}
@@ -128,9 +136,6 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
         </Button>
       ) : (
         <>
-          {/* <Button type="button" className="w" disabled={true}>
-            第1次内测体验, 暂时关闭增加代币
-          </Button> */}
           <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
             <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
           </Button>

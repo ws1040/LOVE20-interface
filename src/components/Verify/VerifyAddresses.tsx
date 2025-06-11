@@ -207,7 +207,7 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
       <div className="w-full max-w-2xl">
         <ul className="space-y-4">
           <li className="flex justify-between items-center p-4 bg-greyscale-50">
-            <div className="text-left font-semibold">被选中的行动参与者</div>
+            <div className="text-left font-semibold">被抽中的行动参与者</div>
             {remainingVotes > 0 && <div className="font-semibold">打分 (分数占比)</div>}
           </li>
           {isPendingVerificationInfosByAction && <LoadingIcon />}
