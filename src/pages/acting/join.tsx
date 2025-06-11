@@ -16,8 +16,9 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import ActionDetail from '@/src/components/ActionDetail/ActionDetail';
 import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import MyJoinInfoOfActionAbstract from '@/src/components/My/MyJoinInfoOfActionAbstract';
+import ActionPanelForJoin from '@/src/components/ActionDetail/ActionPanelForJoin';
 import SubmitJoin from '@/src/components/Join/SubmitJoin';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 const JoinPage = () => {
   const router = useRouter();
@@ -57,7 +58,13 @@ const JoinPage = () => {
           <LoadingIcon />
         ) : (
           <>
-            <MyJoinInfoOfActionAbstract actionId={BigInt(actionId)} onStakedAmountChange={onStakedAmountChange} />
+            <ActionPanelForJoin
+              actionId={BigInt(actionId)}
+              onRoundChange={() => {}}
+              actionInfo={actionInfo}
+              onStakedAmountChange={onStakedAmountChange}
+              showJoinButton={false}
+            />
             <SubmitJoin actionInfo={actionInfo} stakedAmount={stakedAmount} />
             <div className="flex flex-col w-full p-4">
               <div className="bg-blue-50/30 border-l-4 border-l-blue-50 rounded-r-lg p-4 mb-8 text-sm">

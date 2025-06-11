@@ -20,7 +20,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { ActionInfo } from '@/src/types/love20types';
 
 // my components
-import { formatTokenAmount } from '@/src/lib/format';
+import { formatTokenAmount, formatPercentage } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 // my utils
@@ -30,9 +30,17 @@ interface ActionPanelForJoinProps {
   actionId: bigint;
   onRoundChange: (currentRound: bigint) => void;
   actionInfo: ActionInfo | undefined;
+  onStakedAmountChange?: (stakedAmount: bigint) => void;
+  showJoinButton?: boolean;
 }
 
-const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRoundChange, actionInfo }) => {
+const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
+  actionId,
+  onRoundChange,
+  actionInfo,
+  onStakedAmountChange,
+  showJoinButton = true,
+}) => {
   const { address: account } = useAccount();
   const { token } = useContext(TokenContext) || {};
 
@@ -67,11 +75,11 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
     joinedAmountByActionId &&
     joinedAmountByActionId > 0;
   const participationRatio = isJoined
-    ? parseFloat(((Number(joinedAmountByActionIdByAccount) / Number(joinedAmountByActionId)) * 100).toFixed(3))
+    ? (Number(joinedAmountByActionIdByAccount) / Number(joinedAmountByActionId)) * 100
     : 0;
-  const participationRatioStr = `${participationRatio.toFixed(1)}%`;
+  const participationRatioStr = formatPercentage(participationRatio);
   const probabilityStr = isJoined
-    ? `${Math.min(participationRatio * Number(actionInfo?.body.maxRandomAccounts), 100).toFixed(1)}%`
+    ? formatPercentage(Math.min(participationRatio * Number(actionInfo?.body.maxRandomAccounts), 100))
     : '0%';
 
   // 获取验证信息
@@ -85,6 +93,13 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
     actionId,
     (account as `0x${string}`) || '',
   );
+
+  useEffect(() => {
+    if (isPendingJoinedAmountByAccount) {
+      return;
+    }
+    onStakedAmountChange?.(joinedAmountByActionIdByAccount || BigInt(0));
+  }, [joinedAmountByActionIdByAccount, isPendingJoinedAmountByAccount]);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -130,29 +145,33 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({ actionId, onRou
         </div>
       )}
 
-      {!isJoined ? (
-        <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
-          <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>参与行动</Link>
-        </Button>
-      ) : (
+      {showJoinButton && (
         <>
-          <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
-            <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
-          </Button>
-          <div className="flex flex-col items-center mt-2">
-            <div className="text-sm text-greyscale-600">
-              {isPendingVerificationInfo && '加载中...'}
-              {verificationKeys && verificationKeys.length > 0 && (
-                <div>
-                  {verificationKeys.map((key, index) => (
-                    <div key={index}>
-                      {key}: <LinkIfUrl text={verificationInfos[index]} />
+          {!isJoined ? (
+            <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
+              <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>参与行动</Link>
+            </Button>
+          ) : (
+            <>
+              <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
+                <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
+              </Button>
+              <div className="flex flex-col items-center mt-2">
+                <div className="text-sm text-greyscale-600">
+                  {isPendingVerificationInfo && '加载中...'}
+                  {verificationKeys && verificationKeys.length > 0 && (
+                    <div>
+                      {verificationKeys.map((key, index) => (
+                        <div key={index}>
+                          {key}: <LinkIfUrl text={verificationInfos[index]} />
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
+            </>
+          )}
         </>
       )}
     </div>

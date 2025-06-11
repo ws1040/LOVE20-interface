@@ -6,7 +6,7 @@ import { ChevronRight } from 'lucide-react';
 
 import { JoinableActionDetail } from '@/src/types/love20types';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
-import { formatTokenAmount } from '@/src/lib/format';
+import { formatPercentage, formatTokenAmount } from '@/src/lib/format';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { useJoinableActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
@@ -47,7 +47,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   return (
     <div className="px-4 py-6">
       <LeftTitle title="本轮可参与的行动：" />
-      <RoundLite currentRound={currentRound} roundType="act" />
+      <RoundLite currentRound={currentRound} roundType="act" showCountdown={false} />
       {!accountAddress && <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>}
       {accountAddress && isPending && (
         <div className="p-4 flex justify-center items-center">
@@ -82,16 +82,15 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                     <div className="flex justify-between mt-1 text-sm">
                       <span>
                         <span className="text-greyscale-400 mr-1">投票占比</span>
-                        <span className="text-greyscale-400">
-                          {((Number(joinableActionDetails[index].votesNum || 0n) * 100) / Number(totalVotes)).toFixed(
-                            1,
+                        <span className="text-secondary">
+                          {formatPercentage(
+                            (Number(joinableActionDetails[index].votesNum || 0n) * 100) / Number(totalVotes),
                           )}
-                          %
                         </span>
                       </span>
                       <span>
                         <span className="text-greyscale-400 mr-1">参与代币数</span>
-                        <span className="text-greyscale-400">
+                        <span className="text-secondary">
                           {formatTokenAmount(joinableActionDetails[index].joinedAmount || 0n, 0)}
                         </span>
                       </span>
