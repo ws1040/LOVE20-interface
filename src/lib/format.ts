@@ -7,7 +7,16 @@ export const abbreviateAddress = (address: string): string => {
   return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
 };
 
-// 【显示函数】从wei到eth 并带有逗号分隔 例如从 1000000000000000000 转换为 1.0000
+// 【显示函数-输出整数】从wei到eth 并带有逗号分隔 例如从 1000000000000000000 转换为 1
+export const formatTokenAmountInteger = (balance: bigint): string => {
+  const formatted = formatUnits(balance);
+  const numberFormatted = Number(formatted);
+  return new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 0,
+  }).format(numberFormatted);
+};
+
+// 【显示函数-自动选择小数位数】从wei到eth 并带有逗号分隔 例如从 1000000000000000000 转换为 1.0000
 export const formatTokenAmount = (balance: bigint, maximumFractionDigits_ = 4): string => {
   const formatted = formatUnits(balance);
   const numberFormatted = Number(formatted);
