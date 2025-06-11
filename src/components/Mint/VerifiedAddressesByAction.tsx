@@ -160,13 +160,15 @@ const VerifiedAddressesByAction: React.FC<{
         {selectedRound > 0 && (
           <>
             <LeftTitle title="验证结果" />
-            <span className="text-sm text-greyscale-500 ml-2">行动轮第</span>
+            <span className="text-sm text-greyscale-500 ml-2">(</span>
+            <span className="text-sm text-greyscale-500">行动轮第</span>
             <span className="text-sm text-secondary ml-1">{selectedRound.toString()}</span>
             <span className="text-sm text-greyscale-500 ml-1">轮</span>
             <ChangeRound
               currentRound={token && currentJoinRound ? formatRoundForDisplay(currentJoinRound - 2n, token) : 0n}
               handleChangedRound={handleChangedRound}
             />
+            <span className="text-sm text-greyscale-500">)</span>
           </>
         )}
       </div>

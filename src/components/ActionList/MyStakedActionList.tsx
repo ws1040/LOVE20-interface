@@ -14,7 +14,7 @@ import { Token } from '@/src/contexts/TokenContext';
 
 // my types & funcs
 import { JoinedAction } from '@/src/types/love20types';
-import { formatTokenAmount } from '@/src/lib/format';
+import { formatPercentage, formatTokenAmount } from '@/src/lib/format';
 
 // my components
 import LeftTitle from '@/src/components/Common/LeftTitle';
@@ -86,7 +86,7 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
                     {action.votesNum > 0 && (
                       <span>
                         <span className="text-greyscale-400 mr-1">投票占比</span>
-                        <span className="text-secondary">{`${(Number(action.votePercent) / 100).toFixed(1)}%`}</span>
+                        <span className="text-secondary">{formatPercentage(Number(action.votePercent) / 100)}</span>
                       </span>
                     )}
                   </div>

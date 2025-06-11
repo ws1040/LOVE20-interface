@@ -11,11 +11,11 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 import ActionDetail from '@/src/components/ActionDetail/ActionDetail';
 import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import MyJoinInfoOfActionPancel from '@/src/components/My/MyJoinInfoOfActionPancel';
 import VerifiedAddressesByAction from '@/src/components/Mint/VerifiedAddressesByAction';
 
 // my types
 import { ActionInfo } from '@/src/types/love20types';
+import ActionPanelForJoin from '@/src/components/ActionDetail/ActionPanelForJoin';
 
 const ActRewardsPage = () => {
   const router = useRouter();
@@ -47,7 +47,7 @@ const ActRewardsPage = () => {
           <LoadingIcon />
         ) : (
           <>
-            <MyJoinInfoOfActionPancel actionId={BigInt(actId || 0)} />
+            <ActionPanelForJoin actionId={BigInt(actId || 0)} onRoundChange={() => {}} actionInfo={actionInfo} />
             <VerifiedAddressesByAction
               currentJoinRound={currentJoinRound}
               actionId={BigInt(actId || 0)}

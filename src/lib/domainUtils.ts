@@ -2,6 +2,8 @@
  * 业务逻辑相关的计算工具函数
  */
 
+import { formatPercentage } from './format';
+
 /**
  * 计算治理质押的预计年化收益率(APY)
  * @param rewardAvailable 可用奖励总量
@@ -38,7 +40,7 @@ export const calculateAPY = (
   const apy = (Number(rewardForPhase) / Number(totalStaked) / (Number(phaseBlocks) / blocksPerYear)) * 100;
 
   // 格式化APY，显示整数加2位小数，如果小数最后是0，则去掉
-  return `${apy.toFixed(2).replace(/\.?0+$/, '')}%`;
+  return formatPercentage(apy);
 };
 
 /**
@@ -65,7 +67,7 @@ export const calculateActionAPY = (expectedReward?: bigint, joinedAmount?: bigin
   const apy = (Number(expectedReward) / Number(joinedAmount) / (Number(phaseBlocks) / blocksPerYear)) * 100;
 
   // 格式化APY，显示整数加2位小数，如果小数最后是0，则去掉
-  return `${apy.toFixed(2).replace(/\.?0+$/, '')}%`;
+  return formatPercentage(apy);
 };
 
 /**

@@ -27,11 +27,11 @@ export const formatTokenAmount = (balance: bigint, maximumFractionDigits_ = 4): 
   }
 
   // 根据数值大小使用不同的格式化规则
-  if (numberFormatted >= 100000) {
+  if (numberFormatted >= 1000) {
     return new Intl.NumberFormat('en-US', {
       maximumFractionDigits: 0,
     }).format(numberFormatted);
-  } else if (numberFormatted >= 1000) {
+  } else if (numberFormatted >= 100) {
     return new Intl.NumberFormat('en-US', {
       maximumFractionDigits: 2,
     }).format(numberFormatted);
@@ -165,4 +165,18 @@ export const formatIntegerStringWithCommas = (
 
     return `0.0{${zeroCount}}${significant}`;
   }
+};
+
+// 格式化百分比显示
+export const formatPercentage = (value: number | string): string => {
+  const num = typeof value === 'string' ? parseFloat(value) : value;
+  const absNum = Math.abs(num);
+
+  if (absNum === 0) return '0%';
+  if (absNum >= 100) return num.toLocaleString(undefined, { maximumFractionDigits: 0 }) + '%';
+  if (absNum >= 10) return num.toFixed(1) + '%';
+  if (absNum >= 1) return num.toFixed(2) + '%';
+  if (absNum >= 0.1) return num.toFixed(3) + '%';
+  if (absNum >= 0.01) return num.toFixed(4) + '%';
+  return num.toExponential(4) + '%';
 };

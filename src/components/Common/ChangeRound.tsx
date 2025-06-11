@@ -31,7 +31,7 @@ const ChangeRound: React.FC<{ currentRound: bigint; handleChangedRound: (round: 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
-        <Button variant="link" className="text-secondary no-underline">
+        <Button variant="link" className="text-secondary no-underline pl-2 pr-1">
           切换轮次
         </Button>
       </DrawerTrigger>
