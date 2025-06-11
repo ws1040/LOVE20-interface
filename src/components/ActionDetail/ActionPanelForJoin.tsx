@@ -1,17 +1,23 @@
 'use client';
 import React, { useEffect, useContext } from 'react';
 import { useAccount } from 'wagmi';
+import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 // my hooks
 import {
   useCurrentRound,
   useJoinedAmountByActionIdByAccount,
   useJoinedAmountByActionId,
+  useWithdraw,
 } from '@/src/hooks/contracts/useLOVE20Join';
 import { useVerificationInfosByAccount } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my funcs
+import { checkWalletConnection } from '@/src/lib/web3';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -22,6 +28,7 @@ import { ActionInfo } from '@/src/types/love20types';
 // my components
 import { formatTokenAmount, formatPercentage } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // my utils
 import { LinkIfUrl } from '@/src/lib/stringUtils';
@@ -41,8 +48,9 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
   onStakedAmountChange,
   showJoinButton = true,
 }) => {
-  const { address: account } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const { token } = useContext(TokenContext) || {};
+  const router = useRouter();
 
   // 获取当前轮次, 并设置状态给父组件
   const { currentRound, error: errCurrentRound } = useCurrentRound();
@@ -94,6 +102,35 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
     (account as `0x${string}`) || '',
   );
 
+  // 取回代币
+  const {
+    withdraw,
+    isPending: isPendingWithdraw,
+    isConfirming: isConfirmingWithdraw,
+    isConfirmed: isConfirmedWithdraw,
+    error: errorWithdraw,
+  } = useWithdraw();
+
+  const handleWithdraw = async () => {
+    if (!checkWalletConnection(accountChain)) {
+      return;
+    }
+    // 如果代币为0, toast
+    if (joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= 2n) {
+      toast.error('你还没有参与，无需取回');
+      return;
+    }
+    await withdraw((token?.address as `0x${string}`) || '', actionId);
+  };
+
+  useEffect(() => {
+    if (isConfirmedWithdraw) {
+      toast.success('取回成功');
+      // 跳转到个人首页
+      router.push('/my');
+    }
+  }, [isConfirmedWithdraw, router]);
+
   useEffect(() => {
     if (isPendingJoinedAmountByAccount) {
       return;
@@ -116,7 +153,10 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
     if (errCurrentRound) {
       handleContractError(errCurrentRound, 'join');
     }
-  }, [errorJoinedAmountByAccount, errorJoinedAmount, errorVerificationInfo, errCurrentRound]);
+    if (errorWithdraw) {
+      handleContractError(errorWithdraw, 'join');
+    }
+  }, [errorJoinedAmountByAccount, errorJoinedAmount, errorVerificationInfo, errCurrentRound, errorWithdraw]);
 
   if (isPendingJoinedAmountByAccount || isPendingJoinedAmount) {
     return '';
@@ -153,27 +193,58 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
             </Button>
           ) : (
             <>
-              <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
-                <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
-              </Button>
+              <div className="flex justify-center space-x-4 mt-2 w-full">
+                {joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= 2n ? (
+                  <Button variant="outline" className="w-1/3 text-secondary border-secondary" disabled>
+                    取回
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    className="w-1/3 text-secondary border-secondary"
+                    onClick={handleWithdraw}
+                    disabled={isPendingWithdraw || isConfirmingWithdraw || isConfirmedWithdraw}
+                  >
+                    {isPendingWithdraw
+                      ? '提交中'
+                      : isConfirmingWithdraw
+                      ? '确认中'
+                      : isConfirmedWithdraw
+                      ? '已取回'
+                      : '取回代币'}
+                  </Button>
+                )}
+
+                <Button variant="outline" className="w-1/3 text-secondary border-secondary" asChild>
+                  <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
+                </Button>
+              </div>
               <div className="flex flex-col items-center mt-2">
                 <div className="text-sm text-greyscale-600">
                   {isPendingVerificationInfo && '加载中...'}
-                  {verificationKeys && verificationKeys.length > 0 && (
-                    <div>
-                      {verificationKeys.map((key, index) => (
-                        <div key={index}>
-                          {key}: <LinkIfUrl text={verificationInfos[index]} />
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {joinedAmountByActionIdByAccount != undefined &&
+                    joinedAmountByActionIdByAccount > 2n &&
+                    verificationKeys &&
+                    verificationKeys.length > 0 && (
+                      <div>
+                        {verificationKeys.map((key, index) => (
+                          <div key={index}>
+                            {key}: <LinkIfUrl text={verificationInfos[index]} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                 </div>
               </div>
             </>
           )}
         </>
       )}
+
+      <LoadingOverlay
+        isLoading={isPendingWithdraw || isConfirmingWithdraw}
+        text={isPendingWithdraw ? '提交交易...' : '确认交易...'}
+      />
     </div>
   );
 };
