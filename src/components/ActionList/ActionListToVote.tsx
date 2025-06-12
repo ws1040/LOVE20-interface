@@ -10,8 +10,11 @@ import React, { useContext, useEffect, useState } from 'react';
 // my hooks
 import { ActionInfo, ActionSubmit } from '@/src/types/love20types';
 import { useActionSubmits, useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
-import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useVotesNums } from '@/src/hooks/contracts/useLOVE20Vote';
+
+// my utils
+import { useHandleContractError } from '@/src/lib/errorUtils';
+import { formatTokenAmount } from '@/src/lib/format';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -32,6 +35,7 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
   // 投票数
   const {
     votes,
+    actionIds: votesActionIds,
     isPending: isPendingVotesNums,
     error: errorVotesNums,
   } = useVotesNums((token?.address as `0x${string}`) || '', currentRound);
@@ -51,6 +55,13 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
     isPending: isPendingActionInfosByIds,
     error: errorActionInfosByIds,
   } = useActionInfosByIds((token?.address as `0x${string}`) || '', uniqueActionIds);
+
+  // 创建一个根据actionId获取投票数的函数
+  const getVotesByActionId = (actionId: bigint): bigint => {
+    if (!votesActionIds || !votes) return 0n;
+    const index = votesActionIds.findIndex((id) => id === actionId);
+    return index !== -1 ? votes[index] : 0n;
+  };
 
   // 选择复选框
   const [selectedActions, setSelectedActions] = useState<Set<bigint>>(new Set());
@@ -149,7 +160,8 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
                     className="w-full"
                   >
                     <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
-                      <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
+                      <span className="text-greyscale-400 text-sm mr-1">{`No.`}</span>
+                      <span className="text-secondary text-xl font-bold mr-2">{String(action.head.id)}</span>
                       <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
                     </CardHeader>
                     <CardContent className="px-3 pt-1 pb-2">
@@ -173,10 +185,14 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
                         <span>
                           <span className="text-greyscale-400 mr-1">票数</span>
                           <span className="text-secondary">
-                            {Number(votes?.[index] || 0n) === 0
+                            {formatTokenAmount(getVotesByActionId(BigInt(action.head.id)), 0)} (
+                            {Number(getVotesByActionId(BigInt(action.head.id))) === 0
                               ? '0'
-                              : ((Number(votes?.[index] || 0n) * 100) / Number(totalVotes)).toFixed(1)}
-                            %
+                              : (
+                                  (Number(getVotesByActionId(BigInt(action.head.id))) * 100) /
+                                  Number(totalVotes)
+                                ).toFixed(1)}
+                            %)
                           </span>
                         </span>
                       </div>

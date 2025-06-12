@@ -13,6 +13,7 @@ interface AddressWithCopyButtonProps {
   showCopyButton?: boolean;
   showAddress?: boolean;
   colorClassName?: string;
+  colorClassName2?: string;
 }
 
 const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
@@ -21,6 +22,7 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
   showCopyButton = true,
   showAddress = true,
   colorClassName = '',
+  colorClassName2 = '',
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -38,10 +40,16 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
   };
 
   return (
-    <span className="flex items-center space-x-2">
+    <span className="inline-flex items-center space-x-2">
       {word && <span className="text-xs">{word}</span>}
-      {showAddress && (
+      {showAddress && !colorClassName2 && (
         <span className={`text-xs ${colorClassName ?? 'text-greyscale-500'}`}>{abbreviateAddress(address)}</span>
+      )}
+      {showAddress && colorClassName2 && (
+        <span className="text-[0px]">
+          <span className={`text-xs ${colorClassName ?? 'text-greyscale-500'}`}>{`${address.substring(0, 6)}...`}</span>
+          <span className={`text-xs ${colorClassName2}`}>{`${address.substring(address.length - 4)}`}</span>
+        </span>
       )}
       {showCopyButton && (
         <CopyToClipboard text={address} onCopy={handleCopy}>

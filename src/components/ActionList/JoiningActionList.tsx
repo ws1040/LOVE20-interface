@@ -2,18 +2,28 @@
 import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Edit } from 'lucide-react';
 
 import { JoinableActionDetail } from '@/src/types/love20types';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
+
+// my utils
+import { calculateActionAPY, calculateExpectedActionReward } from '@/src/lib/domainUtils';
 import { formatPercentage, formatTokenAmount } from '@/src/lib/format';
-import { TokenContext } from '@/src/contexts/TokenContext';
-import { useJoinableActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
+// my contexts
+import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my hooks
+import { useJoinableActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useRewardAvailable } from '@/src/hooks/contracts/useLOVE20Mint';
+
+// my components
 import RoundLite from '@/src/components/Common/RoundLite';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 
 interface JoiningActionListProps {
   currentRound: bigint;
@@ -23,12 +33,17 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   const { token } = useContext(TokenContext) || {};
   const { address: accountAddress } = useAccount();
 
-  // 使用合并后的钩子，一次性获取所有相关数据
+  // 获取行动参与相关数据
   const { joinableActionDetails, joinedActions, isPending, error } = useJoinableActions(
     (token?.address as `0x${string}`) || '',
     currentRound ? currentRound : 0n,
     accountAddress as `0x${string}`,
   );
+  const {
+    rewardAvailable,
+    isPending: isPendingRewardAvailable,
+    error: errorRewardAvailable,
+  } = useRewardAvailable((token?.address as `0x${string}`) || '');
 
   // 对返回的 joinableActionDetails 根据 action 的 id 进行排序
   joinableActionDetails?.sort((a, b) => Number(a.action.head.id) - Number(b.action.head.id));
@@ -36,13 +51,20 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   // 计算所有 joinableActionDetails 的总票数，用于计算投票占比
   const totalVotes = joinableActionDetails?.reduce((acc, action) => acc + action.votesNum, 0n) || 0n;
 
+  // 计算预计新增铸币
+  const displayRound = token ? currentRound - BigInt(token.initialStakeRound) + 1n : 0n;
+  const expectedReward = calculateExpectedActionReward(rewardAvailable, displayRound);
+
   // 错误处理
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
     if (error) {
       handleContractError(error, 'dataViewer');
     }
-  }, [error]);
+    if (errorRewardAvailable) {
+      handleContractError(errorRewardAvailable, 'mint');
+    }
+  }, [error, errorRewardAvailable]);
 
   return (
     <div className="px-4 py-6">
@@ -65,6 +87,10 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
               (joinedAction) => joinedAction.action.head.id === actionDetail.action.head.id,
             );
 
+            // 计算投票占比
+            const voteRatio =
+              Number(totalVotes) > 0 ? Number(joinableActionDetails[index].votesNum || 0n) / Number(totalVotes) : 0;
+
             // 根据是否已加入，设置不同的链接
             const href = isJoined
               ? `/action/${actionDetail.action.head.id}?type=join&symbol=${token?.symbol}`
@@ -80,18 +106,31 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                   <CardContent className="px-3 pt-1 pb-2">
                     <div className="text-greyscale-500">{actionDetail.action.body.consensus}</div>
                     <div className="flex justify-between mt-1 text-sm">
-                      <span>
-                        <span className="text-greyscale-400 mr-1">投票占比</span>
-                        <span className="text-secondary">
-                          {formatPercentage(
-                            (Number(joinableActionDetails[index].votesNum || 0n) * 100) / Number(totalVotes),
-                          )}
+                      <span className="flex items-center">
+                        <Edit className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />
+                        <span className="text-greyscale-400">
+                          <AddressWithCopyButton
+                            address={joinableActionDetails[index].action.head.author as `0x${string}`}
+                            showCopyButton={false}
+                            colorClassName2="text-secondary"
+                          />
                         </span>
                       </span>
                       <span>
-                        <span className="text-greyscale-400 mr-1">参与代币数</span>
+                        <span className="text-greyscale-400 mr-1">投票</span>
+                        <span className="text-secondary">{formatPercentage(voteRatio * 100)}</span>
+                      </span>
+                      <span>
+                        <span className="text-greyscale-400 mr-1">预估年化(APY)</span>
                         <span className="text-secondary">
-                          {formatTokenAmount(joinableActionDetails[index].joinedAmount || 0n, 0)}
+                          {isPendingRewardAvailable ? (
+                            <LoadingIcon />
+                          ) : (
+                            calculateActionAPY(
+                              BigInt(Math.floor(Number(expectedReward || 0n) * voteRatio)),
+                              joinableActionDetails[index].joinedAmount,
+                            )
+                          )}
                         </span>
                       </span>
                     </div>
