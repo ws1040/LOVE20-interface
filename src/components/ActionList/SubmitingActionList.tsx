@@ -15,6 +15,8 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { ActionInfo } from '@/src/types/love20types';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LeftTitle from '@/src/components/Common/LeftTitle';
+import AddressWithCopyButton from '../Common/AddressWithCopyButton';
+import { UserPen } from 'lucide-react';
 
 interface SubmitingActionListProps {
   currentRound: bigint;
@@ -53,7 +55,7 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <LeftTitle title="所有行动" />
+        <LeftTitle title="未推举的行动" />
         <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
           <Link href={`/action/new?symbol=${token.symbol}`}>发起新行动</Link>
         </Button>
@@ -66,34 +68,43 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
 
           {actionInfos &&
             actionInfos?.length > 0 &&
-            actionInfos?.map((action: ActionInfo, index: number) => {
-              const isSubmitted = actionSubmits?.some((submit) => submit.actionId === action.head.id);
-              return (
-                <Card key={action.head.id} className="shadow-none">
-                  <Link
-                    href={`/action/${action.head.id}?symbol=${token.symbol}&type=submit&submitted=${isSubmitted}`}
-                    key={action.head.id}
-                  >
-                    <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
-                      <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
-                      <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
-                    </CardHeader>
-                    <CardContent className="px-3 pt-1 pb-2">
-                      <div className="text-base text-greyscale-600">{action.body.consensus}</div>
-                      <div className="flex justify-between mt-1 text-sm">
-                        <span className="text-sm">
-                          {isSubmitted ? (
-                            <span className="text-secondary">已推举</span>
-                          ) : (
-                            <span className="text-greyscale-600">未推举</span>
-                          )}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Link>
-                </Card>
-              );
-            })}
+            actionInfos
+              ?.filter((action: ActionInfo) => {
+                const isSubmitted = actionSubmits?.some((submit) => submit.actionId === action.head.id);
+                return !isSubmitted; // 只显示未推举的行动
+              })
+              ?.map((action: ActionInfo, index: number) => {
+                return (
+                  <Card key={action.head.id} className="shadow-none">
+                    <Link
+                      href={`/action/${action.head.id}?symbol=${token.symbol}&type=submit&submitted=false`}
+                      key={action.head.id}
+                    >
+                      <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
+                        <span className="text-greyscale-400 text-sm">{`No.`}</span>
+                        <span className="text-secondary text-xl font-bold mr-2">{String(action.head.id)}</span>
+                        <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
+                      </CardHeader>
+                      <CardContent className="px-3 pt-1 pb-2">
+                        <div className="text-base text-greyscale-600">{action.body.consensus}</div>
+                        <div className="flex justify-between mt-1 text-sm">
+                          <span className="flex items-center">
+                            <UserPen className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />
+                            <span className="text-greyscale-400">
+                              <AddressWithCopyButton
+                                address={action.head.author as `0x${string}`}
+                                showCopyButton={false}
+                                colorClassName2="text-secondary"
+                              />
+                            </span>
+                          </span>
+                          <span className="text-sm text-greyscale-600">未推举</span>
+                        </div>
+                      </CardContent>
+                    </Link>
+                  </Card>
+                );
+              })}
         </div>
       )}
     </div>

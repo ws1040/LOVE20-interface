@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
-import { Edit, Nfc } from 'lucide-react';
+import { UserPen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
@@ -168,7 +168,7 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
                       <div className="text-greyscale-500">{action.body.consensus}</div>
                       <div className="flex justify-between mt-1 text-sm">
                         <span className="flex items-center">
-                          <Edit className="text-greyscale-400 mr-1 h-3 w-3" />
+                          <UserPen className="text-greyscale-400 mr-1 h-3 w-3" />
                           <span className="text-greyscale-400">
                             <AddressWithCopyButton
                               address={action.head.author as `0x${string}`}
@@ -176,23 +176,22 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
                             />
                           </span>
                         </span>
-                        <span className="flex items-center">
-                          <Nfc className="text-greyscale-400 mr-1 h-3 w-3" />
-                          <span className="text-greyscale-400">
-                            <AddressWithCopyButton address={submitter} showCopyButton={false} />
+                        <span>
+                          <span className="text-greyscale-400 mr-1">投票数</span>
+                          <span className="text-secondary">
+                            {formatTokenAmount(getVotesByActionId(BigInt(action.head.id)), 0)}
                           </span>
                         </span>
                         <span>
-                          <span className="text-greyscale-400 mr-1">票数</span>
+                          <span className="text-greyscale-400 mr-1">投票占比</span>
                           <span className="text-secondary">
-                            {formatTokenAmount(getVotesByActionId(BigInt(action.head.id)), 0)} (
                             {Number(getVotesByActionId(BigInt(action.head.id))) === 0
                               ? '0'
                               : (
                                   (Number(getVotesByActionId(BigInt(action.head.id))) * 100) /
                                   Number(totalVotes)
                                 ).toFixed(1)}
-                            %)
+                            %
                           </span>
                         </span>
                       </div>

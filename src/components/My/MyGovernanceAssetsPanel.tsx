@@ -297,7 +297,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         </div>
       </div>
       <div className="stats w-full grid grid-cols-2 divide-x-0">
-        <div className="stat place-items-center pt-0 pb-3 pl-1">
+        <div className="stat place-items-center pt-0 pb-0 pl-1">
           <div className="stat-title text-sm flex items-center">
             流动性质押凭证SL代币
             <AddressWithCopyButton address={token.slTokenAddress as `0x${string}`} showAddress={false} />
@@ -316,7 +316,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             </Button>
           </div>
         </div>
-        <div className="stat place-items-center pt-0 pb-3  pl-3">
+        <div className="stat place-items-center pt-0 pb-0 pl-3">
           <div className="stat-title text-sm flex items-center">
             代币质押凭证ST代币
             <AddressWithCopyButton address={token.stTokenAddress as `0x${string}`} showAddress={false} />
@@ -336,11 +336,11 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
           </div>
         </div>
       </div>
-      <div className="text-sm mb-4 text-greyscale-500 text-center">
-        {validGovVotes <= 0n && govVotes && govVotes > 0n && (
+      {validGovVotes <= 0n && govVotes && govVotes > 0n && (
+        <div className="text-sm mb-4 text-greyscale-500 text-center">
           <div className="text-red-500">当前 sl 或 st 代币余额不足，导致有效治理票为0，请及时补足</div>
-        )}
-      </div>
+        </div>
+      )}
 
       {enableWithdraw && (
         <>
@@ -423,7 +423,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
       {!enableWithdraw && (
         <div className="flex justify-center space-x-4">
           <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
-            <Link href={`/my/govrewards?symbol=${token.symbol}`}>查看奖励</Link>
+            <Link href={`/my/govrewards?symbol=${token.symbol}`}>领取治理奖励</Link>
           </Button>
           {requestedUnstakeRound && (
             <Button
