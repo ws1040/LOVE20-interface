@@ -74,19 +74,30 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
                 href={`/verify/${verifyingAction.action.head.id}?symbol=${token?.symbol}`}
               >
                 <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
-                  <span className="text-greyscale-400 text-sm mr-1">{`No.${verifyingAction.action.head.id}`}</span>
+                  <span className="text-greyscale-400 text-sm mr-1">{`No.`}</span>
+                  <span className="text-secondary text-xl font-bold mr-2">
+                    {String(verifyingAction.action.head.id)}
+                  </span>
                   <span className="font-bold text-greyscale-800">{`${verifyingAction.action.body.action}`}</span>
                 </CardHeader>
                 <CardContent className="px-3 pt-1 pb-2">
                   <div className="text-greyscale-500">{verifyingAction.action.body.consensus}</div>
-                  <div className="text-xs text-greyscale-400 mt-2 flex justify-between">
-                    <span>总票数: {formatTokenAmount(verifyingAction.votesNum, 2)}</span>
-                    <span>已验证票数: {formatTokenAmount(verifyingAction.verificationScore, 2)}</span>
+                  <div className="text-xs mt-2 flex justify-between">
                     <span>
-                      进度:{' '}
-                      {verifyingAction.votesNum > 0n
-                        ? `${Number((verifyingAction.verificationScore * 100n) / verifyingAction.votesNum)}%`
-                        : '0%'}
+                      <span className="text-greyscale-400 mr-1">投票数</span>
+                      <span className="text-secondary"> {formatTokenAmount(verifyingAction.votesNum, 2)}</span>
+                    </span>
+                    <span>
+                      <span className="text-greyscale-400 mr-1">已验证票数</span>
+                      <span className="text-secondary"> {formatTokenAmount(verifyingAction.verificationScore, 2)}</span>
+                    </span>
+                    <span>
+                      <span className="text-greyscale-400 mr-1">进度</span>
+                      <span className="text-secondary">
+                        {verifyingAction.votesNum > 0n
+                          ? `${Number((verifyingAction.verificationScore * 100n) / verifyingAction.votesNum)}%`
+                          : '0%'}
+                      </span>
                     </span>
                   </div>
                 </CardContent>

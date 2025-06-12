@@ -84,7 +84,6 @@ const GovPage = () => {
           </>
         ) : (
           <>
-            <TokenTab />
             <GovernanceDataPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
 
             {isPendingValidGovVotes ? (

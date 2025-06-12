@@ -2,14 +2,14 @@
 import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
-import { ChevronRight, Edit } from 'lucide-react';
+import { ChevronRight, UserPen } from 'lucide-react';
 
 import { JoinableActionDetail } from '@/src/types/love20types';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 
 // my utils
 import { calculateActionAPY, calculateExpectedActionReward } from '@/src/lib/domainUtils';
-import { formatPercentage, formatTokenAmount } from '@/src/lib/format';
+import { formatPercentage } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -100,14 +100,15 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
               <Card key={actionDetail.action.head.id} className="shadow-none">
                 <Link href={href} className="relative block">
                   <CardHeader className="px-3 pt-2 pb-1 flex-row items-baseline">
-                    <span className="text-greyscale-400 text-sm mr-1">{`No.${actionDetail.action.head.id}`}</span>
+                    <span className="text-greyscale-400 text-sm">{`No.`}</span>
+                    <span className="text-secondary text-xl font-bold mr-2">{String(actionDetail.action.head.id)}</span>
                     <span className="font-bold text-greyscale-800">{`${actionDetail.action.body.action}`}</span>
                   </CardHeader>
                   <CardContent className="px-3 pt-1 pb-2">
                     <div className="text-greyscale-500">{actionDetail.action.body.consensus}</div>
                     <div className="flex justify-between mt-1 text-sm">
                       <span className="flex items-center">
-                        <Edit className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />
+                        <UserPen className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />
                         <span className="text-greyscale-400">
                           <AddressWithCopyButton
                             address={joinableActionDetails[index].action.head.author as `0x${string}`}
@@ -115,10 +116,6 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                             colorClassName2="text-secondary"
                           />
                         </span>
-                      </span>
-                      <span>
-                        <span className="text-greyscale-400 mr-1">投票</span>
-                        <span className="text-secondary">{formatPercentage(voteRatio * 100)}</span>
                       </span>
                       <span>
                         <span className="text-greyscale-400 mr-1">预估年化(APY)</span>
@@ -132,6 +129,10 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                             )
                           )}
                         </span>
+                      </span>
+                      <span>
+                        <span className="text-greyscale-400 mr-1">投票</span>
+                        <span className="text-secondary">{formatPercentage(voteRatio * 100)}</span>
                       </span>
                     </div>
                   </CardContent>
