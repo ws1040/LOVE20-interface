@@ -14,7 +14,7 @@ import { formatTokenAmount } from '@/src/lib/format';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 // my utils
-import { calculateActionAPY } from '@/src/lib/domainUtils';
+import { calculateActionAPY, calculateExpectedActionReward } from '@/src/lib/domainUtils';
 
 const JOIN_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN as `0x${string}`;
 
@@ -50,31 +50,14 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
 
   // 计算预计新增铸币
   const displayRound = token ? currentRound - BigInt(token.initialStakeRound) + 1n : 0n;
-  let expectedReward = BigInt(0);
-  if (rewardAvailable) {
-    const rewardLeftRatio =
-      100n -
-      (BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || 5n) +
-        BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || 5n)) /
-        10n;
-    if (displayRound <= 1n) {
-      // 第1轮：rewardAvailable * 0.01 / 2 (or 5 / 1000)
-      expectedReward =
-        (rewardAvailable * BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '0')) / 1000n;
-    } else {
-      // >=第2轮：rewardAvailable * 0.99 * 0.01 / 2 (or 99 * 5 / 100000)
-      expectedReward =
-        (rewardAvailable * rewardLeftRatio * BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '0')) /
-        100000n;
-    }
-  }
+  const expectedReward = calculateExpectedActionReward(rewardAvailable, displayRound);
 
   return (
     <div className="px-4">
       <div className="w-full border rounded-lg p-0">
         <div className="stats w-full grid grid-cols-2 divide-x-0">
           <div className="stat place-items-center pb-2">
-            <div className="stat-title text-sm pb-1">参与行动代币</div>
+            <div className="stat-title text-sm pb-1">参与行动代币总数</div>
             <div className="stat-value text-xl text-secondary">
               {isPendingJoinedAmount ? <LoadingIcon /> : formatTokenAmount(joinedAmount || BigInt(0), 0)}
             </div>

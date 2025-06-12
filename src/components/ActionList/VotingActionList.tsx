@@ -38,8 +38,6 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
     isPending: isPendingVotesNums,
     error: errorVotesNums,
   } = useVotesNums((token?.address as `0x${string}`) || '', currentRound);
-  console.log('votes', votes);
-  console.log('votesActionIds', votesActionIds);
 
   // 推举信息
   const {
@@ -135,18 +133,23 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
                       <div className="text-greyscale-500">{action.body.consensus}</div>
                       <div className="flex justify-between gap-0 mt-1 text-sm">
                         <span className="flex items-center">
-                          <Edit className="text-greyscale-400 mr-1 h-3 w-3" />
+                          <Edit className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />
                           <span className="text-greyscale-400">
                             <AddressWithCopyButton
                               address={action.head.author as `0x${string}`}
                               showCopyButton={false}
+                              colorClassName2="text-secondary"
                             />
                           </span>
                         </span>
                         <span className="flex items-center">
-                          <Nfc className="text-greyscale-400 mr-1 h-3 w-3" />
+                          <Nfc className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />
                           <span className="text-greyscale-400">
-                            <AddressWithCopyButton address={submitter} showCopyButton={false} />
+                            <AddressWithCopyButton
+                              address={submitter}
+                              colorClassName2="text-secondary"
+                              showCopyButton={false}
+                            />
                           </span>
                         </span>
                         <span>
