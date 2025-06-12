@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/router';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Edit, Nfc } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
@@ -56,6 +56,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
     isPending: isPendingActionInfosByIds,
     error: errorActionInfosByIds,
   } = useActionInfosByIds((token?.address as `0x${string}`) || '', uniqueActionIds);
+  console.log('actionInfos', actionInfos);
 
   // 创建一个根据actionId获取投票数的函数
   const getVotesByActionId = (actionId: bigint): bigint => {
@@ -126,34 +127,39 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
                     className="w-full"
                   >
                     <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
-                      <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
+                      <span className="text-greyscale-400 text-sm">No.</span>
+                      <span className="text-secondary text-xl font-bold mr-2">{String(action.head.id)}</span>
                       <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
                     </CardHeader>
                     <CardContent className="px-3 pt-1 pb-2">
                       <div className="text-greyscale-500">{action.body.consensus}</div>
-                      <div className="flex justify-between mt-1 text-sm">
+                      <div className="flex justify-between gap-0 mt-1 text-sm">
                         <span className="flex items-center">
-                          <span className="text-greyscale-400 mr-1">推举人</span>
-                          <span className="text-secondary">
+                          <Edit className="text-greyscale-400 mr-1 h-3 w-3" />
+                          <span className="text-greyscale-400">
+                            <AddressWithCopyButton
+                              address={action.head.author as `0x${string}`}
+                              showCopyButton={false}
+                            />
+                          </span>
+                        </span>
+                        <span className="flex items-center">
+                          <Nfc className="text-greyscale-400 mr-1 h-3 w-3" />
+                          <span className="text-greyscale-400">
                             <AddressWithCopyButton address={submitter} showCopyButton={false} />
                           </span>
                         </span>
                         <span>
-                          <span className="text-greyscale-400 mr-1">投票数</span>
+                          <span className="text-greyscale-400 mr-1">票数</span>
                           <span className="text-secondary">
-                            {formatTokenAmount(getVotesByActionId(BigInt(action.head.id)), 0)}
-                          </span>
-                        </span>
-                        <span>
-                          <span className="text-greyscale-400 mr-1">占比</span>
-                          <span className="text-secondary">
+                            {formatTokenAmount(getVotesByActionId(BigInt(action.head.id)), 0)} (
                             {Number(getVotesByActionId(BigInt(action.head.id))) === 0
                               ? '0'
                               : (
                                   (Number(getVotesByActionId(BigInt(action.head.id))) * 100) /
                                   Number(totalVotes)
                                 ).toFixed(1)}
-                            %
+                            %)
                           </span>
                         </span>
                       </div>

@@ -36,7 +36,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
       <div className="flex-col items-center mb-2 mt-4 px-4">
         <div className="flex items-center">
           <LeftTitle title="公平发射" />
-          {launchInfo.hasEnded && <span className={`stat-title text-base text-red-500`}>（公平发射已结束）</span>}
+          {launchInfo.hasEnded && <span className={`stat-title text-base text-red-500`}>（已结束）</span>}
         </div>
 
         <div className="stats w-full">

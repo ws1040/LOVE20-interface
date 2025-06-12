@@ -47,7 +47,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   return (
     <div className="px-4 py-6">
       <LeftTitle title="本轮可参与的行动：" />
-      <RoundLite currentRound={currentRound} roundType="act" showCountdown={false} />
+      <RoundLite currentRound={currentRound} roundType="act" />
       {!accountAddress && <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>}
       {accountAddress && isPending && (
         <div className="p-4 flex justify-center items-center">
