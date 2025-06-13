@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import NavigationUtils from '@/src/lib/navigationUtils';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -12,6 +13,13 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (hasRedirected) {
+      return;
+    }
+
+    // 尝试处理钱包环境中的重定向问题
+    const handled = NavigationUtils.handleIndexRedirect(router);
+    if (handled) {
+      setHasRedirected(true);
       return;
     }
 

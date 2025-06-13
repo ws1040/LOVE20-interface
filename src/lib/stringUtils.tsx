@@ -1,4 +1,5 @@
 import React from 'react';
+import NavigationUtils from './navigationUtils';
 
 /**
  * 将文本中的URL转换为可点击的链接
@@ -32,8 +33,10 @@ export const renderTextWithLinks = (text: string): React.ReactNode => {
           <a
             key={i}
             href={url}
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={(e) => {
+              e.preventDefault();
+              NavigationUtils.handleExternalLink(url);
+            }}
             className="text-blue-500 underline hover:text-blue-700"
           >
             {url}
