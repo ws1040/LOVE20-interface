@@ -1,10 +1,16 @@
 // src/components/Footer.tsx
 'use client';
 import React from 'react';
+import NavigationUtils from '@/src/lib/navigationUtils';
 
 interface FooterProps {}
 
 const Footer: React.FC<FooterProps> = () => {
+  const handleExternalLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    NavigationUtils.handleExternalLink('https://love20tkm.github.io/docs/');
+  };
+
   return (
     <footer className="mt-4 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300">
       <div className="container mx-auto px-4 py-4">
@@ -14,8 +20,7 @@ const Footer: React.FC<FooterProps> = () => {
           </p>
           <a
             href="https://love20tkm.github.io/docs/"
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={handleExternalLink}
             className="flex items-center gap-2 text-primary hover:underline font-medium"
           >
             <svg

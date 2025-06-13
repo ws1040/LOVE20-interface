@@ -52,7 +52,7 @@ const VerifyPage = () => {
       <main className="flex-grow">
         {remainingVotes > 0 && (
           <div className="px-4 pt-4">
-            <LeftTitle title="请给行动的参与者打分：" />
+            <LeftTitle title="请分配您的验证票：" />
             <RoundLite currentRound={currentRound} roundType="verify" showCountdown={false} />
           </div>
         )}
