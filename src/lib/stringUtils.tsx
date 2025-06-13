@@ -1,5 +1,5 @@
 import React from 'react';
-import NavigationUtils from './navigationUtils';
+import { NavigationUtils } from './navigationUtils';
 
 /**
  * 将文本中的URL转换为可点击的链接

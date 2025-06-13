@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import NavigationUtils from '@/src/lib/navigationUtils';
+import { NavigationUtils } from '@/src/lib/navigationUtils';
 
 const Home: NextPage = () => {
   const router = useRouter();

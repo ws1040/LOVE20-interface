@@ -1,7 +1,7 @@
 // src/components/Footer.tsx
 'use client';
 import React from 'react';
-import NavigationUtils from '@/src/lib/navigationUtils';
+import { NavigationUtils } from '@/src/lib/navigationUtils';
 
 interface FooterProps {}
 
