@@ -15,8 +15,8 @@ const Home: NextPage = () => {
       return;
     }
 
-    const symbol = router.query.symbol as string;
     let target = '';
+    const symbol = router.query.symbol as string;
     if (symbol) {
       setHasRedirected(true);
       target = `/acting/?symbol=${symbol}`;
