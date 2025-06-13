@@ -416,7 +416,6 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
           </form>
         </Form>
       </div>
-      <div className="border-t border-gray-200 mx-4 mt-2 mb-6"></div>
 
       <LoadingOverlay
         isLoading={

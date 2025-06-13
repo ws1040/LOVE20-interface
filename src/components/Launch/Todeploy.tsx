@@ -65,7 +65,13 @@ const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
 
   return (
     <div className="p-4">
-      <LeftTitle title="部署子币" />
+      <div className="flex justify-between items-center mb-2">
+        <LeftTitle title="部署子币" />
+        <Button variant="link" className="text-secondary border-secondary" asChild>
+          <Link href={`/tokens/children/?symbol=${token?.symbol}`}>子币列表</Link>
+        </Button>
+      </div>
+
       <div className="w-full text-center">
         {isWaitingPeriod ? (
           <div className="px-4 pt-4 text-center">

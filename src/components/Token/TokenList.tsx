@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 
 // my hooks
 import { useTokenDetails } from '@/src/hooks/contracts/useLOVE20DataViewer';
-import { useTokensByPage } from '@/src/hooks/contracts/useLOVE20Launch';
+import { useTokensByPage, useChildTokensByPage } from '@/src/hooks/contracts/useLOVE20Launch';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -22,7 +22,11 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const PAGE_SIZE = 10;
 
-export default function TokenList() {
+interface TokenListProps {
+  parentTokenAddress?: `0x${string}`;
+}
+
+export default function TokenList({ parentTokenAddress }: TokenListProps) {
   const router = useRouter();
   const { token: currentToken, setToken } = useContext(TokenContext) || {};
 
@@ -35,10 +39,16 @@ export default function TokenList() {
     setAllTokens([]);
     setStart(0n);
     setEnd(BigInt(PAGE_SIZE));
-  }, []);
+  }, [parentTokenAddress]); // 当 parentTokenAddress 改变时也重置
 
   // 获取token列表
-  const { tokens: tokenAddresses, isPending: isLoadingTokens, error: tokensError } = useTokensByPage(start, end, true);
+  const tokensResult = parentTokenAddress
+    ? useChildTokensByPage(parentTokenAddress, start, end, true)
+    : useTokensByPage(start, end, true);
+
+  const tokenAddresses = 'childTokens' in tokensResult ? tokensResult.childTokens : tokensResult.tokens;
+  const isLoadingTokens = tokensResult.isPending;
+  const tokensError = tokensResult.error;
 
   // 获取tokens详情
   const {
@@ -122,29 +132,33 @@ export default function TokenList() {
 
   return (
     <div className="space-y-4 m-4">
-      {allTokens.map((token, index) => (
-        <Card key={index} onClick={() => handleTokenClick(token)}>
-          <CardContent className="p-4 flex justify-between items-center">
-            <div>
-              <p className="flex items-center gap-2 ">
-                <span className="font-semibold mr-4">{token.symbol}</span>
-                <span className="text-greyscale-500 text-sm">父币 </span>
-                <span className="text-sm">{token.parentTokenSymbol}</span>
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {token.hasEnded ? (
-                  <span className="text-greyscale-500">发射已完成</span>
-                ) : (
-                  <span className="text-secondary">发射中</span>
-                )}
-              </p>
-            </div>
-            <Button variant="ghost" size="icon">
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </CardContent>
-        </Card>
-      ))}
+      {allTokens.length === 0 && !isLoadingTokens && !isLoadingDetails ? (
+        <div className="text-center text-muted-foreground py-8">{parentTokenAddress ? '暂无子币' : '代币列表为空'}</div>
+      ) : (
+        allTokens.map((token, index) => (
+          <Card key={index} onClick={() => handleTokenClick(token)}>
+            <CardContent className="p-4 flex justify-between items-center">
+              <div>
+                <p className="flex items-center gap-2 ">
+                  <span className="font-semibold mr-4">{token.symbol}</span>
+                  <span className="text-greyscale-500 text-sm">父币 </span>
+                  <span className="text-sm">{token.parentTokenSymbol}</span>
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {token.hasEnded ? (
+                    <span className="text-greyscale-500">发射已完成</span>
+                  ) : (
+                    <span className="text-secondary">发射中</span>
+                  )}
+                </p>
+              </div>
+              <Button variant="ghost" size="icon">
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </CardContent>
+          </Card>
+        ))
+      )}
       {(isLoadingTokens || isLoadingDetails) && <LoadingIcon />}
     </div>
   );
