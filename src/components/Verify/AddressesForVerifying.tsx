@@ -23,6 +23,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // my utils
 import { LinkIfUrl } from '@/src/lib/stringUtils';
+import { formatPercentage } from '@/src/lib/format';
 
 interface VerifyAddressesProps {
   currentRound: bigint;
@@ -31,7 +32,12 @@ interface VerifyAddressesProps {
   remainingVotes: bigint;
 }
 
-const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionId, actionInfo, remainingVotes }) => {
+const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
+  currentRound,
+  actionId,
+  actionInfo,
+  remainingVotes,
+}) => {
   const { token } = useContext(TokenContext) || {};
   const { chain: accountChain } = useAccount();
   const router = useRouter();
@@ -205,78 +211,101 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
   return (
     <>
       <div className="w-full max-w-2xl">
-        <ul className="space-y-4">
-          <li className="flex justify-between items-center p-4 bg-greyscale-50">
-            <div className="text-left font-semibold">被抽中的行动参与者</div>
-            {remainingVotes > 0 && <div className="font-semibold">打分 (分数占比)</div>}
-          </li>
-          {isPendingVerificationInfosByAction && <LoadingIcon />}
-          {verificationInfos && verificationInfos.length > 0 ? (
-            verificationInfos.map((info, index) => (
-              <li key={info.account} className="flex justify-between items-center px-2 py-1 border-b border-gray-100">
-                <div className="text-left">
-                  <div className="font-mono">
-                    <AddressWithCopyButton address={info.account} />
-                  </div>
-                  {actionInfo && (
-                    <div className="text-sm text-greyscale-800">
-                      {actionInfo.body.verificationKeys.map((key, i) => (
-                        <div key={i}>
-                          {key}: <LinkIfUrl text={info.infos[i]} />
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-gray-100">
+              <th className="text-left">被抽中的行动参与者</th>
+              {remainingVotes > 0 && (
+                <>
+                  <th className="text-left">打分</th>
+                  <th className="text-left">分配</th>
+                </>
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {isPendingVerificationInfosByAction && <LoadingIcon />}
+            {verificationInfos && verificationInfos.length > 0 ? (
+              verificationInfos.map((info, index) => (
+                <tr key={info.account} className="border-b border-gray-100">
+                  <td className="py-2">
+                    <div className="text-left">
+                      <div className="font-mono">
+                        <AddressWithCopyButton address={info.account} />
+                      </div>
+                      {actionInfo && (
+                        <div className="text-sm text-greyscale-800">
+                          {actionInfo.body.verificationKeys.map((key, i) => (
+                            <div key={i}>
+                              {key}: <LinkIfUrl text={info.infos[i]} />
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
+                  </td>
+                  {remainingVotes > 0 && (
+                    <>
+                      <td className="py-2">
+                        <div className="flex items-center justify-end">
+                          <input
+                            type="number"
+                            min="0"
+                            value={scores[info.account] || ''}
+                            placeholder="0"
+                            onChange={(e) => handleScoreChange(info.account, e.target.value)}
+                            className="w-8 px-1 py-1 border rounded"
+                            disabled={isWriting || isConfirmed}
+                          />
+                          <span className="text-greyscale-500 text-sm">分</span>
+                        </div>
+                      </td>
+                      <td className="py-2">
+                        <div className="text-right text-greyscale-500 text-sm">
+                          {formatPercentage(addressPercentages[info.account] || 0)}
+                        </div>
+                      </td>
+                    </>
                   )}
-                </div>
-                {remainingVotes > 0 && (
-                  <div className="flex items-center gap-1">
-                    <div className="flex items-center">
-                      <input
-                        type="number"
-                        min="0"
-                        value={scores[info.account] || ''}
-                        placeholder="0"
-                        onChange={(e) => handleScoreChange(info.account, e.target.value)}
-                        className="w-10 px-1 py-1 border rounded"
-                        disabled={isWriting || isConfirmed}
-                      />
-                      <span className="ml-1 text-greyscale-500">分:</span>
-                    </div>
-                    <div className="w-10 text-right text-greyscale-500">
-                      {(addressPercentages[info.account] || 0).toFixed(2)}%
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={remainingVotes > 0 ? 3 : 1} className="text-center py-4">
+                  暂无数据
+                </td>
+              </tr>
+            )}
+            {verificationInfos && remainingVotes > 0 && (
+              <tr>
+                <td className="py-2">
+                  <div className="text-left">
+                    <div className="text-sm text-greyscale-800">
+                      <span>弃权票数：</span>
                     </div>
                   </div>
-                )}
-              </li>
-            ))
-          ) : (
-            <div className="text-center text-greyscale-500">没有人参与活动</div>
-          )}
-          {verificationInfos && remainingVotes > 0 && (
-            <li className="flex justify-between items-center p-4 border-b border-gray-100">
-              <div className="text-left">
-                <div className="text-sm text-greyscale-800">
-                  <span>弃权票数：</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="flex items-center">
-                  <input
-                    type="number"
-                    min="0"
-                    value={abstainScore}
-                    placeholder="0"
-                    onChange={(e) => handleAbstainScoreChange(e.target.value)}
-                    className="w-10 px-1 py-1 border rounded"
-                    disabled={isWriting || isConfirmed}
-                  />
-                  <span className="ml-1 text-greyscale-500">分:</span>
-                </div>
-                <div className="w-10 text-right text-greyscale-500">{abstainPercentage.toFixed(2)}%</div>
-              </div>
-            </li>
-          )}
-        </ul>
+                </td>
+                <td className="py-2">
+                  <div className="flex items-center justify-end">
+                    <input
+                      type="number"
+                      min="0"
+                      value={abstainScore}
+                      placeholder="0"
+                      onChange={(e) => handleAbstainScoreChange(e.target.value)}
+                      className="w-8 px-1 py-1 border rounded"
+                      disabled={isWriting || isConfirmed}
+                    />
+                    <span className="text-greyscale-500 text-sm">分</span>
+                  </div>
+                </td>
+                <td className="py-2">
+                  <div className="text-right text-greyscale-500 text-sm">{formatPercentage(abstainPercentage)}</div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
 
       {remainingVotes > 0 && (
@@ -298,4 +327,4 @@ const VerifyAddresses: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
   );
 };
 
-export default VerifyAddresses;
+export default AddressesForVerifying;

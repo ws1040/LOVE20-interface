@@ -79,13 +79,13 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
           <div className="stat place-items-center pb-2 pl-1">
             <div className="stat-title text-sm pb-1">总治理票数</div>
             <div className="stat-value text-secondary text-xl">
-              {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.govVotes || BigInt(0), 2)}
+              {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.govVotes || BigInt(0))}
             </div>
           </div>
           <div className="stat place-items-center pb-2 pl-1">
             <div className="stat-title text-sm pb-1">预计新增铸币</div>
             <div className="stat-value text-secondary text-xl">
-              {isPending ? <LoadingIcon /> : formatTokenAmount(expectedReward, 2)}
+              {isPending ? <LoadingIcon /> : formatTokenAmount(expectedReward)}
             </div>
           </div>
         </div>
@@ -104,7 +104,7 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
                   href={`/gov/liquid?symbol=${token?.symbol}`}
                   className="flex items-center hover:text-secondary-focus"
                 >
-                  <span className="cursor-pointer">{formatTokenAmount(govData?.slAmount || BigInt(0), 2)}</span>
+                  <span className="cursor-pointer">{formatTokenAmount(govData?.slAmount || BigInt(0))}</span>
                   <Info size={16} className="ml-1 text-secondary cursor-pointer" />
                 </Link>
               )}
@@ -118,7 +118,7 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
           <div className="stat place-items-center pb-0 pt-0 pl-1">
             <div className="stat-title text-sm">代币质押凭证ST代币</div>
             <div className="stat-value text-lg text-gray-600">
-              {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.stAmount || BigInt(0), 2)}
+              {isPending ? <LoadingIcon /> : formatTokenAmount(govData?.stAmount || BigInt(0))}
             </div>
             <div className="stat-desc text-xs">
               <Button variant="link" className="text-secondary font-normal border-secondary pt-0" asChild>

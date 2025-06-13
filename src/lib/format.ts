@@ -26,12 +26,19 @@ export const formatTokenAmount = (balance: bigint, maximumFractionDigits_ = 4): 
     return '0';
   }
 
+  // 如果指定了小数位数，直接使用指定的位数
+  if (maximumFractionDigits_ !== 4) {
+    return new Intl.NumberFormat('en-US', {
+      maximumFractionDigits: maximumFractionDigits_,
+    }).format(numberFormatted);
+  }
+
   // 根据数值大小使用不同的格式化规则
   if (numberFormatted >= 1000) {
     return new Intl.NumberFormat('en-US', {
       maximumFractionDigits: 0,
     }).format(numberFormatted);
-  } else if (numberFormatted >= 100) {
+  } else if (numberFormatted >= 10) {
     return new Intl.NumberFormat('en-US', {
       maximumFractionDigits: 2,
     }).format(numberFormatted);
@@ -167,6 +174,11 @@ export const formatIntegerStringWithCommas = (
   }
 };
 
+// 去除小数末尾的0
+const removeTrailingZeros = (num: number, digits: number): string => {
+  return num.toFixed(digits).replace(/\.?0+$/, '');
+};
+
 // 格式化百分比显示
 export const formatPercentage = (value: number | string): string => {
   const num = typeof value === 'string' ? parseFloat(value) : value;
@@ -174,9 +186,9 @@ export const formatPercentage = (value: number | string): string => {
 
   if (absNum === 0) return '0%';
   if (absNum >= 100) return num.toLocaleString(undefined, { maximumFractionDigits: 0 }) + '%';
-  if (absNum >= 10) return num.toFixed(1) + '%';
-  if (absNum >= 1) return num.toFixed(2) + '%';
-  if (absNum >= 0.1) return num.toFixed(3) + '%';
-  if (absNum >= 0.01) return num.toFixed(4) + '%';
+  if (absNum >= 10) return removeTrailingZeros(num, 1) + '%';
+  if (absNum >= 1) return removeTrailingZeros(num, 2) + '%';
+  if (absNum >= 0.1) return removeTrailingZeros(num, 3) + '%';
+  if (absNum >= 0.01) return removeTrailingZeros(num, 4) + '%';
   return num.toExponential(4) + '%';
 };

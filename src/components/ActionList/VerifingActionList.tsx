@@ -85,11 +85,11 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
                   <div className="text-xs mt-2 flex justify-between">
                     <span>
                       <span className="text-greyscale-400 mr-1">投票数</span>
-                      <span className="text-secondary"> {formatTokenAmount(verifyingAction.votesNum, 2)}</span>
+                      <span className="text-secondary"> {formatTokenAmount(verifyingAction.votesNum)}</span>
                     </span>
                     <span>
                       <span className="text-greyscale-400 mr-1">已验证票数</span>
-                      <span className="text-secondary"> {formatTokenAmount(verifyingAction.verificationScore, 2)}</span>
+                      <span className="text-secondary"> {formatTokenAmount(verifyingAction.verificationScore)}</span>
                     </span>
                     <span>
                       <span className="text-greyscale-400 mr-1">进度</span>

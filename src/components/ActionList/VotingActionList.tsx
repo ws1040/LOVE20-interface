@@ -21,7 +21,7 @@ import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 // my lib
-import { formatTokenAmount } from '@/src/lib/format';
+import { formatPercentage, formatTokenAmount } from '@/src/lib/format';
 
 interface VotingActionListProps {
   currentRound: bigint;
@@ -145,19 +145,15 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
                         <span>
                           <span className="text-greyscale-400 mr-1">投票数</span>
                           <span className="text-secondary">
-                            {formatTokenAmount(getVotesByActionId(BigInt(action.head.id)), 0)}
+                            {formatTokenAmount(getVotesByActionId(BigInt(action.head.id)))}
                           </span>
                         </span>
                         <span>
-                          <span className="text-greyscale-400 mr-1">投票占比</span>
+                          <span className="text-greyscale-400 mr-1">占比</span>
                           <span className="text-secondary">
-                            {Number(getVotesByActionId(BigInt(action.head.id))) === 0
-                              ? '0'
-                              : (
-                                  (Number(getVotesByActionId(BigInt(action.head.id))) * 100) /
-                                  Number(totalVotes)
-                                ).toFixed(1)}
-                            %
+                            {formatPercentage(
+                              (Number(getVotesByActionId(BigInt(action.head.id))) * 100) / Number(totalVotes),
+                            )}
                           </span>
                         </span>
                       </div>

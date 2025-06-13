@@ -55,18 +55,18 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({}) => {
           <div className="stat place-items-center pb-0">
             <div className="stat-title">流动性质押 sl{token?.symbol} 总数</div>
             <div className="stat-value text-secondary text-2xl">
-              {isPendingGovData ? <LoadingIcon /> : formatTokenAmount(govData?.slAmount || BigInt(0), 2)}
+              {isPendingGovData ? <LoadingIcon /> : formatTokenAmount(govData?.slAmount || BigInt(0))}
             </div>
           </div>
         </div>
         <div className="stats rounded-lg w-full grid grid-cols-2 divide-x-0 mt-2">
           <div className="stat place-items-center pt-3 ">
             <div className="stat-title text-sm">对应 {token?.symbol} 质押数</div>
-            <div className="stat-value text-xl">{formatTokenAmount(tokenAmount || BigInt(0), 2)}</div>
+            <div className="stat-value text-xl">{formatTokenAmount(tokenAmount || BigInt(0))}</div>
           </div>
           <div className="stat place-items-center pt-3 ">
             <div className="stat-title text-sm">对应 {token?.parentTokenSymbol} 质押数</div>
-            <div className="stat-value text-xl">{formatTokenAmount(parentTokenAmount || BigInt(0), 2)}</div>
+            <div className="stat-value text-xl">{formatTokenAmount(parentTokenAmount || BigInt(0))}</div>
           </div>
         </div>
       </div>
@@ -75,11 +75,11 @@ const StakedLiquidDataPanel: React.FC<StakedLiquidDataPanelProps> = ({}) => {
       <div className="stats border rounded-lg w-full grid grid-cols-2 divide-x-0 mt-2 mb-6">
         <div className="stat place-items-center pt-3">
           <div className="stat-title text-sm">待分配 {token?.symbol} 总数</div>
-          <div className="stat-value text-xl">{formatTokenAmount(feeTokenAmount || BigInt(0), 2)}</div>
+          <div className="stat-value text-xl">{formatTokenAmount(feeTokenAmount || BigInt(0))}</div>
         </div>
         <div className="stat place-items-center pt-3">
           <div className="stat-title text-sm">待分配 {token?.parentTokenSymbol} 总数</div>
-          <div className="stat-value text-xl">{formatTokenAmount(feeParentTokenAmount || BigInt(0), 4)}</div>
+          <div className="stat-value text-xl">{formatTokenAmount(feeParentTokenAmount || BigInt(0))}</div>
         </div>
       </div>
       <div className="flex justify-center">

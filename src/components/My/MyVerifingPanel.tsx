@@ -85,7 +85,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
         <div className="stat place-items-center pt-1 pb-2">
           <div className="stat-title text-sm">已验证票数</div>
           <div className={`stat-value text-xl ${!showBtn ? 'text-secondary' : ''}`}>
-            {isPendingScoreByVerifier ? <LoadingIcon /> : formatTokenAmount(scoreByVerifier || BigInt(0), 2)}
+            {isPendingScoreByVerifier ? <LoadingIcon /> : formatTokenAmount(scoreByVerifier || BigInt(0))}
           </div>
         </div>
         <div className="stat place-items-center pt-0 pb-2">
@@ -94,7 +94,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
             {isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
               <LoadingIcon />
             ) : (
-              formatTokenAmount(remainingVotes, 2)
+              formatTokenAmount(remainingVotes)
             )}
           </div>
         </div>

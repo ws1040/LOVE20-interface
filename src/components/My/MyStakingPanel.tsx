@@ -58,7 +58,7 @@ const MyStakingPanel: React.FC = () => {
         <div className="stat place-items-center py-1">
           <div className="stat-title text-sm">我的治理票数</div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0), 0)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0))}
           </div>
           <div className="stat-actions w-full my-0">
             <Button variant="link" size="sm" className="w-full text-secondary" asChild>
@@ -69,7 +69,7 @@ const MyStakingPanel: React.FC = () => {
         <div className="stat place-items-center py-1">
           <div className="stat-title text-sm">我的质押代币数</div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || BigInt(0), 0)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || BigInt(0))}
           </div>
           <div className="stat-actions w-full my-0">
             <Button variant="link" size="sm" className="w-full text-secondary" asChild>
