@@ -170,7 +170,7 @@ export default function NewAction() {
             type="error"
             message={`有效治理票，须达到总治理票的${(SUBMIT_PERCENTAGE * 100).toFixed(
               1,
-            )}%，才能新建、推举行动（您当前有效治理票为${formatTokenAmount(validGovVotes, 2)}，占比${(
+            )}%，才能新建、推举行动（您当前有效治理票为${formatTokenAmount(validGovVotes)}，占比${(
               accountPercentage * 100
             ).toFixed(2)}%））`}
             className="mb-4"

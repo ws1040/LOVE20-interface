@@ -120,7 +120,7 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
           </div>
           <div className="stat place-items-center">
             <div className="stat-title">我的剩余票数</div>
-            <div className="stat-value text-2xl">{isLoading ? <LoadingIcon /> : formatTokenAmount(myLeftVotes, 2)}</div>
+            <div className="stat-value text-2xl">{isLoading ? <LoadingIcon /> : formatTokenAmount(myLeftVotes)}</div>
           </div>
         </div>
 
@@ -135,7 +135,7 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
         )}
         {!isPendingValidGovVotes && (
           <div className="text-sm text-greyscale-500 text-center">
-            提示: 每轮最大可投票数，等于您的治理票数 ({formatTokenAmount(validGovVotes, 2)})
+            提示: 每轮最大可投票数，等于您的治理票数 ({formatTokenAmount(validGovVotes)})
           </div>
         )}
       </div>

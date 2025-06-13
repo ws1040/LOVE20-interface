@@ -18,7 +18,7 @@ import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 // utils
-import { formatTokenAmount } from '@/src/lib/format';
+import { formatPercentage, formatTokenAmount } from '@/src/lib/format';
 
 interface VerifingActionListProps {
   currentRound: bigint;
@@ -60,13 +60,20 @@ const ActionListToVerify: React.FC<VerifingActionListProps> = ({ currentRound })
     );
   }
 
+  console.log(myVerifyingActions);
+
+  // 按照我的票数从高到低排序
+  const sortedActions = myVerifyingActions?.slice().sort((a, b) => {
+    return Number(b.myVotesNum - a.myVotesNum);
+  });
+
   return (
     <div className="p-4">
       <LeftTitle title="我需验证的行动" />
-      {!myVerifyingActions?.length && <div className="text-sm mt-4 text-greyscale-500 text-center">没有待验证行动</div>}
-      {myVerifyingActions && myVerifyingActions.length > 0 && (
+      {!sortedActions?.length && <div className="text-sm mt-4 text-greyscale-500 text-center">没有待验证行动</div>}
+      {sortedActions && sortedActions.length > 0 && (
         <div className="mt-4 space-y-4">
-          {myVerifyingActions?.map((verifyingAction) => (
+          {sortedActions.map((verifyingAction) => (
             <Card key={verifyingAction.action.head.id} className="shadow-none">
               <Link
                 className="relative block"
@@ -79,13 +86,19 @@ const ActionListToVerify: React.FC<VerifingActionListProps> = ({ currentRound })
                 <CardContent className="px-3 pt-1 pb-2">
                   <div className="text-greyscale-500">{verifyingAction.action.body.consensus}</div>
                   <div className="text-xs text-greyscale-400 mt-2 flex justify-between">
-                    <span>总票数: {formatTokenAmount(verifyingAction.totalVotesNum, 2)}</span>
-                    <span>我的票数: {formatTokenAmount(verifyingAction.myVotesNum, 2)}</span>
+                    <span>
+                      总票数: <span className="text-secondary">{formatTokenAmount(verifyingAction.totalVotesNum)}</span>
+                    </span>
+                    <span>
+                      我的票数: <span className="text-secondary">{formatTokenAmount(verifyingAction.myVotesNum)}</span>
+                    </span>
                     <span>
                       我的占比:{' '}
-                      {verifyingAction.totalVotesNum > 0n
-                        ? `${Number((verifyingAction.myVotesNum * 100n) / verifyingAction.totalVotesNum)}%`
-                        : '0%'}
+                      <span className="text-secondary">
+                        {formatPercentage(
+                          Number((verifyingAction.myVotesNum * 10000n) / verifyingAction.totalVotesNum) / 100,
+                        )}
+                      </span>
                     </span>
                   </div>
                 </CardContent>

@@ -275,16 +275,16 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
   return (
     <>
       <div className="stats w-full grid grid-cols-2 divide-x-0 ">
-        <div className="stat place-items-center pt-0 pl-1">
+        <div className="stat place-items-center pt-0 pb-1 pl-1">
           <div className="stat-title text-sm">我的治理票数</div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || 0n, 2)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || 0n)}
           </div>
           <div className="stat-desc text-xs mb-2 mt-1">
             {requestedUnstakeRound && requestedUnstakeRound > 0n && '注意：解锁期内治理票数为0'}
           </div>
         </div>
-        <div className="stat place-items-center pt-0 pl-1">
+        <div className="stat place-items-center pt-0 pb-1 pl-1">
           <div className="stat-title text-sm">我承诺的解锁期</div>
           <div className="stat-value text-lg">
             {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingPhases || 0n} `}
@@ -297,7 +297,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         </div>
       </div>
       <div className="stats w-full grid grid-cols-2 divide-x-0">
-        <div className="stat place-items-center pt-0 pb-0 pl-1">
+        <div className="stat place-items-center pt-0 pb-1 pl-1">
           <div className="stat-title text-sm flex items-center">
             流动性质押凭证SL代币
             <AddressWithCopyButton address={token.slTokenAddress as `0x${string}`} showAddress={false} />
@@ -308,7 +308,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             />
           </div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || 0n, 2)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || 0n)}
           </div>
           <div className="stat-desc text-xs">
             <Button variant="link" className="text-secondary font-normal border-secondary" asChild>
@@ -316,7 +316,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             </Button>
           </div>
         </div>
-        <div className="stat place-items-center pt-0 pb-0 pl-3">
+        <div className="stat place-items-center pt-0 pb-1 pl-3">
           <div className="stat-title text-sm flex items-center">
             代币质押凭证ST代币
             <AddressWithCopyButton address={token.stTokenAddress as `0x${string}`} showAddress={false} />
@@ -327,7 +327,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             />
           </div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || 0n, 2)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || 0n)}
           </div>
           <div className="stat-desc text-xs">
             <Button variant="link" className="text-secondary font-normal border-secondary" asChild>
@@ -423,7 +423,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
       {!enableWithdraw && (
         <div className="flex justify-center space-x-4">
           <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
-            <Link href={`/my/govrewards?symbol=${token.symbol}`}>领取治理奖励</Link>
+            <Link href={`/my/govrewards?symbol=${token.symbol}`}>铸造治理奖励</Link>
           </Button>
           {requestedUnstakeRound && (
             <Button
@@ -443,11 +443,11 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
               </Link>
             </Button>
           )}
-          {!requestedUnstakeRound && (
+          {/* {!requestedUnstakeRound && (
             <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
               <Link href={`/gov/?symbol=${token.symbol}`}>社区治理</Link>
             </Button>
-          )}
+          )} */}
         </div>
       )}
       <LoadingOverlay

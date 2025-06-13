@@ -53,7 +53,6 @@ const VerifiedAddressesByAction: React.FC<{
     token && selectedRound ? selectedRound + BigInt(token.initialStakeRound) - 1n : 0n,
     actionId,
   );
-  console.log('verifiedAddresses', verifiedAddresses);
 
   // 获取验证地址的验证信息
   const {

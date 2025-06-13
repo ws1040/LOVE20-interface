@@ -61,9 +61,12 @@ const MyActionVerifingPanel: React.FC<MyActionVerifingPanelProps> = ({
 
   useEffect(() => {
     if (!isPendingVotesNumByAccount && !isPendingScoreByVerifier) {
+      console.log('remainingVotes', remainingVotes);
+      console.log('isPendingVotesNumByAccount', isPendingVotesNumByAccount);
+      console.log('isPendingScoreByVerifier', isPendingScoreByVerifier);
       onRemainingVotesChange?.(remainingVotes);
     }
-  }, [remainingVotes]);
+  }, [remainingVotes, isPendingVotesNumByAccount, isPendingScoreByVerifier]);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -81,17 +84,20 @@ const MyActionVerifingPanel: React.FC<MyActionVerifingPanelProps> = ({
   }
 
   return (
-    <div className="mb-4 text-center">
-      <span className="font-semibold">
-        我的剩余验证票数：
-        {isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
-          <LoadingIcon />
-        ) : (
-          <span className="text-secondary">{formatTokenAmount(remainingVotes)}</span>
-        )}
-      </span>
-      <div className="mt-2 text-sm text-greyscale-500 text-center">
-        提示: 最大可验证票数，等于您本轮对该行动的投票数
+    <div className="px-4">
+      <div className="text-center bg-greyscale-100 p-4 rounded-lg">
+        <span className="text-greyscale-800 text-base">
+          我的剩余验证票数：
+          {isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
+            <LoadingIcon />
+          ) : (
+            <span className="text-secondary">{formatTokenAmount(remainingVotes)}</span>
+          )}
+        </span>
+        <div className="mt-2 text-sm text-greyscale-500 text-center">
+          {/* 提示: 最大可验证票数，等于您本轮对该行动的投票数 */}
+          提示: 您的验证票，将按“打分比例”分配给行动参与者
+        </div>
       </div>
     </div>
   );
