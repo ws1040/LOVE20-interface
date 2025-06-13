@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 // my components
 import Header from '@/src/components/Header';
@@ -48,6 +49,13 @@ const Home: NextPage<{ articles: Article[] }> = ({ articles }) => {
       <Header title="关于协议" />
       <main className="flex-grow">
         <div className="container mx-auto px-4 pt-8">
+          <LeftTitle title="代币列表" />
+          <div className="w-full text-center mt-2 mb-6">
+            <Button variant="outline" size="sm" className="mt-2 w-1/2 text-secondary border-secondary" asChild>
+              <Link href={`/tokens/`}>查看所有代币 &gt;&gt;</Link>
+            </Button>
+          </div>
+
           <LeftTitle title="LOVE20 协议介绍" />
           <div className="grid gap-6 mt-2 mb-6 border rounded-lg py-2 px-4">
             <div className="p-2 text-gray-700">
