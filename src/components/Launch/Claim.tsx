@@ -160,7 +160,7 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
           <span className="text-secondary">{formatTokenAmount(extraRefunded ?? 0n)}</span> {parentTokenSymbol}
         </div>
       )}
-      <div className="border-t border-gray-200 mx-4 mt-2 mb-6"></div>
+      <div className="border-t border-gray-200 mx-4 mt-4 mb-6"></div>
 
       <LoadingOverlay isLoading={isClaiming || isClaimConfirming} text={isClaiming ? '提交交易...' : '确认交易...'} />
     </div>

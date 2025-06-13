@@ -148,6 +148,7 @@ const ContributeInfo: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> 
           {remainingBlocks > 0 ? remainingBlocks.toString() : '0'} 个区块）
         </div>
       )}
+      <div className="border-t border-gray-200 mt-2 mb-6"></div>
       <LoadingOverlay
         isLoading={isWithdrawPending || isWithdrawConfirming}
         text={isWithdrawPending ? '提交交易...' : '确认交易...'}

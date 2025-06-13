@@ -82,7 +82,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
           <LeftTitle title="行动详情" />
           {showVerifyHistory && (
             <Button variant="link" className="text-secondary border-secondary" asChild>
-              <Link href={`/my/actrewards/?id=${actionId}&symbol=${token?.symbol}`}>查看铸造奖励 &gt;&gt;</Link>
+              <Link href={`/my/actrewards/?id=${actionId}&symbol=${token?.symbol}`}>查看铸造激励 &gt;&gt;</Link>
             </Button>
           )}
         </div>
