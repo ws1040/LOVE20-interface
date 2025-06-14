@@ -51,7 +51,7 @@ export const calculateAPY = (
  */
 export const calculateActionAPY = (expectedReward?: bigint, joinedAmount?: bigint): string => {
   // 如果没有数据，返回0%
-  if (!expectedReward || !joinedAmount || joinedAmount === 0n) return '0%';
+  if (!expectedReward || !joinedAmount || joinedAmount === 0n) return '∞';
 
   // 年区块数 = 365天 * 86400秒/天 / 每个区块的秒数
   const blocksPerYear = (365 * 86400 * 100) / Number(process.env.NEXT_PUBLIC_BLOCK_TIME || 0);

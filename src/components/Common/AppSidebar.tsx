@@ -113,12 +113,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             isActive: isActiveUrl(`${basePath}/launch/`),
             icon: Rocket,
           },
-          // {
-          //   title: '代币列表',
-          //   url: `/tokens/?symbol=${token.symbol}`,
-          //   isActive: isActiveUrl(`${basePath}/tokens/`),
-          //   icon: List,
-          // },
+          {
+            title: '子币列表',
+            url: `/tokens/children/?symbol=${token.symbol}`,
+            isActive: isActiveUrl(`${basePath}/tokens/children/`),
+            icon: List,
+          },
         ],
       },
       {

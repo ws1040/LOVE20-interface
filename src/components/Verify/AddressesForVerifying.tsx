@@ -254,7 +254,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
                             value={scores[info.account] || ''}
                             placeholder="0"
                             onChange={(e) => handleScoreChange(info.account, e.target.value)}
-                            className="w-8 px-1 py-1 border rounded"
+                            className="w-10 px-1 py-1 border rounded"
                             disabled={isWriting || isConfirmed}
                           />
                           <span className="text-greyscale-500 text-sm">分</span>

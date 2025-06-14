@@ -62,9 +62,9 @@ const ActionListToVerify: React.FC<VerifingActionListProps> = ({ currentRound })
 
   console.log(myVerifyingActions);
 
-  // 按照我的票数从高到低排序
+  // 按照ID从小到大排序
   const sortedActions = myVerifyingActions?.slice().sort((a, b) => {
-    return Number(b.myVotesNum - a.myVotesNum);
+    return Number(a.action.head.id - b.action.head.id);
   });
 
   return (
