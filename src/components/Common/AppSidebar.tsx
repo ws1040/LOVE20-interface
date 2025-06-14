@@ -15,6 +15,7 @@ import {
   TicketCheck,
   User,
   Info,
+  UserCog,
 } from 'lucide-react';
 
 import {
@@ -113,6 +114,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             isActive: isActiveUrl(`${basePath}/launch/`),
             icon: Rocket,
           },
+          // 当存在父币时显示切换父币链接
+          ...(token.parentTokenAddress &&
+          token.parentTokenAddress !== '0x0000000000000000000000000000000000000000' &&
+          token.parentTokenSymbol &&
+          token.parentTokenSymbol !== process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL
+            ? [
+                {
+                  title: '回到父币',
+                  url: `/acting/?symbol=${token.parentTokenSymbol}`,
+                  isActive: false,
+                  icon: UserCog,
+                },
+              ]
+            : []),
           {
             title: '子币列表',
             url: `/tokens/children/?symbol=${token.symbol}`,
