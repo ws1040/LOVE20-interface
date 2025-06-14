@@ -89,7 +89,12 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
         clearToken();
       } else {
         const cacheCleared = checkAndClearCache();
-        if (!cacheCleared) {
+
+        // 检查当前token是否与URL中的symbol匹配
+        const currentTokenSymbol = token?.symbol;
+        const isTokenChanged = currentTokenSymbol && currentTokenSymbol !== tokenSymbol;
+
+        if (!cacheCleared && !isTokenChanged) {
           // 从 Local Storage 加载 token
           const storedToken = localStorage.getItem('currentToken');
           if (storedToken && JSON.parse(storedToken)) {
@@ -102,7 +107,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
         }
       }
 
-      // 从 路由symbol 加载 token
+      // 从 路由symbol 加载 token（当token发生变化时也会重新加载）
       if (tokenSymbol && tokenSymbol.length > 0 && !ifNoSymbol) {
         setSymbolToGetDetail(tokenSymbol as string); //有指定token
       } else {
