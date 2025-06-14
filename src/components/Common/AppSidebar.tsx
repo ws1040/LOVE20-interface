@@ -201,7 +201,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       isActive={subItem.isActive || false}
                       className={cn(subItem.isActive && '!bg-transparent !text-white font-bold')}
                     >
-                      <Link href={subItem.url} onClick={handleLinkClick}>
+                      <Link
+                        href={subItem.url}
+                        onClick={handleLinkClick}
+                        {...(subItem.title === '回到父币' ? { target: '_self' } : {})}
+                      >
                         <span className="text-base">{subItem.title}</span>
                       </Link>
                     </SidebarMenuButton>
