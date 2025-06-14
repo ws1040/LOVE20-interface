@@ -353,7 +353,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
                   <FormMessage />
                   <FormDescription className="flex items-center">
                     <span>
-                      当前持有：<span className="text-secondary">{formatTokenAmount(tokenBalance || 0n)}</span>{' '}
+                      共有 <span className="text-secondary">{formatTokenAmount(tokenBalance || 0n)}</span>{' '}
                       {token?.symbol}
                     </span>
                     <Button
@@ -443,6 +443,10 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
             </div>
           </form>
         </Form>
+      </div>
+      {/* 增加一个帮助信息 */}
+      <div className="px-6 pt-0 pb-4">
+        <div className="text-greyscale-500 text-sm">提示：加入行动后，可以随时取回参与代币，无等待期</div>
       </div>
 
       <LoadingOverlay
