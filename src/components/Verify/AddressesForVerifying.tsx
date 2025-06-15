@@ -214,9 +214,9 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-100">
-              <th className="text-left">被抽中的行动参与者</th>
-              <th className="text-left whitespace-nowrap w-20">打分</th>
-              <th className="text-center whitespace-nowrap w-16">分配</th>
+              <th className="pb-3 text-left text-sm text-greyscale-500">被抽中的行动参与者</th>
+              <th className="pb-3 pl-2 text-left whitespace-nowrap w-20 text-sm text-greyscale-500">打分</th>
+              <th className="pb-3 text-center whitespace-nowrap w-16 text-sm text-greyscale-500">分配</th>
             </tr>
           </thead>
           <tbody>
@@ -249,7 +249,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
                         value={scores[info.account] || ''}
                         placeholder="0"
                         onChange={(e) => handleScoreChange(info.account, e.target.value)}
-                        className="w-10 px-1 py-1 border rounded"
+                        className="w-11 px-1 py-1 border rounded"
                         disabled={isWriting || isConfirmed}
                       />
                       <span className="text-greyscale-500 text-sm">分</span>
@@ -286,7 +286,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
                       value={abstainScore}
                       placeholder="0"
                       onChange={(e) => handleAbstainScoreChange(e.target.value)}
-                      className="w-10 px-1 py-1 border rounded"
+                      className="w-11 px-1 py-1 border rounded"
                       disabled={isWriting || isConfirmed}
                     />
                     <span className="text-greyscale-500 text-sm">分</span>
