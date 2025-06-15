@@ -191,7 +191,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
         duration: 2000, // 2秒
       });
       setTimeout(() => {
-        router.push(`/verify/actions/?symbol=${token?.symbol}`);
+        router.push(`/verify/?symbol=${token?.symbol}`);
       }, 2000);
     }
   }, [isConfirmed, submitError]);
