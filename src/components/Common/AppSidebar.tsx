@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import {
   SmilePlus,
   Home,
@@ -36,6 +36,7 @@ import {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { token } = useContext(TokenContext) || {};
   const pathname = usePathname();
+  const router = useRouter();
   const { setOpenMobile, isMobile } = useSidebar();
 
   if (!token) {
@@ -70,11 +71,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return false;
   };
 
-  // 处理链接点击，在移动端自动关闭侧边栏
-  const handleLinkClick = () => {
+  // 处理链接点击，使用router.push导航
+  const handleLinkClick = (url: string) => {
     if (isMobile) {
       setOpenMobile(false);
     }
+    router.push(url);
   };
 
   // 动态生成导航数据
@@ -197,13 +199,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   >
                     {subItem.icon && <subItem.icon className={cn('w-4 h-4 ml-2', subItem.isActive && 'text-white')} />}
                     <SidebarMenuButton
-                      asChild
                       isActive={subItem.isActive || false}
                       className={cn(subItem.isActive && '!bg-transparent !text-white font-bold')}
+                      onClick={() => handleLinkClick(subItem.url)}
                     >
-                      <Link href={subItem.url} onClick={handleLinkClick}>
-                        <span className="text-base">{subItem.title}</span>
-                      </Link>
+                      <span className="text-base">{subItem.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
