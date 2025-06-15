@@ -117,19 +117,24 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                           />
                         </span>
                       </span>
-                      <span>
-                        <span className="text-greyscale-400 mr-1">预估年化(APY)</span>
-                        <span className="text-secondary">
-                          {isPendingRewardAvailable ? (
-                            <LoadingIcon />
-                          ) : (
-                            calculateActionAPY(
-                              BigInt(Math.floor(Number(expectedReward || 0n) * voteRatio)),
-                              joinableActionDetails[index].joinedAmount,
-                            )
-                          )}
+                      {voteRatio * 100 < Number(process.env.NEXT_PUBLIC_ACTION_REWARD_MIN_VOTE_PER_THOUSAND) / 10 ? (
+                        <span className="flex justify-between text-error text-sm">无铸币奖励</span>
+                      ) : (
+                        <span>
+                          <span className="text-greyscale-400 mr-1">预估年化(APY)</span>
+                          <span className="text-secondary">
+                            {isPendingRewardAvailable ? (
+                              <LoadingIcon />
+                            ) : (
+                              calculateActionAPY(
+                                BigInt(Math.floor(Number(expectedReward || 0n) * voteRatio)),
+                                joinableActionDetails[index].joinedAmount,
+                              )
+                            )}
+                          </span>
                         </span>
-                      </span>
+                      )}
+
                       <span>
                         <span className="text-greyscale-400 mr-1">投票</span>
                         <span className="text-secondary">{formatPercentage(voteRatio * 100)}</span>
