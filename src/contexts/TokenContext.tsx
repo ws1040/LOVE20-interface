@@ -94,7 +94,12 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
         const currentTokenSymbol = token?.symbol;
         const isTokenChanged = currentTokenSymbol && currentTokenSymbol !== tokenSymbol;
 
-        if (!cacheCleared && !isTokenChanged) {
+        if (isTokenChanged) {
+          // 如果token发生变化，清空当前token并强制重新获取
+          console.log(`Token changed: ${currentTokenSymbol} -> ${tokenSymbol}`);
+          setToken(null);
+          // 不使用缓存，直接跳到重新获取逻辑
+        } else if (!cacheCleared) {
           // 从 Local Storage 加载 token
           const storedToken = localStorage.getItem('currentToken');
           if (storedToken && JSON.parse(storedToken)) {
