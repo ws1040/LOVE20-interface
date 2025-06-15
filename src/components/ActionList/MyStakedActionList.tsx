@@ -79,7 +79,12 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
                       <span className="font-bold text-greyscale-800">{`${action.action.body.action}`}</span>
                     </div>
                     {action.votesNum > 0 ? (
-                      <span className="text-secondary text-xs">进行中</span>
+                      Number(action.votePercent) / 100 >=
+                      Number(process.env.NEXT_PUBLIC_ACTION_REWARD_MIN_VOTE_PER_THOUSAND) / 10 ? (
+                        <span className="text-secondary text-xs">进行中</span>
+                      ) : (
+                        <span className="text-error text-xs">无铸币奖励</span>
+                      )
                     ) : (
                       <span className="text-error text-xs">未投票</span>
                     )}
