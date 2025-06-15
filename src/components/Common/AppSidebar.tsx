@@ -76,6 +76,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     if (isMobile) {
       setOpenMobile(false);
     }
+
+    // 获取URL中的symbol参数
+    const urlParams = new URLSearchParams(url.split('?')[1] || '');
+    const targetSymbol = urlParams.get('symbol');
+
+    // 如果切换到不同的token，使用完整页面跳转来确保重新加载
+    if (targetSymbol && targetSymbol !== token.symbol) {
+      window.location.href = url;
+      return;
+    }
+
     router.push(url);
   };
 

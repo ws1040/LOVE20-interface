@@ -215,12 +215,8 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
           <thead>
             <tr className="border-b border-gray-100">
               <th className="text-left">被抽中的行动参与者</th>
-              {remainingVotes > 0 && (
-                <>
-                  <th className="text-left">打分</th>
-                  <th className="text-left">分配</th>
-                </>
-              )}
+              <th className="text-left whitespace-nowrap w-20">打分</th>
+              <th className="text-center whitespace-nowrap w-16">分配</th>
             </tr>
           </thead>
           <tbody>
@@ -244,39 +240,36 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
                       )}
                     </div>
                   </td>
-                  {remainingVotes > 0 && (
-                    <>
-                      <td className="py-2">
-                        <div className="flex items-center justify-end">
-                          <input
-                            type="number"
-                            min="0"
-                            value={scores[info.account] || ''}
-                            placeholder="0"
-                            onChange={(e) => handleScoreChange(info.account, e.target.value)}
-                            className="w-10 px-1 py-1 border rounded"
-                            disabled={isWriting || isConfirmed}
-                          />
-                          <span className="text-greyscale-500 text-sm">分</span>
-                        </div>
-                      </td>
-                      <td className="py-2">
-                        <div className="text-right text-greyscale-500 text-sm">
-                          {formatPercentage(addressPercentages[info.account] || 0)}
-                        </div>
-                      </td>
-                    </>
-                  )}
+
+                  <td className="py-2 w-20">
+                    <div className="flex items-center text-left">
+                      <input
+                        type="number"
+                        min="0"
+                        value={scores[info.account] || ''}
+                        placeholder="0"
+                        onChange={(e) => handleScoreChange(info.account, e.target.value)}
+                        className="w-10 px-1 py-1 border rounded"
+                        disabled={isWriting || isConfirmed}
+                      />
+                      <span className="text-greyscale-500 text-sm">分</span>
+                    </div>
+                  </td>
+                  <td className="py-2 text-center w-16 whitespace-nowrap">
+                    <div className="text-greyscale-500 text-sm">
+                      {formatPercentage(addressPercentages[info.account] || 0)}
+                    </div>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={remainingVotes > 0 ? 3 : 1} className="text-center py-4">
+                <td colSpan={3} className="text-center py-4">
                   暂无数据
                 </td>
               </tr>
             )}
-            {verificationInfos && remainingVotes > 0 && (
+            {verificationInfos && (
               <tr>
                 <td className="py-2">
                   <div className="text-left">
@@ -285,22 +278,22 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
                     </div>
                   </div>
                 </td>
-                <td className="py-2">
-                  <div className="flex items-center justify-end">
+                <td className="py-2 w-20">
+                  <div className="flex items-center text-left">
                     <input
                       type="number"
                       min="0"
                       value={abstainScore}
                       placeholder="0"
                       onChange={(e) => handleAbstainScoreChange(e.target.value)}
-                      className="w-8 px-1 py-1 border rounded"
+                      className="w-10 px-1 py-1 border rounded"
                       disabled={isWriting || isConfirmed}
                     />
                     <span className="text-greyscale-500 text-sm">分</span>
                   </div>
                 </td>
-                <td className="py-2">
-                  <div className="text-right text-greyscale-500 text-sm">{formatPercentage(abstainPercentage)}</div>
+                <td className="py-2 text-center w-16 whitespace-nowrap">
+                  <div className="text-greyscale-500 text-sm">{formatPercentage(abstainPercentage)}</div>
                 </td>
               </tr>
             )}
@@ -308,19 +301,12 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
         </table>
       </div>
 
-      {remainingVotes > 0 && (
-        <Button onClick={handleSubmit} disabled={isWriting || isConfirming || isConfirmed} className="mt-6 w-1/2">
-          {!isWriting && !isConfirming && !isConfirmed && '提交验证'}
-          {isWriting && '提交中...'}
-          {isConfirming && '确认中...'}
-          {isConfirmed && '已验证'}
-        </Button>
-      )}
-      {/* {!remainingVotes && (
-        <Button disabled className="mt-6 w-1/2">
-          已验证
-        </Button>
-      )} */}
+      <Button onClick={handleSubmit} disabled={isWriting || isConfirming || isConfirmed} className="mt-6 w-1/2">
+        {!isWriting && !isConfirming && !isConfirmed && '提交验证'}
+        {isWriting && '提交中...'}
+        {isConfirming && '确认中...'}
+        {isConfirmed && '已验证'}
+      </Button>
 
       <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
     </>
