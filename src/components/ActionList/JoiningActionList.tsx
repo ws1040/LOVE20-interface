@@ -9,7 +9,7 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card';
 
 // my utils
 import { calculateActionAPY, calculateExpectedActionReward } from '@/src/lib/domainUtils';
-import { formatPercentage } from '@/src/lib/format';
+import { formatPercentage, formatSeconds } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -146,6 +146,19 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
               </Card>
             );
           })}
+
+          <div className="text-sm mt-4 text-greyscale-500 text-center">
+            <span className="text-red-500 font-bold">提醒：</span>
+            <span>
+              每个行动阶段，最后{process.env.NEXT_PUBLIC_JOIN_END_PHASE_BLOCKS}
+              个区块（约
+              {formatSeconds(
+                (Number(process.env.NEXT_PUBLIC_JOIN_END_PHASE_BLOCKS) * Number(process.env.NEXT_PUBLIC_BLOCK_TIME)) /
+                  100,
+              )}
+              ），关闭行动参与报名
+            </span>
+          </div>
         </div>
       )}
     </div>

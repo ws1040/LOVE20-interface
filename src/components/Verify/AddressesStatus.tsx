@@ -11,6 +11,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 // my hooks
 import { useVerificationInfosByAction, useVerifiedAddressesByAction } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useScoreByActionIdByAccount } from '@/src/hooks/contracts/useLOVE20Verify';
+import { useVotesNumByActionId } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my components
@@ -20,7 +21,7 @@ import LeftTitle from '@/src/components/Common/LeftTitle';
 
 // my utils
 import { LinkIfUrl } from '@/src/lib/stringUtils';
-import { formatTokenAmountInteger } from '@/src/lib/format';
+import { formatPercentage, formatTokenAmountInteger } from '@/src/lib/format';
 import RoundLite from '../Common/RoundLite';
 
 interface VerifyAddressesProps {
@@ -61,6 +62,13 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     error: errorVerificationInfosByAction,
   } = useVerificationInfosByAction(token?.address as `0x${string}`, currentRound, actionId);
 
+  // 总验证票数
+  const {
+    votesNumByActionId: totalVotesNum,
+    isPending: isPendingTotalVotesNum,
+    error: errorTotalVotesNum,
+  } = useVotesNumByActionId(token?.address as `0x${string}`, currentRound, actionId);
+
   // 错误处理
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
@@ -73,7 +81,10 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     if (errorAbstainVotes) {
       handleContractError(errorAbstainVotes, 'verify');
     }
-  }, [errorVerifiedAddresses, errorVerificationInfosByAction, errorAbstainVotes]);
+    if (errorTotalVotesNum) {
+      handleContractError(errorTotalVotesNum, 'vote');
+    }
+  }, [errorVerifiedAddresses, errorVerificationInfosByAction, errorAbstainVotes, errorTotalVotesNum]);
 
   const toggleRow = (address: string) => {
     const newExpanded = new Set(expandedRows);
@@ -85,10 +96,15 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     setExpandedRows(newExpanded);
   };
 
+  // 累计当前已验证票数
+  const verifiedVotesNum = verifiedAddresses?.reduce((acc, addr) => acc + addr.score, 0n) || 0n;
+  const verifiedVotesPercent = (Number(verifiedVotesNum) / Number(totalVotesNum || 0n)) * 100;
+
   return (
     <div className="relative px-4 pb-4 w-full">
       <div className="flex items-center">
         <LeftTitle title="当前轮最新验证结果" />
+        <span className="text-sm text-greyscale-500 ml-2">(验证进度：{formatPercentage(verifiedVotesPercent)})</span>
       </div>
       <div className="flex justify-left mt-2">
         <RoundLite currentRound={currentRound} roundType="verify" />
@@ -107,6 +123,7 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
               <th></th>
               <th>被抽中地址</th>
               <th className="px-1 text-right">获得验证票</th>
+              <th className="px-1 text-right">验证票占比</th>
             </tr>
           </thead>
           <tbody>
@@ -148,6 +165,11 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                         />
                       </td>
                       <td className="px-1 text-right">{formatTokenAmountInteger(verifiedAddress?.score || 0n)}</td>
+                      <td className="px-1 text-right">
+                        {formatPercentage(
+                          (Number(verifiedAddress?.score || 0n) / Number(verifiedVotesNum || 0n)) * 100,
+                        )}
+                      </td>
                     </tr>
 
                     {actionInfo && isExpanded && (
@@ -172,6 +194,15 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
               <td className="px-1"></td>
               <td className="px-1 text-greyscale-500">弃权票</td>
               <td className="px-1 text-right">{formatTokenAmountInteger(abstainVotes || 0n)}</td>
+              <td className="px-1 text-right">
+                {formatPercentage((Number(abstainVotes || 0n) / Number(verifiedVotesNum || 0n)) * 100)}
+              </td>
+            </tr>
+            <tr>
+              <td className="px-1"></td>
+              <td className="px-1 text-greyscale-500">汇总 </td>
+              <td className="px-1 text-right">{formatTokenAmountInteger(verifiedVotesNum || 0n)}</td>
+              <td className="px-1 text-right">100%</td>
             </tr>
           </tbody>
         </table>

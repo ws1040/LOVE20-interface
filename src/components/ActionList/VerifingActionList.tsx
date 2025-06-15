@@ -67,44 +67,51 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
       )}
       {verifyingActions && verifyingActions.length > 0 && (
         <div className="mt-4 space-y-4">
-          {verifyingActions?.map((verifyingAction) => (
-            <Card key={verifyingAction.action.head.id} className="shadow-none">
-              <Link
-                className="relative block"
-                href={`/verify/${verifyingAction.action.head.id}?symbol=${token?.symbol}`}
-              >
-                <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
-                  <span className="text-greyscale-400 text-sm mr-1">{`No.`}</span>
-                  <span className="text-secondary text-xl font-bold mr-2">
-                    {String(verifyingAction.action.head.id)}
-                  </span>
-                  <span className="font-bold text-greyscale-800">{`${verifyingAction.action.body.action}`}</span>
-                </CardHeader>
-                <CardContent className="px-3 pt-1 pb-2">
-                  <div className="text-greyscale-500">{verifyingAction.action.body.consensus}</div>
-                  <div className="text-xs mt-2 flex justify-between">
-                    <span>
-                      <span className="text-greyscale-400 mr-1">投票数</span>
-                      <span className="text-secondary"> {formatTokenAmount(verifyingAction.votesNum)}</span>
+          {verifyingActions
+            ?.sort((a, b) => {
+              // 按照 action id 从小到大排序
+              const idA = BigInt(a.action.head.id);
+              const idB = BigInt(b.action.head.id);
+              return idA < idB ? -1 : idA > idB ? 1 : 0;
+            })
+            ?.map((verifyingAction) => (
+              <Card key={verifyingAction.action.head.id} className="shadow-none">
+                <Link
+                  className="relative block"
+                  href={`/verify/${verifyingAction.action.head.id}?symbol=${token?.symbol}`}
+                >
+                  <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
+                    <span className="text-greyscale-400 text-sm mr-1">{`No.`}</span>
+                    <span className="text-secondary text-xl font-bold mr-2">
+                      {String(verifyingAction.action.head.id)}
                     </span>
-                    <span>
-                      <span className="text-greyscale-400 mr-1">已验证票数</span>
-                      <span className="text-secondary"> {formatTokenAmount(verifyingAction.verificationScore)}</span>
-                    </span>
-                    <span>
-                      <span className="text-greyscale-400 mr-1">进度</span>
-                      <span className="text-secondary">
-                        {verifyingAction.votesNum > 0n
-                          ? `${Number((verifyingAction.verificationScore * 100n) / verifyingAction.votesNum)}%`
-                          : '0%'}
+                    <span className="font-bold text-greyscale-800">{`${verifyingAction.action.body.action}`}</span>
+                  </CardHeader>
+                  <CardContent className="px-3 pt-1 pb-2">
+                    <div className="text-greyscale-500">{verifyingAction.action.body.consensus}</div>
+                    <div className="text-xs mt-2 flex justify-between">
+                      <span>
+                        <span className="text-greyscale-400 mr-1">投票数</span>
+                        <span className="text-secondary"> {formatTokenAmount(verifyingAction.votesNum)}</span>
                       </span>
-                    </span>
-                  </div>
-                </CardContent>
-                <ChevronRight className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-greyscale-400 pointer-events-none" />
-              </Link>
-            </Card>
-          ))}
+                      <span>
+                        <span className="text-greyscale-400 mr-1">已验证票数</span>
+                        <span className="text-secondary"> {formatTokenAmount(verifyingAction.verificationScore)}</span>
+                      </span>
+                      <span>
+                        <span className="text-greyscale-400 mr-1">进度</span>
+                        <span className="text-secondary">
+                          {verifyingAction.votesNum > 0n
+                            ? `${Number((verifyingAction.verificationScore * 100n) / verifyingAction.votesNum)}%`
+                            : '0%'}
+                        </span>
+                      </span>
+                    </div>
+                  </CardContent>
+                  <ChevronRight className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-greyscale-400 pointer-events-none" />
+                </Link>
+              </Card>
+            ))}
         </div>
       )}
     </div>
