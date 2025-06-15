@@ -83,7 +83,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
     // 如果切换到不同的token，使用完整页面跳转来确保重新加载
     if (targetSymbol && targetSymbol !== token.symbol) {
-      window.location.href = url;
+      window.location.href = process.env.NEXT_PUBLIC_BASE_PATH ? `${process.env.NEXT_PUBLIC_BASE_PATH}${url}` : url;
       return;
     }
 
