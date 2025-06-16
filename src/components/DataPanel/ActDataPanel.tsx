@@ -68,7 +68,7 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
               {isPendingRewardAvailable || rewardAvailable === undefined ? (
                 <LoadingIcon />
               ) : (
-                formatTokenAmount(expectedReward, 2)
+                formatTokenAmount(expectedReward)
               )}
             </div>
           </div>

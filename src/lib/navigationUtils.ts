@@ -89,27 +89,19 @@ export class NavigationUtils {
     if (typeof window === 'undefined') return;
 
     if (this.isTokenPocketEnvironment()) {
-      // 在钱包环境中，添加用户提示
-      const userConfirmed = window.confirm('即将打开外部链接，可能会在钱包内部加载。确定继续吗？');
+      // 尝试多种方式打开链接
+      try {
+        // 方法1：尝试新窗口
+        const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
 
-      if (userConfirmed) {
-        // 尝试多种方式打开链接
-        try {
-          // 方法1：尝试新窗口
-          const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
-
-          // 方法2：如果新窗口失败，尝试当前窗口
-          if (!newWindow) {
-            window.location.href = url;
-          }
-        } catch (error) {
-          // 方法3：如果所有方法都失败，直接跳转
+        // 方法2：如果新窗口失败，尝试当前窗口
+        if (!newWindow) {
           window.location.href = url;
         }
+      } catch (error) {
+        // 方法3：如果所有方法都失败，直接跳转
+        window.location.href = url;
       }
-    } else {
-      // 在普通浏览器中正常打开
-      window.open(url, '_blank', 'noopener,noreferrer');
     }
   }
 

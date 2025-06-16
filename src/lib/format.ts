@@ -183,12 +183,13 @@ const removeTrailingZeros = (num: number, digits: number): string => {
 export const formatPercentage = (value: number | string): string => {
   const num = typeof value === 'string' ? parseFloat(value) : value;
   const absNum = Math.abs(num);
-
+  console.log('value', value);
+  console.log('absNum', absNum);
   if (absNum === 0) return '0%';
   if (absNum >= 100) return num.toLocaleString(undefined, { maximumFractionDigits: 0 }) + '%';
   if (absNum >= 10) return removeTrailingZeros(num, 1) + '%';
   if (absNum >= 1) return removeTrailingZeros(num, 2) + '%';
   if (absNum >= 0.1) return removeTrailingZeros(num, 3) + '%';
   if (absNum >= 0.01) return removeTrailingZeros(num, 4) + '%';
-  return num.toExponential(4) + '%';
+  return removeTrailingZeros(num, 6) + '%';
 };
