@@ -38,6 +38,7 @@ export const renderTextWithLinks = (text: string): React.ReactNode => {
               NavigationUtils.handleExternalLink(url);
             }}
             className="text-blue-500 underline hover:text-blue-700"
+            target="_blank"
           >
             {url}
           </a>

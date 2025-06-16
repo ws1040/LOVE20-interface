@@ -102,6 +102,8 @@ export class NavigationUtils {
         // 方法3：如果所有方法都失败，直接跳转
         window.location.href = url;
       }
+    } else {
+      window.open(url, '_blank');
     }
   }
 
