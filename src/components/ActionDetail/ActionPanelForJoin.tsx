@@ -14,6 +14,7 @@ import {
   useWithdraw,
 } from '@/src/hooks/contracts/useLOVE20Join';
 import { useVerificationInfosByAccount } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useIsSubmitted } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my funcs
@@ -59,6 +60,13 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
       onRoundChange(currentRound);
     }
   }, [currentRound, onRoundChange]);
+
+  // 获取是否已提交
+  const {
+    isSubmitted,
+    error: errIsSubmitted,
+    isPending: isPendingIsSubmitted,
+  } = useIsSubmitted((token?.address as `0x${string}`) || '', currentRound, actionId);
 
   // 获取我的行动代币数
   const {
@@ -156,14 +164,24 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
     if (errorWithdraw) {
       handleContractError(errorWithdraw, 'join');
     }
-  }, [errorJoinedAmountByAccount, errorJoinedAmount, errorVerificationInfo, errCurrentRound, errorWithdraw]);
+    if (errIsSubmitted) {
+      handleContractError(errIsSubmitted, 'submit');
+    }
+  }, [
+    errorJoinedAmountByAccount,
+    errorJoinedAmount,
+    errorVerificationInfo,
+    errCurrentRound,
+    errorWithdraw,
+    errIsSubmitted,
+  ]);
 
-  if (isPendingJoinedAmountByAccount || isPendingJoinedAmount) {
+  if (isPendingJoinedAmountByAccount || isPendingJoinedAmount || isPendingIsSubmitted) {
     return '';
   }
 
   return (
-    <div className="flex flex-col items-center px-4 pt-1 pb-4">
+    <div className="flex flex-col items-center px-4 pt-1">
       {isJoined && (
         <div className="stats w-full grid grid-cols-2 divide-x-0">
           <div className="stat place-items-center">
@@ -188,9 +206,11 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
       {showJoinButton && (
         <>
           {!isJoined ? (
-            <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
-              <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>参与行动</Link>
-            </Button>
+            isSubmitted && (
+              <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
+                <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>参与行动</Link>
+              </Button>
+            )
           ) : (
             <>
               <div className="flex justify-center space-x-4 mt-2 w-full">
@@ -219,7 +239,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
                   <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
                 </Button>
               </div>
-              <div className="flex flex-col items-center mt-2">
+              <div className="flex flex-col items-center mt-2 mb-4">
                 <div className="text-sm text-greyscale-600">
                   {isPendingVerificationInfo && '加载中...'}
                   {joinedAmountByActionIdByAccount != undefined &&
