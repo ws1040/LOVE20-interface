@@ -124,7 +124,7 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
           </div>
         </div>
 
-        {!isPendingVotesNumByAccountByActionId && myLeftVotes > 0n ? (
+        {!isPendingVotesNumByAccountByActionId && myLeftVotes > 10n ? (
           <Button className="w-1/2" onClick={handleVote} disabled={isWritingVote || isConfirmingVote}>
             {isWritingVote || isConfirmingVote ? <LoadingIcon /> : '将100%票投给此行动'}
           </Button>
