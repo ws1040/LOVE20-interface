@@ -64,7 +64,6 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({
       </>
     );
   }
-
   const isPendingValidGovVotes = externalIsPendingValidGovVotes || false;
   const validGovVotes = externalValidGovVotes || 0n;
 
@@ -99,7 +98,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({
       <div className="flex justify-center">
         {isPendingValidGovVotes || isPendingVotesNumByAccount ? (
           <LoadingIcon />
-        ) : validGovVotes > votesNumByAccount + 2n ? (
+        ) : validGovVotes > votesNumByAccount + 10n ? (
           <Button className="w-1/2" asChild>
             <Link href={`/vote?symbol=${token.symbol}`}>去投票</Link>
           </Button>
