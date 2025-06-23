@@ -147,16 +147,16 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
   return (
     <>
       <div className="p-6">
-        <LeftTitle title="底池销毁" />
+        <LeftTitle title="换回父币" />
         <div className="stats w-full">
           <div className="stat place-items-center">
-            <div className="stat-title text-sm mr-6">底池总量</div>
+            <div className="stat-title text-sm mr-6">父币托底池总量</div>
             <div className="stat-value text-secondary mt-2">
               {formatTokenAmount(balanceOfParentToken || 0n)}
               <span className="text-greyscale-500 font-normal text-sm ml-2">{token.parentTokenSymbol}</span>
             </div>
             <div className="stat-desc text-sm mt-2">
-              销毁 {token.symbol}，可从底池取回 {token.parentTokenSymbol}
+              销毁 {token.symbol}，可从父币托底池取回 {token.parentTokenSymbol}
             </div>
           </div>
         </div>
@@ -207,11 +207,17 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
 
               <div className="flex justify-center">
                 <Button
-                  className="w-1/2 text-white py-2 rounded-lg"
+                  className="text-white py-2 rounded-lg"
                   onClick={form.handleSubmit(onBurn)}
                   disabled={isPendingBurn || isConfirmingBurn || isConfirmedBurn}
                 >
-                  {isPendingBurn ? '销毁中...' : isConfirmingBurn ? '确认中...' : isConfirmedBurn ? '销毁成功' : '销毁'}
+                  {isPendingBurn
+                    ? '提交中...'
+                    : isConfirmingBurn
+                    ? '确认中...'
+                    : isConfirmedBurn
+                    ? '交易成功'
+                    : `销毁 ${token.symbol}，换回父币`}
                 </Button>
               </div>
             </form>

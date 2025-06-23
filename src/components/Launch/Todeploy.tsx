@@ -66,7 +66,7 @@ const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-2">
-        <LeftTitle title="部署子币" />
+        <LeftTitle title="子币发射" />
         <Button variant="link" className="text-secondary border-secondary" asChild>
           <Link href={`/tokens/children/?symbol=${token?.symbol}`}>子币列表</Link>
         </Button>
@@ -84,14 +84,14 @@ const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
           <Button variant="outline" size="sm" className="mt-2 w-1/2 text-secondary border-secondary" asChild>
             <Link href={`/launch/deploy?symbol=${token?.symbol}`}>
               <Plus className="w-4 h-4" />
-              去部署
+              开启子币公平发射
             </Link>
           </Button>
         )}
       </div>
       <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mt-4">
         <p className="mb-1">说明：</p>
-        <p>1. 部署者：须持有 {token?.symbol}不少于 0.5%的治理票</p>
+        <p>1. 须持有 {token?.symbol}不少于 0.5%的治理票</p>
         <p>2. 子币发射目标：须筹集 20,000,000个 {token?.symbol}</p>
       </div>
     </div>
