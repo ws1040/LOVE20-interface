@@ -32,7 +32,7 @@ export default function BurnPage() {
 
   return (
     <>
-      <Header title="底池销毁" />
+      <Header title="换回父币" />
       <main className="flex-grow">
         {isLaunchInfoPending ? (
           <LoadingIcon />

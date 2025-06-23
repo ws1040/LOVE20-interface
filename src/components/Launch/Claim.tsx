@@ -129,7 +129,7 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
               未申购
             </Button>
             <Button className="w-1/2" asChild>
-              <Link href={`/launch/burn?symbol=${token?.symbol}`}>底池销毁</Link>
+              <Link href={`/launch/burn?symbol=${token?.symbol}`}>换回父币</Link>
             </Button>
           </>
         )}
@@ -148,7 +148,7 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
               已领取
             </Button>
             <Button className="w-1/2" asChild>
-              <Link href={`/launch/burn?symbol=${token?.symbol}`}>底池销毁</Link>
+              <Link href={`/launch/burn?symbol=${token?.symbol}`}>换回父币</Link>
             </Button>
           </>
         )}

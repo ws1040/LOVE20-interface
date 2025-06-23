@@ -98,7 +98,7 @@ export default function TokenDeployment() {
     <>
       <Card className="w-full border-none shadow-none rounded-none">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">部署子币</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">开启子币公平发射</CardTitle>
           <CardDescription className="text-center">
             创建 <span className="text-secondary">{token.symbol}</span> 的子币
           </CardDescription>
@@ -139,7 +139,7 @@ export default function TokenDeployment() {
         </Form>
         <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mt-0 m-6">
           <p className="mb-1">说明：</p>
-          <p>1. 部署者：须持有 {token?.symbol}不少于 0.5%的治理票</p>
+          <p>1. 须持有 {token?.symbol}不少于 0.5%的治理票</p>
           <p>2. 子币发射目标：须筹集 20,000,000个 {token?.symbol}</p>
         </div>
       </Card>
