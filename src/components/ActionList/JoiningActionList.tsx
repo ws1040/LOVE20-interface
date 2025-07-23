@@ -155,7 +155,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                 (Number(process.env.NEXT_PUBLIC_JOIN_END_PHASE_BLOCKS) * Number(process.env.NEXT_PUBLIC_BLOCK_TIME)) /
                   100,
               )}
-              ），关闭行动参与报名
+              ），无法参与行动报名
             </span>
           </div>
         </div>

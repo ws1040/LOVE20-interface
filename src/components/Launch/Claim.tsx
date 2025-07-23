@@ -157,7 +157,7 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
         <div className="text-center text-sm my-2 text-greyscale-400">
           我共申购了 <span className="text-secondary">{formatTokenAmount(contributed ?? 0n)} </span>
           {parentTokenSymbol}，申购返还了{' '}
-          <span className="text-secondary">{formatTokenAmount(extraRefunded ?? 0n)}</span> {parentTokenSymbol}
+          <span className="text-secondary">{formatTokenAmount(extraRefunded ?? 0n)}</span> {token.parentTokenSymbol}
         </div>
       )}
       <div className="border-t border-gray-200 mx-4 mt-4 mb-6"></div>
