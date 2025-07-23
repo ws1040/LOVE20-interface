@@ -82,10 +82,10 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "canDeployToken",
+    "name": "canLaunchToken",
     "inputs": [
       {
-        "name": "accountAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       },
@@ -106,7 +106,31 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "childTokenNum",
+    "name": "childTokensAtIndex",
+    "inputs": [
+      {
+        "name": "parentTokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "childTokensCount",
     "inputs": [
       {
         "name": "parentTokenAddress",
@@ -119,64 +143,6 @@ export const LOVE20LaunchAbi = [
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "childTokensByPage",
-    "inputs": [
-      {
-        "name": "parentTokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "start",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "end",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "reverse",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address[]",
-        "internalType": "address[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "childTokensByParent",
-    "inputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
       }
     ],
     "stateMutability": "view"
@@ -278,30 +244,6 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "deployToken",
-    "inputs": [
-      {
-        "name": "tokenSymbol",
-        "type": "string",
-        "internalType": "string"
-      },
-      {
-        "name": "parentTokenAddress",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "extraRefunded",
     "inputs": [
       {
@@ -335,16 +277,6 @@ export const LOVE20LaunchAbi = [
       },
       {
         "name": "submitAddress_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "mintAddress_",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "stakeAddress_",
         "type": "address",
         "internalType": "address"
       },
@@ -466,73 +398,7 @@ export const LOVE20LaunchAbi = [
             "internalType": "uint256"
           },
           {
-            "name": "hasEnded",
-            "type": "bool",
-            "internalType": "bool"
-          },
-          {
-            "name": "participantCount",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "totalContributed",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "totalExtraRefunded",
-            "type": "uint256",
-            "internalType": "uint256"
-          }
-        ]
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "launchInfos",
-    "inputs": [
-      {
-        "name": "addresses",
-        "type": "address[]",
-        "internalType": "address[]"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "launchInfos_",
-        "type": "tuple[]",
-        "internalType": "struct ILOVE20Launch.LaunchInfo[]",
-        "components": [
-          {
-            "name": "parentTokenAddress",
-            "type": "address",
-            "internalType": "address"
-          },
-          {
-            "name": "parentTokenFundraisingGoal",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "secondHalfMinBlocks",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "launchAmount",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "startBlock",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "secondHalfStartBlock",
+            "name": "endBlock",
             "type": "uint256",
             "internalType": "uint256"
           },
@@ -563,7 +429,55 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "launchedChildTokenNum",
+    "name": "launchToken",
+    "inputs": [
+      {
+        "name": "tokenSymbol",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "parentTokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "launchedChildTokensAtIndex",
+    "inputs": [
+      {
+        "name": "parentTokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "launchedChildTokensCount",
     "inputs": [
       {
         "name": "parentTokenAddress",
@@ -582,149 +496,7 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "launchedChildTokensByPage",
-    "inputs": [
-      {
-        "name": "parentTokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "start",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "end",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "reverse",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address[]",
-        "internalType": "address[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "launchedTokenNum",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "launchedTokensByPage",
-    "inputs": [
-      {
-        "name": "start",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "end",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "reverse",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address[]",
-        "internalType": "address[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "launchingChildTokenNum",
-    "inputs": [
-      {
-        "name": "parentTokenAddress",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "launchingChildTokensByPage",
-    "inputs": [
-      {
-        "name": "parentTokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "start",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "end",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "reverse",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address[]",
-        "internalType": "address[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "launchingTokenNum",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "launchingTokens",
+    "name": "launchedTokensAtIndex",
     "inputs": [
       {
         "name": "index",
@@ -743,37 +515,32 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "launchingTokensByPage",
-    "inputs": [
-      {
-        "name": "start",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "end",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "reverse",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
+    "name": "launchedTokensCount",
+    "inputs": [],
     "outputs": [
       {
         "name": "",
-        "type": "address[]",
-        "internalType": "address[]"
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
   },
   {
     "type": "function",
-    "name": "mintAddress",
-    "inputs": [],
+    "name": "launchingChildTokensAtIndex",
+    "inputs": [
+      {
+        "name": "parentTokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "outputs": [
       {
         "name": "",
@@ -785,7 +552,82 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "participatedTokenNum",
+    "name": "launchingChildTokensCount",
+    "inputs": [
+      {
+        "name": "parentTokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "launchingTokensAtIndex",
+    "inputs": [
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "launchingTokensCount",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "participatedTokensAtIndex",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "participatedTokensCount",
     "inputs": [
       {
         "name": "account",
@@ -798,53 +640,6 @@ export const LOVE20LaunchAbi = [
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "participatedTokensByPage",
-    "inputs": [
-      {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "start",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "end",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "reverse",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address[]",
-        "internalType": "address[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "stakeAddress",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
       }
     ],
     "stateMutability": "view"
@@ -883,25 +678,6 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "tokenAddresses",
-    "inputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "tokenFactoryAddress",
     "inputs": [],
     "outputs": [
@@ -915,42 +691,32 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "function",
-    "name": "tokenNum",
-    "inputs": [],
+    "name": "tokensAtIndex",
+    "inputs": [
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "outputs": [
       {
         "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "stateMutability": "view"
   },
   {
     "type": "function",
-    "name": "tokensByPage",
-    "inputs": [
-      {
-        "name": "start",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "end",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "reverse",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
+    "name": "tokensCount",
+    "inputs": [],
     "outputs": [
       {
         "name": "",
-        "type": "address[]",
-        "internalType": "address[]"
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -979,7 +745,7 @@ export const LOVE20LaunchAbi = [
         "internalType": "address"
       },
       {
-        "name": "claimer",
+        "name": "account",
         "type": "address",
         "indexed": true,
         "internalType": "address"
@@ -1010,7 +776,7 @@ export const LOVE20LaunchAbi = [
         "internalType": "address"
       },
       {
-        "name": "contributor",
+        "name": "account",
         "type": "address",
         "indexed": true,
         "internalType": "address"
@@ -1032,37 +798,6 @@ export const LOVE20LaunchAbi = [
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "DeployToken",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "tokenSymbol",
-        "type": "string",
-        "indexed": false,
-        "internalType": "string"
-      },
-      {
-        "name": "parentTokenAddress",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "deployer",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
       }
     ],
     "anonymous": false
@@ -1094,6 +829,37 @@ export const LOVE20LaunchAbi = [
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "LaunchToken",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "tokenSymbol",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "parentTokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       }
     ],
     "anonymous": false
@@ -1134,7 +900,7 @@ export const LOVE20LaunchAbi = [
         "internalType": "address"
       },
       {
-        "name": "contributor",
+        "name": "account",
         "type": "address",
         "indexed": true,
         "internalType": "address"
@@ -1155,7 +921,22 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "error",
+    "name": "ClaimDelayNotPassed",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "InvalidParentToken",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidToAddress",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidTokenAddress",
     "inputs": []
   },
   {
@@ -1185,7 +966,7 @@ export const LOVE20LaunchAbi = [
   },
   {
     "type": "error",
-    "name": "NotEligibleToDeployToken",
+    "name": "NotEligibleToLaunchToken",
     "inputs": []
   },
   {

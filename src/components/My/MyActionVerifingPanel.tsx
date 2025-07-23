@@ -27,7 +27,7 @@ const MyActionVerifingPanel: React.FC<MyActionVerifingPanelProps> = ({
   onRemainingVotesChange,
 }) => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
+  const { address: account } = useAccount();
 
   // 获取我的投票数(即最大验证票数)
   const {
@@ -37,7 +37,7 @@ const MyActionVerifingPanel: React.FC<MyActionVerifingPanelProps> = ({
   } = useVotesNumByAccountByActionId(
     token?.address as `0x${string}`,
     currentRound,
-    (accountAddress as `0x${string}`) || '',
+    (account as `0x${string}`) || '',
     actionId,
   );
 
@@ -49,7 +49,7 @@ const MyActionVerifingPanel: React.FC<MyActionVerifingPanelProps> = ({
   } = useScoreByVerifierByActionId(
     token?.address as `0x${string}`,
     currentRound,
-    (accountAddress as `0x${string}`) || '',
+    (account as `0x${string}`) || '',
     actionId,
   );
 

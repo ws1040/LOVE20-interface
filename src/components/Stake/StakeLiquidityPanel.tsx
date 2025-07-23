@@ -102,7 +102,7 @@ function buildFormSchema(parentTokenBalance: bigint, tokenBalance: bigint) {
 interface StakeLiquidityPanelProps {}
 
 const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
-  const { address: accountAddress, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const context = useContext(TokenContext);
   if (!context) {
     throw new Error('TokenContext 必须在 TokenProvider 内使用');
@@ -117,7 +117,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     isPending: isPendingPair,
     error: errorPair,
   } = useTokenPairInfoWithAccount(
-    accountAddress as `0x${string}`,
+    account as `0x${string}`,
     token?.address as `0x${string}`,
     token?.parentTokenAddress as `0x${string}`,
   );
@@ -162,7 +162,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     promisedWaitingPhases,
     isPending: isPendingAccountStakeStatus,
     error: errAccountStakeStatus,
-  } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  } = useAccountStakeStatus(token?.address as `0x${string}`, account as `0x${string}`);
 
   // --------------------------------------------------
   // 2.2 授权逻辑，使用 useApprove 保持不变
@@ -321,7 +321,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
         stakeAmount,
         parentAmount,
         BigInt(data.releasePeriod),
-        accountAddress as `0x${string}`,
+        account as `0x${string}`,
       );
     } catch (error) {
       console.error('Stake failed', error);
@@ -672,7 +672,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                               <SelectValue placeholder="选择解锁期" />
                             </SelectTrigger>
                             <SelectContent>
-                              {Array.from({ length: 2 }, (_, i) => i + 1)
+                              {Array.from({ length: 9 }, (_, i) => i + 4)
                                 .filter((item) => item >= promisedWaitingPhases)
                                 .map((item) => (
                                   <SelectItem key={item} value={String(item)}>

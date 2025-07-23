@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
 
 // my hooks
-import { useActionInfosByPage, useActionSubmits } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useActionInfosByPage, useActionSubmits } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my context
@@ -29,7 +29,7 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
     actionInfos,
     isPending: isPendingActionInfosByPage,
     error: errorActionInfosByPage,
-  } = useActionInfosByPage((token?.address as `0x${string}`) || '', 0n, 100n, false);
+  } = useActionInfosByPage((token?.address as `0x${string}`) || '', 0n, 100n);
 
   const {
     actionSubmits,
@@ -83,10 +83,10 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
                       <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
                         <span className="text-greyscale-400 text-sm">{`No.`}</span>
                         <span className="text-secondary text-xl font-bold mr-2">{String(action.head.id)}</span>
-                        <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
+                        <span className="font-bold text-greyscale-800">{`${action.body.title}`}</span>
                       </CardHeader>
                       <CardContent className="px-3 pt-1 pb-2">
-                        <div className="text-base text-greyscale-600">{action.body.consensus}</div>
+                        {/* <div className="text-base text-greyscale-600">{action.body.consensus}</div> */}
                         <div className="flex justify-between mt-1 text-sm">
                           <span className="flex items-center">
                             <UserPen className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />

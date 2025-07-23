@@ -5,7 +5,7 @@
 export const LOVE20MintErrorsMap: Record<string, string> = {
   AlreadyInitialized: '已初始化，无需再次初始化',
   NoRewardAvailable: '没有奖励可用',
-  RoundStartMustBeLessOrEqualToRoundEnd: '轮次开始必须小于或等于轮次结束',
+  RoundNotReadyToMint: '该轮次还不能铸造奖励',
   NotEnoughReward: '奖励不足，无法铸造',
   NotEnoughRewardToBurn: '奖励不足，无法销毁',
 };

@@ -8,9 +8,8 @@ import React, { useContext, useEffect } from 'react';
 
 // my hooks
 import { ActionInfo, ActionSubmit } from '@/src/types/love20types';
-import { useActionSubmits, useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useActionSubmits, useActionInfosByIds, useVotesNums } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
-import { useVotesNums } from '@/src/hooks/contracts/useLOVE20Vote';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -127,10 +126,9 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
                     <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
                       <span className="text-greyscale-400 text-sm">No.</span>
                       <span className="text-secondary text-xl font-bold mr-2">{String(action.head.id)}</span>
-                      <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
+                      <span className="font-bold text-greyscale-800">{`${action.body.title}`}</span>
                     </CardHeader>
                     <CardContent className="px-3 pt-1 pb-2">
-                      <div className="text-greyscale-500">{action.body.consensus}</div>
                       <div className="flex justify-between gap-0 mt-1 text-sm">
                         <span className="flex items-center">
                           <UserPen className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />

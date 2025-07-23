@@ -22,20 +22,6 @@ export const useSubmitMinPerThousand = () => {
 };
 
 /**
- * Hook for actionIdsByAuthor
- */
-export const useActionIdsByAuthor = (tokenAddress: `0x${string}`, author: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20SubmitAbi,
-    functionName: 'actionIdsByAuthor',
-    args: [tokenAddress, author],
-  });
-
-  return { actionIds: data as bigint[] | undefined, isPending, error };
-};
-
-/**
  * Hook for actionInfo
  */
 export const useActionInfo = (tokenAddress: `0x${string}`, actionId: bigint | undefined) => {
@@ -53,47 +39,13 @@ export const useActionInfo = (tokenAddress: `0x${string}`, actionId: bigint | un
 };
 
 /**
- * Hook for actionInfosByIds
- */
-export const useActionInfosByIds = (tokenAddress: `0x${string}`, actionIds: bigint[]) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20SubmitAbi,
-    functionName: 'actionInfosByIds',
-    args: [tokenAddress, actionIds],
-    query: {
-      enabled: !!tokenAddress && actionIds.length > 0,
-    },
-  });
-
-  return { actionInfos: data as any[] | undefined, isPending, error };
-};
-
-/**
- * Hook for actionInfosByPage
- */
-export const useActionInfosByPage = (tokenAddress: `0x${string}`, start: bigint, end: bigint, reverse: boolean) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20SubmitAbi,
-    functionName: 'actionInfosByPage',
-    args: [tokenAddress, start, end, reverse],
-    query: {
-      enabled: !!tokenAddress,
-    },
-  });
-
-  return { actionInfos: data as any[] | undefined, isPending, error };
-};
-
-/**
  * Hook for actionNum
  */
-export const useActionNum = (tokenAddress: `0x${string}`) => {
+export const useActionsCount = (tokenAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20SubmitAbi,
-    functionName: 'actionNum',
+    functionName: 'actionsCount',
     args: [tokenAddress],
   });
 
@@ -101,31 +53,14 @@ export const useActionNum = (tokenAddress: `0x${string}`) => {
 };
 
 /**
- * Hook for actionSubmits
- */
-export const useActionSubmits = (tokenAddress: `0x${string}`, round: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20SubmitAbi,
-    functionName: 'actionSubmits',
-    args: [tokenAddress, round],
-    query: {
-      enabled: !!tokenAddress && !!round,
-    },
-  });
-
-  return { actionSubmits: data as any[] | undefined, isPending, error };
-};
-
-/**
  * Hook for canSubmit
  */
-export const useCanSubmit = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
+export const useCanSubmit = (tokenAddress: `0x${string}`, account: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20SubmitAbi,
     functionName: 'canSubmit',
-    args: [tokenAddress, accountAddress],
+    args: [tokenAddress, account],
   });
 
   return { canSubmit: data as boolean | undefined, isPending, error };
@@ -256,9 +191,8 @@ export function useSubmitNewAction() {
     actionBody: {
       minStake: bigint;
       maxRandomAccounts: bigint;
-      whiteList: `0x${string}`[];
-      action: string;
-      consensus: string;
+      whiteListAddress: `0x${string}`;
+      title: string;
       verificationRule: string;
       verificationKeys: string[];
       verificationInfoGuides: string[];

@@ -37,7 +37,7 @@ interface MyGovernanceAssetsPanelProps {
 }
 
 const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token, enableWithdraw = false }) => {
-  const { address: accountAddress, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
 
   // Hook：获取当前轮次
   const { currentRound, isPending: isPendingCurrentRound, error: errorCurrentRound } = useCurrentRound(enableWithdraw);
@@ -51,7 +51,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     govVotes,
     isPending: isPendingAccountStakeStatus,
     error: errorAccountStakeStatus,
-  } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  } = useAccountStakeStatus(token?.address as `0x${string}`, account as `0x${string}`);
 
   // 检查输入条件
   const checkInput = () => {
@@ -72,7 +72,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     error: errAllowanceSL,
   } = useAllowance(
     token?.slTokenAddress as `0x${string}`,
-    accountAddress as `0x${string}`,
+    account as `0x${string}`,
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
     enableWithdraw,
   );
@@ -83,7 +83,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     error: errAllowanceST,
   } = useAllowance(
     token?.stTokenAddress as `0x${string}`,
-    accountAddress as `0x${string}`,
+    account as `0x${string}`,
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
     enableWithdraw,
   );
@@ -93,7 +93,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     validGovVotes,
     isPending: isPendingValidGovVotes,
     error: errorValidGovVotes,
-  } = useValidGovVotes((token?.address as `0x${string}`) || '', (accountAddress as `0x${string}`) || '');
+  } = useValidGovVotes((token?.address as `0x${string}`) || '', (account as `0x${string}`) || '');
 
   // 状态变量：判断各 token 是否已授权
   const [isSlTokenApproved, setIsSlTokenApproved] = useState(false);
@@ -251,7 +251,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     errAllowanceST,
   ]);
 
-  if (!accountAddress) {
+  if (!account) {
     return <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>;
   }
   if (!token || (enableWithdraw && isPendingCurrentRound) || isPendingAccountStakeStatus) {

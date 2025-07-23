@@ -20,7 +20,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { checkWalletConnection } from '@/src/lib/web3';
 
 // my hooks
-import { useDeployToken } from '@/src/hooks/contracts/useLOVE20Launch';
+import { useLaunchToken } from '@/src/hooks/contracts/useLOVE20Launch';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -48,7 +48,7 @@ export default function TokenDeployment() {
   const { chain: accountChain } = useAccount();
 
   // 2. 部署合约相关 Hook
-  const { deployToken, isWriting, writeError, isConfirming, isConfirmed } = useDeployToken();
+  const { launchToken, isWriting, writeError, isConfirming, isConfirmed } = useLaunchToken();
 
   // 3. 错误处理
   const { handleContractError } = useHandleContractError();
@@ -73,7 +73,7 @@ export default function TokenDeployment() {
       return;
     }
     try {
-      await deployToken(data.symbol, token?.address as `0x${string}`);
+      await launchToken(data.symbol, token?.address as `0x${string}`);
     } catch (error) {
       console.error(error);
     }

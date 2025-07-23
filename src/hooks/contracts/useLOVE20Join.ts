@@ -120,32 +120,6 @@ export const useStakedAmountByAccount = (tokenAddress: `0x${string}`, account: `
   return { stakedAmount: data as bigint, isPending, error };
 };
 
-/**
- * Hook for submitAddress
- */
-export const useSubmitAddress = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20JoinAbi,
-    functionName: 'submitAddress',
-  });
-
-  return { submitAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * Hook for voteAddress
- */
-export const useVoteAddress = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20JoinAbi,
-    functionName: 'voteAddress',
-  });
-
-  return { voteAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
 // =====================
 // === 写入 Hook ===
 // =====================
@@ -161,14 +135,13 @@ export const useJoin = () => {
     actionId: bigint,
     additionalStakeAmount: bigint,
     verificationInfos_: string[],
-    to: `0x${string}`,
   ) => {
     try {
       await writeContract({
         address: CONTRACT_ADDRESS,
         abi: LOVE20JoinAbi,
         functionName: 'join',
-        args: [tokenAddress, actionId, additionalStakeAmount, verificationInfos_, to],
+        args: [tokenAddress, actionId, additionalStakeAmount, verificationInfos_],
       });
     } catch (err) {
       console.error('Join failed:', err);

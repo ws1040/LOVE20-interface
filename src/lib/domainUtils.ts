@@ -86,10 +86,24 @@ export const formatPhaseText = (phases: number, onlyBlockTime = false): string =
   // 计算总时间（秒）
   const totalSeconds = Math.ceil((totalBlocks * BLOCK_TIME) / 100);
 
-  // 计算天数
-  const days = Math.ceil(totalSeconds / (24 * 60 * 60));
+  // 计算时间显示
+  let timeDisplay: string;
 
-  let result = `${totalBlocks.toLocaleString()}区块，约${days}天`;
+  if (totalSeconds >= 24 * 60 * 60) {
+    // 超过1天，显示天数
+    const days = Math.ceil(totalSeconds / (24 * 60 * 60));
+    timeDisplay = `${days}天`;
+  } else if (totalSeconds >= 60 * 60) {
+    // 超过1小时但不够1天，显示小时数
+    const hours = Math.ceil(totalSeconds / (60 * 60));
+    timeDisplay = `${hours}小时`;
+  } else {
+    // 不够1小时，显示分钟数
+    const minutes = Math.ceil(totalSeconds / 60);
+    timeDisplay = `${minutes}分钟`;
+  }
+
+  let result = `${totalBlocks.toLocaleString()}区块，约${timeDisplay}`;
   if (!onlyBlockTime) {
     result = `${phases}个阶段（${result})`;
   }

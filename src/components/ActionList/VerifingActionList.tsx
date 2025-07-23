@@ -85,10 +85,10 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
                     <span className="text-secondary text-xl font-bold mr-2">
                       {String(verifyingAction.action.head.id)}
                     </span>
-                    <span className="font-bold text-greyscale-800">{`${verifyingAction.action.body.action}`}</span>
+                    <span className="font-bold text-greyscale-800">{`${verifyingAction.action.body.title}`}</span>
                   </CardHeader>
                   <CardContent className="px-3 pt-1 pb-2">
-                    <div className="text-greyscale-500">{verifyingAction.action.body.consensus}</div>
+                    {/* <div className="text-greyscale-500">{verifyingAction.action.body.consensus}</div> */}
                     <div className="text-xs mt-2 flex justify-between">
                       <span>
                         <span className="text-greyscale-400 mr-1">投票数</span>

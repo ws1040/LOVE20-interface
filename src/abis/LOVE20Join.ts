@@ -86,6 +86,59 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
+    "name": "actionIdsByAccountAtIndex",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "actionIdsByAccountCount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "amountByAccount",
     "inputs": [
       {
@@ -267,11 +320,6 @@ export const LOVE20JoinAbi = [
         "name": "verificationInfos_",
         "type": "string[]",
         "internalType": "string[]"
-      },
-      {
-        "name": "to",
-        "type": "address",
-        "internalType": "address"
       }
     ],
     "outputs": [],
@@ -371,7 +419,13 @@ export const LOVE20JoinAbi = [
         "internalType": "uint256"
       }
     ],
-    "outputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address[]",
+        "internalType": "address[]"
+      }
+    ],
     "stateMutability": "nonpayable"
   },
   {
@@ -399,6 +453,69 @@ export const LOVE20JoinAbi = [
         "name": "",
         "type": "address[]",
         "internalType": "address[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "randomAccountsByActionIdByRoundAtIndex",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "randomAccountsByActionIdByRoundCount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -515,7 +632,7 @@ export const LOVE20JoinAbi = [
         "internalType": "address"
       },
       {
-        "name": "accountAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       },
@@ -544,7 +661,7 @@ export const LOVE20JoinAbi = [
         "internalType": "address"
       },
       {
-        "name": "accountAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       },
@@ -564,6 +681,69 @@ export const LOVE20JoinAbi = [
         "name": "",
         "type": "string",
         "internalType": "string"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "verificationInfoUpdateRoundsByAccountAtIndex",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "verificationKey",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "verificationInfoUpdateRoundsByAccountCount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "verificationKey",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -618,7 +798,7 @@ export const LOVE20JoinAbi = [
       {
         "name": "currentRound",
         "type": "uint256",
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256"
       },
       {
@@ -630,7 +810,7 @@ export const LOVE20JoinAbi = [
       {
         "name": "account",
         "type": "address",
-        "indexed": false,
+        "indexed": true,
         "internalType": "address"
       },
       {
@@ -638,6 +818,37 @@ export const LOVE20JoinAbi = [
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "PrepareRandomAccounts",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "accounts",
+        "type": "address[]",
+        "indexed": false,
+        "internalType": "address[]"
       }
     ],
     "anonymous": false
@@ -692,7 +903,7 @@ export const LOVE20JoinAbi = [
       {
         "name": "currentRound",
         "type": "uint256",
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256"
       },
       {
@@ -704,11 +915,11 @@ export const LOVE20JoinAbi = [
       {
         "name": "account",
         "type": "address",
-        "indexed": false,
+        "indexed": true,
         "internalType": "address"
       },
       {
-        "name": "withdrawnAmount",
+        "name": "amount",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -723,27 +934,12 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "error",
-    "name": "AddressCannotBeZero",
-    "inputs": []
-  },
-  {
-    "type": "error",
     "name": "AlreadyInitialized",
     "inputs": []
   },
   {
     "type": "error",
     "name": "AmountIsZero",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "CannotGenerateAtCurrentRound",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "InvalidToAddress",
     "inputs": []
   },
   {
@@ -763,7 +959,7 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "error",
-    "name": "NotInWhiteList",
+    "name": "NotWhiteListAddress",
     "inputs": []
   },
   {

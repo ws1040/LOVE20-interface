@@ -67,23 +67,6 @@ export const useDecimals = (token: `0x${string}`) => {
 };
 
 /**
- * useInitialized Hook
- */
-export const useInitialized = (token: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: token,
-    abi: LOVE20TokenAbi,
-    functionName: 'initialized',
-    args: [],
-    query: {
-      enabled: !!token,
-    },
-  });
-
-  return { initialized: data as boolean | undefined, isPending, error };
-};
-
-/**
  * useMaxSupply Hook
  */
 export const useMaxSupply = (token: `0x${string}`) => {

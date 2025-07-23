@@ -69,13 +69,13 @@ export const useActionRewardByActionIdByAccount = (
   tokenAddress: `0x${string}`,
   round: bigint,
   actionId: bigint,
-  accountAddress: `0x${string}`,
+  account: `0x${string}`,
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'actionRewardByActionIdByAccount',
-    args: [tokenAddress, round, actionId, accountAddress],
+    args: [tokenAddress, round, actionId, account],
   });
 
   return {
@@ -89,7 +89,7 @@ export const useActionRewardByActionIdByAccount = (
  * Hook for actionRewardMintedByAccount
  */
 export const useActionRewardMintedByAccount = (
-  accountAddress: `0x${string}`,
+  account: `0x${string}`,
   round: bigint,
   actionId: bigint,
   targetAddress: `0x${string}`,
@@ -98,7 +98,7 @@ export const useActionRewardMintedByAccount = (
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'actionRewardMintedByAccount',
-    args: [accountAddress, round, actionId, targetAddress],
+    args: [account, round, actionId, targetAddress],
   });
 
   return {
@@ -145,24 +145,6 @@ export const useCalculateRoundGovReward = (tokenAddress: `0x${string}`) => {
 };
 
 /**
- * Hook for currentRound
- */
-export const useCurrentRound = () => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'currentRound',
-    args: [],
-  });
-
-  return {
-    currentRound: data as bigint | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
  * Hook for govReward
  */
 export const useGovReward = (tokenAddress: `0x${string}`, round: bigint) => {
@@ -183,14 +165,14 @@ export const useGovReward = (tokenAddress: `0x${string}`, round: bigint) => {
 /**
  * Hook for govRewardByAccount
  */
-export const useGovRewardByAccount = (tokenAddress: `0x${string}`, round: bigint, accountAddress: `0x${string}`) => {
+export const useGovRewardByAccount = (tokenAddress: `0x${string}`, round: bigint, account: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'govRewardByAccount',
-    args: [tokenAddress, round, accountAddress],
+    args: [tokenAddress, round, account],
     query: {
-      enabled: !!tokenAddress && !!accountAddress && round !== undefined,
+      enabled: !!tokenAddress && !!account && round !== undefined,
     },
   });
 
@@ -206,16 +188,12 @@ export const useGovRewardByAccount = (tokenAddress: `0x${string}`, round: bigint
 /**
  * Hook for govRewardMintedByAccount
  */
-export const useGovRewardMintedByAccount = (
-  accountAddress: `0x${string}`,
-  round: bigint,
-  targetAddress: `0x${string}`,
-) => {
+export const useGovRewardMintedByAccount = (account: `0x${string}`, round: bigint, targetAddress: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'govRewardMintedByAccount',
-    args: [accountAddress, round, targetAddress],
+    args: [account, round, targetAddress],
   });
 
   return {
@@ -238,24 +216,6 @@ export const useIsRewardPrepared = (tokenAddress: `0x${string}`, round: bigint) 
 
   return {
     isRewardPrepared: data as boolean | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
- * Hook for originBlocks
- */
-export const useOriginBlocks = () => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'originBlocks',
-    args: [],
-  });
-
-  return {
-    originBlocks: data as bigint | undefined,
     isPending: isLoading,
     error,
   };
@@ -285,12 +245,12 @@ export const useRewardAvailable = (tokenAddress: `0x${string}`) => {
 /**
  * Hook for rewardBurned
  */
-export const useRewardBurned = (accountAddress: `0x${string}`) => {
+export const useRewardBurned = (account: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'rewardBurned',
-    args: [accountAddress],
+    args: [account],
   });
 
   return {
@@ -303,12 +263,12 @@ export const useRewardBurned = (accountAddress: `0x${string}`) => {
 /**
  * Hook for rewardMinted
  */
-export const useRewardMinted = (accountAddress: `0x${string}`) => {
+export const useRewardMinted = (account: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'rewardMinted',
-    args: [accountAddress],
+    args: [account],
   });
 
   return {
@@ -321,52 +281,16 @@ export const useRewardMinted = (accountAddress: `0x${string}`) => {
 /**
  * Hook for rewardReserved
  */
-export const useRewardReserved = (accountAddress: `0x${string}`) => {
+export const useRewardReserved = (account: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'rewardReserved',
-    args: [accountAddress],
+    args: [account],
   });
 
   return {
     rewardReserved: data as bigint | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
- * Hook for phaseBlocks
- */
-export const useRoundBlocks = () => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'phaseBlocks',
-    args: [],
-  });
-
-  return {
-    phaseBlocks: data as bigint | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
- * Hook for roundByBlockNumber
- */
-export const useRoundByBlockNumber = (blockNumber: bigint) => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'roundByBlockNumber',
-    args: [blockNumber],
-  });
-
-  return {
-    roundByBlockNumber: data as bigint | undefined,
     isPending: isLoading,
     error,
   };

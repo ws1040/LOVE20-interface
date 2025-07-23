@@ -33,7 +33,7 @@ const VerifiedAddressesByAction: React.FC<{
   actionInfo: ActionInfo;
 }> = ({ currentJoinRound, actionId, actionInfo }) => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const [selectedRound, setSelectedRound] = useState(0n);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
@@ -84,7 +84,7 @@ const VerifiedAddressesByAction: React.FC<{
     if (!checkWalletConnection(accountChain)) {
       return;
     }
-    if (accountAddress && item.unminted > 0 && token) {
+    if (account && item.unminted > 0 && token) {
       await mintActionReward(
         token?.address as `0x${string}`,
         selectedRound + BigInt(token.initialStakeRound) - 1n,
@@ -95,10 +95,10 @@ const VerifiedAddressesByAction: React.FC<{
   useEffect(() => {
     if (isConfirmedMint) {
       setAddresses((prev) =>
-        prev.map((addr) => (addr.account === accountAddress ? { ...addr, minted: addr.unminted, unminted: 0n } : addr)),
+        prev.map((addr) => (addr.account === account ? { ...addr, minted: addr.unminted, unminted: 0n } : addr)),
       );
     }
-  }, [isConfirmedMint, accountAddress]);
+  }, [isConfirmedMint, account]);
 
   const handleChangedRound = (round: number) => {
     setSelectedRound(BigInt(round));
@@ -195,7 +195,7 @@ const VerifiedAddressesByAction: React.FC<{
 
               return (
                 <React.Fragment key={item.account}>
-                  <tr className={`border-b border-gray-100 ${item.account === accountAddress ? 'text-secondary' : ''}`}>
+                  <tr className={`border-b border-gray-100 ${item.account === account ? 'text-secondary' : ''}`}>
                     <td className="px-1 w-8">
                       {verificationInfo && (
                         <button
@@ -210,13 +210,13 @@ const VerifiedAddressesByAction: React.FC<{
                       <AddressWithCopyButton
                         address={item.account}
                         showCopyButton={true}
-                        word={item.account === accountAddress ? '(我)' : ''}
+                        word={item.account === account ? '(我)' : ''}
                       />
                     </td>
                     <td className="px-1 text-right">{formatTokenAmountInteger(item.score)}</td>
                     <td className="px-1 text-right">{formatTokenAmountInteger(item.minted || item.unminted || 0n)}</td>
                     <td className="px-1 text-right">
-                      {item.account === accountAddress &&
+                      {item.account === account &&
                         (item.unminted > 0 ? (
                           <Button
                             variant="outline"

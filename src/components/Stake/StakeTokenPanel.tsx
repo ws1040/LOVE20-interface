@@ -58,7 +58,7 @@ function stakeSchemaFactory(tokenBalance: bigint) {
 }
 
 const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
-  const { address: accountAddress, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const { token } = useContext(TokenContext) || {};
 
   // 状态变量：是否完成授权的
@@ -85,7 +85,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     promisedWaitingPhases,
     isPending: isPendingAccountStakeStatus,
     error: errAccountStakeStatus,
-  } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  } = useAccountStakeStatus(token?.address as `0x${string}`, account as `0x${string}`);
 
   // 1. 获取已授权数量
   const {
@@ -94,7 +94,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     error: errAllowanceToken,
   } = useAllowance(
     token?.address as `0x${string}`,
-    accountAddress as `0x${string}`,
+    account as `0x${string}`,
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
   );
 
@@ -158,7 +158,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
         token?.address as `0x${string}`,
         parseUnits(data.stakeTokenAmount),
         BigInt(data.releasePeriod),
-        accountAddress as `0x${string}`,
+        account as `0x${string}`,
       );
     } catch (error) {
       console.error('Stake failed', error);
@@ -282,7 +282,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
                       <SelectValue placeholder="选择解锁期长度" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from({ length: 2 }, (_, i) => i + 1)
+                      {Array.from({ length: 9 }, (_, i) => i + 4)
                         .filter((item) => item >= promisedWaitingPhases)
                         .map((item) => (
                           <SelectItem key={item} value={String(item)}>

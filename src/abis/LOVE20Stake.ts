@@ -54,7 +54,7 @@ export const LOVE20StakeAbi = [
         "internalType": "address"
       },
       {
-        "name": "accountAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       }
@@ -158,7 +158,7 @@ export const LOVE20StakeAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "accountAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       }
@@ -250,25 +250,6 @@ export const LOVE20StakeAbi = [
         "name": "",
         "type": "bool",
         "internalType": "bool"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "numOfStakeUpdateRounds",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -398,7 +379,7 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "function",
-    "name": "stakeUpdateRoundsByPage",
+    "name": "stakeTokenUpdatedRoundsAtIndex",
     "inputs": [
       {
         "name": "tokenAddress",
@@ -406,26 +387,88 @@ export const LOVE20StakeAbi = [
         "internalType": "address"
       },
       {
-        "name": "start",
+        "name": "index",
         "type": "uint256",
         "internalType": "uint256"
-      },
-      {
-        "name": "end",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "reverse",
-        "type": "bool",
-        "internalType": "bool"
       }
     ],
     "outputs": [
       {
         "name": "",
-        "type": "uint256[]",
-        "internalType": "uint256[]"
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "stakeTokenUpdatedRoundsByAccountAtIndex",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "stakeTokenUpdatedRoundsByAccountCount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "stakeTokenUpdatedRoundsCount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -453,7 +496,7 @@ export const LOVE20StakeAbi = [
         "internalType": "address"
       },
       {
-        "name": "accountAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       }
@@ -491,6 +534,12 @@ export const LOVE20StakeAbi = [
         "internalType": "address"
       },
       {
+        "name": "round",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
         "name": "account",
         "type": "address",
         "indexed": true,
@@ -521,7 +570,7 @@ export const LOVE20StakeAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "govVotesNew",
+        "name": "govVotes",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -533,7 +582,7 @@ export const LOVE20StakeAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "slAmountNew",
+        "name": "slAmount",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -550,6 +599,12 @@ export const LOVE20StakeAbi = [
         "type": "address",
         "indexed": true,
         "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
       },
       {
         "name": "account",
@@ -576,13 +631,13 @@ export const LOVE20StakeAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "govVotesNew",
+        "name": "govVotes",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
       },
       {
-        "name": "stAmountNew",
+        "name": "stAmount",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -601,10 +656,22 @@ export const LOVE20StakeAbi = [
         "internalType": "address"
       },
       {
+        "name": "round",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
         "name": "account",
         "type": "address",
         "indexed": true,
         "internalType": "address"
+      },
+      {
+        "name": "govVotes",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
       {
         "name": "slAmount",
@@ -632,6 +699,12 @@ export const LOVE20StakeAbi = [
         "internalType": "address"
       },
       {
+        "name": "round",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
         "name": "account",
         "type": "address",
         "indexed": true,
@@ -639,6 +712,18 @@ export const LOVE20StakeAbi = [
       },
       {
         "name": "slAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "tokenAmountForLp",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "parentTokenAmountForLp",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -674,11 +759,6 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "error",
-    "name": "NoStakedLiquidityOrToken",
-    "inputs": []
-  },
-  {
-    "type": "error",
     "name": "NotAllowedToStakeAtRoundZero",
     "inputs": []
   },
@@ -689,22 +769,12 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "error",
-    "name": "PromisedWaitingRoundsMustBeGreaterOrEqualThanBefore",
+    "name": "PromisedWaitingPhasesMustBeGreaterOrEqualThanBefore",
     "inputs": []
   },
   {
     "type": "error",
-    "name": "PromisedWaitingRoundsOutOfRange",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "ReleaseAlreadyRequested",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "ReleaseNotRequested",
+    "name": "PromisedWaitingPhasesOutOfRange",
     "inputs": []
   },
   {
@@ -720,6 +790,16 @@ export const LOVE20StakeAbi = [
   {
     "type": "error",
     "name": "StakeAmountMustBeSet",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "UnstakeAlreadyRequested",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "UnstakeNotRequested",
     "inputs": []
   }
 ] as const satisfies Abi;

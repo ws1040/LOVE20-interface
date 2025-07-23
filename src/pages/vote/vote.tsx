@@ -8,9 +8,9 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 // my hooks
-import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useCurrentRound, useVotesNumByAccount, useVote } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my types & functions
@@ -29,7 +29,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 const VotingSubmitPage = () => {
   const { token } = useContext(TokenContext) || {};
   const [percentages, setPercentages] = useState<{ [key: number]: number }>({});
-  const { address: accountAddress, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const { currentRound, isPending: isPendingCurrentRound, error: errCurrentRound } = useCurrentRound();
 
   const router = useRouter();
@@ -82,12 +82,12 @@ const VotingSubmitPage = () => {
     validGovVotes,
     isPending: isPendingValidGovVotes,
     error: errorValidGovVotes,
-  } = useValidGovVotes(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  } = useValidGovVotes(token?.address as `0x${string}`, account as `0x${string}`);
   const {
     votesNumByAccount,
     isPending: isPendingVotesNumByAccount,
     error: errorVotesNumByAccount,
-  } = useVotesNumByAccount(token?.address as `0x${string}`, currentRound, accountAddress as `0x${string}`);
+  } = useVotesNumByAccount(token?.address as `0x${string}`, currentRound, account as `0x${string}`);
 
   // 获取行动列表
   const actionIds = idList?.map((id: number) => BigInt(id)) || [];
@@ -225,9 +225,8 @@ const VotingSubmitPage = () => {
                       >
                         <div className="font-semibold mb-2">
                           <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
-                          <span className="text-greyscale-900">{`${action.body.action}`}</span>
+                          <span className="text-greyscale-900">{`${action.body.title}`}</span>
                         </div>
-                        <p className="text-greyscale-500">{action.body.consensus}</p>
                       </Link>
                       <div className="flex items-center">
                         <input

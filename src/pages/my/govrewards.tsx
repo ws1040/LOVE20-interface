@@ -14,8 +14,9 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
 import { useGovRewardsByAccountByRounds } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Verify';
+import { useMintGovReward } from '@/src/hooks/contracts/useLOVE20Mint';
 import { useHandleContractError } from '@/src/lib/errorUtils';
-import { useMintGovReward, useCurrentRound } from '@/src/hooks/contracts/useLOVE20Mint';
 
 // my components
 import Header from '@/src/components/Header';
@@ -27,7 +28,7 @@ const REWARDS_PER_PAGE = 20n;
 
 const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const { currentRound, error: errorCurrentRound } = useCurrentRound();
   const [startRound, setStartRound] = useState<bigint>(0n);
   const [endRound, setEndRound] = useState<bigint>(0n);
@@ -38,7 +39,7 @@ const GovRewardsPage: React.FC = () => {
 
   useEffect(() => {
     if (currentRound && token) {
-      if (currentRound - BigInt(token.initialStakeRound) >= 0n) {
+      if (currentRound - BigInt(token.initialStakeRound) > 0n) {
         setEndRound(currentRound);
       } else {
         setEndRound(BigInt(token.initialStakeRound));
@@ -62,12 +63,7 @@ const GovRewardsPage: React.FC = () => {
     rewards,
     isPending: isLoadingRewards,
     error: errorLoadingRewards,
-  } = useGovRewardsByAccountByRounds(
-    token?.address as `0x${string}`,
-    accountAddress as `0x${string}`,
-    startRound,
-    endRound,
-  );
+  } = useGovRewardsByAccountByRounds(token?.address as `0x${string}`, account as `0x${string}`, startRound, endRound);
 
   const [rewardList, setRewardList] = useState<RewardInfo[]>([]);
   useEffect(() => {
@@ -97,7 +93,7 @@ const GovRewardsPage: React.FC = () => {
     if (!checkWalletConnection(accountChain)) {
       return;
     }
-    if (token?.address && accountAddress) {
+    if (token?.address && account) {
       setMintingRound(round);
       await mintGovReward(token.address, round);
     }

@@ -73,20 +73,20 @@ export const useCumulatedTokenAmount = (tokenAddress: `0x${string}`, round: bigi
  * 按账户获取累积的代币数量
  * @param tokenAddress 代币地址
  * @param round 轮次
- * @param accountAddress 账户地址
+ * @param account 账户地址
  */
 export const useCumulatedTokenAmountByAccount = (
   tokenAddress: `0x${string}`,
   round: bigint,
-  accountAddress: `0x${string}`,
+  account: `0x${string}`,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20StakeAbi,
     functionName: 'cumulatedTokenAmountByAccount',
-    args: [tokenAddress, round, accountAddress],
+    args: [tokenAddress, round, account],
     query: {
-      enabled: !!tokenAddress && !!accountAddress,
+      enabled: !!tokenAddress && !!account,
     },
   });
 
@@ -190,44 +190,18 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
 };
 
 /**
- * 分页获取更新的轮次
- * @param tokenAddress 代币地址
- * @param start 起始轮次
- * @param end 结束轮次
- * @param reverse 是否逆序
- */
-export const useStakeUpdateRoundsByPage = (
-  tokenAddress: `0x${string}`,
-  start: bigint,
-  end: bigint,
-  reverse: boolean,
-) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20StakeAbi,
-    functionName: 'stakeUpdateRoundsByPage',
-    args: [tokenAddress, start, end, reverse],
-    query: {
-      enabled: !!tokenAddress,
-    },
-  });
-
-  return { rounds: data as bigint[] | undefined, isPending, error };
-};
-
-/**
  * 获取有效的治理投票数
  * @param tokenAddress 代币地址
- * @param accountAddress 账户地址
+ * @param account 账户地址
  */
-export const useValidGovVotes = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
+export const useValidGovVotes = (tokenAddress: `0x${string}`, account: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20StakeAbi,
     functionName: 'validGovVotes',
-    args: [tokenAddress, accountAddress],
+    args: [tokenAddress, account],
     query: {
-      enabled: !!tokenAddress && !!accountAddress,
+      enabled: !!tokenAddress && !!account,
     },
   });
 

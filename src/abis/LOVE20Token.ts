@@ -562,7 +562,7 @@ export const LOVE20TokenAbi = [
   },
   {
     "type": "error",
-    "name": "NotEligibleToMint",
+    "name": "NotMinter",
     "inputs": []
   }
 ] as const satisfies Abi;

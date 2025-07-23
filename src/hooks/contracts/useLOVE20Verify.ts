@@ -11,49 +11,6 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_VERIFY as `0x$
 // =====================
 
 /**
- * Hook for ACTION_REWARD_MIN_VOTE_PER_THOUSAND
- */
-export const useActionRewardMinVotePerThousand = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'ACTION_REWARD_MIN_VOTE_PER_THOUSAND',
-  });
-
-  return { actionRewardMinVotePerThousand: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook for RANDOM_SEED_UPDATE_MIN_PER_TEN_THOUSAND
- */
-export const useRandomSeedUpdateMinPerTenThousand = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'RANDOM_SEED_UPDATE_MIN_PER_TEN_THOUSAND',
-  });
-
-  return { randomSeedUpdateMinPerTenThousand: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook for abstentionScoreWithReward
- */
-export const useAbstentionScoreWithReward = (account: `0x${string}`, someNumber: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'abstentionScoreWithReward',
-    args: [account, someNumber],
-    query: {
-      enabled: !!account && someNumber !== undefined,
-    },
-  });
-
-  return { abstentionScoreWithReward: data as bigint | undefined, isPending, error };
-};
-
-/**
  * Hook for currentRound
  */
 export const useCurrentRound = () => {
@@ -77,23 +34,6 @@ export const useFirstTokenAddress = () => {
   });
 
   return { firstTokenAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * Hook for isActionIdWithReward
- */
-export const useIsActionIdWithReward = (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'isActionIdWithReward',
-    args: [tokenAddress, round, actionId],
-    query: {
-      enabled: !!tokenAddress && round !== undefined && actionId !== undefined,
-    },
-  });
-
-  return { isActionIdWithReward: data as boolean | undefined, isPending, error };
 };
 
 /**
@@ -261,45 +201,6 @@ export const useScoreWithReward = (account: `0x${string}`, someNumber: bigint) =
   });
 
   return { scoreWithReward: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook for stakeAddress
- */
-export const useStakeAddress = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'stakeAddress',
-  });
-
-  return { stakeAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * Hook for submitAddress
- */
-export const useSubmitAddress = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'submitAddress',
-  });
-
-  return { submitAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * Hook for voteAddress
- */
-export const useVoteAddress = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'voteAddress',
-  });
-
-  return { voteAddress: data as `0x${string}` | undefined, isPending, error };
 };
 
 // =====================

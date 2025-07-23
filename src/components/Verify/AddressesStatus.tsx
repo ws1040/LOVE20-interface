@@ -33,7 +33,7 @@ interface VerifyAddressesProps {
 
 const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionId, actionInfo, remainingVotes }) => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
+  const { address: account } = useAccount();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   // 获取弃权票数
@@ -146,9 +146,7 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
 
                 return (
                   <React.Fragment key={info.account}>
-                    <tr
-                      className={`border-b border-gray-100 ${info.account === accountAddress ? 'text-secondary' : ''}`}
-                    >
+                    <tr className={`border-b border-gray-100 ${info.account === account ? 'text-secondary' : ''}`}>
                       <td className="px-1 w-8">
                         <button
                           onClick={() => toggleRow(info.account)}
@@ -161,7 +159,7 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                         <AddressWithCopyButton
                           address={info.account}
                           showCopyButton={true}
-                          word={info.account === accountAddress ? '(我)' : ''}
+                          word={info.account === account ? '(我)' : ''}
                         />
                       </td>
                       <td className="px-1 text-right">{formatTokenAmountInteger(verifiedAddress?.score || 0n)}</td>

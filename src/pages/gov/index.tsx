@@ -22,7 +22,7 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 const GovPage = () => {
   // 当前token
   const { token: currentToken } = useContext(TokenContext) || {};
-  const { address: accountAddress, isConnected } = useAccount();
+  const { address: account, isConnected } = useAccount();
 
   // 获取当前轮次
   const {
@@ -36,7 +36,7 @@ const GovPage = () => {
     validGovVotes,
     isPending: isPendingValidGovVotes,
     error: errorValidGovVotes,
-  } = useValidGovVotes((currentToken?.address as `0x${string}`) || '', (accountAddress as `0x${string}`) || '');
+  } = useValidGovVotes((currentToken?.address as `0x${string}`) || '', (account as `0x${string}`) || '');
 
   // 错误处理
   const { handleContractError } = useHandleContractError();

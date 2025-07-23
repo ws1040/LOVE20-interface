@@ -9,8 +9,7 @@ import React, { useContext, useEffect, useState } from 'react';
 
 // my hooks
 import { ActionInfo, ActionSubmit } from '@/src/types/love20types';
-import { useActionSubmits, useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
-import { useVotesNums } from '@/src/hooks/contracts/useLOVE20Vote';
+import { useActionSubmits, useActionInfosByIds, useVotesNums } from '@/src/hooks/contracts/useLOVE20DataViewer';
 
 // my utils
 import { useHandleContractError } from '@/src/lib/errorUtils';
@@ -162,10 +161,9 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
                     <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
                       <span className="text-greyscale-400 text-sm mr-1">{`No.`}</span>
                       <span className="text-secondary text-xl font-bold mr-2">{String(action.head.id)}</span>
-                      <span className="font-bold text-greyscale-800">{`${action.body.action}`}</span>
+                      <span className="font-bold text-greyscale-800">{`${action.body.title}`}</span>
                     </CardHeader>
                     <CardContent className="px-3 pt-1 pb-2">
-                      <div className="text-greyscale-500">{action.body.consensus}</div>
                       <div className="flex justify-between mt-1 text-sm">
                         <span className="flex items-center">
                           <UserPen className="text-greyscale-400 mr-1 h-3 w-3" />
@@ -185,9 +183,11 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
                         <span>
                           <span className="text-greyscale-400 mr-1">占比</span>
                           <span className="text-secondary">
-                            {formatPercentage(
-                              (Number(getVotesByActionId(BigInt(action.head.id))) * 100) / Number(totalVotes),
-                            )}
+                            {totalVotes === 0n
+                              ? '-'
+                              : formatPercentage(
+                                  (Number(getVotesByActionId(BigInt(action.head.id))) * 100) / Number(totalVotes),
+                                )}
                           </span>
                         </span>
                       </div>

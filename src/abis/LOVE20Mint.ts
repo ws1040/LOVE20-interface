@@ -3,20 +3,17 @@ import { Abi } from 'abitype';
 
 export const LOVE20MintAbi = [
   {
-    "type": "constructor",
-    "inputs": [
+    "type": "function",
+    "name": "ACTION_REWARD_MIN_VOTE_PER_THOUSAND",
+    "inputs": [],
+    "outputs": [
       {
-        "name": "originBlocks",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "phaseBlocks",
+        "name": "",
         "type": "uint256",
         "internalType": "uint256"
       }
     ],
-    "stateMutability": "nonpayable"
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -59,15 +56,39 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "function",
-    "name": "actionReward",
+    "name": "abstentionActionRewardBurned",
     "inputs": [
       {
-        "name": "tokenAddress",
+        "name": "",
         "type": "address",
         "internalType": "address"
       },
       {
-        "name": "round",
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "actionReward",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -101,7 +122,7 @@ export const LOVE20MintAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "accountAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       }
@@ -151,6 +172,30 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "function",
+    "name": "boostRewardBurned",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "calculateRoundActionReward",
     "inputs": [
       {
@@ -189,19 +234,6 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "function",
-    "name": "currentRound",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "govBoostReward",
     "inputs": [
       {
@@ -229,12 +261,12 @@ export const LOVE20MintAbi = [
     "name": "govReward",
     "inputs": [
       {
-        "name": "tokenAddress",
+        "name": "",
         "type": "address",
         "internalType": "address"
       },
       {
-        "name": "round",
+        "name": "",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -263,7 +295,7 @@ export const LOVE20MintAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "accountAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       }
@@ -345,6 +377,11 @@ export const LOVE20MintAbi = [
     "name": "initialize",
     "inputs": [
       {
+        "name": "voteAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
         "name": "verifyAddress_",
         "type": "address",
         "internalType": "address"
@@ -353,6 +390,11 @@ export const LOVE20MintAbi = [
         "name": "stakeAddress_",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "actionRewardMinVotePerThousand",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
         "name": "roundRewardGovPerThousand",
@@ -377,6 +419,35 @@ export const LOVE20MintAbi = [
     "type": "function",
     "name": "initialized",
     "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isActionIdWithReward",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "outputs": [
       {
         "name": "",
@@ -472,32 +543,6 @@ export const LOVE20MintAbi = [
       }
     ],
     "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "originBlocks",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "phaseBlocks",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -609,25 +654,6 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "function",
-    "name": "roundByBlockNumber",
-    "inputs": [
-      {
-        "name": "blockNumber",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "stakeAddress",
     "inputs": [],
     "outputs": [
@@ -642,6 +668,19 @@ export const LOVE20MintAbi = [
   {
     "type": "function",
     "name": "verifyAddress",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "voteAddress",
     "inputs": [],
     "outputs": [
       {
@@ -835,12 +874,7 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "error",
-    "name": "RoundNotStarted",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "RoundStartMustBeLessOrEqualToRoundEnd",
+    "name": "RoundNotReadyToMint",
     "inputs": []
   }
 ] as const satisfies Abi;

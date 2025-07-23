@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 // my hooks
-import { useActionInfo, useActionSubmits } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useActionInfo } from '@/src/hooks/contracts/useLOVE20Submit';
+import { useActionSubmits } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -90,10 +91,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
       <div className="mx-auto p-4 pb-2 ">
         <div className="flex flex-col">
           <span className="text-sm text-greyscale-500">No.{actionInfo?.head.id.toString()}</span>
-          <span className="text-xl font-bold text-black">{actionInfo?.body.action}</span>
-        </div>
-        <div className="mt-1">
-          <span className="text-greyscale-600">{actionInfo?.body.consensus}</span>
+          <span className="text-xl font-bold text-black">{actionInfo?.body.title}</span>
         </div>
         <div className="mt-0 text-xs text-greyscale-500 flex justify-between">
           <div className="flex items-center">
@@ -147,13 +145,14 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
           <div className="mb-4">
             <h3 className="text-sm font-bold">白名单</h3>
             <p className="text-greyscale-500 flex flex-wrap items-center">
-              {actionInfo?.body.whiteList.length
-                ? actionInfo.body.whiteList.map((addr: string, index: number) => (
-                    <span key={index} className="flex items-center mr-2">
-                      <AddressWithCopyButton address={addr as `0x${string}`} />
-                    </span>
-                  ))
-                : '无限制'}
+              {actionInfo?.body.whiteListAddress &&
+              actionInfo.body.whiteListAddress !== '0x0000000000000000000000000000000000000000' ? (
+                <span className="flex items-center mr-2">
+                  <AddressWithCopyButton address={actionInfo.body.whiteListAddress as `0x${string}`} />
+                </span>
+              ) : (
+                '无限制'
+              )}
             </p>
           </div>
         </div>

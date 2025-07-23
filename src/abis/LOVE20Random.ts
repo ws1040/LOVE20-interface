@@ -144,13 +144,7 @@ export const LOVE20RandomAbi = [
         "internalType": "address"
       }
     ],
-    "outputs": [
-      {
-        "name": "newRandomSeed",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
+    "outputs": [],
     "stateMutability": "nonpayable"
   },
   {

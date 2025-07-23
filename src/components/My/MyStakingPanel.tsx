@@ -19,14 +19,14 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
 const MyStakingPanel: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
+  const { address: account } = useAccount();
 
   const {
     govVotes,
     stAmount,
     isPending: isPendingAccountStakeStatus,
     error: errorAccountStakeStatus,
-  } = useAccountStakeStatus((token?.address as `0x${string}`) || '', (accountAddress as `0x${string}`) || '');
+  } = useAccountStakeStatus((token?.address as `0x${string}`) || '', (account as `0x${string}`) || '');
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -40,7 +40,7 @@ const MyStakingPanel: React.FC = () => {
     return '';
   }
 
-  if (!accountAddress) {
+  if (!account) {
     return (
       <>
         <div className="flex-col items-center px-4 py-2">
