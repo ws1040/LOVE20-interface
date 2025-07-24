@@ -6,7 +6,7 @@ export const LOVE20LaunchErrorsMap: Record<string, string> = {
   AlreadyInitialized: '已初始化，无需再次初始化',
   InvalidTokenSymbol: '无效的代币符号',
   TokenSymbolExists: '代币符号已存在',
-  NotEligibleToLaunchToken: '不符合发射子币的条件',
+  NotEligibleToLaunchToken: '当前地址治理票不足，不能开启子币',
   LaunchAlreadyEnded: '公平发射已结束，无法进行操作',
   LaunchNotEnded: '公平发射未结束，无法进行操作',
   ClaimDelayNotPassed: '领取延迟期未到，请稍后再试',
