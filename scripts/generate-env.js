@@ -135,13 +135,13 @@ function generateEnvFiles(projectDir, network) {
   console.log('');
 
   // 先生成 LOVE20.params 的配置
-  console.log('# LOVE20 参数配置');
+  console.log('# LOVE20 参数');
   generateEnvFromParams(projectDir, network);
 
   console.log('');
 
   // 再生成 address.params 的配置
-  console.log('# 合约地址配置');
+  console.log('# 合约地址');
   generateEnvFromAddress(projectDir, network);
 }
 
