@@ -141,6 +141,10 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     error: errInitialStakeRound,
   } = useInitialStakeRound(token?.address as `0x${string}`);
 
+  // 在文件顶部添加环境变量读取
+  const PROMISED_WAITING_PHASES_MIN = Number(process.env.NEXT_PUBLIC_PROMISED_WAITING_PHASES_MIN) || 4;
+  const PROMISED_WAITING_PHASES_MAX = Number(process.env.NEXT_PUBLIC_PROMISED_WAITING_PHASES_MAX) || 12;
+
   // --------------------------------------------------
   // 2.1 使用 React Hook Form
   // --------------------------------------------------
@@ -672,7 +676,10 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                               <SelectValue placeholder="选择解锁期" />
                             </SelectTrigger>
                             <SelectContent>
-                              {Array.from({ length: 2 }, (_, i) => i + 1)
+                              {Array.from(
+                                { length: PROMISED_WAITING_PHASES_MAX - PROMISED_WAITING_PHASES_MIN + 1 },
+                                (_, i) => i + PROMISED_WAITING_PHASES_MIN,
+                              )
                                 .filter((item) => item >= promisedWaitingPhases)
                                 .map((item) => (
                                   <SelectItem key={item} value={String(item)}>

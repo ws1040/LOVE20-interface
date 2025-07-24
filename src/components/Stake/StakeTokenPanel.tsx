@@ -111,6 +111,10 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     prevIsPendingAllowance.current = isPendingAllowanceToken;
   }, [isPendingAllowanceToken]);
 
+  // 在文件顶部添加环境变量读取
+  const PROMISED_WAITING_PHASES_MIN = Number(process.env.NEXT_PUBLIC_PROMISED_WAITING_PHASES_MIN) || 1;
+  const PROMISED_WAITING_PHASES_MAX = Number(process.env.NEXT_PUBLIC_PROMISED_WAITING_PHASES_MAX) || 2;
+
   // 2. 初始化表单
   const form = useForm<z.infer<ReturnType<typeof stakeSchemaFactory>>>({
     resolver: zodResolver(stakeSchemaFactory(tokenBalance)),
@@ -282,7 +286,10 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
                       <SelectValue placeholder="选择解锁期长度" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from({ length: 2 }, (_, i) => i + 1)
+                      {Array.from(
+                        { length: PROMISED_WAITING_PHASES_MAX - PROMISED_WAITING_PHASES_MIN + 1 },
+                        (_, i) => i + PROMISED_WAITING_PHASES_MIN,
+                      )
                         .filter((item) => item >= promisedWaitingPhases)
                         .map((item) => (
                           <SelectItem key={item} value={String(item)}>
