@@ -34,6 +34,13 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
     error: errorBalanceOfToken,
   } = useBalanceOf(token?.address as `0x${string}`, account as `0x${string}`);
 
+  // 读取我的父币余额
+  const {
+    balance: balanceOfParentTokenOfMy,
+    isPending: isPendingBalanceOfParentTokenOfMy,
+    error: errorBalanceOfParentTokenOfMy,
+  } = useBalanceOf(token?.parentTokenAddress as `0x${string}`, account as `0x${string}`);
+
   // 读取底池父币余额
   const {
     balance: balanceOfParentToken,
@@ -137,8 +144,16 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
     if (errorBalanceOfToken) handleContractError(errorBalanceOfToken, 'token');
     if (errorBalanceOfParentToken) handleContractError(errorBalanceOfParentToken, 'token');
     if (errorTotalSupplyOfToken) handleContractError(errorTotalSupplyOfToken, 'token');
+    if (errorBalanceOfParentTokenOfMy) handleContractError(errorBalanceOfParentTokenOfMy, 'token');
     if (errBurn) handleContractError(errBurn, 'token');
-  }, [errorBalanceOfToken, errorBalanceOfParentToken, errorTotalSupplyOfToken, errBurn, handleContractError]);
+  }, [
+    errorBalanceOfToken,
+    errorBalanceOfParentToken,
+    errorTotalSupplyOfToken,
+    errorBalanceOfParentTokenOfMy,
+    errBurn,
+    handleContractError,
+  ]);
 
   if (!token || isPendingBalanceOfToken) {
     return <LoadingIcon />;
@@ -218,6 +233,30 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
                     : isConfirmedBurn
                     ? '交易成功'
                     : `销毁 ${token.symbol}，换回父币`}
+                </Button>
+              </div>
+
+              <div className="flex items-center justify-center text-sm my-2">
+                <span className="text-greyscale-400">
+                  我的 {token.parentTokenSymbol}:{' '}
+                  <span className="text-secondary">{formatTokenAmount(balanceOfParentTokenOfMy || 0n)}</span>{' '}
+                  {token.parentTokenSymbol}
+                </span>
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={() =>
+                    router.push(
+                      `/dex/swap?from=${token.parentTokenSymbol}&to=${
+                        token.parentTokenSymbol == process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL
+                          ? process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL
+                          : process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL
+                      }`,
+                    )
+                  }
+                  className="text-secondary ml-2"
+                >
+                  去兑换
                 </Button>
               </div>
             </form>
