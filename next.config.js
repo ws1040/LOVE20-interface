@@ -2,7 +2,7 @@
 const withTM = require('next-transpile-modules')(['@tanstack/query-core', '@tanstack/react-query']);
 
 const nextConfig = {
-  trailingSlash: true,
+  trailingSlash: false,
   reactStrictMode: false,
   output: 'export',
   basePath: process.env.BASE_PATH || '',
