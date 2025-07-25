@@ -123,10 +123,9 @@ export const calculateExpectedActionReward = (rewardAvailable: bigint | undefine
 
   // 计算剩余奖励比例
   const rewardLeftRatio =
-    100n -
-    (BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || 5n) +
-      BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || 5n)) /
-      10n;
+    1000n -
+    BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || 5n) -
+    BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || 5n);
 
   let expectedReward = BigInt(0);
 
@@ -135,10 +134,50 @@ export const calculateExpectedActionReward = (rewardAvailable: bigint | undefine
     expectedReward =
       (rewardAvailable * BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '0')) / 1000n;
   } else {
-    // >=第2轮：rewardAvailable * 0.99 * 0.01 / 2 (or 99 * 5 / 100000)
+    // >=第2轮：rewardAvailable * 0.99 * 0.01 / 2 (or 99 * 5 / 1000000)
     expectedReward =
       (rewardAvailable * rewardLeftRatio * BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '0')) /
-      100000n;
+      1000000n;
+  }
+
+  return expectedReward;
+};
+
+/**
+ * 计算治理激励的预期奖励
+ * @param rewardAvailable 可用奖励总量
+ * @param displayRound 显示的轮次（从1开始）
+ * @returns 计算得出的预期奖励数量
+ */
+export const calculateExpectedGovReward = (rewardAvailable: bigint | undefined, displayRound: bigint): bigint => {
+  if (!rewardAvailable) {
+    return BigInt(0);
+  }
+
+  // 计算剩余奖励比例
+  const rewardLeftRatio =
+    1000n -
+    BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || 5n) -
+    BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || 5n);
+
+  let expectedReward = BigInt(0);
+
+  if (displayRound === 1n) {
+    // 第1轮：rewardAvailable * 0.01 / 2 (or 5 / 1000)
+    expectedReward = (rewardAvailable * BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) / 1000n;
+  } else if (displayRound === 2n) {
+    // 第2轮：rewardAvailable * 0.99 * 0.01 / 2 (or 99 * 5 / 1000000)
+    expectedReward =
+      (rewardAvailable * rewardLeftRatio * BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) /
+      1000000n;
+  } else {
+    // >=第3轮：rewardAvailable * 0.99 * 0.99 * 0.01 / 2 (or 99 * 99 * 5 / 1000000000)
+    expectedReward =
+      (rewardAvailable *
+        rewardLeftRatio *
+        rewardLeftRatio *
+        BigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) /
+      1000000000n;
   }
 
   return expectedReward;
