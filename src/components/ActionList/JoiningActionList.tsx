@@ -93,7 +93,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
 
             // 根据是否已加入，设置不同的链接
             const href = isJoined
-              ? `/action/${actionDetail.action.head.id}?type=join&symbol=${token?.symbol}`
+              ? `/action/detail?id=${actionDetail.action.head.id}&type=join&symbol=${token?.symbol}`
               : `/acting/join?id=${actionDetail.action.head.id}&symbol=${token?.symbol}`;
 
             return (

@@ -77,7 +77,7 @@ const SubmitingActionList: React.FC<SubmitingActionListProps> = ({ currentRound 
                 return (
                   <Card key={action.head.id} className="shadow-none">
                     <Link
-                      href={`/action/${action.head.id}?symbol=${token.symbol}&type=submit&submitted=false`}
+                      href={`/action/detail?id=${action.head.id}&symbol=${token.symbol}&type=submit&submitted=false`}
                       key={action.head.id}
                     >
                       <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">

@@ -219,7 +219,7 @@ const VotingSubmitPage = () => {
                   return (
                     <div key={action.head.id} className="p-4 rounded-lg mb-4 flex justify-between items-center">
                       <Link
-                        href={`/action/${action.head.id}?type=vote&symbol=${token.symbol}`}
+                        href={`/action/detail?id=${action.head.id}&type=vote&symbol=${token.symbol}`}
                         key={action.head.id}
                         className="flex-grow"
                       >
