@@ -146,6 +146,14 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
           我共申购了 <span className="text-secondary">{formatTokenAmount(contributed ?? 0n)} </span>
           {parentTokenSymbol}，申购返还了 <span className="text-secondary">{formatTokenAmount(extraRefund ?? 0n)}</span>{' '}
           {token.parentTokenSymbol}
+          {token.parentTokenSymbol == process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL && (
+            <Link
+              href={`/dex/swap?from=${token.parentTokenSymbol}&to=${process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL}`}
+              className="text-secondary ml-1"
+            >
+              （转回 {process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL}）
+            </Link>
+          )}
         </div>
       )}
       <div className="border-t border-gray-200 mx-4 mt-4 mb-6"></div>
