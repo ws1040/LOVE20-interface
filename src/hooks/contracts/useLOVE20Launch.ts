@@ -1,6 +1,10 @@
 // hooks/contracts/useLOVE20Launch.ts
+import { useState } from 'react';
+import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
+import { Address } from 'viem';
 
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { config } from '@/src/wagmi';
 import { LOVE20LaunchAbi } from '@/src/abis/LOVE20Launch';
 import { LaunchInfo } from '@/src/types/love20types';
 
@@ -231,102 +235,145 @@ export const useLastContributedBlock = (tokenAddress: `0x${string}`, account: `0
  * Hook for claim
  */
 export function useClaim() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const claim = async (tokenAddress: `0x${string}`) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
+      await simulateContract(config, {
         abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
         functionName: 'claim',
         args: [tokenAddress],
       });
-    } catch (err) {
-      console.error('Claim failed:', err);
+      const txHash = await writeContract(config, {
+        abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
+        functionName: 'claim',
+        args: [tokenAddress],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { claim, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { claim, writeData: hash, isPending, writeError: error, isConfirming, isConfirmed };
 }
 
 /**
  * Hook for contribute
  */
 export function useContribute() {
-  const { writeContract, isPending, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const contribute = async (tokenAddress: `0x${string}`, parentTokenAmount: bigint, to: `0x${string}`) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
+      await simulateContract(config, {
         abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
         functionName: 'contribute',
         args: [tokenAddress, parentTokenAmount, to],
       });
-    } catch (err) {
-      console.error('Contribute failed:', err);
+      const txHash = await writeContract(config, {
+        abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
+        functionName: 'contribute',
+        args: [tokenAddress, parentTokenAmount, to],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { contribute, writeData, isPending, writeError, isConfirming, isConfirmed };
+  return { contribute, writeData: hash, isPending, writeError: error, isConfirming, isConfirmed };
 }
 
 /**
  * Hook for withdraw
  */
 export function useWithdraw() {
-  const { writeContract, isPending, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const withdraw = async (tokenAddress: `0x${string}`) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
+      await simulateContract(config, {
         abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
         functionName: 'withdraw',
         args: [tokenAddress],
       });
-    } catch (err) {
-      console.error('Withdraw failed:', err);
+      const txHash = await writeContract(config, {
+        abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
+        functionName: 'withdraw',
+        args: [tokenAddress],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
+    hash,
   });
 
-  return { withdraw, writeData, isPending, writeError, isConfirming, isConfirmed };
+  return { withdraw, writeData: hash, isPending, writeError: error, isConfirming, isConfirmed };
 }
 
-/**
- * Hook for deployToken
- */
 export function useLaunchToken() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
-  const launchToken = async (tokenSymbol: string, parentTokenAddress: `0x${string}`) => {
+  const launchToken = async (symbol: string, parent: Address) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
+      await simulateContract(config, {
         abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
         functionName: 'launchToken',
-        args: [tokenSymbol, parentTokenAddress],
+        args: [symbol, parent],
       });
-    } catch (err) {
-      console.error('DeployToken failed:', err);
+      const txHash = await writeContract(config, {
+        abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
+        functionName: 'launchToken',
+        args: [symbol, parent],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { launchToken, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { launchToken, isPending, isConfirming, writeError: error, isConfirmed };
 }

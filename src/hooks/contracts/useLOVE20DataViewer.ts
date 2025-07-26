@@ -1,6 +1,6 @@
 // hooks/contracts/useLOVE20Launch.ts
 
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useReadContract } from 'wagmi';
 import { LOVE20DataViewerAbi } from '@/src/abis/LOVE20DataViewer';
 import {
   JoinedAction,

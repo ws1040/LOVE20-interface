@@ -1,6 +1,10 @@
 // hooks/contracts/useLOVE20Mint.ts
 
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useState } from 'react';
+import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
+import { config } from '@/src/wagmi';
+
 import { LOVE20MintAbi } from '@/src/abis/LOVE20Mint';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MINT as `0x${string}`;
@@ -340,31 +344,42 @@ export const useVerifyAddress = () => {
  * Hook for mintActionReward
  */
 export function useMintActionReward() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const mintActionReward = async (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20MintAbi,
         functionName: 'mintActionReward',
         args: [tokenAddress, round, actionId],
       });
-    } catch (err) {
-      console.error('mintActionReward failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20MintAbi,
+        functionName: 'mintActionReward',
+        args: [tokenAddress, round, actionId],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
   return {
     mintActionReward,
-    writeData,
-    isWriting,
-    writeError,
+    isPending,
     isConfirming,
+    writeError: error,
     isConfirmed,
   };
 }
@@ -373,31 +388,42 @@ export function useMintActionReward() {
  * Hook for mintGovReward
  */
 export function useMintGovReward() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const mintGovReward = async (tokenAddress: `0x${string}`, round: bigint) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20MintAbi,
         functionName: 'mintGovReward',
         args: [tokenAddress, round],
       });
-    } catch (err) {
-      console.error('mintGovReward failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20MintAbi,
+        functionName: 'mintGovReward',
+        args: [tokenAddress, round],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
   return {
     mintGovReward,
-    writeData,
-    isWriting,
-    writeError,
+    isPending,
     isConfirming,
+    writeError: error,
     isConfirmed,
   };
 }
@@ -406,31 +432,42 @@ export function useMintGovReward() {
  * Hook for prepareRewardIfNeeded
  */
 export function usePrepareRewardIfNeeded() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const prepareRewardIfNeeded = async (tokenAddress: `0x${string}`, round: bigint) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20MintAbi,
         functionName: 'prepareRewardIfNeeded',
         args: [tokenAddress],
       });
-    } catch (err) {
-      console.error('prepareRewardIfNeeded failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20MintAbi,
+        functionName: 'prepareRewardIfNeeded',
+        args: [tokenAddress],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
   return {
     prepareRewardIfNeeded,
-    writeData,
-    isWriting,
-    writeError,
+    isPending,
     isConfirming,
+    writeError: error,
     isConfirmed,
   };
 }

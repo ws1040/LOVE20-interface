@@ -1,6 +1,9 @@
 // hooks/contracts/useLOVE20Vote.ts
+import { useState } from 'react';
+import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
+import { config } from '@/src/wagmi';
 
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { LOVE20VoteAbi } from '@/src/abis/LOVE20Vote';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_VOTE as `0x${string}`;
@@ -253,24 +256,36 @@ export const useVotesNumsByAccountByActionIds = (
  * Hook to perform a vote transaction.
  */
 export function useVote() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const vote = async (tokenAddress: `0x${string}`, actionIds: bigint[], votes: bigint[]) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract?.({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20VoteAbi,
         functionName: 'vote',
         args: [tokenAddress, actionIds, votes],
       });
-    } catch (err) {
-      console.error('Voting failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20VoteAbi,
+        functionName: 'vote',
+        args: [tokenAddress, actionIds, votes],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { vote, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { vote, isPending, isConfirming, writeError: error, isConfirmed };
 }

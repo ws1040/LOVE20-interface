@@ -1,4 +1,7 @@
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useState } from 'react';
+import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
+import { config } from '@/src/wagmi';
 import { LOVE20SubmitAbi } from '@/src/abis/LOVE20Submit';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_SUBMIT as `0x${string}`;
@@ -158,33 +161,46 @@ export const useStakeAddress = () => {
  * Hook for submit
  */
 export function useSubmit() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const submit = async (tokenAddress: `0x${string}`, actionId: bigint) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20SubmitAbi,
         functionName: 'submit',
         args: [tokenAddress, actionId],
       });
-    } catch (err) {
-      console.error('Submit failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20SubmitAbi,
+        functionName: 'submit',
+        args: [tokenAddress, actionId],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { submit, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { submit, isPending, isConfirming, writeError: error, isConfirmed };
 }
 
 /**
  * Hook for submitNewAction
  */
 export function useSubmitNewAction() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const submitNewAction = async (
     tokenAddress: `0x${string}`,
@@ -198,22 +214,31 @@ export function useSubmitNewAction() {
       verificationInfoGuides: string[];
     },
   ) => {
+    setIsPending(true);
+    setError(null);
     try {
-      const tx = await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20SubmitAbi,
         functionName: 'submitNewAction',
         args: [tokenAddress, actionBody],
       });
-      return tx;
-    } catch (err) {
-      console.error('Submit New Action failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20SubmitAbi,
+        functionName: 'submitNewAction',
+        args: [tokenAddress, actionBody],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { submitNewAction, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { submitNewAction, isPending, isConfirming, writeError: error, isConfirmed };
 }

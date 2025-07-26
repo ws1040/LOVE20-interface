@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { toast } from 'react-hot-toast';
 
@@ -46,9 +46,10 @@ export default function TokenDeployment() {
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
   const { chain: accountChain } = useAccount();
+  const [symbol, setSymbol] = useState('');
 
   // 2. 部署合约相关 Hook
-  const { launchToken, isWriting, writeError, isConfirming, isConfirmed } = useLaunchToken();
+  const { launchToken, isPending, writeError, isConfirming, isConfirmed } = useLaunchToken();
 
   // 3. 错误处理
   const { handleContractError } = useHandleContractError();
@@ -73,6 +74,7 @@ export default function TokenDeployment() {
       return;
     }
     try {
+      setSymbol(data.symbol);
       await launchToken(data.symbol, token?.address as `0x${string}`);
     } catch (error) {
       console.error(error);
@@ -82,9 +84,9 @@ export default function TokenDeployment() {
   // 6. 交易确认后跳转
   useEffect(() => {
     if (isConfirmed) {
-      router.push(`/tokens`);
+      router.push(`/launch/?symbol=${process.env.NEXT_PUBLIC_TOKEN_PREFIX ?? ''}${symbol}`);
     }
-  }, [isConfirmed, router]);
+  }, [isConfirmed, router, symbol]);
 
   // 如果 TokenContext 中还未读取到 token，就显示加载
   if (!token) {
@@ -92,7 +94,7 @@ export default function TokenDeployment() {
   }
 
   // 7. 界面渲染
-  const isLoading = isWriting || isConfirming;
+  const isLoading = isPending || isConfirming;
 
   return (
     <>
@@ -132,7 +134,7 @@ export default function TokenDeployment() {
             </CardContent>
             <CardFooter className="flex justify-center">
               <Button className="w-1/2" type="submit" disabled={isLoading || isConfirmed}>
-                {isWriting ? '提交中...' : isConfirming ? '确认中...' : isConfirmed ? '提交成功' : '提交'}
+                {isPending ? '提交中...' : isConfirming ? '确认中...' : isConfirmed ? '提交成功' : '提交'}
               </Button>
             </CardFooter>
           </form>
@@ -143,7 +145,7 @@ export default function TokenDeployment() {
           <p>2. 子币发射目标：须筹集 20,000,000个 {token?.symbol}</p>
         </div>
       </Card>
-      <LoadingOverlay isLoading={isLoading} text={isWriting ? '提交交易...' : '确认交易...'} />
+      <LoadingOverlay isLoading={isLoading} text={isPending ? '提交交易...' : '确认交易...'} />
     </>
   );
 }

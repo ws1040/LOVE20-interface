@@ -1,6 +1,10 @@
 // hooks/contracts/useLOVE20Verify.ts
 
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useState } from 'react';
+import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
+import { config } from '@/src/wagmi';
+
 import { LOVE20VerifyAbi } from '@/src/abis/LOVE20Verify';
 
 // 定义合约地址，请根据实际情况设置
@@ -211,24 +215,36 @@ export const useScoreWithReward = (account: `0x${string}`, someNumber: bigint) =
  * Hook for verify
  */
 export function useVerify() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const verify = async (tokenAddress: `0x${string}`, actionId: bigint, abstentionScore: bigint, scores: bigint[]) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20VerifyAbi,
         functionName: 'verify',
         args: [tokenAddress, actionId, abstentionScore, scores],
       });
-    } catch (err) {
-      console.error('Verification failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20VerifyAbi,
+        functionName: 'verify',
+        args: [tokenAddress, actionId, abstentionScore, scores],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { verify, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { verify, isPending, isConfirming, writeError: error, isConfirmed };
 }

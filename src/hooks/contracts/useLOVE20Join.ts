@@ -1,6 +1,10 @@
 // hooks/useLove20Join.ts
 
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useState } from 'react';
+import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
+import { config } from '@/src/wagmi';
+
 import { LOVE20JoinAbi } from '@/src/abis/LOVE20Join';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN as `0x${string}`;
@@ -127,8 +131,10 @@ export const useStakedAmountByAccount = (tokenAddress: `0x${string}`, account: `
 /**
  * Hook for join
  */
-export const useJoin = () => {
-  const { writeContract, data: writeData, isPending, error } = useWriteContract();
+export function useJoin() {
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const join = async (
     tokenAddress: `0x${string}`,
@@ -136,47 +142,69 @@ export const useJoin = () => {
     additionalStakeAmount: bigint,
     verificationInfos_: string[],
   ) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20JoinAbi,
         functionName: 'join',
         args: [tokenAddress, actionId, additionalStakeAmount, verificationInfos_],
       });
-    } catch (err) {
-      console.error('Join failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20JoinAbi,
+        functionName: 'join',
+        args: [tokenAddress, actionId, additionalStakeAmount, verificationInfos_],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { join, writeData, isPending, error, isConfirming, isConfirmed };
-};
+  return { join, isPending, isConfirming, writeError: error, isConfirmed };
+}
 
 /**
  * Hook for withdraw
  */
-export const useWithdraw = () => {
-  const { writeContract, data: writeData, isPending, error } = useWriteContract();
+export function useWithdraw() {
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const withdraw = async (tokenAddress: `0x${string}`, actionId: bigint) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20JoinAbi,
         functionName: 'withdraw',
         args: [tokenAddress, actionId],
       });
-    } catch (err) {
-      console.error('Withdraw failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20JoinAbi,
+        functionName: 'withdraw',
+        args: [tokenAddress, actionId],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { withdraw, writeData, isPending, error, isConfirming, isConfirmed };
-};
+  return { withdraw, isPending, isConfirming, writeError: error, isConfirmed };
+}

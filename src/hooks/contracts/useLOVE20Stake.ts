@@ -1,4 +1,7 @@
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
+import { useState } from 'react';
+import { config } from '@/src/wagmi';
 import { LOVE20StakeAbi } from '@/src/abis/LOVE20Stake';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`;
@@ -209,14 +212,16 @@ export const useValidGovVotes = (tokenAddress: `0x${string}`, account: `0x${stri
 };
 
 // =======================
-// ===== 写入 Hooks ======
+// ===== Write Hooks =====
 // =======================
 
 /**
  * 质押流动性
  */
 export const useStakeLiquidity = () => {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const stakeLiquidity = async (
     tokenAddress: `0x${string}`,
@@ -225,29 +230,37 @@ export const useStakeLiquidity = () => {
     promisedWaitingPhases: bigint,
     to: `0x${string}`,
   ) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
+      await simulateContract(config, {
         abi: LOVE20StakeAbi,
+        address: CONTRACT_ADDRESS,
         functionName: 'stakeLiquidity',
         args: [tokenAddress, tokenAmountForLP, parentTokenAmountForLP, promisedWaitingPhases, to],
       });
-    } catch (err) {
-      console.error('StakeLiquidity failed:', err);
-      // 重新抛出错误，让组件能够捕获
+      const txHash = await writeContract(config, {
+        abi: LOVE20StakeAbi,
+        address: CONTRACT_ADDRESS,
+        functionName: 'stakeLiquidity',
+        args: [tokenAddress, tokenAmountForLP, parentTokenAmountForLP, promisedWaitingPhases, to],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
       throw err;
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
   return {
     stakeLiquidity,
-    writeData,
-    isWriting,
-    writeError,
+    writeData: hash,
+    isWriting: isPending,
+    writeError: error,
     isConfirming,
     isConfirmed,
   };
@@ -257,7 +270,9 @@ export const useStakeLiquidity = () => {
  * 质押代币
  */
 export const useStakeToken = () => {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   /**
    * 调用合约的 stakeToken 函数
@@ -272,29 +287,37 @@ export const useStakeToken = () => {
     promisedWaitingPhases: bigint,
     to: `0x${string}`,
   ) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
+      await simulateContract(config, {
         abi: LOVE20StakeAbi,
+        address: CONTRACT_ADDRESS,
         functionName: 'stakeToken',
         args: [tokenAddress, tokenAmount, promisedWaitingPhases, to],
       });
-    } catch (err) {
-      console.error('StakeToken failed:', err);
-      // 重新抛出错误，让组件能够捕获
+      const txHash = await writeContract(config, {
+        abi: LOVE20StakeAbi,
+        address: CONTRACT_ADDRESS,
+        functionName: 'stakeToken',
+        args: [tokenAddress, tokenAmount, promisedWaitingPhases, to],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
       throw err;
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
   return {
     stakeToken,
-    writeData,
-    isWriting,
-    writeError,
+    writeData: hash,
+    isWriting: isPending,
+    writeError: error,
     isConfirming,
     isConfirmed,
   };
@@ -304,58 +327,92 @@ export const useStakeToken = () => {
  * 取消质押
  */
 export const useUnstake = () => {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const unstake = async (tokenAddress: `0x${string}`) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
+      await simulateContract(config, {
         abi: LOVE20StakeAbi,
+        address: CONTRACT_ADDRESS,
         functionName: 'unstake',
         args: [tokenAddress],
       });
-    } catch (err) {
-      console.error('Unstake failed:', err);
-      // 重新抛出错误，让组件能够捕获
+      const txHash = await writeContract(config, {
+        abi: LOVE20StakeAbi,
+        address: CONTRACT_ADDRESS,
+        functionName: 'unstake',
+        args: [tokenAddress],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
       throw err;
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { unstake, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return {
+    unstake,
+    writeData: hash,
+    isWriting: isPending,
+    writeError: error,
+    isConfirming,
+    isConfirmed,
+  };
 };
 
 /**
  * 提款
  */
 export const useWithdraw = () => {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   /**
    * 调用合约的 withdraw 函数
    * @param tokenAddress 代币地址
    */
   const withdraw = async (tokenAddress: `0x${string}`) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
+      await simulateContract(config, {
         abi: LOVE20StakeAbi,
+        address: CONTRACT_ADDRESS,
         functionName: 'withdraw',
         args: [tokenAddress],
       });
-    } catch (err) {
-      console.error('Withdraw failed:', err);
-      // 重新抛出错误，让组件能够捕获
+      const txHash = await writeContract(config, {
+        abi: LOVE20StakeAbi,
+        address: CONTRACT_ADDRESS,
+        functionName: 'withdraw',
+        args: [tokenAddress],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
       throw err;
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { withdraw, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return {
+    withdraw,
+    writeData: hash,
+    isWriting: isPending,
+    writeError: error,
+    isConfirming,
+    isConfirmed,
+  };
 };
