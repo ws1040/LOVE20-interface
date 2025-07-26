@@ -165,7 +165,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   // ------------------------------
   const {
     approve: approveToken,
-    isWriting: isPendingApprove,
+    isPending: isPendingApprove,
     isConfirming: isConfirmingApprove,
     isConfirmed: isConfirmedApprove,
     writeError: errApprove,
@@ -228,7 +228,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
     isPending: isPendingJoin,
     isConfirming: isConfirmingJoin,
     isConfirmed: isConfirmedJoin,
-    error: errorJoin,
+    writeError: errorJoin,
   } = useJoin();
 
   async function handleJoin(values: FormValues) {

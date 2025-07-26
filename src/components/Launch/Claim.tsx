@@ -35,11 +35,11 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
     isPending: isClaimInfoPending,
     error: claimInfoError,
   } = useClaimInfo(token?.address as `0x${string}`, account as `0x${string}`);
-
+  console.log('receivedTokenAmount', receivedTokenAmount);
   // 领取代币hook
   const {
     claim,
-    isWriting: isClaiming,
+    isPending: isClaiming,
     writeError: claimError,
     isConfirming: isClaimConfirming,
     isConfirmed: isClaimConfirmed,
@@ -104,7 +104,7 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
         <div className="stat place-items-center">
           <div className="stat-title text-sm mr-6">共获得</div>
           <div className="stat-value text-3xl text-secondary">
-            {formatTokenAmount(receivedTokenAmount)}
+            {formatTokenAmount(receivedTokenAmount ?? 0n)}
             <span className="text-greyscale-500 font-normal text-sm ml-2">{token.symbol}</span>
           </div>
         </div>

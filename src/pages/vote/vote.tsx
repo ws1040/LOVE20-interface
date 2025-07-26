@@ -98,7 +98,7 @@ const VotingSubmitPage = () => {
   } = useActionInfosByIds(token?.address as `0x${string}`, actionIds);
 
   // 提交投票
-  const { vote, isWriting, isConfirming, isConfirmed, writeError: submitVoteError } = useVote();
+  const { vote, isPending, isConfirming, isConfirmed, writeError: submitVoteError } = useVote();
 
   // 检查输入
   const checkInput = () => {
@@ -250,9 +250,9 @@ const VotingSubmitPage = () => {
                   className="w-1/2 focus:outline-none focus:ring-0"
                   onFocus={(e) => e.currentTarget.blur()}
                   onClick={handleSubmit}
-                  disabled={isWriting || isConfirming || isConfirmed}
+                  disabled={isPending || isConfirming || isConfirmed}
                 >
-                  {isWriting ? '提交中...' : isConfirming ? '确认中...' : isConfirmed ? '已提交' : '提交投票'}
+                  {isPending ? '提交中...' : isConfirming ? '确认中...' : isConfirmed ? '已提交' : '提交投票'}
                 </Button>
               </div>
             </div>
@@ -266,7 +266,7 @@ const VotingSubmitPage = () => {
                 </div>
               </div>
             </div>
-            <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
+            <LoadingOverlay isLoading={isPending || isConfirming} text={isPending ? '提交交易...' : '确认交易...'} />
           </>
         )}
       </main>

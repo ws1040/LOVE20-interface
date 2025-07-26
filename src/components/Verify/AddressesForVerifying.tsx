@@ -102,7 +102,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
   };
 
   // 提交验证
-  const { verify, isWriting, isConfirming, isConfirmed, writeError: submitError } = useVerify();
+  const { verify, isPending, isConfirming, isConfirmed, writeError: submitError } = useVerify();
   const checkInput = () => {
     if (!checkWalletConnection(accountChain)) {
       return false;
@@ -250,7 +250,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
                         placeholder="0"
                         onChange={(e) => handleScoreChange(info.account, e.target.value)}
                         className="w-11 px-1 py-1 border rounded"
-                        disabled={isWriting || isConfirmed}
+                        disabled={isPending || isConfirmed}
                       />
                       <span className="text-greyscale-500 text-sm">分</span>
                     </div>
@@ -287,7 +287,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
                       placeholder="0"
                       onChange={(e) => handleAbstainScoreChange(e.target.value)}
                       className="w-11 px-1 py-1 border rounded"
-                      disabled={isWriting || isConfirmed}
+                      disabled={isPending || isConfirmed}
                     />
                     <span className="text-greyscale-500 text-sm">分</span>
                   </div>
@@ -301,14 +301,14 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
         </table>
       </div>
 
-      <Button onClick={handleSubmit} disabled={isWriting || isConfirming || isConfirmed} className="mt-6 w-1/2">
-        {!isWriting && !isConfirming && !isConfirmed && '提交验证'}
-        {isWriting && '提交中...'}
+      <Button onClick={handleSubmit} disabled={isPending || isConfirming || isConfirmed} className="mt-6 w-1/2">
+        {!isPending && !isConfirming && !isConfirmed && '提交验证'}
+        {isPending && '提交中...'}
         {isConfirming && '确认中...'}
         {isConfirmed && '已验证'}
       </Button>
 
-      <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
+      <LoadingOverlay isLoading={isPending || isConfirming} text={isPending ? '提交交易...' : '确认交易...'} />
     </>
   );
 };

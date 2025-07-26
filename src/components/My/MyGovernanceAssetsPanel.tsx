@@ -104,14 +104,14 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     isPending: isPendingApproveST,
     isConfirming: isConfirmingApproveST,
     isConfirmed: isConfirmedApproveST,
-    error: approveSTWriteError,
+    writeError: approveSTWriteError,
     approve: approveST,
   } = useApproveST(token?.stTokenAddress as `0x${string}`);
   const {
     isPending: isPendingApproveSL,
     isConfirming: isConfirmingApproveSL,
     isConfirmed: isConfirmedApproveSL,
-    error: approveSLWriteError,
+    writeError: approveSLWriteError,
     approve: approveSL,
   } = useApproveSL(token?.slTokenAddress as `0x${string}`);
 

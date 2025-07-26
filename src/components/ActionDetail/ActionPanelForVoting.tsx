@@ -64,7 +64,7 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
 
   const {
     vote,
-    isWriting: isWritingVote,
+    isPending: isWritingVote,
     isConfirming: isConfirmingVote,
     isConfirmed: isConfirmedVote,
     writeError: errorVote,

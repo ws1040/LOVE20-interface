@@ -83,7 +83,7 @@ const Deposit: React.FC = () => {
     isPending: isPendingDeposit,
     isConfirming: isConfirmingDeposit,
     isConfirmed: isConfirmedDeposit,
-    error: errDeposit,
+    writeError: errDeposit,
   } = useDeposit();
 
   // 2. 创建 hook form 实例，并传入当前余额

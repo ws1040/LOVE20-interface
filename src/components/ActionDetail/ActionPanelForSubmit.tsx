@@ -51,12 +51,12 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
   } = useCanSubmit();
 
   // 提交
-  const { submit, isWriting, isConfirming, isConfirmed, writeError: errSubmit } = useSubmit();
+  const { submit, isPending, isConfirming, isConfirmed, writeError: errSubmit } = useSubmit();
   const handleSubmit = () => {
     if (!checkWalletConnection(accountChain)) {
       return;
     }
-    if (isWriting || isConfirming) {
+    if (isPending || isConfirming) {
       return;
     }
     if (!hasEnoughVotes) {
@@ -120,10 +120,10 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
               )}
             </div>
           ) : (
-            <Button onClick={handleSubmit} className="w-1/2" disabled={isWriting || isConfirming || !hasEnoughVotes}>
-              {isWriting && '提交中...'}
+            <Button onClick={handleSubmit} className="w-1/2" disabled={isPending || isConfirming || !hasEnoughVotes}>
+              {isPending && '提交中...'}
               {isConfirming && '确认中...'}
-              {!isWriting && !isConfirming && '推举本行动'}
+              {!isPending && !isConfirming && '推举本行动'}
             </Button>
           )}
         </div>
@@ -133,7 +133,7 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
           <p>2. 每轮次，1个地址最多可 创建/推举 1 个行动；</p>
         </div>
       </div>
-      <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
+      <LoadingOverlay isLoading={isPending || isConfirming} text={isPending ? '提交交易...' : '确认交易...'} />
     </div>
   );
 };

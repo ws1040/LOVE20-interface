@@ -107,7 +107,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   // 3. ERC20代币授权相关逻辑（仅在非native代币时使用）
   const {
     approve: approveParentToken,
-    isWriting: isPendingApproveParentToken,
+    isPending: isPendingApproveParentToken,
     isConfirming: isConfirmingApproveParentToken,
     isConfirmed: isConfirmedApproveParentToken,
     writeError: errApproveParentToken,
@@ -173,7 +173,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   // 4. "申购"相关逻辑 - 根据类型选择不同的hook
   const {
     contribute: contributeWithETH,
-    isWriting: isPendingContributeETH,
+    isPending: isPendingContributeETH,
     isConfirming: isConfirmingContributeETH,
     isConfirmed: isConfirmedContributeETH,
     writeError: errContributeETH,

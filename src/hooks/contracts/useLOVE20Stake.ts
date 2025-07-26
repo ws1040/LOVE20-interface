@@ -316,8 +316,8 @@ export const useStakeToken = () => {
   return {
     stakeToken,
     writeData: hash,
-    isWriting: isPending,
     writeError: error,
+    isPending,
     isConfirming,
     isConfirmed,
   };

@@ -256,5 +256,5 @@ export const useApprove = (address: `0x${string}`) => {
     hash,
   });
 
-  return { approve, isPending, isConfirming, error, isConfirmed };
+  return { approve, isPending, isConfirming, writeError: error, isConfirmed };
 };

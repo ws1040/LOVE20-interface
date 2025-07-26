@@ -75,7 +75,7 @@ const VerifiedAddressesByAction: React.FC<{
   // 领取奖励
   const {
     mintActionReward,
-    isWriting: isMinting,
+    isPending: isMinting,
     isConfirming: isConfirmingMint,
     isConfirmed: isConfirmedMint,
     writeError: mintError,

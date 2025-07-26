@@ -79,7 +79,7 @@ const GovRewardsPage: React.FC = () => {
   }, [rewards]);
 
   // 铸造治理奖励
-  const { mintGovReward, isWriting, isConfirming, isConfirmed, writeError: errorMintGovReward } = useMintGovReward();
+  const { mintGovReward, isPending, isConfirming, isConfirmed, writeError: errorMintGovReward } = useMintGovReward();
   const [mintingRound, setMintingRound] = useState<bigint | null>(null);
   useEffect(() => {
     if (isConfirmed) {
@@ -180,7 +180,7 @@ const GovRewardsPage: React.FC = () => {
                             size="sm"
                             className="text-secondary border-secondary"
                             onClick={() => handleClaim(item.round)}
-                            disabled={isWriting || isConfirming}
+                            disabled={isPending || isConfirming}
                           >
                             铸造
                           </Button>
@@ -210,7 +210,7 @@ const GovRewardsPage: React.FC = () => {
             </div>
           </div>
         )}
-        <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
+        <LoadingOverlay isLoading={isPending || isConfirming} text={isPending ? '提交交易...' : '确认交易...'} />
       </main>
     </>
   );

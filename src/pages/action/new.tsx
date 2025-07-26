@@ -114,11 +114,10 @@ export default function NewAction() {
   // 提交表单
   const {
     submitNewAction,
-    isWriting: isSubmitting,
+    isPending: isSubmitting,
     isConfirming,
     isConfirmed: isSubmitted,
     writeError: submitError,
-    writeData,
   } = useSubmitNewAction();
   const onSubmit = async (values: FormValues) => {
     if (!checkWalletConnection(accountChain)) return;
@@ -161,7 +160,7 @@ export default function NewAction() {
     if (isSubmitted) {
       router.push(`/vote/?symbol=${token?.symbol}`);
     }
-  }, [isSubmitted, writeData, router, token?.symbol]);
+  }, [isSubmitted, router, token?.symbol]);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();

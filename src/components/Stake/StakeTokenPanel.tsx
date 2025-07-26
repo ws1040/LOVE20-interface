@@ -66,7 +66,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
 
   const {
     approve: approveToken,
-    isWriting: isPendingApproveToken,
+    isPending: isPendingApproveToken,
     isConfirming: isConfirmingApproveToken,
     isConfirmed: isConfirmedApproveToken,
     writeError: errApproveToken,
@@ -74,7 +74,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
 
   const {
     stakeToken,
-    isWriting: isPendingStakeToken,
+    isPending: isPendingStakeToken,
     isConfirming: isConfirmingStakeToken,
     isConfirmed: isConfirmedStakeToken,
     writeError: errStakeToken,

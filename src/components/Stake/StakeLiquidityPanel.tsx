@@ -176,7 +176,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
 
   const {
     approve: approveToken,
-    isWriting: isPendingApproveToken,
+    isPending: isPendingApproveToken,
     isConfirming: isConfirmingApproveToken,
     isConfirmed: isConfirmedApproveToken,
     writeError: errApproveToken,
@@ -184,7 +184,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
 
   const {
     approve: approveParentToken,
-    isWriting: isPendingApproveParentToken,
+    isPending: isPendingApproveParentToken,
     isConfirming: isConfirmingApproveParentToken,
     isConfirmed: isConfirmedApproveParentToken,
     writeError: errApproveParentToken,
