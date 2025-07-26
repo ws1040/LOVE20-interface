@@ -55,6 +55,10 @@ export default function AddToMetamask({ tokenAddress, tokenSymbol, tokenDecimals
     }
   };
 
+  if (tokenSymbol.length > 11) {
+    return null;
+  }
+
   return (
     <button
       onClick={addToken}

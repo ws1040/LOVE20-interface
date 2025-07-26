@@ -39,8 +39,8 @@ const GovRewardsPage: React.FC = () => {
 
   useEffect(() => {
     if (currentRound && token) {
-      if (currentRound - BigInt(token.initialStakeRound) > 0n) {
-        setEndRound(currentRound);
+      if (currentRound - BigInt(token.initialStakeRound) > 1n) {
+        setEndRound(currentRound - 1n);
       } else {
         setEndRound(BigInt(token.initialStakeRound));
       }
