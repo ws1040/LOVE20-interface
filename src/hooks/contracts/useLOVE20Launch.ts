@@ -99,20 +99,26 @@ export const useLaunchedChildTokensCount = (parentTokenAddress: `0x${string}`) =
 };
 
 /**
- * Hook for claimed
+ * Hook for claimInfo
  */
-export const useClaimed = (tokenAddress: `0x${string}`, account: `0x${string}`) => {
+export const useClaimInfo = (tokenAddress: `0x${string}`, account: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
-    functionName: 'claimed',
+    functionName: 'claimInfo',
     args: [tokenAddress, account],
     query: {
       enabled: !!tokenAddress && !!account,
     },
   });
 
-  return { claimed: data as boolean | undefined, isPending, error };
+  return {
+    receivedTokenAmount: data?.[0] as bigint,
+    extraRefund: data?.[1] as bigint,
+    isClaimed: data?.[2] as boolean,
+    isPending,
+    error,
+  };
 };
 
 /**
@@ -130,23 +136,6 @@ export const useContributed = (tokenAddress: `0x${string}`, account: `0x${string
   });
 
   return { contributed: data as bigint | undefined, isPending, error, refetch };
-};
-
-/**
- * Hook for extraRefunded
- */
-export const useExtraRefunded = (tokenAddress: `0x${string}`, account: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'extraRefunded',
-    args: [tokenAddress, account],
-    query: {
-      enabled: !!tokenAddress && !!account,
-    },
-  });
-
-  return { extraRefunded: data as bigint | undefined, isPending, error };
 };
 
 /**

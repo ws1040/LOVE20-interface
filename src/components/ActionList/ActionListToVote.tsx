@@ -154,7 +154,7 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
                     onChange={() => handleCheckboxChange(BigInt(action.head.id))}
                   />
                   <Link
-                    href={`/action/${action.head.id}?type=vote&symbol=${token?.symbol}`}
+                    href={`/action/detail?id=${action.head.id}&type=vote&symbol=${token?.symbol}`}
                     key={action.head.id}
                     className="w-full"
                   >

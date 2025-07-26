@@ -287,7 +287,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
       form.reset();
       // 2秒后返回
       setTimeout(() => {
-        router.push(`/action/${actionInfo.head.id}?type=join&symbol=${token?.symbol}`);
+        router.push(`/action/detail?id=${actionInfo.head.id}&type=join&symbol=${token?.symbol}`);
       }, 2000);
     }
   }, [isConfirmedJoin]);
