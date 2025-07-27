@@ -81,7 +81,7 @@ const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
             </div>
           </>
         ) : (
-          <div className="px-4 pt-4 text-center">
+          <div className="px-4 pt-1 text-center">
             <p className="text-greyscale-500 text-sm">
               再完成 <span className="font-semibold">{remainingMintTimes}</span> 次治理奖励铸币，才可以开放子币部署
             </p>
