@@ -216,6 +216,28 @@ export const useLastContributedBlock = (tokenAddress: `0x${string}`, account: `0
   return { lastContributedBlock: data as bigint | undefined, isPending, error };
 };
 
+/**
+ * Hook for remainingLaunchCount
+ * 查询账户剩余可发起Launch的次数
+ */
+export const useRemainingLaunchCount = (parentTokenAddress: `0x${string}`, account: `0x${string}`) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20LaunchAbi,
+    functionName: 'remainingLaunchCount',
+    args: [parentTokenAddress, account],
+    query: {
+      enabled: !!parentTokenAddress && !!account,
+    },
+  });
+
+  return {
+    remainingLaunchCount: data as bigint | undefined,
+    isPending,
+    error,
+  };
+};
+
 // =======================
 // ===== Write Hooks =====
 // =======================

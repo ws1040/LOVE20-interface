@@ -556,6 +556,30 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "function",
+    "name": "numOfMintGovRewardByAccount",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "prepareRewardIfNeeded",
     "inputs": [
       {

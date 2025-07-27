@@ -13,6 +13,14 @@ import { toast } from 'react-hot-toast';
 // shadcn/ui
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
@@ -20,7 +28,8 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { checkWalletConnection } from '@/src/lib/web3';
 
 // my hooks
-import { useLaunchToken } from '@/src/hooks/contracts/useLOVE20Launch';
+import { useLaunchToken, useRemainingLaunchCount } from '@/src/hooks/contracts/useLOVE20Launch';
+import { useNumOfMintGovRewardByAccount } from '@/src/hooks/contracts/useLOVE20Mint';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -45,11 +54,24 @@ type TokenFormValues = z.infer<typeof TokenFormSchema>;
 export default function TokenDeployment() {
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
-  const { chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const [symbol, setSymbol] = useState('');
 
   // 2. 部署合约相关 Hook
   const { launchToken, isPending, writeError, isConfirming, isConfirmed } = useLaunchToken();
+  const { remainingLaunchCount } = useRemainingLaunchCount(
+    token ? token.address : '0x0000000000000000000000000000000000000000',
+    account as `0x${string}`,
+  );
+
+  const { numOfMintGovRewardByAccount } = useNumOfMintGovRewardByAccount(
+    token ? token.address : '0x0000000000000000000000000000000000000000',
+    account as `0x${string}`,
+  );
+  // 获取等待铸币次数
+  const MIN_GOV_REWARD_MINTS = Number(process.env.NEXT_PUBLIC_MIN_GOV_REWARD_MINTS_TO_LAUNCH) || 180n;
+  const remainingMintTimes =
+    Number(MIN_GOV_REWARD_MINTS) - (Number(numOfMintGovRewardByAccount) % Number(MIN_GOV_REWARD_MINTS));
 
   // 3. 错误处理
   const { handleContractError } = useHandleContractError();
@@ -74,6 +96,9 @@ export default function TokenDeployment() {
       return;
     }
     try {
+      const confirmed = await handleConfirm();
+      if (!confirmed) return;
+
       setSymbol(data.symbol);
       await launchToken(data.symbol, token?.address as `0x${string}`);
     } catch (error) {
@@ -87,6 +112,33 @@ export default function TokenDeployment() {
       router.push(`/launch/?symbol=${process.env.NEXT_PUBLIC_TOKEN_PREFIX ?? ''}${symbol}`);
     }
   }, [isConfirmed, router, symbol]);
+
+  // 修改状态管理
+  const [open, setOpen] = useState(false);
+  const [pendingConfirm, setPendingConfirm] = useState<{
+    resolve: (value: boolean) => void;
+    reject: () => void;
+  } | null>(null);
+
+  // 修改确认逻辑
+  const handleConfirm = (): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      setPendingConfirm({ resolve, reject });
+      setOpen(true);
+    });
+  };
+
+  const handleConfirmClick = () => {
+    setOpen(false);
+    pendingConfirm?.resolve(true);
+    setPendingConfirm(null);
+  };
+
+  const handleCancelClick = () => {
+    setOpen(false);
+    pendingConfirm?.resolve(false);
+    setPendingConfirm(null);
+  };
 
   // 如果 TokenContext 中还未读取到 token，就显示加载
   if (!token) {
@@ -146,6 +198,33 @@ export default function TokenDeployment() {
         </div>
       </Card>
       <LoadingOverlay isLoading={isLoading} text={isPending ? '提交交易...' : '确认交易...'} />
+      <Dialog
+        open={open}
+        onOpenChange={(newOpen) => {
+          if (!newOpen) {
+            pendingConfirm?.resolve(false);
+            setPendingConfirm(null);
+          }
+          setOpen(newOpen);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>确认开启子币发射</DialogTitle>
+            <DialogDescription>
+              剩余可发射次数：{Number(remainingLaunchCount)} 次
+              <br />
+              再完成 {remainingMintTimes} 次治理奖励铸币，可增加1次
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCancelClick}>
+              取消
+            </Button>
+            <Button onClick={handleConfirmClick}>确认</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

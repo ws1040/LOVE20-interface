@@ -49,6 +49,25 @@ export const useRoundRewardGovPerThousand = () => {
 };
 
 /**
+ * Hook for numOfMintGovRewardByAccount
+ * 查询账户已铸造的治理次数
+ */
+export const useNumOfMintGovRewardByAccount = (tokenAddress: `0x${string}`, account: `0x${string}`) => {
+  const { data, isLoading, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20MintAbi,
+    functionName: 'numOfMintGovRewardByAccount',
+    args: [tokenAddress, account],
+  });
+
+  return {
+    numOfMintGovRewardByAccount: data as bigint | undefined,
+    isPending: isLoading,
+    error,
+  };
+};
+
+/**
  * Hook for actionReward
  */
 export const useActionReward = (tokenAddress: `0x${string}`, round: bigint) => {
@@ -297,42 +316,6 @@ export const useRewardReserved = (account: `0x${string}`) => {
 
   return {
     rewardReserved: data as bigint | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
- * Hook for stakeAddress
- */
-export const useStakeAddress = () => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'stakeAddress',
-    args: [],
-  });
-
-  return {
-    stakeAddress: data as `0x${string}` | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
- * Hook for verifyAddress
- */
-export const useVerifyAddress = () => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'verifyAddress',
-    args: [],
-  });
-
-  return {
-    verifyAddress: data as `0x${string}` | undefined,
     isPending: isLoading,
     error,
   };
