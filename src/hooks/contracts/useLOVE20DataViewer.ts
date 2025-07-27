@@ -446,7 +446,7 @@ export const useGovRewardsByAccountByRounds = (
     functionName: 'govRewardsByAccountByRounds',
     args: [tokenAddress, account, startRound, endRound],
     query: {
-      enabled: !!tokenAddress && !!account && startRound !== undefined && endRound !== undefined,
+      enabled: !!tokenAddress && !!account && startRound !== undefined && endRound !== undefined && endRound > 0n,
     },
   });
 

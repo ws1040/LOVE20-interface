@@ -125,7 +125,9 @@ export const formatRoundForDisplay = (round: bigint, token: Token): bigint => {
   if (!round || !token) {
     return 0n;
   }
-  return round - BigInt(token.initialStakeRound) + 1n;
+  return round;
+  // 不显示子币自己的轮次了
+  // return round - BigInt(token.initialStakeRound) + 1n;
 };
 
 // 将整数转换为千分位, 保留n小数, 并去掉小数位末尾的0

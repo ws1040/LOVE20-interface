@@ -129,9 +129,14 @@ export const LOVE20MintAbi = [
     ],
     "outputs": [
       {
-        "name": "",
+        "name": "reward",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "isMinted",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "stateMutability": "view"
@@ -315,6 +320,11 @@ export const LOVE20MintAbi = [
         "name": "burnReward",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "isMinted",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "stateMutability": "view"
@@ -693,7 +703,7 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "event",
-    "name": "BurnAbstentionActionReward",
+    "name": "BurnActionReward",
     "inputs": [
       {
         "name": "tokenAddress",
@@ -855,6 +865,11 @@ export const LOVE20MintAbi = [
   {
     "type": "error",
     "name": "AlreadyInitialized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "AlreadyMinted",
     "inputs": []
   },
   {

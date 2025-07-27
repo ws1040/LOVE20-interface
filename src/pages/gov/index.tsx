@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // 导入context
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -18,6 +19,7 @@ import MyVotingPanel from '@/src/components/My/MyVotingPanel';
 import MyVerifingPanel from '@/src/components/My/MyVerifingPanel';
 import Todeploy from '@/src/components/Launch/Todeploy';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import MyGovernanceAssetsPanel from '@/src/components/My/MyGovernanceAssetsPanel';
 
 const GovPage = () => {
   // 当前token
@@ -84,8 +86,20 @@ const GovPage = () => {
           </>
         ) : (
           <>
-            <GovernanceDataPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
-
+            <Tabs defaultValue="my-assets" className="w-full px-4">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="my-assets">我的治理资产</TabsTrigger>
+                <TabsTrigger value="community-assets">社区治理资产</TabsTrigger>
+              </TabsList>
+              <TabsContent value="my-assets">
+                <div className="border rounded-lg px-2 py-4 mt-2">
+                  <MyGovernanceAssetsPanel token={currentToken} enableWithdraw={false} />
+                </div>
+              </TabsContent>
+              <TabsContent value="community-assets">
+                <GovernanceDataPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
+              </TabsContent>
+            </Tabs>
             {isPendingValidGovVotes ? (
               <div className="flex justify-center p-4">
                 <LoadingIcon />

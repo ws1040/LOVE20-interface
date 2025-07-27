@@ -39,7 +39,7 @@ const VerifiedAddressesByAction: React.FC<{
 
   useEffect(() => {
     if (token && currentJoinRound - BigInt(token.initialStakeRound) >= 2n) {
-      setSelectedRound(currentJoinRound - BigInt(token.initialStakeRound) - 1n);
+      setSelectedRound(currentJoinRound - 1n);
     }
   }, [currentJoinRound, token]);
 
@@ -50,7 +50,7 @@ const VerifiedAddressesByAction: React.FC<{
     error: errorVerifiedAddresses,
   } = useVerifiedAddressesByAction(
     token?.address as `0x${string}`,
-    token && selectedRound ? selectedRound + BigInt(token.initialStakeRound) - 1n : 0n,
+    token && selectedRound ? selectedRound : 0n,
     actionId,
   );
 
@@ -61,7 +61,7 @@ const VerifiedAddressesByAction: React.FC<{
     error: errorVerificationInfosByAction,
   } = useVerificationInfosByAction(
     token?.address as `0x${string}`,
-    token && selectedRound ? selectedRound + BigInt(token.initialStakeRound) - 1n : 0n,
+    token && selectedRound ? selectedRound : 0n,
     actionId,
   );
 
@@ -84,19 +84,13 @@ const VerifiedAddressesByAction: React.FC<{
     if (!checkWalletConnection(accountChain)) {
       return;
     }
-    if (account && item.unminted > 0 && token) {
-      await mintActionReward(
-        token?.address as `0x${string}`,
-        selectedRound + BigInt(token.initialStakeRound) - 1n,
-        actionId,
-      );
+    if (account && item.reward > 0n && !item.isMinted && token) {
+      await mintActionReward(token?.address as `0x${string}`, selectedRound, actionId);
     }
   };
   useEffect(() => {
     if (isConfirmedMint) {
-      setAddresses((prev) =>
-        prev.map((addr) => (addr.account === account ? { ...addr, minted: addr.unminted, unminted: 0n } : addr)),
-      );
+      setAddresses((prev) => prev.map((addr) => (addr.account === account ? { ...addr, isMinted: true } : addr)));
     }
   }, [isConfirmedMint, account]);
 
@@ -214,10 +208,10 @@ const VerifiedAddressesByAction: React.FC<{
                       />
                     </td>
                     <td className="px-1 text-right">{formatTokenAmountInteger(item.score)}</td>
-                    <td className="px-1 text-right">{formatTokenAmountInteger(item.minted || item.unminted || 0n)}</td>
+                    <td className="px-1 text-right">{formatTokenAmountInteger(item.reward || 0n)}</td>
                     <td className="px-1 text-right">
                       {item.account === account &&
-                        (item.unminted > 0 ? (
+                        (item.reward > 0n && !item.isMinted ? (
                           <Button
                             variant="outline"
                             size="sm"

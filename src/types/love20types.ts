@@ -58,14 +58,14 @@ export interface MyVerifyingAction {
 export interface VerifiedAddress {
   account: `0x${string}`;
   score: bigint;
-  minted: bigint;
-  unminted: bigint;
+  reward: bigint;
+  isMinted: boolean;
 }
 
 export interface RewardInfo {
   round: bigint;
-  minted: bigint;
-  unminted: bigint;
+  reward: bigint;
+  isMinted: boolean;
 }
 
 export interface GovData {

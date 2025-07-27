@@ -45,9 +45,7 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
   let expectedReward = calculateExpectedGovReward(govData?.rewardAvailable, displayRound);
 
   return (
-    <div className="px-4 mb-2">
-      {/* <Round currentRound={currentRound} roundType="vote" /> */}
-
+    <div className="mb-2">
       <div className="border rounded-lg p-0">
         <div className="stats w-full grid grid-cols-2 divide-x-0">
           <div className="stat place-items-center pb-2 pl-1">

@@ -83,7 +83,8 @@ export const useActionRewardByActionIdByAccount = (
   });
 
   return {
-    actionRewardByActionIdByAccount: data as bigint | undefined,
+    actionRewardByActionIdByAccount: data?.[0] as bigint | undefined,
+    isMinted: data?.[1] as boolean | undefined,
     isPending: isLoading,
     error,
   };
@@ -184,6 +185,7 @@ export const useGovRewardByAccount = (tokenAddress: `0x${string}`, round: bigint
     verifyReward: data?.[0] as bigint | undefined,
     boostReward: data?.[1] as bigint | undefined,
     burnReward: data?.[2] as bigint | undefined,
+    isMinted: data?.[3] as boolean | undefined,
     isPending: isLoading,
     error,
   };

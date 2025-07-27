@@ -234,14 +234,14 @@ export const LOVE20DataViewerAbi = [
             "internalType": "uint256"
           },
           {
-            "name": "minted",
+            "name": "reward",
             "type": "uint256",
             "internalType": "uint256"
           },
           {
-            "name": "unminted",
-            "type": "uint256",
-            "internalType": "uint256"
+            "name": "isMinted",
+            "type": "bool",
+            "internalType": "bool"
           }
         ]
       }
@@ -401,14 +401,14 @@ export const LOVE20DataViewerAbi = [
             "internalType": "uint256"
           },
           {
-            "name": "minted",
+            "name": "reward",
             "type": "uint256",
             "internalType": "uint256"
           },
           {
-            "name": "unminted",
-            "type": "uint256",
-            "internalType": "uint256"
+            "name": "isMinted",
+            "type": "bool",
+            "internalType": "bool"
           }
         ]
       }
@@ -1635,14 +1635,14 @@ export const LOVE20DataViewerAbi = [
             "internalType": "uint256"
           },
           {
-            "name": "minted",
+            "name": "reward",
             "type": "uint256",
             "internalType": "uint256"
           },
           {
-            "name": "unminted",
-            "type": "uint256",
-            "internalType": "uint256"
+            "name": "isMinted",
+            "type": "bool",
+            "internalType": "bool"
           }
         ]
       }
