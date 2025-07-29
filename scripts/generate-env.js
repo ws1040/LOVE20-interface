@@ -78,6 +78,7 @@ function generateEnvFromParams(projectDir, network) {
   const targetKeywords = [
     'FIRST_TOKEN_SYMBOL',
     'PHASE_BLOCKS',
+    'PARENT_TOKEN_FUNDRAISING_GOAL',
     'WITHDRAW_WAITING_BLOCKS',
     'MIN_GOV_REWARD_MINTS_TO_LAUNCH',
     'JOIN_END_PHASE_BLOCKS',
