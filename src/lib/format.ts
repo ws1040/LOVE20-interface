@@ -54,11 +54,10 @@ export const formatTokenAmount = (balance: bigint, maximumFractionDigits_ = 4): 
     // 数字 < 0.001：使用折叠显示，例如 0.0000229 显示为 0.0{4}229
     if (numberFormatted === 0) return '0';
 
-    // 为了确保获取足够多的小数位，使用 toFixed 获取更多精度
-    const extraPrecision = 10;
-    const fixedStr = numberFormatted.toFixed(4 + extraPrecision);
-    const parts = fixedStr.split('.');
-    if (parts.length < 2) return fixedStr;
+    // 对于极小的数值，使用字符串处理来保持精度
+    const formattedStr = formatUnits(balance);
+    const parts = formattedStr.split('.');
+    if (parts.length < 2) return formattedStr;
 
     const fractionalPart = parts[1];
 
