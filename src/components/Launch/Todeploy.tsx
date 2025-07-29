@@ -11,6 +11,7 @@ import LeftTitle from '@/src/components/Common/LeftTitle';
 import { useLaunchInfo, useRemainingLaunchCount } from '@/src/hooks/contracts/useLOVE20Launch';
 import { useNumOfMintGovRewardByAccount } from '@/src/hooks/contracts/useLOVE20Mint';
 import { useHandleContractError } from '@/src/lib/errorUtils';
+import { formatTokenAmount } from '@/src/lib/format';
 
 const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
   // 获取当前区块号和个人地址
@@ -66,31 +67,38 @@ const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
 
       <div className="w-full text-center mb-4">
         {remainingLaunchCount && remainingLaunchCount > 0 ? (
-          <>
-            <Button variant="outline" size="sm" className="mt-2 w-1/2 text-secondary border-secondary" asChild>
-              <Link href={`/launch/deploy?symbol=${token?.symbol}`}>
-                <Plus className="w-4 h-4" />
-                开启子币公平发射
-              </Link>
-            </Button>
-
-            <div className="px-4 mt-2 mb-4 text-center">
-              <p className="text-greyscale-500 text-sm">
-                剩余开启次数：{Number(remainingLaunchCount)}次，再完成 {remainingMintTimes}次治理奖励铸币，可增加1次
-              </p>
-            </div>
-          </>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-2 w-1/2 text-secondary border-secondary"
+            disabled={remainingLaunchCount === undefined || remainingLaunchCount <= 0}
+            asChild
+          >
+            <Link href={`/launch/deploy?symbol=${token?.symbol}`}>
+              <Plus className="w-4 h-4" />
+              开启子币公平发射
+            </Link>
+          </Button>
         ) : (
-          <div className="px-4 pt-1 text-center">
-            <p className="text-greyscale-500 text-sm">
-              再完成 <span className="font-semibold">{remainingMintTimes}</span> 次治理奖励铸币，才可以开放子币发射
-            </p>
-          </div>
+          <Button disabled className="w-1/2">
+            开启子币公平发射
+          </Button>
         )}
+
+        <div className="px-4 mt-2 mb-4 text-center">
+          <p className="text-greyscale-500 text-sm">
+            剩余开启次数：{Number(remainingLaunchCount)}次，再完成 {remainingMintTimes}次治理奖励铸币，可增加1次
+          </p>
+          <p className="text-greyscale-500 text-sm">
+            （须持有 TestLOVE20不少于 {Number(process.env.NEXT_PUBLIC_SUBMIT_MIN_PER_THOUSAND) / 10}%的治理票）
+          </p>
+        </div>
+
         <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mt-4 text-left">
-          <p className="mb-1">说明：</p>
-          <p>1. 须持有 {token?.symbol}不少于 0.5%的治理票</p>
-          <p>2. 子币发射目标：须筹集 20,000,000个 {token?.symbol}</p>
+          <p>
+            公平发射募集目标：{formatTokenAmount(BigInt(process.env.NEXT_PUBLIC_PARENT_TOKEN_FUNDRAISING_GOAL ?? '0'))}
+            个 {token?.symbol}
+          </p>
         </div>
       </div>
     </div>

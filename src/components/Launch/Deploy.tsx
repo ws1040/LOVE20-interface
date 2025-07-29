@@ -26,6 +26,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 
 // my funcs
 import { checkWalletConnection } from '@/src/lib/web3';
+import { formatTokenAmount } from '@/src/lib/format';
 
 // my hooks
 import { useLaunchToken, useRemainingLaunchCount } from '@/src/hooks/contracts/useLOVE20Launch';
@@ -192,9 +193,10 @@ export default function TokenDeployment() {
           </form>
         </Form>
         <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mt-0 m-6">
-          <p className="mb-1">说明：</p>
-          <p>1. 须持有 {token?.symbol}不少于 0.5%的治理票</p>
-          <p>2. 子币发射目标：须筹集 20,000,000个 {token?.symbol}</p>
+          <p>
+            公平发射募集目标：{formatTokenAmount(BigInt(process.env.NEXT_PUBLIC_PARENT_TOKEN_FUNDRAISING_GOAL ?? '0'))}
+            个 {token?.symbol}
+          </p>
         </div>
       </Card>
       <LoadingOverlay isLoading={isLoading} text={isPending ? '提交交易...' : '确认交易...'} />
