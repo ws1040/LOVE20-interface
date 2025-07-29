@@ -191,6 +191,18 @@ export function getErrorNameFromSelector(selector: string, contractKey: string):
   }
 
   // 再在通用错误中查找
+  const slTokenSelectors = ErrorSelectorsMap.slToken;
+  if (slTokenSelectors && slTokenSelectors[selector]) {
+    return slTokenSelectors[selector];
+  }
+  const stTokenSelectors = ErrorSelectorsMap.stToken;
+  if (stTokenSelectors && stTokenSelectors[selector]) {
+    return stTokenSelectors[selector];
+  }
+  const tokenSelectors = ErrorSelectorsMap.token;
+  if (tokenSelectors && tokenSelectors[selector]) {
+    return tokenSelectors[selector];
+  }
   const commonSelectors = ErrorSelectorsMap.common;
   if (commonSelectors && commonSelectors[selector]) {
     return commonSelectors[selector];

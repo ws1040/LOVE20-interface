@@ -252,6 +252,18 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
       }
 
       // 如果在对应合约中找不到，再在通用错误映射中查找
+      const slTokenErrorMap = ContractErrorsMaps.slToken;
+      if (slTokenErrorMap && slTokenErrorMap[errorName]) {
+        return { name: '交易错误', message: slTokenErrorMap[errorName] };
+      }
+      const stErrorMap = ContractErrorsMaps.stToken;
+      if (stErrorMap && stErrorMap[errorName]) {
+        return { name: '交易错误', message: stErrorMap[errorName] };
+      }
+      const tokenErrorMap = ContractErrorsMaps.token;
+      if (tokenErrorMap && tokenErrorMap[errorName]) {
+        return { name: '交易错误', message: tokenErrorMap[errorName] };
+      }
       const commonErrorMap = ContractErrorsMaps.common;
       if (commonErrorMap && commonErrorMap[errorName]) {
         return { name: '交易错误', message: commonErrorMap[errorName] };
@@ -308,7 +320,6 @@ export const useHandleContractError = () => {
   const handleContractError = useCallback(
     (error: any, context: string) => {
       console.error('Context:', context);
-      console.error('Error Object:', error);
 
       // 尝试从多个可能的位置提取错误信息
       let errorMessage = '';
