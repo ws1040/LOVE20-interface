@@ -35,6 +35,17 @@ const thinkium801: Chain = {
   testnet: true,
 };
 
+// 定义自定义链 Thinkium Test
+const thinkium70001: Chain = {
+  id: 70001,
+  name: 'thinkium70001',
+  nativeCurrency: { name: 'TKM', symbol: 'TKM', decimals: 18 },
+  rpcUrls: {
+    default: { http: [process.env.NEXT_PUBLIC_THINKIUM_RPC_URL || 'https://proxy1.thinkiumrpc.net'] },
+  },
+  testnet: true,
+};
+
 // 映射链名称到链配置
 const CHAIN_MAP: Record<string, Chain> = {
   mainnet: mainnet,
@@ -42,6 +53,7 @@ const CHAIN_MAP: Record<string, Chain> = {
   bscTestnet: bscTestnet,
   anvil: anvil,
   thinkium801: thinkium801,
+  thinkium70001: thinkium70001,
 };
 
 // 从环境变量中获取所选的链名称

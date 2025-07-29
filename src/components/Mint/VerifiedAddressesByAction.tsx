@@ -170,7 +170,7 @@ const VerifiedAddressesByAction: React.FC<{
           <LoadingIcon />
         </div>
       ) : addresses.length === 0 ? (
-        selectedRound > 0n && <div className="text-center text-sm text-greyscale-400 p-4">没有地址参与行动</div>
+        selectedRound > 0n && <div className="text-center text-sm text-greyscale-400 p-4">没有可铸造激励的地址</div>
       ) : (
         <table className="table w-full">
           <thead>

@@ -116,7 +116,7 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
           <LoadingIcon />
         </div>
       ) : !verificationInfos || verificationInfos.length === 0 ? (
-        <div className="text-center text-sm text-greyscale-400 p-4">没有地址参与行动</div>
+        <div className="text-center text-sm text-greyscale-400 p-4">没有验证地址</div>
       ) : (
         <table className="table w-full">
           <thead>
