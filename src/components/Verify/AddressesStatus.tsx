@@ -98,7 +98,8 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
 
   // 累计当前已验证票数
   const verifiedVotesNum = verifiedAddresses?.reduce((acc, addr) => acc + addr.score, 0n) || 0n;
-  const verifiedVotesPercent = (Number(verifiedVotesNum) / Number(totalVotesNum || 0n)) * 100;
+  const verifiedVotesPercent =
+    ((Number(verifiedVotesNum) + Number(abstainVotes || 0n)) / Number(totalVotesNum || 0n)) * 100;
 
   return (
     <div className="relative px-4 pb-4 w-full">
