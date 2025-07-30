@@ -3,7 +3,7 @@
 
 import Head from 'next/head';
 import React, { useEffect, useRef, useState } from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { WalletButton } from '@/src/components/WalletButton';
 import { ErrorAlert } from '@/src/components/Common/ErrorAlert';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useAccount, useConfig } from 'wagmi';
@@ -108,12 +108,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
 
       <header className="flex justify-between items-center py-2 px-4">
         <SidebarTrigger className="-ml-1" />
-        <ConnectButton
-          showBalance={{
-            smallScreen: true,
-            largeScreen: true,
-          }}
-        />
+        <WalletButton />
       </header>
 
       <div className="px-4">
