@@ -233,12 +233,12 @@ export const useStakeLiquidity = () => {
     setIsPending(true);
     setError(null);
     try {
-      await simulateContract(config, {
-        abi: LOVE20StakeAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'stakeLiquidity',
-        args: [tokenAddress, tokenAmountForLP, parentTokenAmountForLP, promisedWaitingPhases, to],
-      });
+      // await simulateContract(config, {
+      //   abi: LOVE20StakeAbi,
+      //   address: CONTRACT_ADDRESS,
+      //   functionName: 'stakeLiquidity',
+      //   args: [tokenAddress, tokenAmountForLP, parentTokenAmountForLP, promisedWaitingPhases, to],
+      // });
       const txHash = await writeContract(config, {
         abi: LOVE20StakeAbi,
         address: CONTRACT_ADDRESS,
