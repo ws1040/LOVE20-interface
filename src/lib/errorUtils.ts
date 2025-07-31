@@ -300,7 +300,7 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
   // 未知错误
   return {
     name: '交易错误',
-    message: '交易失败，请稍后刷新重试',
+    message: '交易失败，请稍后刷新重试 ' + rawMessage,
   };
 }
 
