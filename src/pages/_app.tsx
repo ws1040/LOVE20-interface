@@ -18,6 +18,16 @@ import 'regenerator-runtime/runtime';
 
 import '../styles/globals.css';
 
+// 开发环境下动态导入 vConsole
+const initVConsole = () => {
+  // if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+  if (typeof window !== 'undefined') {
+    import('vconsole').then((VConsole) => {
+      const vConsole = new VConsole.default();
+    });
+  }
+};
+
 const client = new QueryClient();
 
 // 动态导入所有Web3相关组件，禁用SSR
@@ -35,6 +45,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     setMounted(true);
+    initVConsole();
   }, []);
 
   // 在服务端或客户端未完成挂载时显示loading
