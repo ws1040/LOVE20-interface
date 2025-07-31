@@ -383,12 +383,12 @@ export function useLaunchToken() {
     setIsPending(true);
     setError(null);
     try {
-      // await simulateContract(config, {
-      //   abi: LOVE20LaunchAbi,
-      //   address: CONTRACT_ADDRESS,
-      //   functionName: 'launchToken',
-      //   args: [symbol, parent],
-      // });
+      await simulateContract(config, {
+        abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
+        functionName: 'launchToken',
+        args: [symbol, parent],
+      });
       const txHash = await writeContract(config, {
         abi: LOVE20LaunchAbi,
         address: CONTRACT_ADDRESS,
