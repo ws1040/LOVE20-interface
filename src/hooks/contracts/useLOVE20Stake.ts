@@ -3,6 +3,7 @@ import { simulateContract, writeContract } from '@wagmi/core';
 import { useState } from 'react';
 import { config } from '@/src/wagmi';
 import { LOVE20StakeAbi } from '@/src/abis/LOVE20Stake';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`;
 
@@ -27,11 +28,11 @@ export const useAccountStakeStatus = (token: `0x${string}`, account: `0x${string
   });
 
   return {
-    slAmount: data?.slAmount as bigint | undefined,
-    stAmount: data?.stAmount as bigint | undefined,
-    promisedWaitingPhases: data?.promisedWaitingPhases as bigint | 0,
-    requestedUnstakeRound: data?.requestedUnstakeRound as bigint | undefined,
-    govVotes: data?.govVotes as bigint | undefined,
+    slAmount: data?.slAmount ? safeToBigInt(data.slAmount) : undefined,
+    stAmount: data?.stAmount ? safeToBigInt(data.stAmount) : undefined,
+    promisedWaitingPhases: data?.promisedWaitingPhases ? safeToBigInt(data.promisedWaitingPhases) : 0n,
+    requestedUnstakeRound: data?.requestedUnstakeRound ? safeToBigInt(data.requestedUnstakeRound) : undefined,
+    govVotes: data?.govVotes ? safeToBigInt(data.govVotes) : undefined,
     isPending,
     error,
   };
@@ -50,50 +51,7 @@ export const useCaculateGovVotes = (lpAmount: bigint, promisedWaitingPhases: big
     args: [lpAmount, promisedWaitingPhases],
   });
 
-  return { govVotes: data as bigint | undefined, isPending, error };
-};
-
-/**
- * 获取累积的代币数量
- * @param tokenAddress 代币地址
- * @param round 轮次
- */
-export const useCumulatedTokenAmount = (tokenAddress: `0x${string}`, round: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20StakeAbi,
-    functionName: 'cumulatedTokenAmount',
-    args: [tokenAddress, round],
-    query: {
-      enabled: !!tokenAddress,
-    },
-  });
-
-  return { tokenAmount: data as bigint | undefined, isPending, error };
-};
-
-/**
- * 按账户获取累积的代币数量
- * @param tokenAddress 代币地址
- * @param round 轮次
- * @param account 账户地址
- */
-export const useCumulatedTokenAmountByAccount = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  account: `0x${string}`,
-) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20StakeAbi,
-    functionName: 'cumulatedTokenAmountByAccount',
-    args: [tokenAddress, round, account],
-    query: {
-      enabled: !!tokenAddress && !!account,
-    },
-  });
-
-  return { tokenAmount: data as bigint | undefined, isPending, error };
+  return { govVotes: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -110,7 +68,7 @@ export const useCurrentRound = (enabled: boolean = true) => {
     },
   });
 
-  return { currentRound: data as bigint, isPending, error };
+  return { currentRound: safeToBigInt(data), isPending, error };
 };
 
 /**
@@ -208,7 +166,7 @@ export const useValidGovVotes = (tokenAddress: `0x${string}`, account: `0x${stri
     },
   });
 
-  return { validGovVotes: data as bigint, isPending, error };
+  return { validGovVotes: safeToBigInt(data), isPending, error };
 };
 
 // =======================
