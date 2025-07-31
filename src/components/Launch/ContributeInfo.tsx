@@ -12,6 +12,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my types & funcs
 import { formatTokenAmount } from '@/src/lib/format';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 import { LaunchInfo } from '@/src/types/love20types';
 
 // my contexts
@@ -48,7 +49,7 @@ const ContributeInfo: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> 
   );
 
   // 计算还剩余几个区块可以撤回
-  const WITHDRAW_WAITING_BLOCKS = BigInt(process.env.NEXT_PUBLIC_WITHDRAW_WAITING_BLOCKS || '0');
+  const WITHDRAW_WAITING_BLOCKS = safeToBigInt(process.env.NEXT_PUBLIC_WITHDRAW_WAITING_BLOCKS || '0');
   const lastContributedBlockNumber = lastContributedBlock ? lastContributedBlock : 0n;
   const currentBlockNumber = blockNumber ? BigInt(blockNumber) : 0n;
   const remainingBlocks = WITHDRAW_WAITING_BLOCKS - (currentBlockNumber - lastContributedBlockNumber);

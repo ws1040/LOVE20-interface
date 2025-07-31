@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-const withTM = require('next-transpile-modules')(['@tanstack/query-core', '@tanstack/react-query']);
 
 const nextConfig = {
   trailingSlash: true, // GitHub Pages 需要这个设置
@@ -50,4 +49,4 @@ const nextConfig = {
   // devIndicators: false,
 };
 
-module.exports = withTM(nextConfig);
+module.exports = nextConfig;
