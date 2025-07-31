@@ -3,6 +3,7 @@ import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/router';
 import { useTokenDetailBySymbol } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useOriginBlocks } from '@/src/hooks/contracts/useLOVE20Vote';
+import { isClient } from '@/src/lib/clientUtils';
 
 // 定义 Token 类型
 export interface Token {
@@ -47,6 +48,9 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   }, []);
 
   const checkAndClearCache = () => {
+    // 确保在客户端环境下执行
+    if (!isClient()) return false;
+
     try {
       const storedVersion = localStorage.getItem('app_version');
 
@@ -90,15 +94,19 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
       } else {
         const cacheCleared = checkAndClearCache();
 
-        if (!cacheCleared) {
+        if (!cacheCleared && isClient()) {
           // 从 Local Storage 加载 token
-          const storedToken = localStorage.getItem('currentToken');
-          if (storedToken && JSON.parse(storedToken)) {
-            const _token = JSON.parse(storedToken);
-            if (ifNoSymbol || tokenSymbol === _token.symbol) {
-              setToken(_token);
-              return; // 从 Local Storage 中找到了token，直接返回
+          try {
+            const storedToken = localStorage.getItem('currentToken');
+            if (storedToken && JSON.parse(storedToken)) {
+              const _token = JSON.parse(storedToken);
+              if (ifNoSymbol || tokenSymbol === _token.symbol) {
+                setToken(_token);
+                return; // 从 Local Storage 中找到了token，直接返回
+              }
             }
+          } catch (error) {
+            console.error('Failed to load token from localStorage:', error);
           }
         }
       }
@@ -167,6 +175,8 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
   // Step 5. 当 token 变化时，更新 Local Storage
   useEffect(() => {
+    if (!isClient()) return;
+    
     try {
       if (token) {
         localStorage.setItem('currentToken', JSON.stringify(token));

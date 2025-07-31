@@ -3,6 +3,7 @@ import { Chain } from 'wagmi/chains';
 import { mainnet, sepolia, bscTestnet } from 'wagmi/chains';
 import { createConfig, http } from 'wagmi';
 import { injected } from 'wagmi/connectors';
+import { isClient, hasWeb3Wallet, getEthereumProvider } from '@/src/lib/clientUtils';
 
 // 定义自定义链 Anvil
 const anvil: Chain = {
@@ -68,15 +69,30 @@ export const config = createConfig({
   connectors: [
     injected({
       target() {
-        // 安全检查：确保在客户端且 window.ethereum 存在
-        if (typeof window !== 'undefined' && window.ethereum) {
+        // 使用安全的客户端检测工具
+        if (!isClient() || !hasWeb3Wallet()) {
+          return {
+            id: 'fallback',
+            name: 'Wallet',
+            provider: null,
+          };
+        }
+
+        const provider = getEthereumProvider();
+        if (provider) {
           return {
             id: 'injected',
             name: 'Injected Wallet',
-            provider: window.ethereum,
+            provider: provider,
           };
         }
-        return undefined;
+
+        // 如果没有找到钱包，返回一个安全的默认值
+        return {
+          id: 'fallback',
+          name: 'Wallet',
+          provider: null,
+        };
       },
       shimDisconnect: true, // 确保断开连接时清理状态
     }),

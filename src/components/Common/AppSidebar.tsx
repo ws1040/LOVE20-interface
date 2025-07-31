@@ -1,5 +1,5 @@
 'use client';
-import { useContext } from 'react';
+import { useContext, useMemo, useCallback } from 'react';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
@@ -39,166 +39,183 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
   const { setOpenMobile, isMobile } = useSidebar();
 
-  if (!token) {
-    return null;
-  }
-
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
-  // 检查当前URL是否匹配菜单项
-  const isActiveUrl = (url: string) => {
-    const urlPath = url.split('?')[0];
-    const normalizedUrlPath = urlPath.endsWith('/') ? urlPath : `${urlPath}/`;
+  // 优化的URL匹配逻辑，使用 useCallback 缓存
+  const isActiveUrl = useCallback(
+    (url: string) => {
+      if (!token) return false; // 如果没有 token，返回 false
 
-    const currentPath = pathname.split('?')[0];
-    const normalizedCurrentPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
+      const urlPath = url.split('?')[0];
+      const normalizedUrlPath = urlPath.endsWith('/') ? urlPath : `${urlPath}/`;
 
-    if (normalizedCurrentPath === normalizedUrlPath) return true;
+      const currentPath = pathname.split('?')[0];
+      const normalizedCurrentPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
 
-    // 如果basePath存在且不为空，处理子路径情况
-    if (basePath && basePath.length > 0) {
-      const pathWithoutBase = normalizedCurrentPath.startsWith(basePath)
-        ? normalizedCurrentPath.substring(basePath.length)
-        : normalizedCurrentPath;
+      if (normalizedCurrentPath === normalizedUrlPath) return true;
 
-      const urlWithoutBase = normalizedUrlPath.startsWith(basePath)
-        ? normalizedUrlPath.substring(basePath.length)
-        : normalizedUrlPath;
+      // 如果basePath存在且不为空，处理子路径情况
+      if (basePath && basePath.length > 0) {
+        const pathWithoutBase = normalizedCurrentPath.startsWith(basePath)
+          ? normalizedCurrentPath.substring(basePath.length)
+          : normalizedCurrentPath;
 
-      return pathWithoutBase === urlWithoutBase;
+        const urlWithoutBase = normalizedUrlPath.startsWith(basePath)
+          ? normalizedUrlPath.substring(basePath.length)
+          : normalizedUrlPath;
+
+        return pathWithoutBase === urlWithoutBase;
+      }
+
+      return false;
+    },
+    [pathname, basePath, token],
+  );
+
+  // 优化的点击处理逻辑，使用 useCallback 缓存，避免不必要的页面刷新
+  const handleLinkClick = useCallback(
+    (url: string) => {
+      if (isMobile) {
+        setOpenMobile(false);
+      }
+
+      // 统一使用 router.push 进行导航，提高响应速度
+      // 移除强制页面刷新的逻辑，让 TokenContext 自动处理 token 切换
+      router.push(url);
+    },
+    [isMobile, setOpenMobile, router],
+  );
+
+  // 使用 useMemo 缓存导航数据，避免每次渲染都重新计算
+  const navigationData = useMemo(() => {
+    if (!token) {
+      return { navMain: [] }; // 如果没有 token，返回空的导航数据
     }
 
-    return false;
-  };
+    return {
+      navMain: [
+        {
+          title: '社区',
+          url: '#',
+          items: [
+            {
+              title: '社区行动',
+              url: `/acting/?symbol=${token.symbol}`,
+              isActive: isActiveUrl(`${basePath}/acting/`),
+              icon: SmilePlus,
+            },
+            {
+              title: '社区治理',
+              url: `/gov/?symbol=${token.symbol}`,
+              isActive: isActiveUrl(`${basePath}/gov/`),
+              icon: Landmark,
+            },
+            // {
+            //   title: '推举行动',
+            //   url: `/vote/actions4submit?symbol=${token.symbol}`,
+            //   isActive: false,
+            //   icon: SatelliteDish,
+            // },
+          ],
+        },
+        {
+          title: '发射',
+          url: '#',
+          items: [
+            {
+              title: '公平发射',
+              url: `/launch/?symbol=${token.symbol}`,
+              isActive: isActiveUrl(`${basePath}/launch/`),
+              icon: Rocket,
+            },
+            // 当存在父币时显示切换父币链接
+            ...(token.parentTokenAddress &&
+            token.parentTokenAddress !== '0x0000000000000000000000000000000000000000' &&
+            token.parentTokenSymbol &&
+            token.parentTokenSymbol !== process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL
+              ? [
+                  {
+                    title: '回到父币',
+                    url: `/acting/?symbol=${token.parentTokenSymbol}`,
+                    isActive: false,
+                    icon: UserCog,
+                  },
+                ]
+              : []),
+            {
+              title: '子币列表',
+              url: `/tokens/children/?symbol=${token.symbol}`,
+              isActive: isActiveUrl(`${basePath}/tokens/children/`),
+              icon: List,
+            },
+          ],
+        },
+        {
+          title: '交易',
+          url: '#',
+          items: [
+            {
+              title: `兑换代币`,
+              url: `/dex/swap?symbol=${token.symbol}&from=${process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL}`,
+              isActive: isActiveUrl(`${basePath}/dex/swap`),
+              icon: TicketCheck,
+            },
+          ],
+        },
+        // {
+        //   title: 'LOVE20',
+        //   url: '#',
+        //   items: [
+        //     {
+        //       title: '协议首页',
+        //       url: `/?symbol=${token.symbol}`,
+        //       isActive: pathname === basePath || pathname === `${basePath}/`,
+        //       icon: Home,
+        //     },
+        //   ],
+        // },
+        {
+          title: '我的',
+          url: '#',
+          items: [
+            {
+              title: '个人中心',
+              url: `/my/?symbol=${token.symbol}`,
+              isActive: isActiveUrl(`${basePath}/my/`),
+              icon: User,
+            },
+            {
+              title: '关于协议',
+              url: `/about?symbol=${token.symbol}`,
+              isActive: isActiveUrl(`${basePath}/about`),
+              icon: Info,
+            },
+          ],
+        },
+      ],
+    };
+  }, [token, basePath, isActiveUrl]);
 
-  // 处理链接点击，使用router.push导航
-  const handleLinkClick = (url: string) => {
-    if (isMobile) {
-      setOpenMobile(false);
-    }
-
-    // 获取URL中的symbol参数
-    const urlParams = new URLSearchParams(url.split('?')[1] || '');
-    const targetSymbol = urlParams.get('symbol');
-
-    // 如果切换到不同的token，使用完整页面跳转来确保重新加载
-    if (targetSymbol && targetSymbol !== token.symbol) {
-      window.location.href = process.env.NEXT_PUBLIC_BASE_PATH ? `${process.env.NEXT_PUBLIC_BASE_PATH}${url}` : url;
-      return;
-    }
-
-    router.push(url);
-  };
-
-  // 动态生成导航数据
-  const data = {
-    navMain: [
-      {
-        title: '社区',
-        url: '#',
-        items: [
-          {
-            title: '社区行动',
-            url: `/acting/?symbol=${token.symbol}`,
-            isActive: isActiveUrl(`${basePath}/acting/`),
-            icon: SmilePlus,
-          },
-          {
-            title: '社区治理',
-            url: `/gov/?symbol=${token.symbol}`,
-            isActive: isActiveUrl(`${basePath}/gov/`),
-            icon: Landmark,
-          },
-          // {
-          //   title: '推举行动',
-          //   url: `/vote/actions4submit?symbol=${token.symbol}`,
-          //   isActive: false,
-          //   icon: SatelliteDish,
-          // },
-        ],
-      },
-      {
-        title: '发射',
-        url: '#',
-        items: [
-          {
-            title: '公平发射',
-            url: `/launch/?symbol=${token.symbol}`,
-            isActive: isActiveUrl(`${basePath}/launch/`),
-            icon: Rocket,
-          },
-          // 当存在父币时显示切换父币链接
-          ...(token.parentTokenAddress &&
-          token.parentTokenAddress !== '0x0000000000000000000000000000000000000000' &&
-          token.parentTokenSymbol &&
-          token.parentTokenSymbol !== process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL
-            ? [
-                {
-                  title: '回到父币',
-                  url: `/acting/?symbol=${token.parentTokenSymbol}`,
-                  isActive: false,
-                  icon: UserCog,
-                },
-              ]
-            : []),
-          {
-            title: '子币列表',
-            url: `/tokens/children/?symbol=${token.symbol}`,
-            isActive: isActiveUrl(`${basePath}/tokens/children/`),
-            icon: List,
-          },
-        ],
-      },
-      {
-        title: '交易',
-        url: '#',
-        items: [
-          {
-            title: `兑换代币`,
-            url: `/dex/swap?symbol=${token.symbol}&from=${process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL}`,
-            isActive: isActiveUrl(`${basePath}/dex/swap`),
-            icon: TicketCheck,
-          },
-        ],
-      },
-      // {
-      //   title: 'LOVE20',
-      //   url: '#',
-      //   items: [
-      //     {
-      //       title: '协议首页',
-      //       url: `/?symbol=${token.symbol}`,
-      //       isActive: pathname === basePath || pathname === `${basePath}/`,
-      //       icon: Home,
-      //     },
-      //   ],
-      // },
-      {
-        title: '我的',
-        url: '#',
-        items: [
-          {
-            title: '个人中心',
-            url: `/my/?symbol=${token.symbol}`,
-            isActive: isActiveUrl(`${basePath}/my/`),
-            icon: User,
-          },
-          {
-            title: '关于协议',
-            url: `/about?symbol=${token.symbol}`,
-            isActive: isActiveUrl(`${basePath}/about`),
-            icon: Info,
-          },
-        ],
-      },
-    ],
-  };
+  // 添加加载状态提示
+  if (!token) {
+    return (
+      <Sidebar {...props}>
+        <SidebarHeader></SidebarHeader>
+        <SidebarContent>
+          <div className="flex items-center justify-center p-4">
+            <div className="text-sm text-gray-500">加载中...</div>
+          </div>
+        </SidebarContent>
+        <SidebarRail />
+      </Sidebar>
+    );
+  }
 
   return (
     <Sidebar {...props}>
       <SidebarHeader></SidebarHeader>
       <SidebarContent>
-        {data.navMain.map((item) => (
+        {navigationData.navMain.map((item) => (
           <SidebarGroup key={item.title}>
             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
             <SidebarGroupContent>
