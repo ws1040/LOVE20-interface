@@ -9,6 +9,7 @@ import { AppSidebar } from '@/src/components/Common/AppSidebar';
 import { config } from '@/src/wagmi';
 import { ErrorProvider } from '@/src/contexts/ErrorContext';
 import Footer from '@/src/components/Footer';
+import ErrorBoundary from '@/src/components/ErrorBoundary';
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 
@@ -48,34 +49,38 @@ function MyApp({ Component, pageProps }: AppProps) {
   }
 
   return (
-    <ClientWrapper>
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={client}>
-          <TokenProvider>
-            <SidebarProvider>
-              <ErrorProvider>
-                <AppSidebar />
-                <SidebarInset>
-                  <div className="min-h-screen bg-background flex flex-col">
-                    <Toaster
-                      position="top-center"
-                      toastOptions={{
-                        style: {
-                          background: '#000000',
-                          color: '#FFFFFF',
-                        },
-                      }}
-                    />
-                    <Component {...pageProps} />
-                    <Footer />
-                  </div>
-                </SidebarInset>
-              </ErrorProvider>
-            </SidebarProvider>
-          </TokenProvider>
-        </QueryClientProvider>
-      </WagmiProvider>
-    </ClientWrapper>
+    <ErrorBoundary>
+      <ClientWrapper>
+        <WagmiProvider config={config}>
+          <QueryClientProvider client={client}>
+            <TokenProvider>
+              <SidebarProvider>
+                <ErrorProvider>
+                  <AppSidebar />
+                  <SidebarInset>
+                    <div className="min-h-screen bg-background flex flex-col">
+                      <Toaster
+                        position="top-center"
+                        toastOptions={{
+                          style: {
+                            background: '#000000',
+                            color: '#FFFFFF',
+                          },
+                        }}
+                      />
+                      <ErrorBoundary>
+                        <Component {...pageProps} />
+                      </ErrorBoundary>
+                      <Footer />
+                    </div>
+                  </SidebarInset>
+                </ErrorProvider>
+              </SidebarProvider>
+            </TokenProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
+      </ClientWrapper>
+    </ErrorBoundary>
   );
 }
 
