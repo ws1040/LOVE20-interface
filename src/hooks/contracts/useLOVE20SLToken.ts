@@ -252,9 +252,15 @@ export const useApprove = (address: `0x${string}`) => {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({
     hash,
   });
 
-  return { approve, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { approve, isPending, isConfirming, writeError: combinedError, isConfirmed };
 };

@@ -208,9 +208,15 @@ export function useApprove(token: `0x${string}`) {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { approve, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { approve, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }
 
 /**
@@ -246,9 +252,15 @@ export function useBurn(token: `0x${string}`) {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { burn, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { burn, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }
 
 /**
@@ -284,7 +296,13 @@ export function useBurnForParentToken(token: `0x${string}`) {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { burnForParentToken, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { burnForParentToken, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }

@@ -68,12 +68,12 @@ export function useSwapExactTokensForTokens() {
     setIsPending(true);
     setError(null);
     try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: UniswapV2RouterAbi,
-        functionName: 'swapExactTokensForTokens',
-        args: [amountIn, amountOutMin, path, to, deadline],
-      });
+      // await simulateContract(config, {
+      //   address: CONTRACT_ADDRESS,
+      //   abi: UniswapV2RouterAbi,
+      //   functionName: 'swapExactTokensForTokens',
+      //   args: [amountIn, amountOutMin, path, to, deadline],
+      // });
       const txHash = await writeContract(config, {
         address: CONTRACT_ADDRESS,
         abi: UniswapV2RouterAbi,
@@ -113,13 +113,13 @@ export function useSwapExactETHForTokens() {
     setIsPending(true);
     setError(null);
     try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: UniswapV2RouterAbi,
-        functionName: 'swapExactETHForTokens',
-        args: [amountOutMin, path, to, deadline],
-        value,
-      });
+      // await simulateContract(config, {
+      //   address: CONTRACT_ADDRESS,
+      //   abi: UniswapV2RouterAbi,
+      //   functionName: 'swapExactETHForTokens',
+      //   args: [amountOutMin, path, to, deadline],
+      //   value,
+      // });
       const txHash = await writeContract(config, {
         address: CONTRACT_ADDRESS,
         abi: UniswapV2RouterAbi,
@@ -160,12 +160,12 @@ export function useSwapExactTokensForETH() {
     setIsPending(true);
     setError(null);
     try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: UniswapV2RouterAbi,
-        functionName: 'swapExactTokensForETH',
-        args: [amountIn, amountOutMin, path, to, deadline],
-      });
+      // await simulateContract(config, {
+      //   address: CONTRACT_ADDRESS,
+      //   abi: UniswapV2RouterAbi,
+      //   functionName: 'swapExactTokensForETH',
+      //   args: [amountIn, amountOutMin, path, to, deadline],
+      // });
       const txHash = await writeContract(config, {
         address: CONTRACT_ADDRESS,
         abi: UniswapV2RouterAbi,

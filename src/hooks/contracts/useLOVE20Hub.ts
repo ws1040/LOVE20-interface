@@ -45,7 +45,13 @@ export function useContributeWithETH() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { contribute, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { contribute, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }

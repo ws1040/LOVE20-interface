@@ -581,5 +581,10 @@ export const LOVE20SLTokenAbi = [
     "type": "error",
     "name": "TotalLpExceedsBalance",
     "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "UniswapLpMintedIsZero",
+    "inputs": []
   }
 ] as const satisfies Abi;

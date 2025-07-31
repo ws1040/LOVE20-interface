@@ -264,12 +264,15 @@ export function useVote() {
     setIsPending(true);
     setError(null);
     try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20VoteAbi,
-        functionName: 'vote',
-        args: [tokenAddress, actionIds, votes],
-      });
+      // await simulateContract(config, {
+      //   address: CONTRACT_ADDRESS,
+      //   abi: LOVE20VoteAbi,
+      //   functionName: 'vote',
+      //   args: [tokenAddress, actionIds, votes],
+      // });
+      console.log('tokenAddress', tokenAddress);
+      console.log('actionIds', actionIds);
+      console.log('votes', votes);
       const txHash = await writeContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20VoteAbi,
@@ -285,7 +288,13 @@ export function useVote() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { vote, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { vote, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }

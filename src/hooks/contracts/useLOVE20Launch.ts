@@ -274,9 +274,15 @@ export function useClaim() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { claim, writeData: hash, isPending, writeError: error, isConfirming, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { claim, writeData: hash, isPending, writeError: combinedError, isConfirming, isConfirmed };
 }
 
 /**
@@ -311,9 +317,15 @@ export function useContribute() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { contribute, writeData: hash, isPending, writeError: error, isConfirming, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { contribute, writeData: hash, isPending, writeError: combinedError, isConfirming, isConfirmed };
 }
 
 /**
@@ -348,11 +360,17 @@ export function useWithdraw() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({
     hash,
   });
 
-  return { withdraw, writeData: hash, isPending, writeError: error, isConfirming, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { withdraw, writeData: hash, isPending, writeError: combinedError, isConfirming, isConfirmed };
 }
 
 export function useLaunchToken() {
@@ -364,12 +382,12 @@ export function useLaunchToken() {
     setIsPending(true);
     setError(null);
     try {
-      await simulateContract(config, {
-        abi: LOVE20LaunchAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'launchToken',
-        args: [symbol, parent],
-      });
+      // await simulateContract(config, {
+      //   abi: LOVE20LaunchAbi,
+      //   address: CONTRACT_ADDRESS,
+      //   functionName: 'launchToken',
+      //   args: [symbol, parent],
+      // });
       const txHash = await writeContract(config, {
         abi: LOVE20LaunchAbi,
         address: CONTRACT_ADDRESS,
@@ -384,7 +402,13 @@ export function useLaunchToken() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { launchToken, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { launchToken, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }

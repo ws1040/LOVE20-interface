@@ -189,9 +189,15 @@ export function useSubmit() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { submit, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { submit, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }
 
 /**
@@ -217,12 +223,12 @@ export function useSubmitNewAction() {
     setIsPending(true);
     setError(null);
     try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20SubmitAbi,
-        functionName: 'submitNewAction',
-        args: [tokenAddress, actionBody],
-      });
+      // await simulateContract(config, {
+      //   address: CONTRACT_ADDRESS,
+      //   abi: LOVE20SubmitAbi,
+      //   functionName: 'submitNewAction',
+      //   args: [tokenAddress, actionBody],
+      // });
       const txHash = await writeContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20SubmitAbi,
@@ -238,7 +244,13 @@ export function useSubmitNewAction() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { submitNewAction, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { submitNewAction, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }
