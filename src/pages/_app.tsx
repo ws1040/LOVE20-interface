@@ -10,7 +10,6 @@ import { config } from '@/src/wagmi';
 import { ErrorProvider } from '@/src/contexts/ErrorContext';
 import Footer from '@/src/components/Footer';
 import ErrorBoundary from '@/src/components/ErrorBoundary';
-import DebugInfo from '@/src/components/DebugInfo';
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 

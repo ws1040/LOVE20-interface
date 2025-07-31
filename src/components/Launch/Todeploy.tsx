@@ -88,7 +88,7 @@ const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
 
         <div className="px-4 mt-2 mb-4 text-center">
           <p className="text-greyscale-500 text-sm">
-            剩余开启次数：{Number(remainingLaunchCount)}次，再完成 {remainingMintTimes}次治理奖励铸币，可增加1次
+            剩余开启次数：{Number(remainingLaunchCount ?? 0)}次，再完成 {remainingMintTimes}次治理奖励铸币，可增加1次
           </p>
           <p className="text-greyscale-500 text-sm">
             （须持有 TestLOVE20不少于 {Number(process.env.NEXT_PUBLIC_SUBMIT_MIN_PER_THOUSAND) / 10}%的治理票）

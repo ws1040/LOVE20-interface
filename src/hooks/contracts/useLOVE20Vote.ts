@@ -265,12 +265,12 @@ export function useVote() {
     setIsPending(true);
     setError(null);
     try {
-      // await simulateContract(config, {
-      //   address: CONTRACT_ADDRESS,
-      //   abi: LOVE20VoteAbi,
-      //   functionName: 'vote',
-      //   args: [tokenAddress, actionIds, votes],
-      // });
+      await simulateContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20VoteAbi,
+        functionName: 'vote',
+        args: [tokenAddress, actionIds, votes],
+      });
       console.log('tokenAddress', tokenAddress);
       console.log('actionIds', actionIds);
       console.log('votes', votes);
