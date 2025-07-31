@@ -6,6 +6,7 @@ import { simulateContract, writeContract } from '@wagmi/core';
 import { config } from '@/src/wagmi';
 
 import { LOVE20JoinAbi } from '@/src/abis/LOVE20Join';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN as `0x${string}`;
 
@@ -26,7 +27,7 @@ export const useCurrentRound = (flag: boolean = true) => {
     },
   });
 
-  return { currentRound: data as bigint, isPending, error };
+  return { currentRound: safeToBigInt(data), isPending, error };
 };
 
 /**
@@ -43,7 +44,7 @@ export const useJoinedAmountByActionId = (tokenAddress: `0x${string}`, actionId:
     },
   });
 
-  return { joinedAmountByActionId: data as bigint | undefined, isPending, error };
+  return { joinedAmountByActionId: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -64,7 +65,7 @@ export const useJoinedAmountByActionIdByAccount = (
     },
   });
 
-  return { joinedAmountByActionIdByAccount: data as bigint | undefined, isPending, error };
+  return { joinedAmountByActionIdByAccount: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -121,7 +122,7 @@ export const useStakedAmountByAccount = (tokenAddress: `0x${string}`, account: `
     },
   });
 
-  return { stakedAmount: data as bigint, isPending, error };
+  return { stakedAmount: safeToBigInt(data), isPending, error };
 };
 
 // =====================

@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 // my funcs
 import { formatTokenAmount } from '@/src/lib/format';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -43,8 +44,21 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
   } = useScoreByVerifier(token?.address as `0x${string}`, currentRound, (account as `0x${string}`) || '');
 
   // 计算剩余验证票数
-  const remainingVotes =
-    !isPendingVotesNumByAccount && !isPendingScoreByVerifier ? votesNumByAccount - scoreByVerifier : BigInt(0);
+  const remainingVotes = (() => {
+    if (isPendingVotesNumByAccount || isPendingScoreByVerifier) {
+      return 0n;
+    }
+
+    const votes = safeToBigInt(votesNumByAccount);
+    const score = safeToBigInt(scoreByVerifier);
+
+    try {
+      return votes >= score ? votes - score : 0n;
+    } catch (error) {
+      console.error('计算剩余验证票数出错:', error);
+      return 0n;
+    }
+  })();
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -85,7 +99,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
         <div className="stat place-items-center pt-1 pb-2">
           <div className="stat-title text-sm">已验证票数</div>
           <div className={`stat-value text-xl ${!showBtn ? 'text-secondary' : ''}`}>
-            {isPendingScoreByVerifier ? <LoadingIcon /> : formatTokenAmount(scoreByVerifier || BigInt(0))}
+            {isPendingScoreByVerifier ? <LoadingIcon /> : formatTokenAmount(safeToBigInt(scoreByVerifier))}
           </div>
         </div>
         <div className="stat place-items-center pt-0 pb-2">
@@ -103,13 +117,13 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
         <div className="flex justify-center">
           {isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
             <LoadingIcon />
-          ) : remainingVotes > 5n && votesNumByAccount > scoreByVerifier ? (
+          ) : remainingVotes > 5n && safeToBigInt(votesNumByAccount) > safeToBigInt(scoreByVerifier) ? (
             <Button className="w-1/2" asChild>
               <Link href={`/verify?symbol=${token.symbol}`}>去验证</Link>
             </Button>
           ) : (
             <Button disabled className="w-1/2">
-              {scoreByVerifier > 0 ? '已验证' : '未投票，无需验证'}
+              {safeToBigInt(scoreByVerifier) > 0n ? '已验证' : '未投票，无需验证'}
             </Button>
           )}
         </div>

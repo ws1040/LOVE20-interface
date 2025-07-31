@@ -5,6 +5,7 @@ import { simulateContract, writeContract } from '@wagmi/core';
 import { config } from '@/src/wagmi';
 
 import { LOVE20VoteAbi } from '@/src/abis/LOVE20Vote';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_VOTE as `0x${string}`;
 
@@ -50,7 +51,7 @@ export const useCurrentRound = () => {
     functionName: 'currentRound',
     args: [],
   });
-  return { currentRound: data as bigint, isPending, error };
+  return { currentRound: safeToBigInt(data), isPending, error };
 };
 
 /**
@@ -78,7 +79,7 @@ export const useMaxVotesNum = (tokenAddress: `0x${string}`, account: `0x${string
     args: [tokenAddress, account],
   });
 
-  return { maxVotesNum: data as bigint | undefined, isPending, error };
+  return { maxVotesNum: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -95,7 +96,7 @@ export const useOriginBlocks = (flag: boolean) => {
     },
   });
 
-  return { originBlocks: data as bigint | undefined, isPending, error };
+  return { originBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -109,7 +110,7 @@ export const useRoundBlocks = () => {
     args: [],
   });
 
-  return { phaseBlocks: data as bigint | undefined, isPending, error };
+  return { phaseBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -123,7 +124,7 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
     args: [blockNumber],
   });
 
-  return { round: data as bigint | undefined, isPending, error };
+  return { round: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -141,7 +142,7 @@ export const useVotesNum = (tokenAddress: `0x${string}`, round: bigint) => {
   });
 
   return {
-    votes: data as bigint | undefined,
+    votes: data ? safeToBigInt(data) : undefined,
     isPending,
     error,
   };
@@ -162,7 +163,7 @@ export const useVotesNumByAccount = (tokenAddress: `0x${string}`, round: bigint,
   });
 
   return {
-    votesNumByAccount: data as bigint,
+    votesNumByAccount: safeToBigInt(data),
     isPending,
     error,
   };
@@ -187,7 +188,7 @@ export const useVotesNumByAccountByActionId = (
     },
   });
 
-  return { votesNumByAccountByActionId: data as bigint, isPending, error };
+  return { votesNumByAccountByActionId: safeToBigInt(data), isPending, error };
 };
 
 /**
@@ -204,7 +205,7 @@ export const useVotesNumByActionId = (tokenAddress: `0x${string}`, round: bigint
     },
   });
 
-  return { votesNumByActionId: data as bigint | undefined, isPending, error };
+  return { votesNumByActionId: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -222,8 +223,8 @@ export const useVotesNumsByAccount = (tokenAddress: `0x${string}`, round: bigint
   });
 
   return {
-    actionIds: data?.[0] as bigint[] | undefined,
-    votes: data?.[1] as bigint[] | undefined,
+    actionIds: data?.[0] ? (data[0] as any[]).map(safeToBigInt) : undefined,
+    votes: data?.[1] ? (data[1] as any[]).map(safeToBigInt) : undefined,
     isPending,
     error,
   };
@@ -245,7 +246,7 @@ export const useVotesNumsByAccountByActionIds = (
     args: [tokenAddress, round, account, actionIds],
   });
 
-  return { votesNumsByAccountByActionIds: data as bigint[] | undefined, isPending, error };
+  return { votesNumsByAccountByActionIds: data ? (data as any[]).map(safeToBigInt) : undefined, isPending, error };
 };
 
 // =======================
