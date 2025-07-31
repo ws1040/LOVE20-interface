@@ -6,6 +6,7 @@ import { simulateContract, writeContract } from '@wagmi/core';
 import { config } from '@/src/wagmi';
 
 import { LOVE20VerifyAbi } from '@/src/abis/LOVE20Verify';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 
 // 定义合约地址，请根据实际情况设置
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_VERIFY as `0x${string}`;
@@ -24,7 +25,7 @@ export const useCurrentRound = () => {
     functionName: 'currentRound',
   });
 
-  return { currentRound: data as bigint, isPending, error };
+  return { currentRound: safeToBigInt(data), isPending, error };
 };
 
 /**
@@ -50,7 +51,7 @@ export const useOriginBlocks = () => {
     functionName: 'originBlocks',
   });
 
-  return { originBlocks: data as bigint | undefined, isPending, error };
+  return { originBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -76,7 +77,7 @@ export const useRoundBlocks = () => {
     functionName: 'phaseBlocks',
   });
 
-  return { phaseBlocks: data as bigint | undefined, isPending, error };
+  return { phaseBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -93,7 +94,7 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
     },
   });
 
-  return { roundByBlockNumber: data as bigint | undefined, isPending, error };
+  return { roundByBlockNumber: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -110,7 +111,7 @@ export const useScore = (account: `0x${string}`, someNumber: bigint) => {
     },
   });
 
-  return { score: data as bigint | undefined, isPending, error };
+  return { score: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -127,7 +128,7 @@ export const useScoreByActionId = (account: `0x${string}`, someNumber1: bigint, 
     },
   });
 
-  return { scoreByActionId: data as bigint | undefined, isPending, error };
+  return { scoreByActionId: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -149,7 +150,7 @@ export const useScoreByActionIdByAccount = (
     },
   });
 
-  return { scoreByActionIdByAccount: data as bigint | undefined, isPending, error };
+  return { scoreByActionIdByAccount: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -165,7 +166,7 @@ export const useScoreByVerifier = (tokenAddress: `0x${string}`, round: bigint, v
       enabled: !!tokenAddress && !!verifier && round !== undefined,
     },
   });
-  return { scoreByVerifier: data as bigint, isPending, error };
+  return { scoreByVerifier: safeToBigInt(data), isPending, error };
 };
 
 /**
@@ -187,7 +188,7 @@ export const useScoreByVerifierByActionId = (
     },
   });
 
-  return { scoreByVerifierByActionId: data as bigint, isPending, error };
+  return { scoreByVerifierByActionId: safeToBigInt(data), isPending, error };
 };
 
 /**
@@ -204,7 +205,7 @@ export const useScoreWithReward = (account: `0x${string}`, someNumber: bigint) =
     },
   });
 
-  return { scoreWithReward: data as bigint | undefined, isPending, error };
+  return { scoreWithReward: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 // =====================

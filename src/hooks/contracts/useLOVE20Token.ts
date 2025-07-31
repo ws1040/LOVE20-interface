@@ -6,6 +6,7 @@ import { simulateContract, writeContract } from '@wagmi/core';
 import { config } from '@/src/wagmi';
 
 import { LOVE20TokenAbi } from '@/src/abis/LOVE20Token';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 
 /* =======================
    ===== Read Hooks ======
@@ -32,7 +33,7 @@ export const useAllowance = (
     },
   });
 
-  return { allowance: data as bigint | undefined, isPending, error };
+  return { allowance: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -50,7 +51,7 @@ export const useBalanceOf = (token: `0x${string}`, account: `0x${string}`, flag:
     },
   });
 
-  return { balance: data as bigint | undefined, isPending, error };
+  return { balance: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -169,7 +170,7 @@ export const useTotalSupply = (token: `0x${string}`) => {
     },
   });
 
-  return { totalSupply: data as bigint | undefined, isPending, error };
+  return { totalSupply: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /* =======================
