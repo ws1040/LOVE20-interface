@@ -86,7 +86,7 @@ export const useInitialStakeRound = (tokenAddress: `0x${string}`) => {
     },
   });
 
-  return { initialStakeRound: data as bigint | undefined, isPending, error };
+  return { initialStakeRound: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -104,7 +104,7 @@ export const useGovVotesNum = (token: `0x${string}`) => {
     },
   });
 
-  return { govVotesNum: data as bigint | undefined, isPending, error };
+  return { govVotesNum: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -118,7 +118,7 @@ export const useOriginBlocks = () => {
     args: [],
   });
 
-  return { originBlocks: data as bigint | undefined, isPending, error };
+  return { originBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -132,7 +132,7 @@ export const useRoundBlocks = () => {
     args: [],
   });
 
-  return { phaseBlocks: data as bigint | undefined, isPending, error };
+  return { phaseBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -147,7 +147,7 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
     args: [blockNumber],
   });
 
-  return { round: data as bigint | undefined, isPending, error };
+  return { round: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
