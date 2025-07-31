@@ -6,6 +6,7 @@ import { simulateContract, writeContract } from '@wagmi/core';
 import { config } from '@/src/wagmi';
 
 import { LOVE20STTokenAbi } from '@/src/abis/LOVE20STToken';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 
 /**
  * Hook for allowance
@@ -22,7 +23,7 @@ export const useAllowance = (address: `0x${string}`, owner: `0x${string}`, spend
   });
 
   return {
-    allowance: data as bigint | undefined,
+    allowance: data ? safeToBigInt(data) : undefined,
     isPending,
     error,
   };
@@ -43,7 +44,7 @@ export const useBalanceOf = (address: `0x${string}`, account: `0x${string}`) => 
   });
 
   return {
-    balance: data as bigint | undefined,
+    balance: data ? safeToBigInt(data) : undefined,
     isPending,
     error,
   };
@@ -106,7 +107,7 @@ export const useReserve = (address: `0x${string}`) => {
   });
 
   return {
-    reserve: data as bigint | undefined,
+    reserve: data ? safeToBigInt(data) : undefined,
     isPending,
     error,
   };
@@ -169,7 +170,7 @@ export const useTotalSupply = (address: `0x${string}`) => {
   });
 
   return {
-    totalSupply: data as bigint | undefined,
+    totalSupply: data ? safeToBigInt(data) : undefined,
     isPending,
     error,
   };

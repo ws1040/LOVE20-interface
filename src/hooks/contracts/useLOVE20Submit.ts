@@ -3,6 +3,7 @@ import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
 import { simulateContract, writeContract } from '@wagmi/core';
 import { config } from '@/src/wagmi';
 import { LOVE20SubmitAbi } from '@/src/abis/LOVE20Submit';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_SUBMIT as `0x${string}`;
 
@@ -21,7 +22,7 @@ export const useSubmitMinPerThousand = () => {
     args: [],
   });
 
-  return { submitMinPerThousand: data as bigint | undefined, isPending, error };
+  return { submitMinPerThousand: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -52,7 +53,7 @@ export const useActionsCount = (tokenAddress: `0x${string}`) => {
     args: [tokenAddress],
   });
 
-  return { actionNum: data as bigint | undefined, isPending, error };
+  return { actionNum: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -80,7 +81,7 @@ export const useCurrentRound = () => {
     args: [],
   });
 
-  return { currentRound: data as bigint, isPending, error };
+  return { currentRound: safeToBigInt(data), isPending, error };
 };
 
 /**
@@ -108,7 +109,7 @@ export const useOriginBlocks = () => {
     args: [],
   });
 
-  return { originBlocks: data as bigint | undefined, isPending, error };
+  return { originBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -122,7 +123,7 @@ export const useRoundBlocks = () => {
     args: [],
   });
 
-  return { phaseBlocks: data as bigint | undefined, isPending, error };
+  return { phaseBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -136,7 +137,7 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
     args: [blockNumber],
   });
 
-  return { round: data as bigint | undefined, isPending, error };
+  return { round: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**

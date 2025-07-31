@@ -6,6 +6,7 @@ import { simulateContract, writeContract } from '@wagmi/core';
 import { config } from '@/src/wagmi';
 
 import { WETH9Abi } from '@/src/abis/WETH9';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN as `0x${string}`;
 
@@ -28,7 +29,7 @@ export const useBalanceOf = (token: `0x${string}`, account: `0x${string}`) => {
     },
   });
 
-  return { balance: data as bigint | undefined, isPending, error };
+  return { balance: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 // =====================
