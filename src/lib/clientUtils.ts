@@ -51,3 +51,52 @@ export const onClientReady = (callback: () => void): void => {
     setTimeout(callback, 0);
   }
 };
+
+/**
+ * 安全地将数值转换为BigInt
+ * 处理科学记数法、字符串、数字等各种格式
+ */
+export const safeToBigInt = (value: any): bigint => {
+  if (value === null || value === undefined) {
+    return 0n;
+  }
+
+  // 如果已经是BigInt，直接返回
+  if (typeof value === 'bigint') {
+    return value;
+  }
+
+  // 如果是数字类型
+  if (typeof value === 'number') {
+    // 处理科学记数法
+    if (value.toString().includes('e') || value.toString().includes('E')) {
+      // 将科学记数法转换为完整的数字字符串
+      const fullNumber = value.toFixed(0);
+      return BigInt(fullNumber);
+    }
+    return BigInt(Math.floor(value));
+  }
+
+  // 如果是字符串
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (trimmed === '') return 0n;
+
+    // 处理科学记数法字符串
+    if (trimmed.includes('e') || trimmed.includes('E')) {
+      const num = parseFloat(trimmed);
+      if (isNaN(num)) return 0n;
+      return BigInt(num.toFixed(0));
+    }
+
+    // 处理普通数字字符串
+    try {
+      return BigInt(trimmed);
+    } catch {
+      return 0n;
+    }
+  }
+
+  // 其他情况返回0
+  return 0n;
+};
