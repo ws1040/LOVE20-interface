@@ -166,9 +166,15 @@ export function useJoin() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { join, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error || confirmError;
+
+  return { join, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }
 
 /**
@@ -204,7 +210,13 @@ export function useWithdraw() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { withdraw, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error || confirmError;
+
+  return { withdraw, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }

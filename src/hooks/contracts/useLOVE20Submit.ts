@@ -217,12 +217,12 @@ export function useSubmitNewAction() {
     setIsPending(true);
     setError(null);
     try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20SubmitAbi,
-        functionName: 'submitNewAction',
-        args: [tokenAddress, actionBody],
-      });
+      // await simulateContract(config, {
+      //   address: CONTRACT_ADDRESS,
+      //   abi: LOVE20SubmitAbi,
+      //   functionName: 'submitNewAction',
+      //   args: [tokenAddress, actionBody],
+      // });
       const txHash = await writeContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20SubmitAbi,

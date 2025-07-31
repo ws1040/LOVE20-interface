@@ -244,7 +244,13 @@ export function useVerify() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { verify, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error || confirmError;
+
+  return { verify, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }
