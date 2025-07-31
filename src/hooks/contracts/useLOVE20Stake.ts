@@ -261,7 +261,7 @@ export const useStakeLiquidity = () => {
     error: confirmError,
   } = useWaitForTransactionReceipt({ hash });
 
-  const combinedError = error || confirmError;
+  const combinedError = error ?? confirmError;
 
   return {
     stakeLiquidity,
@@ -324,7 +324,7 @@ export const useStakeToken = () => {
     error: confirmError,
   } = useWaitForTransactionReceipt({ hash });
 
-  const combinedError = error || confirmError;
+  const combinedError = error ?? confirmError;
 
   return {
     stakeToken,
@@ -375,7 +375,7 @@ export const useUnstake = () => {
     error: confirmError,
   } = useWaitForTransactionReceipt({ hash });
 
-  const combinedError = error || confirmError;
+  const combinedError = error ?? confirmError;
 
   return {
     unstake,
@@ -430,7 +430,7 @@ export const useWithdraw = () => {
     error: confirmError,
   } = useWaitForTransactionReceipt({ hash });
 
-  const combinedError = error || confirmError;
+  const combinedError = error ?? confirmError;
 
   return {
     withdraw,

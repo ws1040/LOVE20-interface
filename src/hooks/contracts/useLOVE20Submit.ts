@@ -189,9 +189,15 @@ export function useSubmit() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { submit, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { submit, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }
 
 /**
@@ -238,7 +244,13 @@ export function useSubmitNewAction() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { submitNewAction, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { submitNewAction, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }

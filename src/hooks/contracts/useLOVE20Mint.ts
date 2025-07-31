@@ -358,13 +358,19 @@ export function useMintActionReward() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
+
+  const combinedError = error ?? confirmError;
 
   return {
     mintActionReward,
     isPending,
     isConfirming,
-    writeError: error,
+    writeError: combinedError,
     isConfirmed,
   };
 }
@@ -402,13 +408,19 @@ export function useMintGovReward() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
+
+  const combinedError = error ?? confirmError;
 
   return {
     mintGovReward,
     isPending,
     isConfirming,
-    writeError: error,
+    writeError: combinedError,
     isConfirmed,
   };
 }
@@ -446,13 +458,19 @@ export function usePrepareRewardIfNeeded() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
+
+  const combinedError = error ?? confirmError;
 
   return {
     prepareRewardIfNeeded,
     isPending,
     isConfirming,
-    writeError: error,
+    writeError: combinedError,
     isConfirmed,
   };
 }

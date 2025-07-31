@@ -288,7 +288,13 @@ export function useVote() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
 
-  return { vote, isPending, isConfirming, writeError: error, isConfirmed };
+  const combinedError = error ?? confirmError;
+
+  return { vote, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }

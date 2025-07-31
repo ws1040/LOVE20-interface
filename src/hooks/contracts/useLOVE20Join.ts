@@ -172,7 +172,7 @@ export function useJoin() {
     error: confirmError,
   } = useWaitForTransactionReceipt({ hash });
 
-  const combinedError = error || confirmError;
+  const combinedError = error ?? confirmError;
 
   return { join, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }
@@ -216,7 +216,7 @@ export function useWithdraw() {
     error: confirmError,
   } = useWaitForTransactionReceipt({ hash });
 
-  const combinedError = error || confirmError;
+  const combinedError = error ?? confirmError;
 
   return { withdraw, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }

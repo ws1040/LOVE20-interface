@@ -250,7 +250,7 @@ export function useVerify() {
     error: confirmError,
   } = useWaitForTransactionReceipt({ hash });
 
-  const combinedError = error || confirmError;
+  const combinedError = error ?? confirmError;
 
   return { verify, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }
