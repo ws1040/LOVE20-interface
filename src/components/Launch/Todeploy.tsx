@@ -12,6 +12,7 @@ import { useLaunchInfo, useRemainingLaunchCount } from '@/src/hooks/contracts/us
 import { useNumOfMintGovRewardByAccount } from '@/src/hooks/contracts/useLOVE20Mint';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { formatTokenAmount } from '@/src/lib/format';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 
 const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
   // 获取当前区块号和个人地址
@@ -96,8 +97,9 @@ const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
 
         <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mt-4 text-left">
           <p>
-            公平发射募集目标：{formatTokenAmount(BigInt(process.env.NEXT_PUBLIC_PARENT_TOKEN_FUNDRAISING_GOAL ?? '0'))}
-            个 {token?.symbol}
+            公平发射募集目标：
+            {formatTokenAmount(safeToBigInt(process.env.NEXT_PUBLIC_PARENT_TOKEN_FUNDRAISING_GOAL ?? '0'))}个{' '}
+            {token?.symbol}
           </p>
         </div>
       </div>
