@@ -6,6 +6,7 @@ import { simulateContract, writeContract } from '@wagmi/core';
 import { config } from '@/src/wagmi';
 
 import { LOVE20SLTokenAbi } from '@/src/abis/LOVE20SLToken';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 
 // =====================
 // === 读取 Hook ===
@@ -25,7 +26,7 @@ export const useAllowance = (address: `0x${string}`, owner: `0x${string}`, spend
     },
   });
 
-  return { allowance: data as bigint | undefined, isPending, error };
+  return { allowance: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -42,7 +43,7 @@ export const useBalanceOf = (address: `0x${string}`, account: `0x${string}`) => 
     },
   });
 
-  return { balance: data as bigint | undefined, isPending, error };
+  return { balance: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -171,8 +172,8 @@ export const useTokenAmountsBySlAmount = (address: `0x${string}`, slAmount: bigi
   return {
     tokenAmountsBySlAmount: data
       ? {
-          tokenAmount: (data as any).tokenAmount as bigint,
-          parentTokenAmount: (data as any).parentTokenAmount as bigint,
+          tokenAmount: safeToBigInt((data as any)?.tokenAmount),
+          parentTokenAmount: safeToBigInt((data as any)?.parentTokenAmount),
         }
       : undefined,
     isPending,
@@ -194,7 +195,7 @@ export const useTotalSupply = (address: `0x${string}`) => {
     },
   });
 
-  return { totalSupply: data as bigint | undefined, isPending, error };
+  return { totalSupply: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**

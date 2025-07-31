@@ -6,6 +6,7 @@ import { simulateContract, writeContract } from '@wagmi/core';
 import { config } from '@/src/wagmi';
 
 import { LOVE20MintAbi } from '@/src/abis/LOVE20Mint';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MINT as `0x${string}`;
 
@@ -24,7 +25,7 @@ export const useRoundRewardActionPerThousand = () => {
   });
 
   return {
-    roundRewardActionPerThousand: data as bigint | undefined,
+    roundRewardActionPerThousand: data ? safeToBigInt(data) : undefined,
     isPending: isLoading,
     error,
   };
@@ -42,7 +43,7 @@ export const useRoundRewardGovPerThousand = () => {
   });
 
   return {
-    roundRewardGovPerThousand: data as bigint | undefined,
+    roundRewardGovPerThousand: data ? safeToBigInt(data) : undefined,
     isPending: isLoading,
     error,
   };
@@ -61,7 +62,7 @@ export const useNumOfMintGovRewardByAccount = (tokenAddress: `0x${string}`, acco
   });
 
   return {
-    numOfMintGovRewardByAccount: data as bigint | undefined,
+    numOfMintGovRewardByAccount: data ? safeToBigInt(data) : undefined,
     isPending: isLoading,
     error,
   };
@@ -79,7 +80,7 @@ export const useActionReward = (tokenAddress: `0x${string}`, round: bigint) => {
   });
 
   return {
-    actionReward: data as bigint | undefined,
+    actionReward: data ? safeToBigInt(data) : undefined,
     isPending: isLoading,
     error,
   };
@@ -102,7 +103,7 @@ export const useActionRewardByActionIdByAccount = (
   });
 
   return {
-    actionRewardByActionIdByAccount: data?.[0] as bigint | undefined,
+    actionRewardByActionIdByAccount: data?.[0] ? safeToBigInt(data[0]) : undefined,
     isMinted: data?.[1] as boolean | undefined,
     isPending: isLoading,
     error,
@@ -126,7 +127,7 @@ export const useActionRewardMintedByAccount = (
   });
 
   return {
-    actionRewardMintedByAccount: data as bigint | undefined,
+    actionRewardMintedByAccount: data ? safeToBigInt(data) : undefined,
     isPending: isLoading,
     error,
   };
@@ -144,7 +145,7 @@ export const useCalculateRoundActionReward = (tokenAddress: `0x${string}`, round
   });
 
   return {
-    calculateRoundActionReward: data as bigint | undefined,
+    calculateRoundActionReward: data ? safeToBigInt(data) : undefined,
     isPending: isLoading,
     error,
   };
@@ -162,7 +163,7 @@ export const useCalculateRoundGovReward = (tokenAddress: `0x${string}`) => {
   });
 
   return {
-    calculateRoundGovReward: data as bigint | undefined,
+    calculateRoundGovReward: data ? safeToBigInt(data) : undefined,
     isPending: isLoading,
     error,
   };
@@ -180,7 +181,7 @@ export const useGovReward = (tokenAddress: `0x${string}`, round: bigint) => {
   });
 
   return {
-    govReward: data as bigint | undefined,
+    govReward: data ? safeToBigInt(data) : undefined,
     isPending: isLoading,
     error,
   };
@@ -201,9 +202,9 @@ export const useGovRewardByAccount = (tokenAddress: `0x${string}`, round: bigint
   });
 
   return {
-    verifyReward: data?.[0] as bigint | undefined,
-    boostReward: data?.[1] as bigint | undefined,
-    burnReward: data?.[2] as bigint | undefined,
+    verifyReward: data?.[0] ? safeToBigInt(data[0]) : undefined,
+    boostReward: data?.[1] ? safeToBigInt(data[1]) : undefined,
+    burnReward: data?.[2] ? safeToBigInt(data[2]) : undefined,
     isMinted: data?.[3] as boolean | undefined,
     isPending: isLoading,
     error,
@@ -222,7 +223,7 @@ export const useGovRewardMintedByAccount = (account: `0x${string}`, round: bigin
   });
 
   return {
-    govRewardMintedByAccount: data as bigint | undefined,
+    govRewardMintedByAccount: data ? safeToBigInt(data) : undefined,
     isPending: isLoading,
     error,
   };
@@ -261,7 +262,7 @@ export const useRewardAvailable = (tokenAddress: `0x${string}`) => {
   });
 
   return {
-    rewardAvailable: data as bigint | undefined,
+    rewardAvailable: data ? safeToBigInt(data) : undefined,
     isPending: isLoading,
     error,
   };
@@ -279,7 +280,7 @@ export const useRewardBurned = (account: `0x${string}`) => {
   });
 
   return {
-    rewardBurned: data as bigint | undefined,
+    rewardBurned: data ? safeToBigInt(data) : undefined,
     isPending: isLoading,
     error,
   };
@@ -297,7 +298,7 @@ export const useRewardMinted = (account: `0x${string}`) => {
   });
 
   return {
-    rewardMinted: data as bigint | undefined,
+    rewardMinted: data ? safeToBigInt(data) : undefined,
     isPending: isLoading,
     error,
   };
@@ -315,7 +316,7 @@ export const useRewardReserved = (account: `0x${string}`) => {
   });
 
   return {
-    rewardReserved: data as bigint | undefined,
+    rewardReserved: data ? safeToBigInt(data) : undefined,
     isPending: isLoading,
     error,
   };

@@ -2,6 +2,7 @@
 
 import { useReadContract } from 'wagmi';
 import { LOVE20DataViewerAbi } from '@/src/abis/LOVE20DataViewer';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 import {
   JoinedAction,
   LaunchInfo,
@@ -240,8 +241,8 @@ export const useVotesNums = (tokenAddress: `0x${string}`, round: bigint) => {
   });
 
   return {
-    actionIds: data?.[0] as bigint[] | undefined,
-    votes: data?.[1] as bigint[] | undefined,
+    actionIds: data?.[0] ? (data[0] as any[]).map(safeToBigInt) : undefined,
+    votes: data?.[1] ? (data[1] as any[]).map(safeToBigInt) : undefined,
     isPending,
     error,
   };

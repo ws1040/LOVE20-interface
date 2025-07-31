@@ -73,7 +73,6 @@ function MyApp({ Component, pageProps }: AppProps) {
                         <Component {...pageProps} />
                       </ErrorBoundary>
                       <Footer />
-                      <DebugInfo showInProduction={true} />
                     </div>
                   </SidebarInset>
                 </ErrorProvider>
