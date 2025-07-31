@@ -78,7 +78,7 @@ export const useOriginBlocks = () => {
     functionName: 'originBlocks',
   });
 
-  return { originBlocks: data as bigint | undefined, isPending, error };
+  return { originBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -91,7 +91,7 @@ export const useRoundBlocks = () => {
     functionName: 'phaseBlocks',
   });
 
-  return { phaseBlocks: data as bigint | undefined, isPending, error };
+  return { phaseBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -105,7 +105,7 @@ export const useRoundByBlockNumber = (blockNumber: bigint) => {
     args: [blockNumber],
   });
 
-  return { round: data as bigint | undefined, isPending, error };
+  return { round: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**

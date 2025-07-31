@@ -85,7 +85,7 @@ export const useMaxSupply = (token: `0x${string}`) => {
     },
   });
 
-  return { maxSupply: data as bigint | undefined, isPending, error };
+  return { maxSupply: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -119,7 +119,7 @@ export const useParentPool = (token: `0x${string}`) => {
     },
   });
 
-  return { parentPool: data as bigint | undefined, isPending, error };
+  return { parentPool: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**

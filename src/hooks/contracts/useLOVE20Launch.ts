@@ -6,6 +6,7 @@ import { Address } from 'viem';
 
 import { config } from '@/src/wagmi';
 import { LOVE20LaunchAbi } from '@/src/abis/LOVE20Launch';
+import { safeToBigInt } from '@/src/lib/clientUtils';
 import { LaunchInfo } from '@/src/types/love20types';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x${string}`;
@@ -25,7 +26,7 @@ export const useFirstParentTokenFundraisingGoal = () => {
     args: [],
   });
 
-  return { firstParentTokenFundraisingGoal: data as bigint | undefined, isPending, error };
+  return { firstParentTokenFundraisingGoal: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -39,7 +40,7 @@ export const useParentTokenFundraisingGoal = () => {
     args: [],
   });
 
-  return { parentTokenFundraisingGoal: data as bigint | undefined, isPending, error };
+  return { parentTokenFundraisingGoal: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -53,7 +54,7 @@ export const useSecondHalfMinBlocks = () => {
     args: [],
   });
 
-  return { secondHalfMinBlocks: data as bigint | undefined, isPending, error };
+  return { secondHalfMinBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -67,7 +68,7 @@ export const useTokenSymbolLength = () => {
     args: [],
   });
 
-  return { tokenSymbolLength: data as bigint | undefined, isPending, error };
+  return { tokenSymbolLength: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -81,7 +82,7 @@ export const useChildTokensCount = (parentTokenAddress: `0x${string}`) => {
     args: [parentTokenAddress],
   });
 
-  return { childTokenNum: data as bigint | undefined, isPending, error };
+  return { childTokenNum: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -95,7 +96,7 @@ export const useLaunchedChildTokensCount = (parentTokenAddress: `0x${string}`) =
     args: [parentTokenAddress],
   });
 
-  return { launchedChildTokenNum: data as bigint | undefined, isPending, error };
+  return { launchedChildTokenNum: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -113,8 +114,8 @@ export const useClaimInfo = (tokenAddress: `0x${string}`, account: `0x${string}`
   });
 
   return {
-    receivedTokenAmount: data?.[0] as bigint,
-    extraRefund: data?.[1] as bigint,
+    receivedTokenAmount: safeToBigInt(data?.[0]),
+    extraRefund: safeToBigInt(data?.[1]),
     isClaimed: data?.[2] as boolean,
     isPending,
     error,
@@ -135,7 +136,7 @@ export const useContributed = (tokenAddress: `0x${string}`, account: `0x${string
     },
   });
 
-  return { contributed: data as bigint | undefined, isPending, error, refetch };
+  return { contributed: data ? safeToBigInt(data) : undefined, isPending, error, refetch };
 };
 
 /**
@@ -155,16 +156,16 @@ export const useLaunchInfo = (address: `0x${string}`) => {
   const launchInfo: LaunchInfo | undefined = data
     ? {
         parentTokenAddress: data.parentTokenAddress as `0x${string}`,
-        parentTokenFundraisingGoal: data.parentTokenFundraisingGoal as bigint,
-        secondHalfMinBlocks: data.secondHalfMinBlocks as bigint,
-        launchAmount: data.launchAmount as bigint,
-        startBlock: data.startBlock as bigint,
-        secondHalfStartBlock: data.secondHalfStartBlock as bigint,
-        endBlock: data.endBlock as bigint,
+        parentTokenFundraisingGoal: safeToBigInt(data.parentTokenFundraisingGoal),
+        secondHalfMinBlocks: safeToBigInt(data.secondHalfMinBlocks),
+        launchAmount: safeToBigInt(data.launchAmount),
+        startBlock: safeToBigInt(data.startBlock),
+        secondHalfStartBlock: safeToBigInt(data.secondHalfStartBlock),
+        endBlock: safeToBigInt(data.endBlock),
         hasEnded: data.hasEnded as boolean,
-        participantCount: data.participantCount as bigint,
-        totalContributed: data.totalContributed as bigint,
-        totalExtraRefunded: data.totalExtraRefunded as bigint,
+        participantCount: safeToBigInt(data.participantCount),
+        totalContributed: safeToBigInt(data.totalContributed),
+        totalExtraRefunded: safeToBigInt(data.totalExtraRefunded),
       }
     : undefined;
 
@@ -196,7 +197,7 @@ export const useTokenCount = () => {
     args: [],
   });
 
-  return { tokenNum: data as bigint | undefined, isPending, error };
+  return { tokenNum: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -213,7 +214,7 @@ export const useLastContributedBlock = (tokenAddress: `0x${string}`, account: `0
     },
   });
 
-  return { lastContributedBlock: data as bigint | undefined, isPending, error };
+  return { lastContributedBlock: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**
@@ -232,7 +233,7 @@ export const useRemainingLaunchCount = (parentTokenAddress: `0x${string}`, accou
   });
 
   return {
-    remainingLaunchCount: data as bigint | undefined,
+    remainingLaunchCount: data ? safeToBigInt(data) : undefined,
     isPending,
     error,
   };
