@@ -116,7 +116,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
     isPending: isPendingWithdraw,
     isConfirming: isConfirmingWithdraw,
     isConfirmed: isConfirmedWithdraw,
-    error: errorWithdraw,
+    writeError: errorWithdraw,
   } = useWithdraw();
 
   const handleWithdraw = async () => {

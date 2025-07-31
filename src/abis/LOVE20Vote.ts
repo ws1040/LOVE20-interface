@@ -20,6 +20,69 @@ export const LOVE20VoteAbi = [
   },
   {
     "type": "function",
+    "name": "accountVotedActionIdsAtIndex",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "accountVotedActionIdsCount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "canBeVoted",
     "inputs": [
       {
@@ -57,7 +120,7 @@ export const LOVE20VoteAbi = [
         "internalType": "address"
       },
       {
-        "name": "accountAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       }
@@ -154,7 +217,7 @@ export const LOVE20VoteAbi = [
         "internalType": "address"
       },
       {
-        "name": "accountAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       }
@@ -261,6 +324,59 @@ export const LOVE20VoteAbi = [
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "votedActionIdsAtIndex",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "votedActionIdsCount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -380,35 +496,6 @@ export const LOVE20VoteAbi = [
   },
   {
     "type": "function",
-    "name": "votesNums",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "round",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "actionIds",
-        "type": "uint256[]",
-        "internalType": "uint256[]"
-      },
-      {
-        "name": "votes",
-        "type": "uint256[]",
-        "internalType": "uint256[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "votesNumsByAccount",
     "inputs": [
       {
@@ -422,7 +509,7 @@ export const LOVE20VoteAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "accountAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       }
@@ -456,38 +543,9 @@ export const LOVE20VoteAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "accountAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
-      },
-      {
-        "name": "actionIds",
-        "type": "uint256[]",
-        "internalType": "uint256[]"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "votes",
-        "type": "uint256[]",
-        "internalType": "uint256[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "votesNumsByActionIds",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "round",
-        "type": "uint256",
-        "internalType": "uint256"
       },
       {
         "name": "actionIds",
@@ -517,7 +575,7 @@ export const LOVE20VoteAbi = [
       {
         "name": "round",
         "type": "uint256",
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256"
       },
       {
@@ -527,16 +585,16 @@ export const LOVE20VoteAbi = [
         "internalType": "address"
       },
       {
-        "name": "actionIds",
-        "type": "uint256[]",
-        "indexed": false,
-        "internalType": "uint256[]"
+        "name": "actionId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
       },
       {
         "name": "votes",
-        "type": "uint256[]",
+        "type": "uint256",
         "indexed": false,
-        "internalType": "uint256[]"
+        "internalType": "uint256"
       }
     ],
     "anonymous": false

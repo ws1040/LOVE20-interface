@@ -33,7 +33,7 @@ interface VerifyAddressesProps {
 
 const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionId, actionInfo, remainingVotes }) => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
+  const { address: account } = useAccount();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   // 获取弃权票数
@@ -98,7 +98,8 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
 
   // 累计当前已验证票数
   const verifiedVotesNum = verifiedAddresses?.reduce((acc, addr) => acc + addr.score, 0n) || 0n;
-  const verifiedVotesPercent = (Number(verifiedVotesNum) / Number(totalVotesNum || 0n)) * 100;
+  const verifiedVotesPercent =
+    ((Number(verifiedVotesNum) + Number(abstainVotes || 0n)) / Number(totalVotesNum || 0n)) * 100;
 
   return (
     <div className="relative px-4 pb-4 w-full">
@@ -115,7 +116,7 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
           <LoadingIcon />
         </div>
       ) : !verificationInfos || verificationInfos.length === 0 ? (
-        <div className="text-center text-sm text-greyscale-400 p-4">没有地址参与行动</div>
+        <div className="text-center text-sm text-greyscale-400 p-4">没有验证地址</div>
       ) : (
         <table className="table w-full">
           <thead>
@@ -146,9 +147,7 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
 
                 return (
                   <React.Fragment key={info.account}>
-                    <tr
-                      className={`border-b border-gray-100 ${info.account === accountAddress ? 'text-secondary' : ''}`}
-                    >
+                    <tr className={`border-b border-gray-100 ${info.account === account ? 'text-secondary' : ''}`}>
                       <td className="px-1 w-8">
                         <button
                           onClick={() => toggleRow(info.account)}
@@ -161,7 +160,7 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                         <AddressWithCopyButton
                           address={info.account}
                           showCopyButton={true}
-                          word={info.account === accountAddress ? '(我)' : ''}
+                          word={info.account === account ? '(我)' : ''}
                         />
                       </td>
                       <td className="px-1 text-right">{formatTokenAmountInteger(verifiedAddress?.score || 0n)}</td>

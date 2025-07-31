@@ -1,6 +1,10 @@
-// hooks/useLove20Join.ts
+// hooks/useWETH.ts
 
-import { useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
+import { useState } from 'react';
+import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
+import { config } from '@/src/wagmi';
+
 import { WETH9Abi } from '@/src/abis/WETH9';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN as `0x${string}`;
@@ -35,51 +39,74 @@ export const useBalanceOf = (token: `0x${string}`, account: `0x${string}`) => {
  * Hook for deposit
  */
 export const useDeposit = () => {
-  const { writeContract, data: writeData, isPending, error } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const deposit = async (ethAmount: bigint) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: WETH9Abi,
         functionName: 'deposit',
         args: [],
         value: ethAmount,
       });
-    } catch (err) {
-      console.error('Deposit failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: WETH9Abi,
+        functionName: 'deposit',
+        args: [],
+        value: ethAmount,
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { deposit, writeData, isPending, error, isConfirming, isConfirmed };
+  return { deposit, isPending, isConfirming, writeError: error, isConfirmed };
 };
 
 /**
  * Hook for withdraw
  */
 export const useWithdraw = () => {
-  const { writeContract, data: writeData, isPending, error } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const withdraw = async (wethAmount: bigint) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: WETH9Abi,
         functionName: 'withdraw',
         args: [wethAmount],
       });
-    } catch (err) {
-      console.error('Withdraw failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: WETH9Abi,
+        functionName: 'withdraw',
+        args: [wethAmount],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { withdraw, writeData, isPending, error, isConfirming, isConfirmed };
+  return { withdraw, isPending, isConfirming, writeError: error, isConfirmed };
 };

@@ -8,9 +8,9 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 // my hooks
-import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useCurrentRound, useVotesNumByAccount, useVote } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my types & functions
@@ -29,7 +29,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 const VotingSubmitPage = () => {
   const { token } = useContext(TokenContext) || {};
   const [percentages, setPercentages] = useState<{ [key: number]: number }>({});
-  const { address: accountAddress, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const { currentRound, isPending: isPendingCurrentRound, error: errCurrentRound } = useCurrentRound();
 
   const router = useRouter();
@@ -82,12 +82,12 @@ const VotingSubmitPage = () => {
     validGovVotes,
     isPending: isPendingValidGovVotes,
     error: errorValidGovVotes,
-  } = useValidGovVotes(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  } = useValidGovVotes(token?.address as `0x${string}`, account as `0x${string}`);
   const {
     votesNumByAccount,
     isPending: isPendingVotesNumByAccount,
     error: errorVotesNumByAccount,
-  } = useVotesNumByAccount(token?.address as `0x${string}`, currentRound, accountAddress as `0x${string}`);
+  } = useVotesNumByAccount(token?.address as `0x${string}`, currentRound, account as `0x${string}`);
 
   // 获取行动列表
   const actionIds = idList?.map((id: number) => BigInt(id)) || [];
@@ -98,7 +98,7 @@ const VotingSubmitPage = () => {
   } = useActionInfosByIds(token?.address as `0x${string}`, actionIds);
 
   // 提交投票
-  const { vote, isWriting, isConfirming, isConfirmed, writeError: submitVoteError } = useVote();
+  const { vote, isPending, isConfirming, isConfirmed, writeError: submitVoteError } = useVote();
 
   // 检查输入
   const checkInput = () => {
@@ -219,15 +219,14 @@ const VotingSubmitPage = () => {
                   return (
                     <div key={action.head.id} className="p-4 rounded-lg mb-4 flex justify-between items-center">
                       <Link
-                        href={`/action/${action.head.id}?type=vote&symbol=${token.symbol}`}
+                        href={`/action/detail?id=${action.head.id}&type=vote&symbol=${token.symbol}`}
                         key={action.head.id}
                         className="flex-grow"
                       >
                         <div className="font-semibold mb-2">
                           <span className="text-greyscale-400 text-sm mr-1">{`No.${action.head.id}`}</span>
-                          <span className="text-greyscale-900">{`${action.body.action}`}</span>
+                          <span className="text-greyscale-900">{`${action.body.title}`}</span>
                         </div>
-                        <p className="text-greyscale-500">{action.body.consensus}</p>
                       </Link>
                       <div className="flex items-center">
                         <input
@@ -251,9 +250,9 @@ const VotingSubmitPage = () => {
                   className="w-1/2 focus:outline-none focus:ring-0"
                   onFocus={(e) => e.currentTarget.blur()}
                   onClick={handleSubmit}
-                  disabled={isWriting || isConfirming || isConfirmed}
+                  disabled={isPending || isConfirming || isConfirmed}
                 >
-                  {isWriting ? '提交中...' : isConfirming ? '确认中...' : isConfirmed ? '已提交' : '提交投票'}
+                  {isPending ? '提交中...' : isConfirming ? '确认中...' : isConfirmed ? '已提交' : '提交投票'}
                 </Button>
               </div>
             </div>
@@ -267,7 +266,7 @@ const VotingSubmitPage = () => {
                 </div>
               </div>
             </div>
-            <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
+            <LoadingOverlay isLoading={isPending || isConfirming} text={isPending ? '提交交易...' : '确认交易...'} />
           </>
         )}
       </main>

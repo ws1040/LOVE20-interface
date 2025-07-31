@@ -1,6 +1,6 @@
 // hooks/contracts/useLOVE20Launch.ts
 
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useReadContract } from 'wagmi';
 import { LOVE20DataViewerAbi } from '@/src/abis/LOVE20DataViewer';
 import {
   JoinedAction,
@@ -60,6 +60,191 @@ export const useMintAddress = () => {
   });
 
   return { mintAddress: data as `0x${string}` | undefined, isPending, error };
+};
+
+/**
+ * Hook for launchInfos
+ */
+export const useLaunchInfos = (addresses: `0x${string}`[]) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'launchInfos',
+    args: [addresses],
+  });
+
+  return { launchInfos: data as any[] | undefined, isPending, error };
+};
+
+/**
+ * Hook for tokensByPage
+ */
+export const useTokensByPage = (start: bigint, end: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'tokensByPage',
+    args: [start, end],
+  });
+
+  return { tokens: data as `0x${string}`[] | undefined, isPending, error };
+};
+
+/**
+ * Hook for childTokensByPage
+ */
+export const useChildTokensByPage = (parentTokenAddress: `0x${string}`, start: bigint, end: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'childTokensByPage',
+    args: [parentTokenAddress, start, end],
+  });
+
+  return { childTokens: data as `0x${string}`[] | undefined, isPending, error };
+};
+
+/**
+ * Hook for launchingTokensByPage
+ */
+export const useLaunchingTokensByPage = (start: bigint, end: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'launchingTokensByPage',
+    args: [start, end],
+  });
+
+  return { launchingTokens: data as `0x${string}`[] | undefined, isPending, error };
+};
+
+/**
+ * Hook for launchedTokensByPage
+ */
+export const useLaunchedTokensByPage = (start: bigint, end: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'launchedTokensByPage',
+    args: [start, end],
+  });
+
+  return { launchedTokens: data as `0x${string}`[] | undefined, isPending, error };
+};
+
+/**
+ * Hook for launchingChildTokensByPage
+ */
+export const useLaunchingChildTokensByPage = (parentTokenAddress: `0x${string}`, start: bigint, end: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'launchingChildTokensByPage',
+    args: [parentTokenAddress, start, end],
+  });
+
+  return { launchingChildTokens: data as `0x${string}`[] | undefined, isPending, error };
+};
+
+/**
+ * Hook for launchedChildTokensByPage
+ */
+export const useLaunchedChildTokensByPage = (parentTokenAddress: `0x${string}`, start: bigint, end: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'launchedChildTokensByPage',
+    args: [parentTokenAddress, start, end],
+  });
+
+  return { launchedChildTokens: data as `0x${string}`[] | undefined, isPending, error };
+};
+
+/**
+ * Hook for participatedTokensByPage
+ */
+export const useParticipatedTokensByPage = (walletAddress: `0x${string}`, start: bigint, end: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'participatedTokensByPage',
+    args: [walletAddress, start, end],
+  });
+
+  return { participatedTokens: data as `0x${string}`[] | undefined, isPending, error };
+};
+
+/**
+ * Hook for actionSubmits
+ */
+export const useActionSubmits = (tokenAddress: `0x${string}`, round: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'actionSubmits',
+    args: [tokenAddress, round],
+    query: {
+      enabled: !!tokenAddress && !!round,
+    },
+  });
+
+  return { actionSubmits: data as any[] | undefined, isPending, error };
+};
+
+/**
+ * Hook for actionInfosByIds
+ */
+export const useActionInfosByIds = (tokenAddress: `0x${string}`, actionIds: bigint[]) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'actionInfosByIds',
+    args: [tokenAddress, actionIds],
+    query: {
+      enabled: !!tokenAddress && actionIds.length > 0,
+    },
+  });
+
+  return { actionInfos: data as any[] | undefined, isPending, error };
+};
+
+/**
+ * Hook for actionInfosByPage
+ */
+export const useActionInfosByPage = (tokenAddress: `0x${string}`, start: bigint, end: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'actionInfosByPage',
+    args: [tokenAddress, start, end],
+    query: {
+      enabled: !!tokenAddress,
+    },
+  });
+
+  return { actionInfos: data as any[] | undefined, isPending, error };
+};
+
+/**
+ * Hook to get the number of votes (multiple).
+ */
+export const useVotesNums = (tokenAddress: `0x${string}`, round: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20DataViewerAbi,
+    functionName: 'votesNums',
+    args: [tokenAddress, round || BigInt(0)],
+    query: {
+      enabled: !!tokenAddress && round !== undefined,
+    },
+  });
+
+  return {
+    actionIds: data?.[0] as bigint[] | undefined,
+    votes: data?.[1] as bigint[] | undefined,
+    isPending,
+    error,
+  };
 };
 
 /**
@@ -261,7 +446,7 @@ export const useGovRewardsByAccountByRounds = (
     functionName: 'govRewardsByAccountByRounds',
     args: [tokenAddress, account, startRound, endRound],
     query: {
-      enabled: !!tokenAddress && !!account && startRound !== undefined && endRound !== undefined,
+      enabled: !!tokenAddress && !!account && startRound !== undefined && endRound !== undefined && endRound > 0n,
     },
   });
 

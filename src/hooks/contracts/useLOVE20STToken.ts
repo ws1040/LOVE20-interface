@@ -1,4 +1,10 @@
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+// hooks/contracts/useLOVE20STToken.ts
+
+import { useState } from 'react';
+import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
+import { config } from '@/src/wagmi';
+
 import { LOVE20STTokenAbi } from '@/src/abis/LOVE20STToken';
 
 /**
@@ -176,27 +182,37 @@ export const useTotalSupply = (address: `0x${string}`) => {
 /**
  * Hook for approve
  */
-export const useApprove = (address: `0x${string}`) => {
-  const { writeContract, data: writeData, isPending, error } = useWriteContract();
+export function useApprove(address: `0x${string}`) {
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const approve = async (spender: `0x${string}`, value: bigint) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address,
         abi: LOVE20STTokenAbi,
         functionName: 'approve',
         args: [spender, value],
       });
-    } catch (err) {
-      console.error('Approve failed:', err);
-      // 重新抛出错误，让组件能够捕获
-      throw err;
+      const txHash = await writeContract(config, {
+        address,
+        abi: LOVE20STTokenAbi,
+        functionName: 'approve',
+        args: [spender, value],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { approve, writeData, isPending, error, isConfirming, isConfirmed };
-};
+  return { approve, isPending, isConfirming, writeError: error, isConfirmed };
+}

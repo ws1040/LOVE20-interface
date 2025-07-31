@@ -102,7 +102,7 @@ function buildFormSchema(parentTokenBalance: bigint, tokenBalance: bigint) {
 interface StakeLiquidityPanelProps {}
 
 const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
-  const { address: accountAddress, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const context = useContext(TokenContext);
   if (!context) {
     throw new Error('TokenContext 必须在 TokenProvider 内使用');
@@ -117,7 +117,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     isPending: isPendingPair,
     error: errorPair,
   } = useTokenPairInfoWithAccount(
-    accountAddress as `0x${string}`,
+    account as `0x${string}`,
     token?.address as `0x${string}`,
     token?.parentTokenAddress as `0x${string}`,
   );
@@ -141,6 +141,10 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     error: errInitialStakeRound,
   } = useInitialStakeRound(token?.address as `0x${string}`);
 
+  // 在文件顶部添加环境变量读取
+  const PROMISED_WAITING_PHASES_MIN = Number(process.env.NEXT_PUBLIC_PROMISED_WAITING_PHASES_MIN) || 4;
+  const PROMISED_WAITING_PHASES_MAX = Number(process.env.NEXT_PUBLIC_PROMISED_WAITING_PHASES_MAX) || 12;
+
   // --------------------------------------------------
   // 2.1 使用 React Hook Form
   // --------------------------------------------------
@@ -162,7 +166,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     promisedWaitingPhases,
     isPending: isPendingAccountStakeStatus,
     error: errAccountStakeStatus,
-  } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  } = useAccountStakeStatus(token?.address as `0x${string}`, account as `0x${string}`);
 
   // --------------------------------------------------
   // 2.2 授权逻辑，使用 useApprove 保持不变
@@ -172,7 +176,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
 
   const {
     approve: approveToken,
-    isWriting: isPendingApproveToken,
+    isPending: isPendingApproveToken,
     isConfirming: isConfirmingApproveToken,
     isConfirmed: isConfirmedApproveToken,
     writeError: errApproveToken,
@@ -180,7 +184,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
 
   const {
     approve: approveParentToken,
-    isWriting: isPendingApproveParentToken,
+    isPending: isPendingApproveParentToken,
     isConfirming: isConfirmingApproveParentToken,
     isConfirmed: isConfirmedApproveParentToken,
     writeError: errApproveParentToken,
@@ -321,7 +325,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
         stakeAmount,
         parentAmount,
         BigInt(data.releasePeriod),
-        accountAddress as `0x${string}`,
+        account as `0x${string}`,
       );
     } catch (error) {
       console.error('Stake failed', error);
@@ -333,7 +337,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   function handleStakeSuccess() {
     toast.success('质押成功');
     setTimeout(() => {
-      window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/my/?symbol=${token?.symbol}`;
+      window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/gov?symbol=${token?.symbol}`;
     }, 2000);
   }
 
@@ -672,7 +676,10 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                               <SelectValue placeholder="选择解锁期" />
                             </SelectTrigger>
                             <SelectContent>
-                              {Array.from({ length: 2 }, (_, i) => i + 1)
+                              {Array.from(
+                                { length: PROMISED_WAITING_PHASES_MAX - PROMISED_WAITING_PHASES_MIN + 1 },
+                                (_, i) => i + PROMISED_WAITING_PHASES_MIN,
+                              )
                                 .filter((item) => item >= promisedWaitingPhases)
                                 .map((item) => (
                                   <SelectItem key={item} value={String(item)}>

@@ -51,12 +51,12 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
   } = useCanSubmit();
 
   // 提交
-  const { submit, isWriting, isConfirming, isConfirmed, writeError: errSubmit } = useSubmit();
+  const { submit, isPending, isConfirming, isConfirmed, writeError: errSubmit } = useSubmit();
   const handleSubmit = () => {
     if (!checkWalletConnection(accountChain)) {
       return;
     }
-    if (isWriting || isConfirming) {
+    if (isPending || isConfirming) {
       return;
     }
     if (!hasEnoughVotes) {
@@ -120,20 +120,20 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
               )}
             </div>
           ) : (
-            <Button onClick={handleSubmit} className="w-1/2" disabled={isWriting || isConfirming || !hasEnoughVotes}>
-              {isWriting && '提交中...'}
+            <Button onClick={handleSubmit} className="w-1/2" disabled={isPending || isConfirming || !hasEnoughVotes}>
+              {isPending && '提交中...'}
               {isConfirming && '确认中...'}
-              {!isWriting && !isConfirming && '推举本行动'}
+              {!isPending && !isConfirming && '推举本行动'}
             </Button>
           )}
         </div>
         <div className="bg-gray-100 text-greyscale-500 rounded-lg p-4 text-sm mt-4 w-full">
           <p className="mb-1">说明：</p>
-          <p>1. 有效治理票数 ≥ 总治理票的0.5%，才能推举；</p>
+          <p>1. 有效治理票数 ≥ 总治理票的{Number(process.env.NEXT_PUBLIC_SUBMIT_MIN_PER_THOUSAND) / 10}%，才能推举；</p>
           <p>2. 每轮次，1个地址最多可 创建/推举 1 个行动；</p>
         </div>
       </div>
-      <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
+      <LoadingOverlay isLoading={isPending || isConfirming} text={isPending ? '提交交易...' : '确认交易...'} />
     </div>
   );
 };

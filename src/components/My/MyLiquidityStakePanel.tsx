@@ -19,7 +19,7 @@ interface MyLiquidityStakePanelProps {
 }
 
 const MyLiquidityStakePanel: React.FC<MyLiquidityStakePanelProps> = ({ token: propToken }) => {
-  const { address: accountAddress } = useAccount();
+  const { address: account } = useAccount();
 
   // 如果没有传入 token，则从 context 获取
   const context = useContext(TokenContext);
@@ -32,7 +32,7 @@ const MyLiquidityStakePanel: React.FC<MyLiquidityStakePanelProps> = ({ token: pr
     govVotes,
     isPending: isPendingAccountStakeStatus,
     error: errorAccountStakeStatus,
-  } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  } = useAccountStakeStatus(token?.address as `0x${string}`, account as `0x${string}`);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -42,7 +42,7 @@ const MyLiquidityStakePanel: React.FC<MyLiquidityStakePanelProps> = ({ token: pr
     }
   }, [errorAccountStakeStatus, handleContractError]);
 
-  if (!accountAddress) {
+  if (!account) {
     return <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>;
   }
 

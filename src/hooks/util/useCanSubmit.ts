@@ -8,14 +8,14 @@ const SUBMIT_MIN_PERCENTAGE = Number(process.env.NEXT_PUBLIC_SUBMIT_MIN_PER_THOU
 
 export const useCanSubmit = () => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
+  const { address: account } = useAccount();
 
   // 我的治理票&总有效票数
   const {
     validGovVotes,
     isPending: isPendingValidGovVotes,
     error: errorValidGovVotes,
-  } = useValidGovVotes((token?.address as `0x${string}`) || '', (accountAddress as `0x${string}`) || '');
+  } = useValidGovVotes((token?.address as `0x${string}`) || '', (account as `0x${string}`) || '');
 
   // 使用 useGovData 获取治理数据
   const { govData, isPending: isPendingGovData, error: errorGovData } = useGovData(token?.address as `0x${string}`);

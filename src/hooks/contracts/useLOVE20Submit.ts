@@ -1,4 +1,7 @@
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useState } from 'react';
+import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
+import { config } from '@/src/wagmi';
 import { LOVE20SubmitAbi } from '@/src/abis/LOVE20Submit';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_SUBMIT as `0x${string}`;
@@ -22,20 +25,6 @@ export const useSubmitMinPerThousand = () => {
 };
 
 /**
- * Hook for actionIdsByAuthor
- */
-export const useActionIdsByAuthor = (tokenAddress: `0x${string}`, author: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20SubmitAbi,
-    functionName: 'actionIdsByAuthor',
-    args: [tokenAddress, author],
-  });
-
-  return { actionIds: data as bigint[] | undefined, isPending, error };
-};
-
-/**
  * Hook for actionInfo
  */
 export const useActionInfo = (tokenAddress: `0x${string}`, actionId: bigint | undefined) => {
@@ -53,47 +42,13 @@ export const useActionInfo = (tokenAddress: `0x${string}`, actionId: bigint | un
 };
 
 /**
- * Hook for actionInfosByIds
- */
-export const useActionInfosByIds = (tokenAddress: `0x${string}`, actionIds: bigint[]) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20SubmitAbi,
-    functionName: 'actionInfosByIds',
-    args: [tokenAddress, actionIds],
-    query: {
-      enabled: !!tokenAddress && actionIds.length > 0,
-    },
-  });
-
-  return { actionInfos: data as any[] | undefined, isPending, error };
-};
-
-/**
- * Hook for actionInfosByPage
- */
-export const useActionInfosByPage = (tokenAddress: `0x${string}`, start: bigint, end: bigint, reverse: boolean) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20SubmitAbi,
-    functionName: 'actionInfosByPage',
-    args: [tokenAddress, start, end, reverse],
-    query: {
-      enabled: !!tokenAddress,
-    },
-  });
-
-  return { actionInfos: data as any[] | undefined, isPending, error };
-};
-
-/**
  * Hook for actionNum
  */
-export const useActionNum = (tokenAddress: `0x${string}`) => {
+export const useActionsCount = (tokenAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20SubmitAbi,
-    functionName: 'actionNum',
+    functionName: 'actionsCount',
     args: [tokenAddress],
   });
 
@@ -101,31 +56,14 @@ export const useActionNum = (tokenAddress: `0x${string}`) => {
 };
 
 /**
- * Hook for actionSubmits
- */
-export const useActionSubmits = (tokenAddress: `0x${string}`, round: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20SubmitAbi,
-    functionName: 'actionSubmits',
-    args: [tokenAddress, round],
-    query: {
-      enabled: !!tokenAddress && !!round,
-    },
-  });
-
-  return { actionSubmits: data as any[] | undefined, isPending, error };
-};
-
-/**
  * Hook for canSubmit
  */
-export const useCanSubmit = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
+export const useCanSubmit = (tokenAddress: `0x${string}`, account: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20SubmitAbi,
     functionName: 'canSubmit',
-    args: [tokenAddress, accountAddress],
+    args: [tokenAddress, account],
   });
 
   return { canSubmit: data as boolean | undefined, isPending, error };
@@ -223,63 +161,84 @@ export const useStakeAddress = () => {
  * Hook for submit
  */
 export function useSubmit() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const submit = async (tokenAddress: `0x${string}`, actionId: bigint) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20SubmitAbi,
         functionName: 'submit',
         args: [tokenAddress, actionId],
       });
-    } catch (err) {
-      console.error('Submit failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20SubmitAbi,
+        functionName: 'submit',
+        args: [tokenAddress, actionId],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { submit, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { submit, isPending, isConfirming, writeError: error, isConfirmed };
 }
 
 /**
  * Hook for submitNewAction
  */
 export function useSubmitNewAction() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const submitNewAction = async (
     tokenAddress: `0x${string}`,
     actionBody: {
       minStake: bigint;
       maxRandomAccounts: bigint;
-      whiteList: `0x${string}`[];
-      action: string;
-      consensus: string;
+      whiteListAddress: `0x${string}`;
+      title: string;
       verificationRule: string;
       verificationKeys: string[];
       verificationInfoGuides: string[];
     },
   ) => {
+    setIsPending(true);
+    setError(null);
     try {
-      const tx = await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20SubmitAbi,
         functionName: 'submitNewAction',
         args: [tokenAddress, actionBody],
       });
-      return tx;
-    } catch (err) {
-      console.error('Submit New Action failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20SubmitAbi,
+        functionName: 'submitNewAction',
+        args: [tokenAddress, actionBody],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { submitNewAction, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { submitNewAction, isPending, isConfirming, writeError: error, isConfirmed };
 }

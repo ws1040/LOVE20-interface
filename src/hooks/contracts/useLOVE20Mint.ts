@@ -1,6 +1,10 @@
 // hooks/contracts/useLOVE20Mint.ts
 
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useState } from 'react';
+import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
+import { config } from '@/src/wagmi';
+
 import { LOVE20MintAbi } from '@/src/abis/LOVE20Mint';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MINT as `0x${string}`;
@@ -45,6 +49,25 @@ export const useRoundRewardGovPerThousand = () => {
 };
 
 /**
+ * Hook for numOfMintGovRewardByAccount
+ * 查询账户已铸造的治理次数
+ */
+export const useNumOfMintGovRewardByAccount = (tokenAddress: `0x${string}`, account: `0x${string}`) => {
+  const { data, isLoading, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20MintAbi,
+    functionName: 'numOfMintGovRewardByAccount',
+    args: [tokenAddress, account],
+  });
+
+  return {
+    numOfMintGovRewardByAccount: data as bigint | undefined,
+    isPending: isLoading,
+    error,
+  };
+};
+
+/**
  * Hook for actionReward
  */
 export const useActionReward = (tokenAddress: `0x${string}`, round: bigint) => {
@@ -69,17 +92,18 @@ export const useActionRewardByActionIdByAccount = (
   tokenAddress: `0x${string}`,
   round: bigint,
   actionId: bigint,
-  accountAddress: `0x${string}`,
+  account: `0x${string}`,
 ) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'actionRewardByActionIdByAccount',
-    args: [tokenAddress, round, actionId, accountAddress],
+    args: [tokenAddress, round, actionId, account],
   });
 
   return {
-    actionRewardByActionIdByAccount: data as bigint | undefined,
+    actionRewardByActionIdByAccount: data?.[0] as bigint | undefined,
+    isMinted: data?.[1] as boolean | undefined,
     isPending: isLoading,
     error,
   };
@@ -89,7 +113,7 @@ export const useActionRewardByActionIdByAccount = (
  * Hook for actionRewardMintedByAccount
  */
 export const useActionRewardMintedByAccount = (
-  accountAddress: `0x${string}`,
+  account: `0x${string}`,
   round: bigint,
   actionId: bigint,
   targetAddress: `0x${string}`,
@@ -98,7 +122,7 @@ export const useActionRewardMintedByAccount = (
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'actionRewardMintedByAccount',
-    args: [accountAddress, round, actionId, targetAddress],
+    args: [account, round, actionId, targetAddress],
   });
 
   return {
@@ -145,24 +169,6 @@ export const useCalculateRoundGovReward = (tokenAddress: `0x${string}`) => {
 };
 
 /**
- * Hook for currentRound
- */
-export const useCurrentRound = () => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'currentRound',
-    args: [],
-  });
-
-  return {
-    currentRound: data as bigint | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
  * Hook for govReward
  */
 export const useGovReward = (tokenAddress: `0x${string}`, round: bigint) => {
@@ -183,14 +189,14 @@ export const useGovReward = (tokenAddress: `0x${string}`, round: bigint) => {
 /**
  * Hook for govRewardByAccount
  */
-export const useGovRewardByAccount = (tokenAddress: `0x${string}`, round: bigint, accountAddress: `0x${string}`) => {
+export const useGovRewardByAccount = (tokenAddress: `0x${string}`, round: bigint, account: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'govRewardByAccount',
-    args: [tokenAddress, round, accountAddress],
+    args: [tokenAddress, round, account],
     query: {
-      enabled: !!tokenAddress && !!accountAddress && round !== undefined,
+      enabled: !!tokenAddress && !!account && round !== undefined,
     },
   });
 
@@ -198,6 +204,7 @@ export const useGovRewardByAccount = (tokenAddress: `0x${string}`, round: bigint
     verifyReward: data?.[0] as bigint | undefined,
     boostReward: data?.[1] as bigint | undefined,
     burnReward: data?.[2] as bigint | undefined,
+    isMinted: data?.[3] as boolean | undefined,
     isPending: isLoading,
     error,
   };
@@ -206,16 +213,12 @@ export const useGovRewardByAccount = (tokenAddress: `0x${string}`, round: bigint
 /**
  * Hook for govRewardMintedByAccount
  */
-export const useGovRewardMintedByAccount = (
-  accountAddress: `0x${string}`,
-  round: bigint,
-  targetAddress: `0x${string}`,
-) => {
+export const useGovRewardMintedByAccount = (account: `0x${string}`, round: bigint, targetAddress: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'govRewardMintedByAccount',
-    args: [accountAddress, round, targetAddress],
+    args: [account, round, targetAddress],
   });
 
   return {
@@ -238,24 +241,6 @@ export const useIsRewardPrepared = (tokenAddress: `0x${string}`, round: bigint) 
 
   return {
     isRewardPrepared: data as boolean | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
- * Hook for originBlocks
- */
-export const useOriginBlocks = () => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'originBlocks',
-    args: [],
-  });
-
-  return {
-    originBlocks: data as bigint | undefined,
     isPending: isLoading,
     error,
   };
@@ -285,12 +270,12 @@ export const useRewardAvailable = (tokenAddress: `0x${string}`) => {
 /**
  * Hook for rewardBurned
  */
-export const useRewardBurned = (accountAddress: `0x${string}`) => {
+export const useRewardBurned = (account: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'rewardBurned',
-    args: [accountAddress],
+    args: [account],
   });
 
   return {
@@ -303,12 +288,12 @@ export const useRewardBurned = (accountAddress: `0x${string}`) => {
 /**
  * Hook for rewardMinted
  */
-export const useRewardMinted = (accountAddress: `0x${string}`) => {
+export const useRewardMinted = (account: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'rewardMinted',
-    args: [accountAddress],
+    args: [account],
   });
 
   return {
@@ -321,88 +306,16 @@ export const useRewardMinted = (accountAddress: `0x${string}`) => {
 /**
  * Hook for rewardReserved
  */
-export const useRewardReserved = (accountAddress: `0x${string}`) => {
+export const useRewardReserved = (account: `0x${string}`) => {
   const { data, isLoading, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20MintAbi,
     functionName: 'rewardReserved',
-    args: [accountAddress],
+    args: [account],
   });
 
   return {
     rewardReserved: data as bigint | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
- * Hook for phaseBlocks
- */
-export const useRoundBlocks = () => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'phaseBlocks',
-    args: [],
-  });
-
-  return {
-    phaseBlocks: data as bigint | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
- * Hook for roundByBlockNumber
- */
-export const useRoundByBlockNumber = (blockNumber: bigint) => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'roundByBlockNumber',
-    args: [blockNumber],
-  });
-
-  return {
-    roundByBlockNumber: data as bigint | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
- * Hook for stakeAddress
- */
-export const useStakeAddress = () => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'stakeAddress',
-    args: [],
-  });
-
-  return {
-    stakeAddress: data as `0x${string}` | undefined,
-    isPending: isLoading,
-    error,
-  };
-};
-
-/**
- * Hook for verifyAddress
- */
-export const useVerifyAddress = () => {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20MintAbi,
-    functionName: 'verifyAddress',
-    args: [],
-  });
-
-  return {
-    verifyAddress: data as `0x${string}` | undefined,
     isPending: isLoading,
     error,
   };
@@ -416,31 +329,42 @@ export const useVerifyAddress = () => {
  * Hook for mintActionReward
  */
 export function useMintActionReward() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const mintActionReward = async (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20MintAbi,
         functionName: 'mintActionReward',
         args: [tokenAddress, round, actionId],
       });
-    } catch (err) {
-      console.error('mintActionReward failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20MintAbi,
+        functionName: 'mintActionReward',
+        args: [tokenAddress, round, actionId],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
   return {
     mintActionReward,
-    writeData,
-    isWriting,
-    writeError,
+    isPending,
     isConfirming,
+    writeError: error,
     isConfirmed,
   };
 }
@@ -449,31 +373,42 @@ export function useMintActionReward() {
  * Hook for mintGovReward
  */
 export function useMintGovReward() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const mintGovReward = async (tokenAddress: `0x${string}`, round: bigint) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20MintAbi,
         functionName: 'mintGovReward',
         args: [tokenAddress, round],
       });
-    } catch (err) {
-      console.error('mintGovReward failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20MintAbi,
+        functionName: 'mintGovReward',
+        args: [tokenAddress, round],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
   return {
     mintGovReward,
-    writeData,
-    isWriting,
-    writeError,
+    isPending,
     isConfirming,
+    writeError: error,
     isConfirmed,
   };
 }
@@ -482,31 +417,42 @@ export function useMintGovReward() {
  * Hook for prepareRewardIfNeeded
  */
 export function usePrepareRewardIfNeeded() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const prepareRewardIfNeeded = async (tokenAddress: `0x${string}`, round: bigint) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: LOVE20MintAbi,
         functionName: 'prepareRewardIfNeeded',
         args: [tokenAddress],
       });
-    } catch (err) {
-      console.error('prepareRewardIfNeeded failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: LOVE20MintAbi,
+        functionName: 'prepareRewardIfNeeded',
+        args: [tokenAddress],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
   return {
     prepareRewardIfNeeded,
-    writeData,
-    isWriting,
-    writeError,
+    isPending,
     isConfirming,
+    writeError: error,
     isConfirmed,
   };
 }

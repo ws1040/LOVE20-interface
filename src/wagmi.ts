@@ -1,8 +1,8 @@
 // wagmi.ts
 import { Chain } from 'wagmi/chains';
 import { mainnet, sepolia, bscTestnet } from 'wagmi/chains';
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { http } from 'wagmi';
+import { createConfig, http } from 'wagmi';
+import { injected } from 'wagmi/connectors';
 
 // 定义自定义链 Anvil
 const anvil: Chain = {
@@ -35,6 +35,17 @@ const thinkium801: Chain = {
   testnet: true,
 };
 
+// 定义自定义链 Thinkium Test
+const thinkium70001: Chain = {
+  id: 70001,
+  name: 'thinkium70001',
+  nativeCurrency: { name: 'TKM', symbol: 'TKM', decimals: 18 },
+  rpcUrls: {
+    default: { http: [process.env.NEXT_PUBLIC_THINKIUM_RPC_URL || 'https://proxy1.thinkiumrpc.net'] },
+  },
+  testnet: true,
+};
+
 // 映射链名称到链配置
 const CHAIN_MAP: Record<string, Chain> = {
   mainnet: mainnet,
@@ -42,6 +53,7 @@ const CHAIN_MAP: Record<string, Chain> = {
   bscTestnet: bscTestnet,
   anvil: anvil,
   thinkium801: thinkium801,
+  thinkium70001: thinkium70001,
 };
 
 // 从环境变量中获取所选的链名称
@@ -50,30 +62,32 @@ const selectedChainName = process.env.NEXT_PUBLIC_CHAIN || 'mainnet';
 // 获取对应的链配置，如果未找到则默认使用 mainnet
 const selectedChain = CHAIN_MAP[selectedChainName] || mainnet;
 
-// 使用单例模式创建配置，确保只初始化一次
-let _config: ReturnType<typeof getDefaultConfig> | null = null;
-
-export const getConfig = () => {
-  if (!_config) {
-    _config = getDefaultConfig({
-      appName: 'LOVE20 DAPP',
-      projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '',
-      chains: [selectedChain],
-      transports:
-        selectedChain.id === sepolia.id
-          ? {
-              [sepolia.id]: http(
-                process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL || 'https://eth-sepolia.api.onfinality.io/public',
-              ),
-            }
-          : {
-              [selectedChain.id]: http(selectedChain.rpcUrls.default.http[0]),
-            },
-      ssr: false, // 静态导出模式下禁用 SSR
-    });
-  }
-  return _config;
-};
-
-// 导出配置实例
-export const config = getConfig();
+// 创建 wagmi 配置
+export const config = createConfig({
+  chains: [selectedChain],
+  connectors: [
+    injected({
+      target() {
+        // 安全检查：确保在客户端且 window.ethereum 存在
+        if (typeof window !== 'undefined' && window.ethereum) {
+          return {
+            id: 'injected',
+            name: 'Injected Wallet',
+            provider: window.ethereum,
+          };
+        }
+        return undefined;
+      },
+      shimDisconnect: true, // 确保断开连接时清理状态
+    }),
+  ],
+  transports:
+    selectedChain.id === sepolia.id
+      ? {
+          [sepolia.id]: http(process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL || 'https://eth-sepolia.api.onfinality.io/public'),
+        }
+      : {
+          [selectedChain.id]: http(selectedChain.rpcUrls.default.http[0]),
+        },
+  ssr: false, // 静态导出模式下禁用 SSR
+});

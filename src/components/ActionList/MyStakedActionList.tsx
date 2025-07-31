@@ -28,13 +28,13 @@ interface MyStakedActionListProps {
 }
 
 const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
-  const { address: accountAddress } = useAccount();
+  const { address: account } = useAccount();
   const { currentRound } = useCurrentRound();
   const {
     joinedActions,
     isPending: isPendingJoinedActions,
     error: errorJoinedActions,
-  } = useJoinedActions((token?.address as `0x${string}`) || '', accountAddress as `0x${string}`);
+  } = useJoinedActions((token?.address as `0x${string}`) || '', account as `0x${string}`);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -76,7 +76,7 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
                     <div className="flex items-baseline">
                       <span className="text-greyscale-400 text-sm">{`No.`}</span>
                       <span className="text-secondary text-xl font-bold mr-2">{String(action.action.head.id)}</span>
-                      <span className="font-bold text-greyscale-800">{`${action.action.body.action}`}</span>
+                      <span className="font-bold text-greyscale-800">{`${action.action.body.title}`}</span>
                     </div>
                     {action.votesNum > 0 ? (
                       Number(action.votePercent) / 100 >=
@@ -90,7 +90,7 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
                     )}
                   </CardHeader>
                   <CardContent className="px-3 pt-1 pb-2">
-                    <div className="text-greyscale-500">{action.action.body.consensus}</div>
+                    {/* <div className="text-greyscale-500">{action.action.body.consensus}</div> */}
                     <div className="flex justify-between mt-1 text-sm">
                       <span className="flex items-center">
                         <UserPen className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />

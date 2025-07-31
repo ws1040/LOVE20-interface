@@ -84,7 +84,7 @@ const Withdraw: React.FC = () => {
     isPending: isPendingWithdraw,
     isConfirming: isConfirmingWithdraw,
     isConfirmed: isConfirmedWithdraw,
-    error: errWithdraw,
+    writeError: errWithdraw,
   } = useWithdraw();
 
   // 2. 创建 hook form 实例，并传入当前余额

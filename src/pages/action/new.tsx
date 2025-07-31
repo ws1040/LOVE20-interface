@@ -38,7 +38,6 @@ const SUBMIT_MIN_PERCENTAGE = Number(process.env.NEXT_PUBLIC_SUBMIT_MIN_PER_THOU
 
 const FormSchema = z.object({
   actionName: z.string().min(1, { message: '行动名称不能为空' }),
-  consensus: z.string().min(1, { message: '行动共识不能为空' }),
   verificationRule: z.string().min(1, { message: '验证规则不能为空' }),
 
   // 使用数组存储多组 key-value
@@ -59,7 +58,20 @@ const FormSchema = z.object({
     .min(1, { message: '最小参与代币数不能为空' })
     .refine((val) => Number(val) > 0, { message: '最小参与代币数必须大于0' }),
 
-  whiteList: z.string().optional(),
+  whiteListAddress: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        // 如果为空或未定义，则通过校验
+        if (!val || val.trim() === '') {
+          return true;
+        }
+        // 如果非空，则必须是有效的 0x 地址格式
+        return /^0x[a-fA-F0-9]{40}$/.test(val.trim());
+      },
+      { message: '白名单地址必须是有效的 0x 地址格式' },
+    ),
 });
 
 type FormValues = z.infer<typeof FormSchema>;
@@ -73,12 +85,11 @@ export default function NewAction() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       actionName: '',
-      consensus: '',
       verificationRule: '',
       verificationPairs: [{ key: '', value: '' }], // 初始仅1组
       rewardAddressCount: '',
       minStake: '',
-      whiteList: '',
+      whiteListAddress: '',
     },
     mode: 'onChange',
   });
@@ -103,11 +114,10 @@ export default function NewAction() {
   // 提交表单
   const {
     submitNewAction,
-    isWriting: isSubmitting,
+    isPending: isSubmitting,
     isConfirming,
     isConfirmed: isSubmitted,
     writeError: submitError,
-    writeData,
   } = useSubmitNewAction();
   const onSubmit = async (values: FormValues) => {
     if (!checkWalletConnection(accountChain)) return;
@@ -131,9 +141,11 @@ export default function NewAction() {
     const actionBody = {
       minStake: values.minStake ? parseUnits(values.minStake) : 0n,
       maxRandomAccounts: values.rewardAddressCount ? BigInt(values.rewardAddressCount) : 0n,
-      whiteList: values.whiteList ? (values.whiteList.split(',').map((addr) => addr.trim()) as `0x${string}`[]) : [],
-      action: values.actionName,
-      consensus: values.consensus,
+      whiteListAddress:
+        values.whiteListAddress && values.whiteListAddress.trim() !== ''
+          ? (values.whiteListAddress.trim() as `0x${string}`)
+          : ('0x0000000000000000000000000000000000000000' as `0x${string}`),
+      title: values.actionName,
       verificationRule: values.verificationRule,
       verificationKeys,
       verificationInfoGuides,
@@ -148,7 +160,7 @@ export default function NewAction() {
     if (isSubmitted) {
       router.push(`/vote/?symbol=${token?.symbol}`);
     }
-  }, [isSubmitted, writeData, router, token?.symbol]);
+  }, [isSubmitted, router, token?.symbol]);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -188,26 +200,6 @@ export default function NewAction() {
                   <FormLabel>行动名称</FormLabel>
                   <FormControl>
                     <Input type="text" placeholder="一句话说明行动" className="!ring-secondary-foreground" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* 行动共识 */}
-            <FormField
-              control={form.control}
-              name="consensus"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>行动共识</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="描述行动所基于的共识"
-                      className="!ring-secondary-foreground"
-                      {...field}
-                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -353,19 +345,13 @@ export default function NewAction() {
             {/* 白名单 */}
             <FormField
               control={form.control}
-              name="whiteList"
+              name="whiteListAddress"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>白名单</FormLabel>
                   <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="不填为不限，或多个地址用逗号分隔"
-                      className="!ring-secondary-foreground"
-                      {...field}
-                    />
+                    <Input type="text" placeholder="不填为不限" className="!ring-secondary-foreground" {...field} />
                   </FormControl>
-                  <FormDescription>多个地址用逗号分隔</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

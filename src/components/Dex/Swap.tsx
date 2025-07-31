@@ -593,7 +593,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
 
   const {
     approve,
-    isWriting: isPendingApprove,
+    isPending: isPendingApprove,
     isConfirming: isConfirmingApprove,
     isConfirmed: isConfirmedApprove,
     writeError: errApprove,
@@ -602,18 +602,16 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   // WETH9 操作
   const {
     deposit,
-    writeData: depositWriteData,
     isPending: isPendingDeposit,
-    error: errDeposit,
+    writeError: errDeposit,
     isConfirming: isConfirmingDeposit,
     isConfirmed: isConfirmedDeposit,
   } = useDeposit();
 
   const {
     withdraw,
-    writeData: withdrawWriteData,
     isPending: isPendingWithdraw,
-    error: errWithdraw,
+    writeError: errWithdraw,
     isConfirming: isConfirmingWithdraw,
     isConfirmed: isConfirmedWithdraw,
   } = useWithdraw();

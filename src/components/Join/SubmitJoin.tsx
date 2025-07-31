@@ -50,12 +50,12 @@ interface SubmitJoinProps {
 const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: myStakedAmount }) => {
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
 
   // 获取代币余额
   const { balance: tokenBalance, error: errorTokenBalance } = useBalanceOf(
     token?.address as `0x${string}`,
-    accountAddress as `0x${string}`,
+    account as `0x${string}`,
   );
 
   // 获取已授权数量
@@ -65,7 +65,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
     error: errAllowanceToken,
   } = useAllowance(
     token?.address as `0x${string}`,
-    accountAddress as `0x${string}`,
+    account as `0x${string}`,
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_JOIN as `0x${string}`,
   );
 
@@ -78,7 +78,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   } = useVerificationInfosByAccount(
     (token?.address as `0x${string}`) || '',
     BigInt(actionInfo.head.id),
-    accountAddress as `0x${string}`,
+    account as `0x${string}`,
   );
 
   // 定义授权状态变量：是否已完成代币授权
@@ -165,7 +165,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   // ------------------------------
   const {
     approve: approveToken,
-    isWriting: isPendingApprove,
+    isPending: isPendingApprove,
     isConfirming: isConfirmingApprove,
     isConfirmed: isConfirmedApprove,
     writeError: errApprove,
@@ -228,7 +228,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
     isPending: isPendingJoin,
     isConfirming: isConfirmingJoin,
     isConfirmed: isConfirmedJoin,
-    error: errorJoin,
+    writeError: errorJoin,
   } = useJoin();
 
   async function handleJoin(values: FormValues) {
@@ -271,7 +271,6 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
         BigInt(actionInfo.head.id),
         parseUnits(values.additionalStakeAmount) ?? 0n,
         verificationInfosToSubmit,
-        accountAddress as `0x${string}`,
       );
     } catch (error) {
       console.error('Join failed', error);
@@ -288,7 +287,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
       form.reset();
       // 2秒后返回
       setTimeout(() => {
-        router.push(`/action/${actionInfo.head.id}?type=join&symbol=${token?.symbol}`);
+        router.push(`/action/detail?id=${actionInfo.head.id}&type=join&symbol=${token?.symbol}`);
       }, 2000);
     }
   }, [isConfirmedJoin]);

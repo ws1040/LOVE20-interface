@@ -1,7 +1,10 @@
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt, useSendTransaction } from 'wagmi';
-import { UniswapV2RouterAbi } from '@/src/abis/UniswapV2Router';
 import { useState } from 'react';
+import { useReadContract, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
 import { encodeFunctionData } from 'viem';
+
+import { config } from '@/src/wagmi';
+import { UniswapV2RouterAbi } from '@/src/abis/UniswapV2Router';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_ROUTER as `0x${string}`;
 
@@ -51,7 +54,9 @@ export const useGetAmountsIn = (amountOut: bigint, path: `0x${string}`[], isEnab
  * Hook for swapExactTokensForTokens
  */
 export function useSwapExactTokensForTokens() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const swap = async (
     amountIn: bigint,
@@ -60,65 +65,90 @@ export function useSwapExactTokensForTokens() {
     to: `0x${string}`,
     deadline: bigint,
   ) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: UniswapV2RouterAbi,
         functionName: 'swapExactTokensForTokens',
         args: [amountIn, amountOutMin, path, to, deadline],
       });
-    } catch (err) {
-      console.error('Swap failed:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: UniswapV2RouterAbi,
+        functionName: 'swapExactTokensForTokens',
+        args: [amountIn, amountOutMin, path, to, deadline],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
       throw err;
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { swap, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { swap, writeData: hash, isWriting: isPending, writeError: error, isConfirming, isConfirmed };
 }
 
 /*
  * Hook for swapExactETHForTokens
  */
 export function useSwapExactETHForTokens() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const swap = async (
     amountOutMin: bigint,
     path: `0x${string}`[],
     to: `0x${string}`,
     deadline: bigint,
-    value: bigint, // ETH 数量
+    value: bigint,
   ) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: UniswapV2RouterAbi,
         functionName: 'swapExactETHForTokens',
         args: [amountOutMin, path, to, deadline],
-        value, // 发送的 ETH 数量
+        value,
       });
-    } catch (err) {
-      console.error('swapExactETHForTokens 兑换代币失败:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: UniswapV2RouterAbi,
+        functionName: 'swapExactETHForTokens',
+        args: [amountOutMin, path, to, deadline],
+        value,
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
       throw err;
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { swap, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { swap, writeData: hash, isWriting: isPending, writeError: error, isConfirming, isConfirmed };
 }
 
 /*
  * Hook for swapExactTokensForETH
  */
 export function useSwapExactTokensForETH() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const swap = async (
     amountIn: bigint,
@@ -127,24 +157,34 @@ export function useSwapExactTokensForETH() {
     to: `0x${string}`,
     deadline: bigint,
   ) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address: CONTRACT_ADDRESS,
         abi: UniswapV2RouterAbi,
         functionName: 'swapExactTokensForETH',
         args: [amountIn, amountOutMin, path, to, deadline],
       });
-    } catch (err) {
-      console.error('代币兑换 swapExactTokensForETH 失败:', err);
+      const txHash = await writeContract(config, {
+        address: CONTRACT_ADDRESS,
+        abi: UniswapV2RouterAbi,
+        functionName: 'swapExactTokensForETH',
+        args: [amountIn, amountOutMin, path, to, deadline],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
       throw err;
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { swap, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { swap, writeData: hash, isWriting: isPending, writeError: error, isConfirming, isConfirmed };
 }
 
 /**

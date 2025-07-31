@@ -1,6 +1,11 @@
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+// hooks/contracts/useLOVE20SLToken.ts
+
+import { useState } from 'react';
+import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
+import { config } from '@/src/wagmi';
+
 import { LOVE20SLTokenAbi } from '@/src/abis/LOVE20SLToken';
-import { useEffect, useState } from 'react';
 
 // =====================
 // === 读取 Hook ===
@@ -217,156 +222,39 @@ export const useUniswapV2Pair = (address: `0x${string}`) => {
  * Hook for approve
  */
 export const useApprove = (address: `0x${string}`) => {
-  const { writeContract, data: writeData, isPending, error } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const approve = async (spender: `0x${string}`, value: bigint) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
+      await simulateContract(config, {
         address,
         abi: LOVE20SLTokenAbi,
         functionName: 'approve',
         args: [spender, value],
       });
-    } catch (err) {
-      console.error('Approve failed:', err);
-      // 重新抛出错误，让组件能够捕获
+      const txHash = await writeContract(config, {
+        address,
+        abi: LOVE20SLTokenAbi,
+        functionName: 'approve',
+        args: [spender, value],
+      });
+      setHash(txHash);
+      return txHash;
+    } catch (err: any) {
+      setError(err);
       throw err;
+    } finally {
+      setIsPending(false);
     }
   };
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
+    hash,
   });
 
-  return { approve, writeData, isPending, error, isConfirming, isConfirmed };
-};
-
-/**
- * Hook for burn
- */
-export const useBurn = (address: `0x${string}`) => {
-  const { writeContract, data: writeData, isPending, error } = useWriteContract();
-
-  const burn = async (to: `0x${string}`) => {
-    try {
-      await writeContract({
-        address,
-        abi: LOVE20SLTokenAbi,
-        functionName: 'burn',
-        args: [to],
-      });
-    } catch (err) {
-      console.error('Burn failed:', err);
-    }
-  };
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
-
-  return { burn, writeData, isPending, error, isConfirming, isConfirmed };
-};
-
-/**
- * Hook for mint
- */
-export const useMint = (address: `0x${string}`) => {
-  const { writeContract, data: writeData, isPending, error } = useWriteContract();
-
-  const mint = async (to: `0x${string}`) => {
-    try {
-      await writeContract({
-        address,
-        abi: LOVE20SLTokenAbi,
-        functionName: 'mint',
-        args: [to],
-      });
-    } catch (err) {
-      console.error('Minting failed:', err);
-    }
-  };
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
-
-  return { mint, writeData, isPending, error, isConfirming, isConfirmed };
-};
-
-/**
- * Hook for transfer
- */
-export const useTransfer = (address: `0x${string}`) => {
-  const { writeContract, data: writeData, isPending, error } = useWriteContract();
-
-  const transfer = async (to: `0x${string}`, value: bigint) => {
-    try {
-      await writeContract({
-        address,
-        abi: LOVE20SLTokenAbi,
-        functionName: 'transfer',
-        args: [to, value],
-      });
-    } catch (err) {
-      console.error('Transfer failed:', err);
-    }
-  };
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
-
-  return { transfer, writeData, isPending, error, isConfirming, isConfirmed };
-};
-
-/**
- * Hook for transferFrom
- */
-export const useTransferFrom = (address: `0x${string}`) => {
-  const { writeContract, data: writeData, isPending, error } = useWriteContract();
-
-  const transferFrom = async (from: `0x${string}`, to: `0x${string}`, value: bigint) => {
-    try {
-      await writeContract({
-        address,
-        abi: LOVE20SLTokenAbi,
-        functionName: 'transferFrom',
-        args: [from, to, value],
-      });
-    } catch (err) {
-      console.error('TransferFrom failed:', err);
-    }
-  };
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
-
-  return { transferFrom, writeData, isPending, error, isConfirming, isConfirmed };
-};
-
-/**
- * Hook for withdrawFee
- */
-export const useWithdrawFee = (address: `0x${string}`) => {
-  const { writeContract, data: writeData, isPending, error } = useWriteContract();
-
-  const withdrawFee = async (to: `0x${string}`) => {
-    try {
-      await writeContract({
-        address,
-        abi: LOVE20SLTokenAbi,
-        functionName: 'withdrawFee',
-        args: [to],
-      });
-    } catch (err) {
-      console.error('WithdrawFee failed:', err);
-    }
-  };
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
-
-  return { withdrawFee, writeData, isPending, error, isConfirming, isConfirmed };
+  return { approve, isPending, isConfirming, writeError: error, isConfirmed };
 };

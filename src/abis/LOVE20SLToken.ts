@@ -123,7 +123,18 @@ export const LOVE20SLTokenAbi = [
         "internalType": "address"
       }
     ],
-    "outputs": [],
+    "outputs": [
+      {
+        "name": "tokenAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "parentTokenAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable"
   },
   {
@@ -277,12 +288,12 @@ export const LOVE20SLTokenAbi = [
     "inputs": [],
     "outputs": [
       {
-        "name": "tokenAmount",
+        "name": "withdrawableTokenAmount",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
-        "name": "parentTokenAmount",
+        "name": "withdrawableParentTokenAmount",
         "type": "uint256",
         "internalType": "uint256"
       },
@@ -442,25 +453,6 @@ export const LOVE20SLTokenAbi = [
   },
   {
     "type": "event",
-    "name": "FeeWithdraw",
-    "inputs": [
-      {
-        "name": "to",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "lpAmount",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
     "name": "TokenBurn",
     "inputs": [
       {
@@ -535,6 +527,37 @@ export const LOVE20SLTokenAbi = [
     "anonymous": false
   },
   {
+    "type": "event",
+    "name": "WithdrawFee",
+    "inputs": [
+      {
+        "name": "to",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "lpAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "tokenAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "parentTokenAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
     "type": "error",
     "name": "InsufficientLiquidity",
     "inputs": []
@@ -546,17 +569,12 @@ export const LOVE20SLTokenAbi = [
   },
   {
     "type": "error",
-    "name": "InvalidRatio",
-    "inputs": []
-  },
-  {
-    "type": "error",
     "name": "NoTokensToBurn",
     "inputs": []
   },
   {
     "type": "error",
-    "name": "NotEligibleToMint",
+    "name": "NotMinter",
     "inputs": []
   },
   {

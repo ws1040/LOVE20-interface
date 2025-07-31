@@ -33,13 +33,13 @@ const VerifiedAddressesByAction: React.FC<{
   actionInfo: ActionInfo;
 }> = ({ currentJoinRound, actionId, actionInfo }) => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const [selectedRound, setSelectedRound] = useState(0n);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (token && currentJoinRound - BigInt(token.initialStakeRound) >= 2n) {
-      setSelectedRound(currentJoinRound - BigInt(token.initialStakeRound) - 1n);
+      setSelectedRound(currentJoinRound - 1n);
     }
   }, [currentJoinRound, token]);
 
@@ -50,7 +50,7 @@ const VerifiedAddressesByAction: React.FC<{
     error: errorVerifiedAddresses,
   } = useVerifiedAddressesByAction(
     token?.address as `0x${string}`,
-    token && selectedRound ? selectedRound + BigInt(token.initialStakeRound) - 1n : 0n,
+    token && selectedRound ? selectedRound : 0n,
     actionId,
   );
 
@@ -61,7 +61,7 @@ const VerifiedAddressesByAction: React.FC<{
     error: errorVerificationInfosByAction,
   } = useVerificationInfosByAction(
     token?.address as `0x${string}`,
-    token && selectedRound ? selectedRound + BigInt(token.initialStakeRound) - 1n : 0n,
+    token && selectedRound ? selectedRound : 0n,
     actionId,
   );
 
@@ -75,7 +75,7 @@ const VerifiedAddressesByAction: React.FC<{
   // 领取奖励
   const {
     mintActionReward,
-    isWriting: isMinting,
+    isPending: isMinting,
     isConfirming: isConfirmingMint,
     isConfirmed: isConfirmedMint,
     writeError: mintError,
@@ -84,21 +84,15 @@ const VerifiedAddressesByAction: React.FC<{
     if (!checkWalletConnection(accountChain)) {
       return;
     }
-    if (accountAddress && item.unminted > 0 && token) {
-      await mintActionReward(
-        token?.address as `0x${string}`,
-        selectedRound + BigInt(token.initialStakeRound) - 1n,
-        actionId,
-      );
+    if (account && item.reward > 0n && !item.isMinted && token) {
+      await mintActionReward(token?.address as `0x${string}`, selectedRound, actionId);
     }
   };
   useEffect(() => {
     if (isConfirmedMint) {
-      setAddresses((prev) =>
-        prev.map((addr) => (addr.account === accountAddress ? { ...addr, minted: addr.unminted, unminted: 0n } : addr)),
-      );
+      setAddresses((prev) => prev.map((addr) => (addr.account === account ? { ...addr, isMinted: true } : addr)));
     }
-  }, [isConfirmedMint, accountAddress]);
+  }, [isConfirmedMint, account]);
 
   const handleChangedRound = (round: number) => {
     setSelectedRound(BigInt(round));
@@ -176,7 +170,7 @@ const VerifiedAddressesByAction: React.FC<{
           <LoadingIcon />
         </div>
       ) : addresses.length === 0 ? (
-        selectedRound > 0n && <div className="text-center text-sm text-greyscale-400 p-4">没有地址参与行动</div>
+        selectedRound > 0n && <div className="text-center text-sm text-greyscale-400 p-4">没有可铸造激励的地址</div>
       ) : (
         <table className="table w-full">
           <thead>
@@ -195,7 +189,7 @@ const VerifiedAddressesByAction: React.FC<{
 
               return (
                 <React.Fragment key={item.account}>
-                  <tr className={`border-b border-gray-100 ${item.account === accountAddress ? 'text-secondary' : ''}`}>
+                  <tr className={`border-b border-gray-100 ${item.account === account ? 'text-secondary' : ''}`}>
                     <td className="px-1 w-8">
                       {verificationInfo && (
                         <button
@@ -210,14 +204,14 @@ const VerifiedAddressesByAction: React.FC<{
                       <AddressWithCopyButton
                         address={item.account}
                         showCopyButton={true}
-                        word={item.account === accountAddress ? '(我)' : ''}
+                        word={item.account === account ? '(我)' : ''}
                       />
                     </td>
                     <td className="px-1 text-right">{formatTokenAmountInteger(item.score)}</td>
-                    <td className="px-1 text-right">{formatTokenAmountInteger(item.minted || item.unminted || 0n)}</td>
+                    <td className="px-1 text-right">{formatTokenAmountInteger(item.reward || 0n)}</td>
                     <td className="px-1 text-right">
-                      {item.account === accountAddress &&
-                        (item.unminted > 0 ? (
+                      {item.account === account &&
+                        (item.reward > 0n && !item.isMinted ? (
                           <Button
                             variant="outline"
                             size="sm"

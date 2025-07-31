@@ -8,8 +8,7 @@ import toast from 'react-hot-toast';
 import { formatTokenAmount } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { LaunchInfo } from '@/src/types/love20types';
-import { TOKEN_CONFIG } from '@/src/config/tokenConfig';
-import { useContributed, useClaimed, useExtraRefunded, useClaim } from '@/src/hooks/contracts/useLOVE20Launch';
+import { useContributed, useClaimInfo, useClaim } from '@/src/hooks/contracts/useLOVE20Launch';
 
 // my context
 import { Token, TokenContext } from '@/src/contexts/TokenContext';
@@ -30,25 +29,17 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
     error: contributedError,
   } = useContributed(token?.address as `0x${string}`, account as `0x${string}`);
   const {
-    claimed,
-    isPending: isClaimedPending,
-    error: claimedError,
-  } = useClaimed(token?.address as `0x${string}`, account as `0x${string}`);
-  const {
-    extraRefunded,
-    isPending: isExtraRefundedPending,
-    error: extraRefundedError,
-  } = useExtraRefunded(token?.address as `0x${string}`, account as `0x${string}`);
-
-  // 计算待领取代币数量
-  const gotTokens = launchInfo.totalContributed
-    ? (BigInt(TOKEN_CONFIG.fairLaunch) * (contributed || 0n)) / BigInt(launchInfo.totalContributed)
-    : 0n;
-
+    receivedTokenAmount,
+    extraRefund,
+    isClaimed: claimed,
+    isPending: isClaimInfoPending,
+    error: claimInfoError,
+  } = useClaimInfo(token?.address as `0x${string}`, account as `0x${string}`);
+  console.log('receivedTokenAmount', receivedTokenAmount);
   // 领取代币hook
   const {
     claim,
-    isWriting: isClaiming,
+    isPending: isClaiming,
     writeError: claimError,
     isConfirming: isClaimConfirming,
     isConfirmed: isClaimConfirmed,
@@ -82,21 +73,18 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
     if (claimError) {
       handleContractError(claimError, 'launch');
     }
-    if (claimedError) {
-      handleContractError(claimedError, 'launch');
-    }
-    if (extraRefundedError) {
-      handleContractError(extraRefundedError, 'launch');
+    if (claimInfoError) {
+      handleContractError(claimInfoError, 'launch');
     }
     if (contributedError) {
       handleContractError(contributedError, 'launch');
     }
-  }, [claimError, claimedError, extraRefundedError, contributedError]);
+  }, [claimError, claimInfoError, contributedError]);
 
   if (!account) {
     return '';
   }
-  if (isClaimedPending) {
+  if (isClaimInfoPending) {
     return <LoadingIcon />;
   }
   if (!token) {
@@ -116,7 +104,7 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
         <div className="stat place-items-center">
           <div className="stat-title text-sm mr-6">共获得</div>
           <div className="stat-value text-3xl text-secondary">
-            {formatTokenAmount(gotTokens)}
+            {formatTokenAmount(receivedTokenAmount ?? 0n)}
             <span className="text-greyscale-500 font-normal text-sm ml-2">{token.symbol}</span>
           </div>
         </div>
@@ -156,8 +144,16 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
       {Number(contributed) > 0 && claimed && (
         <div className="text-center text-sm my-2 text-greyscale-400">
           我共申购了 <span className="text-secondary">{formatTokenAmount(contributed ?? 0n)} </span>
-          {parentTokenSymbol}，申购返还了{' '}
-          <span className="text-secondary">{formatTokenAmount(extraRefunded ?? 0n)}</span> {parentTokenSymbol}
+          {parentTokenSymbol}，申购返还了 <span className="text-secondary">{formatTokenAmount(extraRefund ?? 0n)}</span>{' '}
+          {token.parentTokenSymbol}
+          {token.parentTokenSymbol == process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL && (
+            <Link
+              href={`/dex/swap?from=${token.parentTokenSymbol}&to=${process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL}`}
+              className="text-secondary ml-1"
+            >
+              （转回 {process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL}）
+            </Link>
+          )}
         </div>
       )}
       <div className="border-t border-gray-200 mx-4 mt-4 mb-6"></div>

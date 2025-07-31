@@ -1,6 +1,10 @@
 // hooks/contracts/useLOVE20Launch.ts
+import { useState } from 'react';
+import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
+import { Address } from 'viem';
 
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { config } from '@/src/wagmi';
 import { LOVE20LaunchAbi } from '@/src/abis/LOVE20Launch';
 import { LaunchInfo } from '@/src/types/love20types';
 
@@ -67,27 +71,13 @@ export const useTokenSymbolLength = () => {
 };
 
 /**
- * Hook for canDeployToken
+ * Hook for childTokensCount
  */
-export const useCanDeployToken = (accountAddress: `0x${string}`, parentTokenAddress: `0x${string}`) => {
+export const useChildTokensCount = (parentTokenAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
-    functionName: 'canDeployToken',
-    args: [accountAddress, parentTokenAddress],
-  });
-
-  return { isEligible: data as boolean | undefined, isPending, error };
-};
-
-/**
- * Hook for childTokenNum
- */
-export const useChildTokenNum = (parentTokenAddress: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'childTokenNum',
+    functionName: 'childTokensCount',
     args: [parentTokenAddress],
   });
 
@@ -95,125 +85,13 @@ export const useChildTokenNum = (parentTokenAddress: `0x${string}`) => {
 };
 
 /**
- * Hook for childTokensByPage
+ * Hook for launchedChildTokensCount
  */
-export const useChildTokensByPage = (
-  parentTokenAddress: `0x${string}`,
-  start: bigint,
-  end: bigint,
-  reverse: boolean,
-) => {
+export const useLaunchedChildTokensCount = (parentTokenAddress: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
-    functionName: 'childTokensByPage',
-    args: [parentTokenAddress, start, end, reverse],
-  });
-
-  return { childTokens: data as `0x${string}`[] | undefined, isPending, error };
-};
-
-/**
- * Hook for childTokensByParent
- */
-export const useChildTokensByParent = (parentAddress: `0x${string}`, index: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'childTokensByParent',
-    args: [parentAddress, index],
-  });
-
-  return { childToken: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * Hook for claimed
- */
-export const useClaimed = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'claimed',
-    args: [tokenAddress, accountAddress],
-    query: {
-      enabled: !!tokenAddress && !!accountAddress,
-    },
-  });
-
-  return { claimed: data as boolean | undefined, isPending, error };
-};
-
-/**
- * Hook for contributed
- */
-export const useContributed = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
-  const { data, isPending, error, refetch } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'contributed',
-    args: [tokenAddress, accountAddress],
-    query: {
-      enabled: !!tokenAddress && !!accountAddress,
-    },
-  });
-
-  return { contributed: data as bigint | undefined, isPending, error, refetch };
-};
-
-/**
- * Hook for extraRefunded
- */
-export const useExtraRefunded = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'extraRefunded',
-    args: [tokenAddress, accountAddress],
-    query: {
-      enabled: !!tokenAddress && !!accountAddress,
-    },
-  });
-
-  return { extraRefunded: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook for initialized
- */
-export const useInitialized = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'initialized',
-    args: [],
-  });
-
-  return { initialized: data as boolean | undefined, isPending, error };
-};
-
-/**
- * Hook for launchInfos
- */
-export const useLaunchInfos = (addresses: `0x${string}`[]) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'launchInfos',
-    args: [addresses],
-  });
-
-  return { launchInfos: data as any[] | undefined, isPending, error };
-};
-
-/**
- * Hook for launchedChildTokenNum
- */
-export const useLaunchedChildTokenNum = (parentTokenAddress: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'launchedChildTokenNum',
+    functionName: 'launchedChildTokensCount',
     args: [parentTokenAddress],
   });
 
@@ -221,50 +99,43 @@ export const useLaunchedChildTokenNum = (parentTokenAddress: `0x${string}`) => {
 };
 
 /**
- * Hook for launchedChildTokensByPage
+ * Hook for claimInfo
  */
-export const useLaunchedChildTokensByPage = (
-  parentTokenAddress: `0x${string}`,
-  start: bigint,
-  end: bigint,
-  reverse: boolean,
-) => {
+export const useClaimInfo = (tokenAddress: `0x${string}`, account: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
-    functionName: 'launchedChildTokensByPage',
-    args: [parentTokenAddress, start, end, reverse],
+    functionName: 'claimInfo',
+    args: [tokenAddress, account],
+    query: {
+      enabled: !!tokenAddress && !!account,
+    },
   });
 
-  return { launchedChildTokens: data as `0x${string}`[] | undefined, isPending, error };
+  return {
+    receivedTokenAmount: data?.[0] as bigint,
+    extraRefund: data?.[1] as bigint,
+    isClaimed: data?.[2] as boolean,
+    isPending,
+    error,
+  };
 };
 
 /**
- * Hook for launchedTokenNum
+ * Hook for contributed
  */
-export const useLaunchedTokenNum = () => {
-  const { data, isPending, error } = useReadContract({
+export const useContributed = (tokenAddress: `0x${string}`, account: `0x${string}`) => {
+  const { data, isPending, error, refetch } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
-    functionName: 'launchedTokenNum',
-    args: [],
+    functionName: 'contributed',
+    args: [tokenAddress, account],
+    query: {
+      enabled: !!tokenAddress && !!account,
+    },
   });
 
-  return { launchedTokenNum: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook for launchedTokensByPage
- */
-export const useLaunchedTokensByPage = (start: bigint, end: bigint, reverse: boolean) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'launchedTokensByPage',
-    args: [start, end, reverse],
-  });
-
-  return { launchedTokens: data as `0x${string}`[] | undefined, isPending, error };
+  return { contributed: data as bigint | undefined, isPending, error, refetch };
 };
 
 /**
@@ -289,6 +160,7 @@ export const useLaunchInfo = (address: `0x${string}`) => {
         launchAmount: data.launchAmount as bigint,
         startBlock: data.startBlock as bigint,
         secondHalfStartBlock: data.secondHalfStartBlock as bigint,
+        endBlock: data.endBlock as bigint,
         hasEnded: data.hasEnded as boolean,
         participantCount: data.participantCount as bigint,
         totalContributed: data.totalContributed as bigint,
@@ -297,156 +169,6 @@ export const useLaunchInfo = (address: `0x${string}`) => {
     : undefined;
 
   return { launchInfo, isPending, error };
-};
-
-/**
- * Hook for launchingChildTokenNum
- */
-export const useLaunchingChildTokenNum = (parentTokenAddress: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'launchingChildTokenNum',
-    args: [parentTokenAddress],
-  });
-
-  return { launchingChildTokenNum: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook for launchingChildTokensByPage
- */
-export const useLaunchingChildTokensByPage = (
-  parentTokenAddress: `0x${string}`,
-  start: bigint,
-  end: bigint,
-  reverse: boolean,
-) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'launchingChildTokensByPage',
-    args: [parentTokenAddress, start, end, reverse],
-  });
-
-  return { launchingChildTokens: data as `0x${string}`[] | undefined, isPending, error };
-};
-
-/**
- * Hook for launchingTokenNum
- */
-export const useLaunchingTokenNum = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'launchingTokenNum',
-    args: [],
-  });
-
-  return { launchingTokenNum: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook for launchingTokens
- */
-export const useLaunchingTokens = (index: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'launchingTokens',
-    args: [index],
-  });
-
-  return { launchingToken: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * Hook for launchingTokensByPage
- */
-export const useLaunchingTokensByPage = (start: bigint, end: bigint, reverse: boolean) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'launchingTokensByPage',
-    args: [start, end, reverse],
-  });
-
-  return { launchingTokens: data as `0x${string}`[] | undefined, isPending, error };
-};
-
-/**
- * Hook for mintAddress
- */
-export const useMintAddress = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'mintAddress',
-    args: [],
-  });
-
-  return { mintAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * Hook for participatedTokenNum
- */
-export const useParticipatedTokenNum = (walletAddress: `0x${string}`) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'participatedTokenNum',
-    args: [walletAddress],
-  });
-
-  return { participatedTokenNum: data as bigint | undefined, isPending, error };
-};
-
-/**
- * Hook for participatedTokensByPage
- */
-export const useParticipatedTokensByPage = (
-  walletAddress: `0x${string}`,
-  start: bigint,
-  end: bigint,
-  reverse: boolean,
-) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'participatedTokensByPage',
-    args: [walletAddress, start, end, reverse],
-  });
-
-  return { participatedTokens: data as `0x${string}`[] | undefined, isPending, error };
-};
-
-/**
- * Hook for stakeAddress
- */
-export const useStakeAddress = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'stakeAddress',
-    args: [],
-  });
-
-  return { stakeAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * Hook for submitAddress
- */
-export const useSubmitAddress = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'submitAddress',
-    args: [],
-  });
-
-  return { submitAddress: data as `0x${string}` | undefined, isPending, error };
 };
 
 /**
@@ -464,27 +186,13 @@ export const useTokenAddressBySymbol = (symbol: string) => {
 };
 
 /**
- * Hook for tokenAddresses
- */
-export const useTokenAddresses = (index: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'tokenAddresses',
-    args: [index],
-  });
-
-  return { tokenAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
  * Hook for tokenNum
  */
-export const useTokenNum = () => {
+export const useTokenCount = () => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
-    functionName: 'tokenNum',
+    functionName: 'tokensCount',
     args: [],
   });
 
@@ -492,34 +200,42 @@ export const useTokenNum = () => {
 };
 
 /**
- * Hook for tokensByPage
- */
-export const useTokensByPage = (start: bigint, end: bigint, reverse: boolean) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20LaunchAbi,
-    functionName: 'tokensByPage',
-    args: [start, end, reverse],
-  });
-
-  return { tokens: data as `0x${string}`[] | undefined, isPending, error };
-};
-
-/**
  * Hook for lastContributedBlock
  */
-export const useLastContributedBlock = (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
+export const useLastContributedBlock = (tokenAddress: `0x${string}`, account: `0x${string}`) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20LaunchAbi,
     functionName: 'lastContributedBlock',
-    args: [tokenAddress, accountAddress],
+    args: [tokenAddress, account],
     query: {
-      enabled: !!tokenAddress && !!accountAddress,
+      enabled: !!tokenAddress && !!account,
     },
   });
 
   return { lastContributedBlock: data as bigint | undefined, isPending, error };
+};
+
+/**
+ * Hook for remainingLaunchCount
+ * 查询账户剩余可发起Launch的次数
+ */
+export const useRemainingLaunchCount = (parentTokenAddress: `0x${string}`, account: `0x${string}`) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20LaunchAbi,
+    functionName: 'remainingLaunchCount',
+    args: [parentTokenAddress, account],
+    query: {
+      enabled: !!parentTokenAddress && !!account,
+    },
+  });
+
+  return {
+    remainingLaunchCount: data as bigint | undefined,
+    isPending,
+    error,
+  };
 };
 
 // =======================
@@ -530,102 +246,145 @@ export const useLastContributedBlock = (tokenAddress: `0x${string}`, accountAddr
  * Hook for claim
  */
 export function useClaim() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const claim = async (tokenAddress: `0x${string}`) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
+      await simulateContract(config, {
         abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
         functionName: 'claim',
         args: [tokenAddress],
       });
-    } catch (err) {
-      console.error('Claim failed:', err);
+      const txHash = await writeContract(config, {
+        abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
+        functionName: 'claim',
+        args: [tokenAddress],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { claim, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { claim, writeData: hash, isPending, writeError: error, isConfirming, isConfirmed };
 }
 
 /**
  * Hook for contribute
  */
 export function useContribute() {
-  const { writeContract, isPending, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const contribute = async (tokenAddress: `0x${string}`, parentTokenAmount: bigint, to: `0x${string}`) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
+      await simulateContract(config, {
         abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
         functionName: 'contribute',
         args: [tokenAddress, parentTokenAmount, to],
       });
-    } catch (err) {
-      console.error('Contribute failed:', err);
+      const txHash = await writeContract(config, {
+        abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
+        functionName: 'contribute',
+        args: [tokenAddress, parentTokenAmount, to],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { contribute, writeData, isPending, writeError, isConfirming, isConfirmed };
+  return { contribute, writeData: hash, isPending, writeError: error, isConfirming, isConfirmed };
 }
 
 /**
  * Hook for withdraw
  */
 export function useWithdraw() {
-  const { writeContract, isPending, data: writeData, error: writeError } = useWriteContract();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const withdraw = async (tokenAddress: `0x${string}`) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
+      await simulateContract(config, {
         abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
         functionName: 'withdraw',
         args: [tokenAddress],
       });
-    } catch (err) {
-      console.error('Withdraw failed:', err);
+      const txHash = await writeContract(config, {
+        abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
+        functionName: 'withdraw',
+        args: [tokenAddress],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
+    hash,
   });
 
-  return { withdraw, writeData, isPending, writeError, isConfirming, isConfirmed };
+  return { withdraw, writeData: hash, isPending, writeError: error, isConfirming, isConfirmed };
 }
 
-/**
- * Hook for deployToken
- */
-export function useDeployToken() {
-  const { writeContract, isPending: isWriting, data: writeData, error: writeError } = useWriteContract();
+export function useLaunchToken() {
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
-  const deployToken = async (tokenSymbol: string, parentTokenAddress: `0x${string}`) => {
+  const launchToken = async (symbol: string, parent: Address) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESS,
+      await simulateContract(config, {
         abi: LOVE20LaunchAbi,
-        functionName: 'deployToken',
-        args: [tokenSymbol, parentTokenAddress],
+        address: CONTRACT_ADDRESS,
+        functionName: 'launchToken',
+        args: [symbol, parent],
       });
-    } catch (err) {
-      console.error('DeployToken failed:', err);
+      const txHash = await writeContract(config, {
+        abi: LOVE20LaunchAbi,
+        address: CONTRACT_ADDRESS,
+        functionName: 'launchToken',
+        args: [symbol, parent],
+      });
+      setHash(txHash);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  return { deployToken, writeData, isWriting, writeError, isConfirming, isConfirmed };
+  return { launchToken, isPending, isConfirming, writeError: error, isConfirmed };
 }

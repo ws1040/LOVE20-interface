@@ -20,21 +20,21 @@ import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton
 import AddToMetamask from '@/src/components/Common/AddToMetamask';
 
 const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) => {
-  const { address: accountAddress } = useAccount();
+  const { address: account } = useAccount();
 
   // 获取代币余额
   const {
     balance,
     isPending: isPendingBalance,
     error: errorBalance,
-  } = useBalanceOf(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  } = useBalanceOf(token?.address as `0x${string}`, account as `0x${string}`);
 
   // 获取父币余额
   const {
     balance: parentTokenBalance,
     isPending: isPendingParentTokenBalance,
     error: errorParentTokenBalance,
-  } = useBalanceOf(token?.parentTokenAddress as `0x${string}`, accountAddress as `0x${string}`);
+  } = useBalanceOf(token?.parentTokenAddress as `0x${string}`, account as `0x${string}`);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -50,7 +50,7 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
   if (!token) {
     return <LoadingIcon />;
   }
-  if (!accountAddress) {
+  if (!account) {
     return (
       <>
         <div className="flex-col items-center px-4 py-2">
@@ -96,7 +96,7 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
             />
           </div>
           <div className="stat-value text-xl">
-            {isPendingParentTokenBalance ? <LoadingIcon /> : formatTokenAmount(parentTokenBalance || BigInt(0), 0)}
+            {isPendingParentTokenBalance ? <LoadingIcon /> : formatTokenAmount(parentTokenBalance || BigInt(0))}
           </div>
           <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light"></div>
         </div>

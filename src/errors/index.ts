@@ -57,7 +57,7 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
 
   // ILOVE20STToken 相关错误
   stToken: {
-    '0x54331660': 'NotEligibleToMint',
+    '0xf8d2906c': 'NotMinter',
     '0xe6c4247b': 'InvalidAddress',
     '0x8fe0a65f': 'AmountIsGreaterThanReserve',
   },
@@ -65,8 +65,6 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
   // ILOVE20Verify 相关错误
   verify: {
     '0x0dc149f0': 'AlreadyInitialized',
-    '0x118fd7b8': 'AlreadyVerified',
-    '0xe622e040': 'AddressCannotBeZero',
     '0xd6616002': 'ScoresAndAccountsLengthMismatch',
     '0x99b9530a': 'ScoresExceedVotesNum',
     '0x64d9b4d8': 'ScoresMustIncrease',
@@ -80,6 +78,9 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
     '0x7bb17d5a': 'StartGreaterThanEnd',
     '0x077294b9': 'MinStakeZero',
     '0x8ed5f448': 'MaxRandomAccountsZero',
+    '0x5d0ff12d': 'TitleEmpty',
+    '0x079a14e3': 'VerificationRuleEmpty',
+    '0x4f706af0': 'VerificationKeyLengthExceeded',
     '0x9fbfc589': 'AlreadySubmitted',
     '0x9fb13b87': 'OnlyOneSubmitPerRound',
   },
@@ -90,12 +91,11 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
     '0xbe9cd064': 'NotAllowedToStakeAtRoundZero',
     '0x8aa3a72f': 'InvalidToAddress',
     '0xa748da06': 'StakeAmountMustBeSet',
-    '0xd6e1a062': 'ReleaseAlreadyRequested',
-    '0xf3acff1d': 'ReleaseNotRequested',
-    '0x50cd778e': 'PromisedWaitingRoundsOutOfRange',
-    '0x268e8b5e': 'PromisedWaitingRoundsMustBeGreaterOrEqualThanBefore',
+    '0x97198fa6': 'UnstakeAlreadyRequested',
+    '0xeef9087e': 'UnstakeNotRequested',
+    '0xebd13c1e': 'PromisedWaitingPhasesOutOfRange',
+    '0x970d9702': 'PromisedWaitingPhasesMustBeGreaterOrEqualThanBefore',
     '0x745dc627': 'NoStakedLiquidity',
-    '0x8b520315': 'NoStakedLiquidityOrToken',
     '0xd8315312': 'AlreadyUnstaked',
     '0xf55a5f82': 'NotEnoughWaitingBlocks',
     '0x6e0f544a': 'RoundHasNotStartedYet',
@@ -106,7 +106,7 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
     '0x0dc149f0': 'AlreadyInitialized',
     '0x220839c9': 'InvalidTokenSymbol',
     '0xd567cb6d': 'TokenSymbolExists',
-    '0xdb3a599a': 'NotEligibleToDeployToken',
+    '0xe169fb70': 'NotEligibleToLaunchToken',
     '0x6a25ec6f': 'LaunchAlreadyEnded',
     '0x34ad25cc': 'LaunchNotEnded',
     '0x65c7efcc': 'NoContribution',
@@ -115,6 +115,8 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
     '0xf09762b6': 'LaunchAlreadyExists',
     '0xbeea6d6c': 'ParentTokenNotSet',
     '0xab82a248': 'ZeroContribution',
+    '0x1eb00b06': 'InvalidTokenAddress',
+    '0x8aa3a72f': 'InvalidToAddress',
     '0x670ff944': 'InvalidParentToken',
     '0xf1266c59': 'NotEnoughChildTokenWaitingBlocks',
   },
@@ -123,7 +125,7 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
   token: {
     '0x0dc149f0': 'AlreadyInitialized',
     '0xe6c4247b': 'InvalidAddress',
-    '0x54331660': 'NotEligibleToMint',
+    '0xf8d2906c': 'NotMinter',
     '0xc30436e9': 'ExceedsMaxSupply',
     '0xf4d678b8': 'InsufficientBalance',
     '0x15ae6727': 'InvalidSupply',
@@ -140,7 +142,7 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
   mint: {
     '0x0dc149f0': 'AlreadyInitialized',
     '0x6d363c45': 'NoRewardAvailable',
-    '0x7b9893a6': 'RoundStartMustBeLessOrEqualToRoundEnd',
+    '0x694832c9': 'RoundNotReadyToMint',
     '0xc9d2c178': 'NotEnoughReward',
     '0xce0a57ff': 'NotEnoughRewardToBurn',
   },
@@ -156,25 +158,21 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
 
   // ILOVE20SLToken 相关错误
   slToken: {
-    '0x54331660': 'NotEligibleToMint',
+    '0xf8d2906c': 'NotMinter',
     '0xe6c4247b': 'InvalidAddress',
     '0xb951d9d6': 'NoTokensToBurn',
     '0xbb55fd27': 'InsufficientLiquidity',
     '0xe98204b2': 'TotalLpExceedsBalance',
-    '0x648564d3': 'InvalidRatio',
   },
 
   // ILOVE20Join 相关错误
   join: {
     '0x0dc149f0': 'AlreadyInitialized',
-    '0xe622e040': 'AddressCannotBeZero',
-    '0x6be4d17c': 'CannotGenerateAtCurrentRound',
     '0x074d7a6b': 'LastBlocksOfPhaseCannotJoin',
     '0x17793beb': 'ActionNotVoted',
-    '0x8aa3a72f': 'InvalidToAddress',
     '0x43ad20fc': 'AmountIsZero',
     '0x1ba68870': 'JoinedAmountIsZero',
-    '0x9ad59b97': 'NotInWhiteList',
+    '0x7d1f6366': 'NotWhiteListAddress',
     '0xf33b2011': 'JoinAmountLessThanMinStake',
   },
 };
@@ -193,6 +191,18 @@ export function getErrorNameFromSelector(selector: string, contractKey: string):
   }
 
   // 再在通用错误中查找
+  const slTokenSelectors = ErrorSelectorsMap.slToken;
+  if (slTokenSelectors && slTokenSelectors[selector]) {
+    return slTokenSelectors[selector];
+  }
+  const stTokenSelectors = ErrorSelectorsMap.stToken;
+  if (stTokenSelectors && stTokenSelectors[selector]) {
+    return stTokenSelectors[selector];
+  }
+  const tokenSelectors = ErrorSelectorsMap.token;
+  if (tokenSelectors && tokenSelectors[selector]) {
+    return tokenSelectors[selector];
+  }
   const commonSelectors = ErrorSelectorsMap.common;
   if (commonSelectors && commonSelectors[selector]) {
     return commonSelectors[selector];

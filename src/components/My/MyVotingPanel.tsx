@@ -30,18 +30,14 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({
   isPendingValidGovVotes: externalIsPendingValidGovVotes,
 }) => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
+  const { address: account } = useAccount();
 
   // 我的投票数
   const {
     votesNumByAccount,
     isPending: isPendingVotesNumByAccount,
     error: errorVotesNumByAccount,
-  } = useVotesNumByAccount(
-    (token?.address as `0x${string}`) || '',
-    currentRound,
-    (accountAddress as `0x${string}`) || '',
-  );
+  } = useVotesNumByAccount((token?.address as `0x${string}`) || '', currentRound, (account as `0x${string}`) || '');
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -54,7 +50,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({
   if (!token) {
     return '';
   }
-  if (!accountAddress) {
+  if (!account) {
     return (
       <>
         <div className="flex-col items-center px-4 py-2">

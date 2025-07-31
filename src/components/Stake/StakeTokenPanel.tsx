@@ -58,7 +58,7 @@ function stakeSchemaFactory(tokenBalance: bigint) {
 }
 
 const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
-  const { address: accountAddress, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const { token } = useContext(TokenContext) || {};
 
   // 状态变量：是否完成授权的
@@ -66,7 +66,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
 
   const {
     approve: approveToken,
-    isWriting: isPendingApproveToken,
+    isPending: isPendingApproveToken,
     isConfirming: isConfirmingApproveToken,
     isConfirmed: isConfirmedApproveToken,
     writeError: errApproveToken,
@@ -74,7 +74,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
 
   const {
     stakeToken,
-    isWriting: isPendingStakeToken,
+    isPending: isPendingStakeToken,
     isConfirming: isConfirmingStakeToken,
     isConfirmed: isConfirmedStakeToken,
     writeError: errStakeToken,
@@ -85,7 +85,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     promisedWaitingPhases,
     isPending: isPendingAccountStakeStatus,
     error: errAccountStakeStatus,
-  } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  } = useAccountStakeStatus(token?.address as `0x${string}`, account as `0x${string}`);
 
   // 1. 获取已授权数量
   const {
@@ -94,7 +94,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     error: errAllowanceToken,
   } = useAllowance(
     token?.address as `0x${string}`,
-    accountAddress as `0x${string}`,
+    account as `0x${string}`,
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
   );
 
@@ -110,6 +110,10 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
     }
     prevIsPendingAllowance.current = isPendingAllowanceToken;
   }, [isPendingAllowanceToken]);
+
+  // 在文件顶部添加环境变量读取
+  const PROMISED_WAITING_PHASES_MIN = Number(process.env.NEXT_PUBLIC_PROMISED_WAITING_PHASES_MIN) || 1;
+  const PROMISED_WAITING_PHASES_MAX = Number(process.env.NEXT_PUBLIC_PROMISED_WAITING_PHASES_MAX) || 2;
 
   // 2. 初始化表单
   const form = useForm<z.infer<ReturnType<typeof stakeSchemaFactory>>>({
@@ -158,7 +162,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
         token?.address as `0x${string}`,
         parseUnits(data.stakeTokenAmount),
         BigInt(data.releasePeriod),
-        accountAddress as `0x${string}`,
+        account as `0x${string}`,
       );
     } catch (error) {
       console.error('Stake failed', error);
@@ -282,7 +286,10 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
                       <SelectValue placeholder="选择解锁期长度" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from({ length: 2 }, (_, i) => i + 1)
+                      {Array.from(
+                        { length: PROMISED_WAITING_PHASES_MAX - PROMISED_WAITING_PHASES_MIN + 1 },
+                        (_, i) => i + PROMISED_WAITING_PHASES_MIN,
+                      )
                         .filter((item) => item >= promisedWaitingPhases)
                         .map((item) => (
                           <SelectItem key={item} value={String(item)}>

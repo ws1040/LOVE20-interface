@@ -47,10 +47,10 @@ const RoundLite: React.FC<RoundProps> = ({ currentRound, roundType, showCountdow
 
   // 计算当前轮次
   useEffect(() => {
-    if (token && currentRound > 0n) {
-      setCurrentTokenRound(currentRound - BigInt(token.initialStakeRound) + 1n);
+    if (currentRound > 0n) {
+      setCurrentTokenRound(currentRound);
     }
-  }, [currentRound, token]);
+  }, [currentRound]);
 
   // 计算轮次名称
   const roundName = roundType === 'vote' ? '投票' : roundType === 'verify' ? '验证' : '行动';
@@ -58,7 +58,7 @@ const RoundLite: React.FC<RoundProps> = ({ currentRound, roundType, showCountdow
   // 如果 currentRound 为空，则设置默认值，否则转换为字符串
   const displayRound = currentTokenRound != null ? currentTokenRound.toString() : '0';
 
-  if (!token?.initialStakeRound || currentTokenRound <= 0n) {
+  if (currentTokenRound <= 0n) {
     return <></>;
   }
 
@@ -67,8 +67,6 @@ const RoundLite: React.FC<RoundProps> = ({ currentRound, roundType, showCountdow
     if (currentTokenRound == null || currentTokenRound < 0n) {
       console.log('currentTokenRound', currentTokenRound);
       console.log('currentRound', currentRound);
-      console.log('token.initialStakeRound', token?.initialStakeRound);
-      console.log('token', token);
     }
     return <LoadingIcon />;
   }

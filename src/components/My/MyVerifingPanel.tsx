@@ -26,21 +26,21 @@ interface MyVerifingPanelProps {
 
 const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn = true }) => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
+  const { address: account } = useAccount();
 
   // 获取我的投票数(即最大验证票数)
   const {
     votesNumByAccount,
     isPending: isPendingVotesNumByAccount,
     error: isVotesNumByAccountError,
-  } = useVotesNumByAccount(token?.address as `0x${string}`, currentRound, (accountAddress as `0x${string}`) || '');
+  } = useVotesNumByAccount(token?.address as `0x${string}`, currentRound, (account as `0x${string}`) || '');
 
   // 获取我的已验证票数
   const {
     scoreByVerifier,
     isPending: isPendingScoreByVerifier,
     error: isScoreByVerifierError,
-  } = useScoreByVerifier(token?.address as `0x${string}`, currentRound, (accountAddress as `0x${string}`) || '');
+  } = useScoreByVerifier(token?.address as `0x${string}`, currentRound, (account as `0x${string}`) || '');
 
   // 计算剩余验证票数
   const remainingVotes =
@@ -60,7 +60,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
   if (!token) {
     return <LoadingIcon />;
   }
-  if (!accountAddress) {
+  if (!account) {
     return (
       <>
         <div className="flex-col items-center px-4 pt-6 pb-2">

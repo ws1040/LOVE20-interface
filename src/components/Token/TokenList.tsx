@@ -7,8 +7,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { useRouter } from 'next/router';
 
 // my hooks
-import { useTokenDetails } from '@/src/hooks/contracts/useLOVE20DataViewer';
-import { useTokensByPage, useChildTokensByPage } from '@/src/hooks/contracts/useLOVE20Launch';
+import { useTokenDetails, useTokensByPage, useChildTokensByPage } from '@/src/hooks/contracts/useLOVE20DataViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { formatPercentage } from '@/src/lib/format';
 
@@ -21,7 +20,7 @@ import { TokenInfo } from '@/src/types/love20types';
 // my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 50;
 
 interface TokenListProps {
   parentTokenAddress?: `0x${string}`;
@@ -50,8 +49,8 @@ export default function TokenList({ parentTokenAddress }: TokenListProps) {
 
   // 获取token列表
   const tokensResult = parentTokenAddress
-    ? useChildTokensByPage(parentTokenAddress, start, end, true)
-    : useTokensByPage(start, end, true);
+    ? useChildTokensByPage(parentTokenAddress, start, end)
+    : useTokensByPage(start, end);
 
   const tokenAddresses = 'childTokens' in tokensResult ? tokensResult.childTokens : tokensResult.tokens;
   const isLoadingTokens = tokensResult.isPending;

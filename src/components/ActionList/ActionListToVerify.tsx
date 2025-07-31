@@ -48,7 +48,7 @@ const ActionListToVerify: React.FC<VerifingActionListProps> = ({ currentRound })
   // 如果只有1个行动，直接跳转到行动详情页
   if (myVerifyingActions && myVerifyingActions.length === 1) {
     const actionId = myVerifyingActions[0].action.head.id;
-    router.push(`/verify/${actionId}?symbol=${token?.symbol}&auto=true`);
+    router.push(`/verify/action?id=${actionId}&symbol=${token?.symbol}&auto=true`);
     return null;
   }
 
@@ -77,14 +77,13 @@ const ActionListToVerify: React.FC<VerifingActionListProps> = ({ currentRound })
             <Card key={verifyingAction.action.head.id} className="shadow-none">
               <Link
                 className="relative block"
-                href={`/verify/${verifyingAction.action.head.id}?symbol=${token?.symbol}`}
+                href={`/verify/action?id=${verifyingAction.action.head.id}&symbol=${token?.symbol}`}
               >
                 <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
                   <span className="text-greyscale-400 text-sm mr-1">{`No.${verifyingAction.action.head.id}`}</span>
-                  <span className="font-bold text-greyscale-800">{`${verifyingAction.action.body.action}`}</span>
+                  <span className="font-bold text-greyscale-800">{`${verifyingAction.action.body.title}`}</span>
                 </CardHeader>
                 <CardContent className="px-3 pt-1 pb-2">
-                  <div className="text-greyscale-500">{verifyingAction.action.body.consensus}</div>
                   <div className="text-xs text-greyscale-400 mt-2 flex justify-between">
                     <span>
                       总票数: <span className="text-secondary">{formatTokenAmount(verifyingAction.totalVotesNum)}</span>

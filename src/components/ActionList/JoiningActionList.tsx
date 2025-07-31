@@ -31,13 +31,13 @@ interface JoiningActionListProps {
 
 const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
+  const { address: account } = useAccount();
 
   // 获取行动参与相关数据
   const { joinableActionDetails, joinedActions, isPending, error } = useJoinableActions(
     (token?.address as `0x${string}`) || '',
     currentRound ? currentRound : 0n,
-    accountAddress as `0x${string}`,
+    account as `0x${string}`,
   );
   const {
     rewardAvailable,
@@ -70,13 +70,13 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
     <div className="px-4 py-6">
       <LeftTitle title="本轮可参与的行动：" />
       <RoundLite currentRound={currentRound} roundType="act" />
-      {!accountAddress && <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>}
-      {accountAddress && isPending && (
+      {!account && <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>}
+      {account && isPending && (
         <div className="p-4 flex justify-center items-center">
           <LoadingIcon />
         </div>
       )}
-      {accountAddress && !isPending && !joinableActionDetails?.length && (
+      {account && !isPending && !joinableActionDetails?.length && (
         <div className="text-sm mt-4 text-greyscale-500 text-center">本轮暂无行动</div>
       )}
       {!isPending && joinableActionDetails && joinableActionDetails.length > 0 && (
@@ -93,7 +93,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
 
             // 根据是否已加入，设置不同的链接
             const href = isJoined
-              ? `/action/${actionDetail.action.head.id}?type=join&symbol=${token?.symbol}`
+              ? `/action/detail?id=${actionDetail.action.head.id}&type=join&symbol=${token?.symbol}`
               : `/acting/join?id=${actionDetail.action.head.id}&symbol=${token?.symbol}`;
 
             return (
@@ -102,10 +102,9 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                   <CardHeader className="px-3 pt-2 pb-1 flex-row items-baseline">
                     <span className="text-greyscale-400 text-sm">{`No.`}</span>
                     <span className="text-secondary text-xl font-bold mr-2">{String(actionDetail.action.head.id)}</span>
-                    <span className="font-bold text-greyscale-800">{`${actionDetail.action.body.action}`}</span>
+                    <span className="font-bold text-greyscale-800">{`${actionDetail.action.body.title}`}</span>
                   </CardHeader>
                   <CardContent className="px-3 pt-1 pb-2">
-                    <div className="text-greyscale-500">{actionDetail.action.body.consensus}</div>
                     <div className="flex justify-between mt-1 text-sm">
                       <span className="flex items-center">
                         <UserPen className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />
@@ -156,7 +155,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                 (Number(process.env.NEXT_PUBLIC_JOIN_END_PHASE_BLOCKS) * Number(process.env.NEXT_PUBLIC_BLOCK_TIME)) /
                   100,
               )}
-              ），关闭行动参与报名
+              ），无法参与行动报名
             </span>
           </div>
         </div>

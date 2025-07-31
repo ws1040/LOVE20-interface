@@ -6,9 +6,11 @@ export const LOVE20SubmitErrorsMap: Record<string, string> = {
   AlreadyInitialized: '已初始化，无需再次初始化',
   CannotSubmitAction: '您没有权限提交提案，请先质押获取足够代理票数',
   ActionIdNotExist: '提案ID不存在',
-  StartGreaterThanEnd: '开始时间大于结束时间',
   MinStakeZero: '最小参与代币数必须大于0',
   MaxRandomAccountsZero: '最大随机账户数量必须大于0',
+  TitleEmpty: '标题不能为空',
+  VerificationRuleEmpty: '验证规则不能为空',
+  VerificationKeyLengthExceeded: '验证密钥长度超出限制',
   AlreadySubmitted: '该提案已提交，请勿重复提交',
   OnlyOneSubmitPerRound: '每个轮次，1个地址只能提交1个行动',
 };

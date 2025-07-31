@@ -7,9 +7,8 @@ export interface ActionHead {
 export interface ActionBody {
   minStake: number;
   maxRandomAccounts: number;
-  whiteList: string[];
-  action: string;
-  consensus: string;
+  whiteListAddress: `0x${string}`;
+  title: string;
   verificationRule: string;
   verificationKeys: string[];
   verificationInfoGuides: string[];
@@ -59,14 +58,14 @@ export interface MyVerifyingAction {
 export interface VerifiedAddress {
   account: `0x${string}`;
   score: bigint;
-  minted: bigint;
-  unminted: bigint;
+  reward: bigint;
+  isMinted: boolean;
 }
 
 export interface RewardInfo {
   round: bigint;
-  minted: bigint;
-  unminted: bigint;
+  reward: bigint;
+  isMinted: boolean;
 }
 
 export interface GovData {
@@ -96,6 +95,7 @@ export interface LaunchInfo {
   launchAmount: bigint;
   startBlock: bigint;
   secondHalfStartBlock: bigint;
+  endBlock: bigint;
   hasEnded: boolean;
   participantCount: bigint;
   totalContributed: bigint;

@@ -37,7 +37,7 @@ interface MyGovernanceAssetsPanelProps {
 }
 
 const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token, enableWithdraw = false }) => {
-  const { address: accountAddress, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
 
   // Hook：获取当前轮次
   const { currentRound, isPending: isPendingCurrentRound, error: errorCurrentRound } = useCurrentRound(enableWithdraw);
@@ -51,7 +51,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     govVotes,
     isPending: isPendingAccountStakeStatus,
     error: errorAccountStakeStatus,
-  } = useAccountStakeStatus(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  } = useAccountStakeStatus(token?.address as `0x${string}`, account as `0x${string}`);
 
   // 检查输入条件
   const checkInput = () => {
@@ -72,7 +72,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     error: errAllowanceSL,
   } = useAllowance(
     token?.slTokenAddress as `0x${string}`,
-    accountAddress as `0x${string}`,
+    account as `0x${string}`,
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
     enableWithdraw,
   );
@@ -83,7 +83,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     error: errAllowanceST,
   } = useAllowance(
     token?.stTokenAddress as `0x${string}`,
-    accountAddress as `0x${string}`,
+    account as `0x${string}`,
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`,
     enableWithdraw,
   );
@@ -93,7 +93,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     validGovVotes,
     isPending: isPendingValidGovVotes,
     error: errorValidGovVotes,
-  } = useValidGovVotes((token?.address as `0x${string}`) || '', (accountAddress as `0x${string}`) || '');
+  } = useValidGovVotes((token?.address as `0x${string}`) || '', (account as `0x${string}`) || '');
 
   // 状态变量：判断各 token 是否已授权
   const [isSlTokenApproved, setIsSlTokenApproved] = useState(false);
@@ -104,14 +104,14 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     isPending: isPendingApproveST,
     isConfirming: isConfirmingApproveST,
     isConfirmed: isConfirmedApproveST,
-    error: approveSTWriteError,
+    writeError: approveSTWriteError,
     approve: approveST,
   } = useApproveST(token?.stTokenAddress as `0x${string}`);
   const {
     isPending: isPendingApproveSL,
     isConfirming: isConfirmingApproveSL,
     isConfirmed: isConfirmedApproveSL,
-    error: approveSLWriteError,
+    writeError: approveSLWriteError,
     approve: approveSL,
   } = useApproveSL(token?.slTokenAddress as `0x${string}`);
 
@@ -251,7 +251,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     errAllowanceST,
   ]);
 
-  if (!accountAddress) {
+  if (!account) {
     return <div className="text-sm mt-4 text-greyscale-500 text-center">请先连接钱包</div>;
   }
   if (!token || (enableWithdraw && isPendingCurrentRound) || isPendingAccountStakeStatus) {
@@ -277,7 +277,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
       <div className="stats w-full grid grid-cols-2 divide-x-0 ">
         <div className="stat place-items-center pt-0 pb-1 pl-1">
           <div className="stat-title text-sm">我的治理票数</div>
-          <div className="stat-value text-xl">
+          <div className="stat-value text-xl text-secondary">
             {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || 0n)}
           </div>
           <div className="stat-desc text-xs mb-2 mt-1">
@@ -287,8 +287,10 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         <div className="stat place-items-center pt-0 pb-1 pl-1">
           <div className="stat-title text-sm">我承诺的解锁期</div>
           <div className="stat-value text-lg">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingPhases || 0n} `}
-            <span className="text-sm"> 阶段</span>
+            <span className="text-secondary">
+              {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingPhases || 0n} `}
+            </span>
+            <span className="text-sm text-gray-600"> 阶段</span>
           </div>
           <div className="stat-desc text-xs mb-2 mt-1">{`${formatPhaseText(
             Number(promisedWaitingPhases || 0n),
@@ -307,7 +309,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
               tokenDecimals={token.decimals}
             />
           </div>
-          <div className="stat-value text-xl">
+          <div className="stat-value text-xl text-gray-600">
             {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || 0n)}
           </div>
           <div className="stat-desc text-xs">
@@ -326,7 +328,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
               tokenDecimals={token.decimals}
             />
           </div>
-          <div className="stat-value text-xl">
+          <div className="stat-value text-xl text-gray-600">
             {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || 0n)}
           </div>
           <div className="stat-desc text-xs">

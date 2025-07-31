@@ -20,7 +20,7 @@ export const LOVE20SubmitAbi = [
   },
   {
     "type": "function",
-    "name": "SUBMIT_MIN_PER_THOUSAND",
+    "name": "MAX_VERIFICATION_KEY_LENGTH",
     "inputs": [],
     "outputs": [
       {
@@ -33,24 +33,13 @@ export const LOVE20SubmitAbi = [
   },
   {
     "type": "function",
-    "name": "actionIdsByAuthor",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "author",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
+    "name": "SUBMIT_MIN_PER_THOUSAND",
+    "inputs": [],
     "outputs": [
       {
         "name": "",
-        "type": "uint256[]",
-        "internalType": "uint256[]"
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -114,112 +103,12 @@ export const LOVE20SubmitAbi = [
                 "internalType": "uint256"
               },
               {
-                "name": "whiteList",
-                "type": "address[]",
-                "internalType": "address[]"
-              },
-              {
-                "name": "action",
-                "type": "string",
-                "internalType": "string"
-              },
-              {
-                "name": "consensus",
-                "type": "string",
-                "internalType": "string"
-              },
-              {
-                "name": "verificationRule",
-                "type": "string",
-                "internalType": "string"
-              },
-              {
-                "name": "verificationKeys",
-                "type": "string[]",
-                "internalType": "string[]"
-              },
-              {
-                "name": "verificationInfoGuides",
-                "type": "string[]",
-                "internalType": "string[]"
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "actionInfosByIds",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "actionIds",
-        "type": "uint256[]",
-        "internalType": "uint256[]"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "tuple[]",
-        "internalType": "struct ActionInfo[]",
-        "components": [
-          {
-            "name": "head",
-            "type": "tuple",
-            "internalType": "struct ActionHead",
-            "components": [
-              {
-                "name": "id",
-                "type": "uint256",
-                "internalType": "uint256"
-              },
-              {
-                "name": "author",
+                "name": "whiteListAddress",
                 "type": "address",
                 "internalType": "address"
               },
               {
-                "name": "createAtBlock",
-                "type": "uint256",
-                "internalType": "uint256"
-              }
-            ]
-          },
-          {
-            "name": "body",
-            "type": "tuple",
-            "internalType": "struct ActionBody",
-            "components": [
-              {
-                "name": "minStake",
-                "type": "uint256",
-                "internalType": "uint256"
-              },
-              {
-                "name": "maxRandomAccounts",
-                "type": "uint256",
-                "internalType": "uint256"
-              },
-              {
-                "name": "whiteList",
-                "type": "address[]",
-                "internalType": "address[]"
-              },
-              {
-                "name": "action",
-                "type": "string",
-                "internalType": "string"
-              },
-              {
-                "name": "consensus",
+                "name": "title",
                 "type": "string",
                 "internalType": "string"
               },
@@ -247,131 +136,7 @@ export const LOVE20SubmitAbi = [
   },
   {
     "type": "function",
-    "name": "actionInfosByPage",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "start",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "end",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "reverse",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "tuple[]",
-        "internalType": "struct ActionInfo[]",
-        "components": [
-          {
-            "name": "head",
-            "type": "tuple",
-            "internalType": "struct ActionHead",
-            "components": [
-              {
-                "name": "id",
-                "type": "uint256",
-                "internalType": "uint256"
-              },
-              {
-                "name": "author",
-                "type": "address",
-                "internalType": "address"
-              },
-              {
-                "name": "createAtBlock",
-                "type": "uint256",
-                "internalType": "uint256"
-              }
-            ]
-          },
-          {
-            "name": "body",
-            "type": "tuple",
-            "internalType": "struct ActionBody",
-            "components": [
-              {
-                "name": "minStake",
-                "type": "uint256",
-                "internalType": "uint256"
-              },
-              {
-                "name": "maxRandomAccounts",
-                "type": "uint256",
-                "internalType": "uint256"
-              },
-              {
-                "name": "whiteList",
-                "type": "address[]",
-                "internalType": "address[]"
-              },
-              {
-                "name": "action",
-                "type": "string",
-                "internalType": "string"
-              },
-              {
-                "name": "consensus",
-                "type": "string",
-                "internalType": "string"
-              },
-              {
-                "name": "verificationRule",
-                "type": "string",
-                "internalType": "string"
-              },
-              {
-                "name": "verificationKeys",
-                "type": "string[]",
-                "internalType": "string[]"
-              },
-              {
-                "name": "verificationInfoGuides",
-                "type": "string[]",
-                "internalType": "string[]"
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "actionNum",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "actionSubmits",
+    "name": "actionSubmitsAtIndex",
     "inputs": [
       {
         "name": "tokenAddress",
@@ -382,13 +147,18 @@ export const LOVE20SubmitAbi = [
         "name": "round",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [
       {
         "name": "",
-        "type": "tuple[]",
-        "internalType": "struct ActionSubmitInfo[]",
+        "type": "tuple",
+        "internalType": "struct ActionSubmitInfo",
         "components": [
           {
             "name": "submitter",
@@ -407,6 +177,221 @@ export const LOVE20SubmitAbi = [
   },
   {
     "type": "function",
+    "name": "actionSubmitsCount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "actionsAtIndex",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct ActionInfo",
+        "components": [
+          {
+            "name": "head",
+            "type": "tuple",
+            "internalType": "struct ActionHead",
+            "components": [
+              {
+                "name": "id",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "author",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "createAtBlock",
+                "type": "uint256",
+                "internalType": "uint256"
+              }
+            ]
+          },
+          {
+            "name": "body",
+            "type": "tuple",
+            "internalType": "struct ActionBody",
+            "components": [
+              {
+                "name": "minStake",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "maxRandomAccounts",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "whiteListAddress",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "title",
+                "type": "string",
+                "internalType": "string"
+              },
+              {
+                "name": "verificationRule",
+                "type": "string",
+                "internalType": "string"
+              },
+              {
+                "name": "verificationKeys",
+                "type": "string[]",
+                "internalType": "string[]"
+              },
+              {
+                "name": "verificationInfoGuides",
+                "type": "string[]",
+                "internalType": "string[]"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "actionsCount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "authorActionIdsAtIndex",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "author",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "authorActionIdsCount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "author",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "canJoin",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "canSubmit",
     "inputs": [
       {
@@ -415,7 +400,7 @@ export const LOVE20SubmitAbi = [
         "internalType": "address"
       },
       {
-        "name": "accountAddress",
+        "name": "account",
         "type": "address",
         "internalType": "address"
       }
@@ -455,6 +440,11 @@ export const LOVE20SubmitAbi = [
         "name": "submitMinPerThousand",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "maxVerificationKeyLength",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [],
@@ -464,35 +454,6 @@ export const LOVE20SubmitAbi = [
     "type": "function",
     "name": "initialized",
     "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "isInWhiteList",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "actionId",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
     "outputs": [
       {
         "name": "",
@@ -609,6 +570,88 @@ export const LOVE20SubmitAbi = [
   },
   {
     "type": "function",
+    "name": "submitInfo",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct ActionSubmitInfo",
+        "components": [
+          {
+            "name": "submitter",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "actionId",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "submitInfoBySubmitter",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "submitter",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct ActionSubmitInfo",
+        "components": [
+          {
+            "name": "submitter",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "actionId",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "submitNewAction",
     "inputs": [
       {
@@ -632,17 +675,12 @@ export const LOVE20SubmitAbi = [
             "internalType": "uint256"
           },
           {
-            "name": "whiteList",
-            "type": "address[]",
-            "internalType": "address[]"
+            "name": "whiteListAddress",
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "name": "action",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "consensus",
+            "name": "title",
             "type": "string",
             "internalType": "string"
           },
@@ -686,7 +724,7 @@ export const LOVE20SubmitAbi = [
       {
         "name": "round",
         "type": "uint256",
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256"
       },
       {
@@ -698,7 +736,7 @@ export const LOVE20SubmitAbi = [
       {
         "name": "actionId",
         "type": "uint256",
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256"
       },
       {
@@ -718,17 +756,12 @@ export const LOVE20SubmitAbi = [
             "internalType": "uint256"
           },
           {
-            "name": "whiteList",
-            "type": "address[]",
-            "internalType": "address[]"
+            "name": "whiteListAddress",
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "name": "action",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "consensus",
+            "name": "title",
             "type": "string",
             "internalType": "string"
           },
@@ -765,13 +798,13 @@ export const LOVE20SubmitAbi = [
       {
         "name": "round",
         "type": "uint256",
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256"
       },
       {
         "name": "submitter",
         "type": "address",
-        "indexed": false,
+        "indexed": true,
         "internalType": "address"
       },
       {
@@ -825,7 +858,17 @@ export const LOVE20SubmitAbi = [
   },
   {
     "type": "error",
-    "name": "StartGreaterThanEnd",
+    "name": "TitleEmpty",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "VerificationKeyLengthExceeded",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "VerificationRuleEmpty",
     "inputs": []
   }
 ] as const satisfies Abi;

@@ -53,6 +53,11 @@ export const LOVE20HubAbi = [
         "internalType": "address"
       },
       {
+        "name": "stakeAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
         "name": "submitAddress_",
         "type": "address",
         "internalType": "address"
@@ -132,6 +137,73 @@ export const LOVE20HubAbi = [
       }
     ],
     "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "stakeAddress",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "stakeLiquidity",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "tokenAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "parentTokenAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "tokenAmountMin",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "parentTokenAmountMin",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "promisedWaitingPhases",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "to",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "govVotesAdded",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "slAmountAdded",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",

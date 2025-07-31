@@ -20,8 +20,8 @@ import StTokenTab from '@/src/components/Token/StTokenTab';
 
 const StakePage = () => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress } = useAccount();
-  const { balance: tokenBalance } = useBalanceOf(token?.address as `0x${string}`, accountAddress as `0x${string}`);
+  const { address: account } = useAccount();
+  const { balance: tokenBalance } = useBalanceOf(token?.address as `0x${string}`, account as `0x${string}`);
   const {
     tokenAmount: stakedSLTokenAmount,
     isPending: isPendingStakedSLTokenAmount,

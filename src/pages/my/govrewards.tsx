@@ -14,8 +14,9 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
 import { useGovRewardsByAccountByRounds } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Verify';
+import { useMintGovReward } from '@/src/hooks/contracts/useLOVE20Mint';
 import { useHandleContractError } from '@/src/lib/errorUtils';
-import { useMintGovReward, useCurrentRound } from '@/src/hooks/contracts/useLOVE20Mint';
 
 // my components
 import Header from '@/src/components/Header';
@@ -27,7 +28,7 @@ const REWARDS_PER_PAGE = 20n;
 
 const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
-  const { address: accountAddress, chain: accountChain } = useAccount();
+  const { address: account, chain: accountChain } = useAccount();
   const { currentRound, error: errorCurrentRound } = useCurrentRound();
   const [startRound, setStartRound] = useState<bigint>(0n);
   const [endRound, setEndRound] = useState<bigint>(0n);
@@ -38,10 +39,10 @@ const GovRewardsPage: React.FC = () => {
 
   useEffect(() => {
     if (currentRound && token) {
-      if (currentRound - BigInt(token.initialStakeRound) >= 0n) {
-        setEndRound(currentRound);
+      if (currentRound <= BigInt(token.initialStakeRound)) {
+        setEndRound(0n);
       } else {
-        setEndRound(BigInt(token.initialStakeRound));
+        setEndRound(BigInt(currentRound >= 1n ? currentRound - 1n : 0n));
       }
     }
   }, [currentRound, token]);
@@ -62,12 +63,7 @@ const GovRewardsPage: React.FC = () => {
     rewards,
     isPending: isLoadingRewards,
     error: errorLoadingRewards,
-  } = useGovRewardsByAccountByRounds(
-    token?.address as `0x${string}`,
-    accountAddress as `0x${string}`,
-    startRound,
-    endRound,
-  );
+  } = useGovRewardsByAccountByRounds(token?.address as `0x${string}`, account as `0x${string}`, startRound, endRound);
 
   const [rewardList, setRewardList] = useState<RewardInfo[]>([]);
   useEffect(() => {
@@ -83,13 +79,11 @@ const GovRewardsPage: React.FC = () => {
   }, [rewards]);
 
   // 铸造治理奖励
-  const { mintGovReward, isWriting, isConfirming, isConfirmed, writeError: errorMintGovReward } = useMintGovReward();
+  const { mintGovReward, isPending, isConfirming, isConfirmed, writeError: errorMintGovReward } = useMintGovReward();
   const [mintingRound, setMintingRound] = useState<bigint | null>(null);
   useEffect(() => {
     if (isConfirmed) {
-      setRewardList((prev) =>
-        prev.map((item) => (item.round === mintingRound ? { ...item, unminted: 0n, minted: item.unminted } : item)),
-      );
+      setRewardList((prev) => prev.map((item) => (item.round === mintingRound ? { ...item, isMinted: true } : item)));
     }
   }, [isConfirmed, mintingRound]);
 
@@ -97,7 +91,7 @@ const GovRewardsPage: React.FC = () => {
     if (!checkWalletConnection(accountChain)) {
       return;
     }
-    if (token?.address && accountAddress) {
+    if (token?.address && account) {
       setMintingRound(round);
       await mintGovReward(token.address, round);
     }
@@ -157,64 +151,65 @@ const GovRewardsPage: React.FC = () => {
           <div className="flex flex-col space-y-6 p-4">
             <LeftTitle title="铸造治理奖励" />
 
-            {/* 如果 rewardList 为空，则判断是否处于加载状态 */}
-            {rewardList.length === 0 ? (
+            {endRound === 0n && currentRound !== undefined ? (
+              <div className="text-center text-gray-500 py-4">当前还不能铸造奖励，请耐心等待</div>
+            ) : rewardList.length === 0 && endRound !== 0n ? (
               <div className="flex justify-center items-center">
                 {isLoadingRewards ? '' : <span className="text-sm text-gray-500">暂无数据</span>}
               </div>
             ) : (
               // 当已有部分数据时，始终展示表格
-              <table className="table w-full table-auto">
-                <thead>
-                  <tr className="border-b border-gray-100">
-                    <th>轮次</th>
-                    <th className="text-center">可铸造激励</th>
-                    <th className="text-center">结果</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rewardList.map((item) => (
-                    <tr key={item.round.toString()} className="border-b border-gray-100">
-                      <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
-                      <td className="text-center">{formatTokenAmount(item.unminted || item.minted || 0n)}</td>
-                      <td className="text-center">
-                        {item.unminted > 0n ? (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-secondary border-secondary"
-                            onClick={() => handleClaim(item.round)}
-                            disabled={isWriting || isConfirming}
-                          >
-                            铸造
-                          </Button>
-                        ) : item.minted > 0n ? (
-                          <span className="text-greyscale-500">已铸造</span>
-                        ) : (
-                          <span className="text-greyscale-500">-</span>
-                        )}
-                      </td>
+              <>
+                <table className="table w-full table-auto">
+                  <thead>
+                    <tr className="border-b border-gray-100">
+                      <th>轮次</th>
+                      <th className="text-center">可铸造激励</th>
+                      <th className="text-center">结果</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {rewardList.map((item) => (
+                      <tr key={item.round.toString()} className="border-b border-gray-100">
+                        <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
+                        <td className="text-center">{formatTokenAmount(item.reward || 0n)}</td>
+                        <td className="text-center">
+                          {item.reward > 0n && !item.isMinted ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-secondary border-secondary"
+                              onClick={() => handleClaim(item.round)}
+                              disabled={isPending || isConfirming}
+                            >
+                              铸造
+                            </Button>
+                          ) : item.isMinted ? (
+                            <span className="text-greyscale-500">已铸造</span>
+                          ) : (
+                            <span className="text-greyscale-500">-</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div ref={loadMoreRef} className="h-12 flex justify-center items-center">
+                  {isLoadingRewards ? (
+                    <LoadingIcon />
+                  ) : hasMoreRewards ? (
+                    <span className="text-sm text-gray-500">加载更多...</span>
+                  ) : startRound > token.initialStakeRound ? (
+                    <span className="text-sm text-gray-500">没有更多奖励</span>
+                  ) : (
+                    ''
+                  )}
+                </div>
+              </>
             )}
-
-            {/* 始终渲染 sentinel 元素 */}
-            <div ref={loadMoreRef} className="h-12 flex justify-center items-center">
-              {isLoadingRewards ? (
-                <LoadingIcon />
-              ) : hasMoreRewards ? (
-                <span className="text-sm text-gray-500">加载更多...</span>
-              ) : startRound > token.initialStakeRound ? (
-                <span className="text-sm text-gray-500">没有更多奖励</span>
-              ) : (
-                ''
-              )}
-            </div>
           </div>
         )}
-        <LoadingOverlay isLoading={isWriting || isConfirming} text={isWriting ? '提交交易...' : '确认交易...'} />
+        <LoadingOverlay isLoading={isPending || isConfirming} text={isPending ? '提交交易...' : '确认交易...'} />
       </main>
     </>
   );
