@@ -254,13 +254,19 @@ export const useStakeLiquidity = () => {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
+
+  const combinedError = error || confirmError;
 
   return {
     stakeLiquidity,
     writeData: hash,
     isWriting: isPending,
-    writeError: error,
+    writeError: combinedError,
     isConfirming,
     isConfirmed,
   };
@@ -311,12 +317,18 @@ export const useStakeToken = () => {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
+
+  const combinedError = error || confirmError;
 
   return {
     stakeToken,
     writeData: hash,
-    writeError: error,
+    writeError: combinedError,
     isPending,
     isConfirming,
     isConfirmed,
@@ -356,13 +368,19 @@ export const useUnstake = () => {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
+
+  const combinedError = error || confirmError;
 
   return {
     unstake,
     writeData: hash,
     isWriting: isPending,
-    writeError: error,
+    writeError: combinedError,
     isConfirming,
     isConfirmed,
   };
@@ -405,13 +423,19 @@ export const useWithdraw = () => {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
+
+  const combinedError = error || confirmError;
 
   return {
     withdraw,
     writeData: hash,
     isWriting: isPending,
-    writeError: error,
+    writeError: combinedError,
     isConfirming,
     isConfirmed,
   };

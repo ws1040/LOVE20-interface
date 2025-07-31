@@ -4,7 +4,7 @@ Decentralized web frontend of LOVE20 Protocal
 
 ## Tech Stack
 
-This is a [RainbowKit](https://rainbowkit.com) + [wagmi](https://wagmi.sh) + [Next.js](https://nextjs.org/) project bootstrapped with [`create-rainbowkit`](/packages/create-rainbowkit).
+This is a [wagmi](https://wagmi.sh) + [Next.js](https://nextjs.org/) project for LOVE20 protocol frontend.
 
 ## Getting Started
 
