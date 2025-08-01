@@ -1,8 +1,10 @@
 // hooks/contracts/useLOVE20Mint.ts
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
 import { simulateContract, writeContract } from '@wagmi/core';
+import { useUniversalTransaction } from '@/src/lib/universalTransaction';
+import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
 import { config } from '@/src/wagmi';
 
 import { LOVE20MintAbi } from '@/src/abis/LOVE20Mint';
@@ -327,151 +329,124 @@ export const useRewardReserved = (account: `0x${string}`) => {
 // =====================
 
 /**
- * Hook for mintActionReward
+ * Hook for mintActionReward (统一交易处理器版本)
+ * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useMintActionReward() {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  // 使用统一交易处理器
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20MintAbi,
+    CONTRACT_ADDRESS,
+    'mintActionReward',
+  );
 
+  // 包装mintActionReward函数，保持原有的接口
   const mintActionReward = async (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20MintAbi,
-        functionName: 'mintActionReward',
-        args: [tokenAddress, round, actionId],
-      });
-      const txHash = await writeContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20MintAbi,
-        functionName: 'mintActionReward',
-        args: [tokenAddress, round, actionId],
-      });
-      setHash(txHash);
-      return txHash;
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交mintActionReward交易:', { tokenAddress, round, actionId, isTukeMode });
+    return await execute([tokenAddress, round, actionId]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
-
-  const combinedError = error ?? confirmError;
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('mintActionReward tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交mintActionReward交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
   return {
     mintActionReward,
     isPending,
     isConfirming,
-    writeError: combinedError,
+    writeError: error,
     isConfirmed,
+    hash,
+    isTukeMode,
   };
 }
 
 /**
- * Hook for mintGovReward
+ * Hook for mintGovReward (统一交易处理器版本)
+ * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useMintGovReward() {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  // 使用统一交易处理器
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20MintAbi,
+    CONTRACT_ADDRESS,
+    'mintGovReward',
+  );
 
+  // 包装mintGovReward函数，保持原有的接口
   const mintGovReward = async (tokenAddress: `0x${string}`, round: bigint) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20MintAbi,
-        functionName: 'mintGovReward',
-        args: [tokenAddress, round],
-      });
-      const txHash = await writeContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20MintAbi,
-        functionName: 'mintGovReward',
-        args: [tokenAddress, round],
-      });
-      setHash(txHash);
-      return txHash;
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交mintGovReward交易:', { tokenAddress, round, isTukeMode });
+    return await execute([tokenAddress, round]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
-
-  const combinedError = error ?? confirmError;
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('mintGovReward tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交mintGovReward交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
   return {
     mintGovReward,
     isPending,
     isConfirming,
-    writeError: combinedError,
+    writeError: error,
     isConfirmed,
+    hash,
+    isTukeMode,
   };
 }
 
 /**
- * Hook for prepareRewardIfNeeded
+ * Hook for prepareRewardIfNeeded (统一交易处理器版本)
+ * 自动兼容TUKE钱包和其他标准钱包
  */
 export function usePrepareRewardIfNeeded() {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  // 使用统一交易处理器
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20MintAbi,
+    CONTRACT_ADDRESS,
+    'prepareRewardIfNeeded',
+  );
 
+  // 包装prepareRewardIfNeeded函数，保持原有的接口
   const prepareRewardIfNeeded = async (tokenAddress: `0x${string}`, round: bigint) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20MintAbi,
-        functionName: 'prepareRewardIfNeeded',
-        args: [tokenAddress],
-      });
-      const txHash = await writeContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20MintAbi,
-        functionName: 'prepareRewardIfNeeded',
-        args: [tokenAddress],
-      });
-      setHash(txHash);
-      return txHash;
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交prepareRewardIfNeeded交易:', { tokenAddress, round, isTukeMode });
+    return await execute([tokenAddress]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
-
-  const combinedError = error ?? confirmError;
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('prepareRewardIfNeeded tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交prepareRewardIfNeeded交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
   return {
     prepareRewardIfNeeded,
     isPending,
     isConfirming,
-    writeError: combinedError,
+    writeError: error,
     isConfirmed,
+    hash,
+    isTukeMode,
   };
 }

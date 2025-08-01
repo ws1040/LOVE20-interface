@@ -1,6 +1,8 @@
 import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
 import { simulateContract, writeContract } from '@wagmi/core';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useUniversalTransaction } from '@/src/lib/universalTransaction';
+import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
 import { config } from '@/src/wagmi';
 import { LOVE20StakeAbi } from '@/src/abis/LOVE20Stake';
 import { safeToBigInt } from '@/src/lib/clientUtils';
@@ -174,13 +176,18 @@ export const useValidGovVotes = (tokenAddress: `0x${string}`, account: `0x${stri
 // =======================
 
 /**
- * 质押流动性
+ * 质押流动性 (统一交易处理器版本)
+ * 自动兼容TUKE钱包和其他标准钱包
  */
 export const useStakeLiquidity = () => {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  // 使用统一交易处理器
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20StakeAbi,
+    CONTRACT_ADDRESS,
+    'stakeLiquidity',
+  );
 
+  // 包装stakeLiquidity函数，保持原有的接口
   const stakeLiquidity = async (
     tokenAddress: `0x${string}`,
     tokenAmountForLP: bigint,
@@ -188,109 +195,83 @@ export const useStakeLiquidity = () => {
     promisedWaitingPhases: bigint,
     to: `0x${string}`,
   ) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      // await simulateContract(config, {
-      //   abi: LOVE20StakeAbi,
-      //   address: CONTRACT_ADDRESS,
-      //   functionName: 'stakeLiquidity',
-      //   args: [tokenAddress, tokenAmountForLP, parentTokenAmountForLP, promisedWaitingPhases, to],
-      // });
-
-      const txHash = await writeContract(config, {
-        abi: LOVE20StakeAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'stakeLiquidity',
-        args: [tokenAddress, tokenAmountForLP, parentTokenAmountForLP, promisedWaitingPhases, to],
-      });
-      setHash(txHash);
-    } catch (err: any) {
-      setError(err);
-      throw err;
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交stakeLiquidity交易:', {
+      tokenAddress,
+      tokenAmountForLP,
+      parentTokenAmountForLP,
+      promisedWaitingPhases,
+      to,
+      isTukeMode,
+    });
+    return await execute([tokenAddress, tokenAmountForLP, parentTokenAmountForLP, promisedWaitingPhases, to]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
-
-  const combinedError = error ?? confirmError;
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('stakeLiquidity tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交stakeLiquidity交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
   return {
     stakeLiquidity,
-    writeData: hash,
-    isWriting: isPending,
-    writeError: combinedError,
+    isPending,
     isConfirming,
+    writeError: error,
     isConfirmed,
+    hash,
+    isTukeMode,
   };
 };
 
 /**
- * 质押代币
+ * 质押代币 (统一交易处理器版本)
+ * 自动兼容TUKE钱包和其他标准钱包
  */
 export const useStakeToken = () => {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  // 使用统一交易处理器
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20StakeAbi,
+    CONTRACT_ADDRESS,
+    'stakeToken',
+  );
 
-  /**
-   * 调用合约的 stakeToken 函数
-   * @param tokenAddress 代币地址
-   * @param tokenAmount 代币数量
-   * @param promisedWaitingPhases 预期等待轮数
-   * @param to 接收地址
-   */
+  // 包装stakeToken函数，保持原有的接口
   const stakeToken = async (
     tokenAddress: `0x${string}`,
     tokenAmount: bigint,
     promisedWaitingPhases: bigint,
     to: `0x${string}`,
   ) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        abi: LOVE20StakeAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'stakeToken',
-        args: [tokenAddress, tokenAmount, promisedWaitingPhases, to],
-      });
-      const txHash = await writeContract(config, {
-        abi: LOVE20StakeAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'stakeToken',
-        args: [tokenAddress, tokenAmount, promisedWaitingPhases, to],
-      });
-      setHash(txHash);
-    } catch (err: any) {
-      setError(err);
-      throw err;
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交stakeToken交易:', { tokenAddress, tokenAmount, promisedWaitingPhases, to, isTukeMode });
+    return await execute([tokenAddress, tokenAmount, promisedWaitingPhases, to]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
-
-  const combinedError = error ?? confirmError;
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('stakeToken tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交stakeToken交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
   return {
     stakeToken,
-    writeData: hash,
-    writeError: combinedError,
     isPending,
     isConfirming,
+    writeError: error,
     isConfirmed,
+    hash,
+    isTukeMode,
   };
 };
 

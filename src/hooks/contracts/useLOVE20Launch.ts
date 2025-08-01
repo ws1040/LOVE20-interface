@@ -1,7 +1,9 @@
 // hooks/contracts/useLOVE20Launch.ts
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
 import { simulateContract, writeContract } from '@wagmi/core';
+import { useUniversalTransaction } from '@/src/lib/universalTransaction';
+import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
 import { Address } from 'viem';
 
 import { config } from '@/src/wagmi';
@@ -244,172 +246,165 @@ export const useRemainingLaunchCount = (parentTokenAddress: `0x${string}`, accou
 // =======================
 
 /**
- * Hook for claim
+ * Hook for claim (统一交易处理器版本)
+ * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useClaim() {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  // 使用统一交易处理器
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20LaunchAbi,
+    CONTRACT_ADDRESS,
+    'claim',
+  );
 
+  // 包装claim函数，保持原有的接口
   const claim = async (tokenAddress: `0x${string}`) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        abi: LOVE20LaunchAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'claim',
-        args: [tokenAddress],
-      });
-      const txHash = await writeContract(config, {
-        abi: LOVE20LaunchAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'claim',
-        args: [tokenAddress],
-      });
-      setHash(txHash);
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交claim交易:', { tokenAddress, isTukeMode });
+    return await execute([tokenAddress]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('claim tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交claim交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
-  const combinedError = error ?? confirmError;
-
-  return { claim, writeData: hash, isPending, writeError: combinedError, isConfirming, isConfirmed };
+  return {
+    claim,
+    isPending,
+    isConfirming,
+    writeError: error,
+    isConfirmed,
+    hash,
+    isTukeMode,
+  };
 }
 
 /**
- * Hook for contribute
+ * Hook for contribute (统一交易处理器版本)
+ * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useContribute() {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  // 使用统一交易处理器
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20LaunchAbi,
+    CONTRACT_ADDRESS,
+    'contribute',
+  );
 
+  // 包装contribute函数，保持原有的接口
   const contribute = async (tokenAddress: `0x${string}`, parentTokenAmount: bigint, to: `0x${string}`) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        abi: LOVE20LaunchAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'contribute',
-        args: [tokenAddress, parentTokenAmount, to],
-      });
-      const txHash = await writeContract(config, {
-        abi: LOVE20LaunchAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'contribute',
-        args: [tokenAddress, parentTokenAmount, to],
-      });
-      setHash(txHash);
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交contribute交易:', { tokenAddress, parentTokenAmount, to, isTukeMode });
+    return await execute([tokenAddress, parentTokenAmount, to]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('contribute tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交contribute交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
-  const combinedError = error ?? confirmError;
-
-  return { contribute, writeData: hash, isPending, writeError: combinedError, isConfirming, isConfirmed };
+  return {
+    contribute,
+    isPending,
+    isConfirming,
+    writeError: error,
+    isConfirmed,
+    hash,
+    isTukeMode,
+  };
 }
 
 /**
- * Hook for withdraw
+ * Hook for withdraw (统一交易处理器版本)
+ * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useWithdraw() {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  // 使用统一交易处理器
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20LaunchAbi,
+    CONTRACT_ADDRESS,
+    'withdraw',
+  );
 
+  // 包装withdraw函数，保持原有的接口
   const withdraw = async (tokenAddress: `0x${string}`) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        abi: LOVE20LaunchAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'withdraw',
-        args: [tokenAddress],
-      });
-      const txHash = await writeContract(config, {
-        abi: LOVE20LaunchAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'withdraw',
-        args: [tokenAddress],
-      });
-      setHash(txHash);
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交withdraw交易:', { tokenAddress, isTukeMode });
+    return await execute([tokenAddress]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('withdraw tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交withdraw交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
+
+  return {
+    withdraw,
+    isPending,
+    isConfirming,
+    writeError: error,
+    isConfirmed,
     hash,
-  });
-
-  const combinedError = error ?? confirmError;
-
-  return { withdraw, writeData: hash, isPending, writeError: combinedError, isConfirming, isConfirmed };
+    isTukeMode,
+  };
 }
 
+/**
+ * Hook for launchToken (统一交易处理器版本)
+ * 自动兼容TUKE钱包和其他标准钱包
+ */
 export function useLaunchToken() {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  // 使用统一交易处理器
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20LaunchAbi,
+    CONTRACT_ADDRESS,
+    'launchToken',
+  );
 
+  // 包装launchToken函数，保持原有的接口
   const launchToken = async (symbol: string, parent: Address) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        abi: LOVE20LaunchAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'launchToken',
-        args: [symbol, parent],
-      });
-      const txHash = await writeContract(config, {
-        abi: LOVE20LaunchAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'launchToken',
-        args: [symbol, parent],
-      });
-      setHash(txHash);
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交launchToken交易:', { symbol, parent, isTukeMode });
+    return await execute([symbol, parent]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('launchToken tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交launchToken交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
-  const combinedError = error ?? confirmError;
-
-  return { launchToken, isPending, isConfirming, writeError: combinedError, isConfirmed };
+  return {
+    launchToken,
+    isPending,
+    isConfirming,
+    writeError: error,
+    isConfirmed,
+    hash,
+    isTukeMode,
+  };
 }

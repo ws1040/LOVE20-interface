@@ -1,8 +1,10 @@
 // hooks/contracts/useLOVE20Hub.ts
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWaitForTransactionReceipt } from 'wagmi';
 import { simulateContract, writeContract } from '@wagmi/core';
+import { useUniversalTransaction } from '@/src/lib/universalTransaction';
+import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
 import { config } from '@/src/wagmi';
 
 import { LOVE20HubAbi } from '@/src/abis/LOVE20Hub';
@@ -13,45 +15,43 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_HUB
 // === 写入 Hooks ===
 // =====================
 
+/**
+ * Hook for contributeWithETH (统一交易处理器版本)
+ * 自动兼容TUKE钱包和其他标准钱包
+ */
 export function useContributeWithETH() {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  // 使用统一交易处理器
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20HubAbi,
+    CONTRACT_ADDRESS,
+    'contributeWithETH',
+  );
 
+  // 包装contribute函数，保持原有的接口
   const contribute = async (tokenAddress: `0x${string}`, to: `0x${string}`, ethAmount: bigint) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20HubAbi,
-        functionName: 'contributeWithETH',
-        args: [tokenAddress, to],
-        value: ethAmount, // ETH 金额作为 value 传递
-      });
-      const txHash = await writeContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20HubAbi,
-        functionName: 'contributeWithETH',
-        args: [tokenAddress, to],
-        value: ethAmount, // ETH 金额作为 value 传递
-      });
-      setHash(txHash);
-      return txHash;
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交contributeWithETH交易:', { tokenAddress, to, ethAmount, isTukeMode });
+    return await execute([tokenAddress, to], ethAmount);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('contributeWithETH tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交contributeWithETH交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
-  const combinedError = error ?? confirmError;
-
-  return { contribute, isPending, isConfirming, writeError: combinedError, isConfirmed };
+  return {
+    contribute,
+    isPending,
+    isConfirming,
+    writeError: error,
+    isConfirmed,
+    hash,
+    isTukeMode,
+  };
 }

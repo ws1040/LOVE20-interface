@@ -5,6 +5,7 @@ import { config } from '@/src/wagmi';
 import { LOVE20SubmitAbi } from '@/src/abis/LOVE20Submit';
 import { safeToBigInt } from '@/src/lib/clientUtils';
 import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
+import { useUniversalTransaction } from '@/src/lib/universalTransaction';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_SUBMIT as `0x${string}`;
 
@@ -159,10 +160,50 @@ export const useStakeAddress = () => {
 // === 写入 Hook ===
 // =====================
 
-/**
- * Hook for submit
- */
 export function useSubmit() {
+  // 使用统一交易处理器
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20SubmitAbi,
+    CONTRACT_ADDRESS,
+    'submit',
+  );
+
+  // 包装submit函数，保持原有的接口
+  const submit = async (tokenAddress: `0x${string}`, actionId: bigint) => {
+    console.log('提交submit交易:', { tokenAddress, actionId, isTukeMode });
+    return await execute([tokenAddress, actionId]);
+  };
+
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('submit tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交submit交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+    if (isConfirmed) {
+      console.log('submit tx confirmed');
+    }
+  }, [hash, error, isConfirmed]);
+
+  return {
+    submit,
+    isPending,
+    isConfirming,
+    writeError: error,
+    isConfirmed,
+    hash,
+    isTukeMode,
+  };
+}
+
+/**
+ * Hook for submit bak
+ */
+export function useSubmit2() {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [hash, setHash] = useState<`0x${string}` | undefined>();

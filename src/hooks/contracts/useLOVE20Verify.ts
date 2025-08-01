@@ -1,8 +1,10 @@
 // hooks/contracts/useLOVE20Verify.ts
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
 import { simulateContract, writeContract } from '@wagmi/core';
+import { useUniversalTransaction } from '@/src/lib/universalTransaction';
+import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
 import { config } from '@/src/wagmi';
 
 import { LOVE20VerifyAbi } from '@/src/abis/LOVE20Verify';
@@ -212,46 +214,39 @@ export const useScoreWithReward = (account: `0x${string}`, someNumber: bigint) =
 // === 写入 Hooks ===
 // =====================
 
-/**
- * Hook for verify
- */
 export function useVerify() {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  // 使用统一交易处理器
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20VerifyAbi,
+    CONTRACT_ADDRESS,
+    'verify',
+  );
 
+  // 包装verify函数，保持原有的接口
   const verify = async (tokenAddress: `0x${string}`, actionId: bigint, abstentionScore: bigint, scores: bigint[]) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20VerifyAbi,
-        functionName: 'verify',
-        args: [tokenAddress, actionId, abstentionScore, scores],
-      });
-      const txHash = await writeContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20VerifyAbi,
-        functionName: 'verify',
-        args: [tokenAddress, actionId, abstentionScore, scores],
-      });
-      setHash(txHash);
-      return txHash;
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交verify交易:', { tokenAddress, actionId, abstentionScore, scores, isTukeMode });
+    return await execute([tokenAddress, actionId, abstentionScore, scores]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('verify tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交verify交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
-  const combinedError = error ?? confirmError;
-
-  return { verify, isPending, isConfirming, writeError: combinedError, isConfirmed };
+  return {
+    verify,
+    isPending,
+    isConfirming,
+    writeError: error,
+    isConfirmed,
+    hash,
+    isTukeMode,
+  };
 }

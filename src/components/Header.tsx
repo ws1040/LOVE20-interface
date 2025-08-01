@@ -2,13 +2,16 @@
 // src/components/Header.tsx
 
 import Head from 'next/head';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { WalletButton } from '@/src/components/WalletButton';
 import { ErrorAlert } from '@/src/components/Common/ErrorAlert';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { useAccount, useConfig } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import { useAccount } from 'wagmi';
 import { useError } from '@/src/contexts/ErrorContext';
-import { toast } from 'react-hot-toast';
+import { TokenContext } from '../contexts/TokenContext';
 
 interface HeaderProps {
   title: string;
@@ -18,7 +21,8 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
   const { address, chain } = useAccount();
   const chainName = process.env.NEXT_PUBLIC_CHAIN;
   const { setError } = useError();
-  const config = useConfig();
+  const { token } = useContext(TokenContext) || {};
+  const router = useRouter();
 
   // 记录上一次检测到的网络错误时间
   const [lastNetworkErrorTime, setLastNetworkErrorTime] = useState<number>(0);
@@ -100,15 +104,31 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
     }
   }, [address, chain, setError, chainName]);
 
+  // 返回上一页处理函数
+  const handleGoBack = () => {
+    router.back();
+  };
+
   return (
     <>
       <Head>
-        <title>{`${title} - LOVE20`}</title>
-        <meta name={`${title} - LOVE20`} content="A Web3 DApp for LOVE20 token management" />
+        <title>{`${token?.symbol}`}</title>
+        <meta name={`${title} - ${token?.symbol}`} content="A Web3 DApp for LOVE20 token management" />
       </Head>
 
       <header className="flex justify-between items-center py-2 px-4">
-        <SidebarTrigger className="-ml-1" />
+        <div className="flex items-center gap-3">
+          <SidebarTrigger className="-ml-1" />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleGoBack}
+            className="flex items-center gap-2 px-3 py-2 text-gray-700 border-gray-300 hover:bg-gray-50 hover:text-gray-900"
+            title="返回上一页"
+          >
+            <span className="text-sm font-medium">&lt;&nbsp;返回</span>
+          </Button>
+        </div>
         <WalletButton />
       </header>
 
