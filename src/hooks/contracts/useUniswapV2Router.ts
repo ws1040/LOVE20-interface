@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useReadContract, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
 import { simulateContract, writeContract } from '@wagmi/core';
 import { encodeFunctionData } from 'viem';
 
 import { config } from '@/src/wagmi';
 import { UniswapV2RouterAbi } from '@/src/abis/UniswapV2Router';
+import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_ROUTER as `0x${string}`;
 
@@ -90,9 +91,26 @@ export function useSwapExactTokensForTokens() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({ hash });
+  useEffect(() => {
+    console.log('hash:', hash);
+    if (error) {
+      console.log('error@simulateContract:');
+      logWeb3Error(error);
+      logError(error);
+    }
+    if (confirmError) {
+      console.log('error@useWaitForTransactionReceipt:');
+      deepLogError(confirmError, 'transaction-receipt-error');
+    }
+  }, [hash, error, confirmError]);
 
-  return { swap, writeData: hash, isWriting: isPending, writeError: error, isConfirming, isConfirmed };
+  const combinedError = error ?? confirmError;
+  return { swap, writeData: hash, isWriting: isPending, writeError: combinedError, isConfirming, isConfirmed };
 }
 
 /*
@@ -244,15 +262,33 @@ export function useSwapExactETHForTokensDirect() {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmError,
+  } = useWaitForTransactionReceipt({
     hash: sendData,
   });
 
+  useEffect(() => {
+    console.log('hash:', sendData);
+    if (sendError) {
+      console.log('error@sendTransaction:');
+      logWeb3Error(sendError);
+      logError(sendError);
+    }
+    if (confirmError) {
+      console.log('error@useWaitForTransactionReceipt:');
+      deepLogError(confirmError, 'transaction-receipt-error');
+    }
+  }, [sendData, sendError, confirmError]);
+
+  const combinedError = sendError ?? confirmError;
   return {
     swap,
     txHash: sendData,
     isWriting: isSending,
-    writeError: sendError,
+    writeError: combinedError,
     isConfirming,
     isConfirmed,
   };
