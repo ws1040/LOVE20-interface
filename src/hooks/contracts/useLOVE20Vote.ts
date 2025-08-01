@@ -1,7 +1,9 @@
 // hooks/contracts/useLOVE20Vote.ts
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
 import { simulateContract, writeContract } from '@wagmi/core';
+import { useUniversalTransaction } from '@/src/lib/universalTransaction';
+import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
 import { config } from '@/src/wagmi';
 
 import { LOVE20VoteAbi } from '@/src/abis/LOVE20Vote';
@@ -253,49 +255,39 @@ export const useVotesNumsByAccountByActionIds = (
 // ===== Write Hook =====
 // =======================
 
-/**
- * Hook to perform a vote transaction.
- */
 export function useVote() {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  // 使用统一交易处理器
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20VoteAbi,
+    CONTRACT_ADDRESS,
+    'vote',
+  );
 
+  // 包装vote函数，保持原有的接口
   const vote = async (tokenAddress: `0x${string}`, actionIds: bigint[], votes: bigint[]) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20VoteAbi,
-        functionName: 'vote',
-        args: [tokenAddress, actionIds, votes],
-      });
-      console.log('tokenAddress', tokenAddress);
-      console.log('actionIds', actionIds);
-      console.log('votes', votes);
-      const txHash = await writeContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: LOVE20VoteAbi,
-        functionName: 'vote',
-        args: [tokenAddress, actionIds, votes],
-      });
-      setHash(txHash);
-      return txHash;
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交vote交易:', { tokenAddress, actionIds, votes, isTukeMode });
+    return await execute([tokenAddress, actionIds, votes]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('vote tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交vote交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
-  const combinedError = error ?? confirmError;
-
-  return { vote, isPending, isConfirming, writeError: combinedError, isConfirmed };
+  return {
+    vote,
+    isPending,
+    isConfirming,
+    writeError: error,
+    isConfirmed,
+    hash,
+    isTukeMode,
+  };
 }
