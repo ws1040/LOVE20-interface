@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
 import { simulateContract, writeContract } from '@wagmi/core';
 import { config } from '@/src/wagmi';
 import { LOVE20SubmitAbi } from '@/src/abis/LOVE20Submit';
 import { safeToBigInt } from '@/src/lib/clientUtils';
+import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_SUBMIT as `0x${string}`;
 
@@ -195,9 +196,20 @@ export function useSubmit() {
     isSuccess: isConfirmed,
     error: confirmError,
   } = useWaitForTransactionReceipt({ hash });
+  useEffect(() => {
+    console.log('hash:', hash);
+    if (error) {
+      console.log('error@simulateContract:');
+      logWeb3Error(error);
+      logError(error);
+    }
+    if (confirmError) {
+      console.log('error@useWaitForTransactionReceipt:');
+      deepLogError(confirmError, 'transaction-receipt-error');
+    }
+  }, [hash, error, confirmError]);
 
   const combinedError = error ?? confirmError;
-
   return { submit, isPending, isConfirming, writeError: combinedError, isConfirmed };
 }
 
