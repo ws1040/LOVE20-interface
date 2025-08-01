@@ -294,7 +294,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   // --------------------------------------------------
   const {
     stakeLiquidity,
-    isWriting: isPendingStakeLiquidity,
+    isPending: isPendingStakeLiquidity,
     isConfirming: isConfirmingStakeLiquidity,
     isConfirmed: isConfirmedStakeLiquidity,
     writeError: errStakeLiquidity,
