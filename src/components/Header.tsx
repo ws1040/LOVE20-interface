@@ -74,6 +74,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
 
     // 使用 Promise 捕获未处理的 Promise 错误
     window.addEventListener('unhandledrejection', (event) => {
+      console.log('unhandledrejection:', event);
       handleError(event.reason);
     });
 
