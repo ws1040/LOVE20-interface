@@ -275,6 +275,7 @@ export const useUnstake = () => {
     LOVE20StakeAbi,
     CONTRACT_ADDRESS,
     'unstake',
+    { skipSimulation: true },
   );
 
   const unstake = async (tokenAddress: `0x${string}`) => {

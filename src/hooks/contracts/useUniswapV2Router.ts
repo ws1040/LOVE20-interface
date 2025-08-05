@@ -60,6 +60,7 @@ export function useSwapExactTokensForTokens() {
     UniswapV2RouterAbi,
     CONTRACT_ADDRESS,
     'swapExactTokensForTokens',
+    { skipSimulation: true },
   );
 
   const swap = async (
@@ -104,6 +105,7 @@ export function useSwapExactETHForTokens() {
     UniswapV2RouterAbi,
     CONTRACT_ADDRESS,
     'swapExactETHForTokens',
+    { skipSimulation: true },
   );
 
   const swap = async (
@@ -148,6 +150,7 @@ export function useSwapExactTokensForETH() {
     UniswapV2RouterAbi,
     CONTRACT_ADDRESS,
     'swapExactTokensForETH',
+    { skipSimulation: true },
   );
 
   const swap = async (
@@ -176,51 +179,6 @@ export function useSwapExactTokensForETH() {
   return {
     swap,
     writeData: hash,
-    isWriting: isPending,
-    writeError: error,
-    isConfirming,
-    isConfirmed,
-    isTukeMode,
-  };
-}
-
-/**
- * Hook for swapExactETHForTokensDirect (统一交易处理器版本)
- * 注意：这个函数专门用于绕过simulateContract的问题
- */
-export function useSwapExactETHForTokensDirect() {
-  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
-    UniswapV2RouterAbi,
-    CONTRACT_ADDRESS,
-    'swapExactETHForTokens',
-  );
-
-  const swap = async (
-    amountOutMin: bigint,
-    path: `0x${string}`[],
-    to: `0x${string}`,
-    deadline: bigint,
-    value: bigint,
-  ) => {
-    console.log('提交swapExactETHForTokensDirect交易:', { amountOutMin, path, to, deadline, value, isTukeMode });
-    return await execute([amountOutMin, path, to, deadline], value);
-  };
-
-  // 错误日志记录
-  useEffect(() => {
-    if (hash) {
-      console.log('swapExactETHForTokensDirect tx hash:', hash);
-    }
-    if (error) {
-      console.log('提交swapExactETHForTokensDirect交易错误:');
-      logWeb3Error(error);
-      logError(error);
-    }
-  }, [hash, error]);
-
-  return {
-    swap,
-    txHash: hash,
     isWriting: isPending,
     writeError: error,
     isConfirming,

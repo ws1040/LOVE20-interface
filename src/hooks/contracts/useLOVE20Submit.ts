@@ -206,6 +206,7 @@ export function useSubmitNewAction() {
     LOVE20SubmitAbi,
     CONTRACT_ADDRESS,
     'submitNewAction',
+    { skipSimulation: true },
   );
 
   const submitNewAction = async (
