@@ -18,7 +18,6 @@ import { Card, CardContent } from '@/components/ui/card';
 
 // my utils
 import { checkWalletConnection } from '@/src/lib/web3';
-import { extractErrorMessage } from '@/src/lib/utils';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { formatPhaseText } from '@/src/lib/domainUtils';
 

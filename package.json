@@ -86,5 +86,11 @@
     "safari >= 10",
     "ios >= 10",
     "android >= 5"
-  ]
+  ],
+  "resolutions": {
+    "@noble/curves": "1.9.4",
+    "@noble/hashes": "1.5.0",
+    "viem": "2.33.1",
+    "ox": "0.4.4"
+  }
 }
