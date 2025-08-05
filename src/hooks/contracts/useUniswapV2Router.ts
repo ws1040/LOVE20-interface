@@ -53,7 +53,7 @@ export const useGetAmountsIn = (amountOut: bigint, path: `0x${string}`[], isEnab
 // =====================
 
 /**
- * Hook for swapExactTokensForTokens (统一交易处理器版本)
+ * Hook for swapExactTokensForTokens
  */
 export function useSwapExactTokensForTokens() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
@@ -98,7 +98,7 @@ export function useSwapExactTokensForTokens() {
 }
 
 /**
- * Hook for swapExactETHForTokens (统一交易处理器版本)
+ * Hook for swapExactETHForTokens
  */
 export function useSwapExactETHForTokens() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
@@ -143,7 +143,7 @@ export function useSwapExactETHForTokens() {
 }
 
 /**
- * Hook for swapExactTokensForETH (统一交易处理器版本)
+ * Hook for swapExactTokensForETH
  */
 export function useSwapExactTokensForETH() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(

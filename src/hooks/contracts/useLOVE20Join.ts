@@ -135,7 +135,7 @@ export const useStakedAmountByAccount = (tokenAddress: `0x${string}`, account: `
  * Hook for join
  */
 /**
- * Hook for join (统一交易处理器版本)
+ * Hook for join
  */
 export function useJoin() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
@@ -181,7 +181,7 @@ export function useJoin() {
  * Hook for withdraw
  */
 /**
- * Hook for withdraw (统一交易处理器版本)
+ * Hook for withdraw
  */
 export function useWithdraw() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(

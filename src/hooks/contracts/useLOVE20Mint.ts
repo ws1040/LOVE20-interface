@@ -329,7 +329,7 @@ export const useRewardReserved = (account: `0x${string}`) => {
 // =====================
 
 /**
- * Hook for mintActionReward (统一交易处理器版本)
+ * Hook for mintActionReward
  */
 export function useMintActionReward() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
@@ -367,7 +367,7 @@ export function useMintActionReward() {
 }
 
 /**
- * Hook for mintGovReward (统一交易处理器版本)
+ * Hook for mintGovReward
  */
 export function useMintGovReward() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
@@ -405,7 +405,7 @@ export function useMintGovReward() {
 }
 
 /**
- * Hook for prepareRewardIfNeeded (统一交易处理器版本)
+ * Hook for prepareRewardIfNeeded
  */
 export function usePrepareRewardIfNeeded() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(

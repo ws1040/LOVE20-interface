@@ -1,11 +1,8 @@
 // hooks/contracts/useLOVE20Hub.ts
 
-import { useState, useEffect } from 'react';
-import { useWaitForTransactionReceipt } from 'wagmi';
-import { simulateContract, writeContract } from '@wagmi/core';
+import { useEffect } from 'react';
 import { useUniversalTransaction } from '@/src/lib/universalTransaction';
-import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
-import { config } from '@/src/wagmi';
+import { logError, logWeb3Error } from '@/src/lib/debugUtils';
 
 import { LOVE20HubAbi } from '@/src/abis/LOVE20Hub';
 
@@ -16,7 +13,7 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_HUB
 // =====================
 
 /**
- * Hook for contributeWithETH (统一交易处理器版本)
+ * Hook for contributeWithETH
  */
 export function useContributeWithETH() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
