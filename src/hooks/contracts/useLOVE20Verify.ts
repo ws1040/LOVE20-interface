@@ -215,14 +215,12 @@ export const useScoreWithReward = (account: `0x${string}`, someNumber: bigint) =
 // =====================
 
 export function useVerify() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20VerifyAbi,
     CONTRACT_ADDRESS,
     'verify',
   );
 
-  // 包装verify函数，保持原有的接口
   const verify = async (tokenAddress: `0x${string}`, actionId: bigint, abstentionScore: bigint, scores: bigint[]) => {
     console.log('提交verify交易:', { tokenAddress, actionId, abstentionScore, scores, isTukeMode });
     return await execute([tokenAddress, actionId, abstentionScore, scores]);

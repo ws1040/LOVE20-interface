@@ -177,17 +177,15 @@ export const useValidGovVotes = (tokenAddress: `0x${string}`, account: `0x${stri
 
 /**
  * 质押流动性 (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export const useStakeLiquidity = () => {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20StakeAbi,
     CONTRACT_ADDRESS,
     'stakeLiquidity',
+    { skipSimulation: true },
   );
 
-  // 包装stakeLiquidity函数，保持原有的接口
   const stakeLiquidity = async (
     tokenAddress: `0x${string}`,
     tokenAmountForLP: bigint,
@@ -229,19 +227,13 @@ export const useStakeLiquidity = () => {
   };
 };
 
-/**
- * 质押代币 (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
- */
 export const useStakeToken = () => {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20StakeAbi,
     CONTRACT_ADDRESS,
     'stakeToken',
   );
 
-  // 包装stakeToken函数，保持原有的接口
   const stakeToken = async (
     tokenAddress: `0x${string}`,
     tokenAmount: bigint,
@@ -276,107 +268,83 @@ export const useStakeToken = () => {
 };
 
 /**
- * 取消质押
+ * 取消质押 (统一交易处理器版本)
  */
 export const useUnstake = () => {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20StakeAbi,
+    CONTRACT_ADDRESS,
+    'unstake',
+  );
 
   const unstake = async (tokenAddress: `0x${string}`) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        abi: LOVE20StakeAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'unstake',
-        args: [tokenAddress],
-      });
-      const txHash = await writeContract(config, {
-        abi: LOVE20StakeAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'unstake',
-        args: [tokenAddress],
-      });
-      setHash(txHash);
-    } catch (err: any) {
-      setError(err);
-      throw err;
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交unstake交易:', { tokenAddress, isTukeMode });
+    return await execute([tokenAddress]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
-
-  const combinedError = error ?? confirmError;
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('unstake tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交unstake交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
   return {
     unstake,
     writeData: hash,
     isWriting: isPending,
-    writeError: combinedError,
+    writeError: error,
     isConfirming,
     isConfirmed,
+    hash,
+    isTukeMode,
   };
 };
 
 /**
- * 提款
+ * 提款 (统一交易处理器版本)
  */
 export const useWithdraw = () => {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20StakeAbi,
+    CONTRACT_ADDRESS,
+    'withdraw',
+  );
 
   /**
    * 调用合约的 withdraw 函数
    * @param tokenAddress 代币地址
    */
   const withdraw = async (tokenAddress: `0x${string}`) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        abi: LOVE20StakeAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'withdraw',
-        args: [tokenAddress],
-      });
-      const txHash = await writeContract(config, {
-        abi: LOVE20StakeAbi,
-        address: CONTRACT_ADDRESS,
-        functionName: 'withdraw',
-        args: [tokenAddress],
-      });
-      setHash(txHash);
-    } catch (err: any) {
-      setError(err);
-      throw err;
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交withdraw交易:', { tokenAddress, isTukeMode });
+    return await execute([tokenAddress]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
-
-  const combinedError = error ?? confirmError;
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('withdraw tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交withdraw交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
   return {
     withdraw,
     writeData: hash,
     isWriting: isPending,
-    writeError: combinedError,
+    writeError: error,
     isConfirming,
     isConfirmed,
+    hash,
+    isTukeMode,
   };
 };

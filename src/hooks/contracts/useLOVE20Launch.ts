@@ -247,17 +247,14 @@ export const useRemainingLaunchCount = (parentTokenAddress: `0x${string}`, accou
 
 /**
  * Hook for claim (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useClaim() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20LaunchAbi,
     CONTRACT_ADDRESS,
     'claim',
   );
 
-  // 包装claim函数，保持原有的接口
   const claim = async (tokenAddress: `0x${string}`) => {
     console.log('提交claim交易:', { tokenAddress, isTukeMode });
     return await execute([tokenAddress]);
@@ -288,17 +285,14 @@ export function useClaim() {
 
 /**
  * Hook for contribute (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useContribute() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20LaunchAbi,
     CONTRACT_ADDRESS,
     'contribute',
   );
 
-  // 包装contribute函数，保持原有的接口
   const contribute = async (tokenAddress: `0x${string}`, parentTokenAmount: bigint, to: `0x${string}`) => {
     console.log('提交contribute交易:', { tokenAddress, parentTokenAmount, to, isTukeMode });
     return await execute([tokenAddress, parentTokenAmount, to]);
@@ -329,17 +323,14 @@ export function useContribute() {
 
 /**
  * Hook for withdraw (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useWithdraw() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20LaunchAbi,
     CONTRACT_ADDRESS,
     'withdraw',
   );
 
-  // 包装withdraw函数，保持原有的接口
   const withdraw = async (tokenAddress: `0x${string}`) => {
     console.log('提交withdraw交易:', { tokenAddress, isTukeMode });
     return await execute([tokenAddress]);
@@ -370,17 +361,14 @@ export function useWithdraw() {
 
 /**
  * Hook for launchToken (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useLaunchToken() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20LaunchAbi,
     CONTRACT_ADDRESS,
     'launchToken',
   );
 
-  // 包装launchToken函数，保持原有的接口
   const launchToken = async (symbol: string, parent: Address) => {
     console.log('提交launchToken交易:', { symbol, parent, isTukeMode });
     return await execute([symbol, parent]);

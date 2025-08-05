@@ -119,7 +119,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
       <header className="flex justify-between items-center py-2 px-4">
         <div className="flex items-center gap-3">
           <SidebarTrigger className="-ml-1" />
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
             onClick={handleGoBack}
@@ -127,7 +127,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
             title="返回上一页"
           >
             <span className="text-sm font-medium">&lt;&nbsp;返回</span>
-          </Button>
+          </Button> */}
         </div>
         <WalletButton />
       </header>

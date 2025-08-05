@@ -256,14 +256,12 @@ export const useVotesNumsByAccountByActionIds = (
 // =======================
 
 export function useVote() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20VoteAbi,
     CONTRACT_ADDRESS,
     'vote',
   );
 
-  // 包装vote函数，保持原有的接口
   const vote = async (tokenAddress: `0x${string}`, actionIds: bigint[], votes: bigint[]) => {
     console.log('提交vote交易:', { tokenAddress, actionIds, votes, isTukeMode });
     return await execute([tokenAddress, actionIds, votes]);

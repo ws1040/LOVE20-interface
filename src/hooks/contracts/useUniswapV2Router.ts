@@ -54,17 +54,14 @@ export const useGetAmountsIn = (amountOut: bigint, path: `0x${string}`[], isEnab
 
 /**
  * Hook for swapExactTokensForTokens (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useSwapExactTokensForTokens() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     UniswapV2RouterAbi,
     CONTRACT_ADDRESS,
     'swapExactTokensForTokens',
   );
 
-  // 包装swap函数，保持原有的接口
   const swap = async (
     amountIn: bigint,
     amountOutMin: bigint,
@@ -101,17 +98,14 @@ export function useSwapExactTokensForTokens() {
 
 /**
  * Hook for swapExactETHForTokens (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useSwapExactETHForTokens() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     UniswapV2RouterAbi,
     CONTRACT_ADDRESS,
     'swapExactETHForTokens',
   );
 
-  // 包装swap函数，保持原有的接口
   const swap = async (
     amountOutMin: bigint,
     path: `0x${string}`[],
@@ -148,17 +142,14 @@ export function useSwapExactETHForTokens() {
 
 /**
  * Hook for swapExactTokensForETH (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useSwapExactTokensForETH() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     UniswapV2RouterAbi,
     CONTRACT_ADDRESS,
     'swapExactTokensForETH',
   );
 
-  // 包装swap函数，保持原有的接口
   const swap = async (
     amountIn: bigint,
     amountOutMin: bigint,
@@ -195,18 +186,15 @@ export function useSwapExactTokensForETH() {
 
 /**
  * Hook for swapExactETHForTokensDirect (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  * 注意：这个函数专门用于绕过simulateContract的问题
  */
 export function useSwapExactETHForTokensDirect() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     UniswapV2RouterAbi,
     CONTRACT_ADDRESS,
     'swapExactETHForTokens',
   );
 
-  // 包装swap函数，保持原有的接口
   const swap = async (
     amountOutMin: bigint,
     path: `0x${string}`[],
