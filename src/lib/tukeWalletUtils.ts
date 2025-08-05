@@ -34,8 +34,12 @@ export const sendTransactionForTuke = async (
   functionName: string,
   args: any[] = [],
   value?: bigint,
+  options?: {
+    skipSimulation?: boolean; // 允许跳过模拟调用
+  },
 ) => {
   try {
+    console.log('🚀 TUKE钱包交易开始');
     console.log('address:', address);
     console.log('functionName:', functionName);
     console.log('args:', args);
@@ -63,29 +67,51 @@ export const sendTransactionForTuke = async (
       console.log('添加value:', overrides.value.toString());
     }
 
-    // try {
-    //   // 尝试手动设置gas限制
-    //   overrides.gasLimit = ethers.BigNumber.from('1000000'); // 100万gas，通常足够
-    //   overrides.gasPrice = await provider.getGasPrice();
-    //   console.log('手动设置gas:', {
-    //     gasLimit: overrides.gasLimit.toString(),
-    //     gasPrice: overrides.gasPrice.toString(),
-    //   });
-    // } catch (gasError) {
-    //   console.warn('获取gas价格失败，使用默认值:', gasError);
-    //   overrides.gasLimit = ethers.BigNumber.from('1000000');
-    // }
+    // 🔍 步骤1: 模拟调用（除非显式跳过）
+    if (!options?.skipSimulation) {
+      console.log('🔍 步骤1: 执行模拟调用验证交易...');
 
-    // 发送交易
-    console.log('发送交易请求...');
+      try {
+        // 使用callStatic进行模拟调用
+        const simulationResult = await contract.callStatic[functionName](...ethersArgs, overrides);
+        console.log('✅ 模拟调用成功，交易预期会成功');
+        console.log('📋 模拟结果:', simulationResult);
+
+        // 可以根据模拟结果做一些额外的验证或提示
+        if (simulationResult !== undefined) {
+          console.log('🎯 模拟调用返回值:', simulationResult);
+        }
+      } catch (simulationError: any) {
+        console.error('❌ 模拟调用失败，交易可能会失败:');
+        console.error('模拟错误:', simulationError);
+
+        // 分析模拟错误并提供更友好的错误信息
+        let errorMessage = '交易模拟失败';
+        if (simulationError.message) {
+          errorMessage += `: ${simulationError.message}`;
+        }
+        if (simulationError.reason) {
+          errorMessage += ` (原因: ${simulationError.reason})`;
+        }
+
+        // 抛出模拟错误，阻止实际交易
+        throw new Error(errorMessage);
+      }
+    } else {
+      console.log('⚠️ 跳过模拟调用（根据选项设置）');
+    }
+
+    // 📤 步骤2: 发送真实交易
+    console.log('📤 步骤2: 发送真实交易...');
     console.log(`调用: contract.${functionName}(...args, overrides)`);
     const tx = await contract[functionName](...ethersArgs, overrides);
+    console.log('✅ 交易已发送!');
     console.log('tx:', tx);
     console.log('tx.hash:', tx.hash);
 
     return tx.hash as `0x${string}`;
   } catch (error: any) {
-    console.error('TUKE ethers交易发送失败:');
+    console.error('❌ TUKE ethers交易失败:');
     console.error('错误类型:', typeof error);
     console.error('错误对象:', error);
 

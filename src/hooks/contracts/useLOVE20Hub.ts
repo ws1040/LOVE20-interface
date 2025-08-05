@@ -17,17 +17,14 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_HUB
 
 /**
  * Hook for contributeWithETH (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useContributeWithETH() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20HubAbi,
     CONTRACT_ADDRESS,
     'contributeWithETH',
   );
 
-  // 包装contribute函数，保持原有的接口
   const contribute = async (tokenAddress: `0x${string}`, to: `0x${string}`, ethAmount: bigint) => {
     console.log('提交contributeWithETH交易:', { tokenAddress, to, ethAmount, isTukeMode });
     return await execute([tokenAddress, to], ethAmount);

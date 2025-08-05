@@ -330,17 +330,14 @@ export const useRewardReserved = (account: `0x${string}`) => {
 
 /**
  * Hook for mintActionReward (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useMintActionReward() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20MintAbi,
     CONTRACT_ADDRESS,
     'mintActionReward',
   );
 
-  // 包装mintActionReward函数，保持原有的接口
   const mintActionReward = async (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
     console.log('提交mintActionReward交易:', { tokenAddress, round, actionId, isTukeMode });
     return await execute([tokenAddress, round, actionId]);
@@ -371,17 +368,14 @@ export function useMintActionReward() {
 
 /**
  * Hook for mintGovReward (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useMintGovReward() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20MintAbi,
     CONTRACT_ADDRESS,
     'mintGovReward',
   );
 
-  // 包装mintGovReward函数，保持原有的接口
   const mintGovReward = async (tokenAddress: `0x${string}`, round: bigint) => {
     console.log('提交mintGovReward交易:', { tokenAddress, round, isTukeMode });
     return await execute([tokenAddress, round]);
@@ -412,17 +406,14 @@ export function useMintGovReward() {
 
 /**
  * Hook for prepareRewardIfNeeded (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export function usePrepareRewardIfNeeded() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20MintAbi,
     CONTRACT_ADDRESS,
     'prepareRewardIfNeeded',
   );
 
-  // 包装prepareRewardIfNeeded函数，保持原有的接口
   const prepareRewardIfNeeded = async (tokenAddress: `0x${string}`, round: bigint) => {
     console.log('提交prepareRewardIfNeeded交易:', { tokenAddress, round, isTukeMode });
     return await execute([tokenAddress]);

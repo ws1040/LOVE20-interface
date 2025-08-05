@@ -136,17 +136,14 @@ export const useStakedAmountByAccount = (tokenAddress: `0x${string}`, account: `
  */
 /**
  * Hook for join (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useJoin() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20JoinAbi,
     CONTRACT_ADDRESS,
     'join',
   );
 
-  // 包装join函数，保持原有的接口
   const join = async (
     tokenAddress: `0x${string}`,
     actionId: bigint,
@@ -185,17 +182,14 @@ export function useJoin() {
  */
 /**
  * Hook for withdraw (统一交易处理器版本)
- * 自动兼容TUKE钱包和其他标准钱包
  */
 export function useWithdraw() {
-  // 使用统一交易处理器
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20JoinAbi,
     CONTRACT_ADDRESS,
     'withdraw',
   );
 
-  // 包装withdraw函数，保持原有的接口
   const withdraw = async (tokenAddress: `0x${string}`, actionId: bigint) => {
     console.log('提交withdraw交易:', { tokenAddress, actionId, isTukeMode });
     return await execute([tokenAddress, actionId]);

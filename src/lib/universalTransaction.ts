@@ -15,22 +15,27 @@ export const sendUniversalTransaction = async (
   functionName: string,
   args: any[] = [],
   value?: bigint,
+  options?: {
+    skipSimulation?: boolean; // 跳过模拟调用
+  },
 ) => {
   if (isTukeWallet()) {
     // TUKE钱包模式：使用ethers.js直接发送
     console.log('使用TUKE钱包模式发送交易');
-    return await sendTransactionForTuke(abi, address, functionName, args, value);
+    return await sendTransactionForTuke(abi, address, functionName, args, value, options);
   } else {
     // 标准钱包模式：simulate + write
     console.log('使用标准钱包模式发送交易');
 
-    await simulateContract(config, {
-      address,
-      abi,
-      functionName,
-      args,
-      value,
-    });
+    if (!options?.skipSimulation) {
+      await simulateContract(config, {
+        address,
+        abi,
+        functionName,
+        args,
+        value,
+      });
+    }
 
     return await writeContract(config, {
       address,
@@ -46,7 +51,14 @@ export const sendUniversalTransaction = async (
  * 统一的交易处理Hook
  * 封装交易发送和确认逻辑
  */
-export function useUniversalTransaction(abi: readonly any[], address: `0x${string}`, functionName: string) {
+export function useUniversalTransaction(
+  abi: readonly any[],
+  address: `0x${string}`,
+  functionName: string,
+  options?: {
+    skipSimulation?: boolean; // 跳过模拟调用
+  },
+) {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [hash, setHash] = useState<`0x${string}` | undefined>();
@@ -73,7 +85,7 @@ export function useUniversalTransaction(abi: readonly any[], address: `0x${strin
 
     try {
       console.log(`发送交易: ${functionName}`, { args, value });
-      const txHash = await sendUniversalTransaction(abi, address, functionName, args, value);
+      const txHash = await sendUniversalTransaction(abi, address, functionName, args, value, options);
       setIsPending(false);
 
       console.log('交易发送成功:', txHash);
