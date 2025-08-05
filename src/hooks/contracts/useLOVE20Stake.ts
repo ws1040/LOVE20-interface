@@ -176,7 +176,7 @@ export const useValidGovVotes = (tokenAddress: `0x${string}`, account: `0x${stri
 // =======================
 
 /**
- * 质押流动性 (统一交易处理器版本)
+ * 质押流动性
  */
 export const useStakeLiquidity = () => {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
@@ -268,7 +268,7 @@ export const useStakeToken = () => {
 };
 
 /**
- * 取消质押 (统一交易处理器版本)
+ * 取消质押
  */
 export const useUnstake = () => {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
@@ -308,13 +308,14 @@ export const useUnstake = () => {
 };
 
 /**
- * 提款 (统一交易处理器版本)
+ * 提款
  */
 export const useWithdraw = () => {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20StakeAbi,
     CONTRACT_ADDRESS,
     'withdraw',
+    { skipSimulation: true },
   );
 
   /**

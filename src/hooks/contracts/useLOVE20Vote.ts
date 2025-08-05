@@ -232,25 +232,6 @@ export const useVotesNumsByAccount = (tokenAddress: `0x${string}`, round: bigint
   };
 };
 
-/**
- * Hook to get the number of votes by account and multiple action IDs.
- */
-export const useVotesNumsByAccountByActionIds = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  account: `0x${string}`,
-  actionIds: bigint[],
-) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VoteAbi,
-    functionName: 'votesNumsByAccountByActionIds',
-    args: [tokenAddress, round, account, actionIds],
-  });
-
-  return { votesNumsByAccountByActionIds: data ? (data as any[]).map(safeToBigInt) : undefined, isPending, error };
-};
-
 // =======================
 // ===== Write Hook =====
 // =======================

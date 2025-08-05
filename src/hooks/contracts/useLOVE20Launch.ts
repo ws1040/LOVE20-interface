@@ -246,7 +246,7 @@ export const useRemainingLaunchCount = (parentTokenAddress: `0x${string}`, accou
 // =======================
 
 /**
- * Hook for claim (统一交易处理器版本)
+ * Hook for claim
  */
 export function useClaim() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
@@ -284,7 +284,7 @@ export function useClaim() {
 }
 
 /**
- * Hook for contribute (统一交易处理器版本)
+ * Hook for contribute
  */
 export function useContribute() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
@@ -322,7 +322,7 @@ export function useContribute() {
 }
 
 /**
- * Hook for withdraw (统一交易处理器版本)
+ * Hook for withdraw
  */
 export function useWithdraw() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
@@ -360,7 +360,7 @@ export function useWithdraw() {
 }
 
 /**
- * Hook for launchToken (统一交易处理器版本)
+ * Hook for launchToken
  */
 export function useLaunchToken() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
