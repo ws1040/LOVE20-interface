@@ -25,7 +25,7 @@ import {
   useGetAmountsOut,
   useSwapExactTokensForTokens,
   useSwapExactETHForTokens,
-  useSwapExactETHForTokensDirect,
+  // useSwapExactETHForTokensDirect,
   useSwapExactTokensForETH,
 } from '@/src/hooks/contracts/useUniswapV2Router';
 import { useDeposit, useWithdraw } from '@/src/hooks/contracts/useWETH';
@@ -633,16 +633,6 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
     writeError: errETHToToken,
   } = useSwapExactETHForTokens();
 
-  // 添加直接交易 hook 作为备用方案
-  const {
-    swap: swapETHForTokensDirect,
-    isWriting: isPendingETHToTokenDirect,
-    isConfirming: isConfirmingETHToTokenDirect,
-    isConfirmed: isConfirmedETHToTokenDirect,
-    writeError: errETHToTokenDirect,
-    txHash: directTxHash,
-  } = useSwapExactETHForTokensDirect();
-
   const {
     swap: swapTokensForETH,
     isWriting: isPendingTokenToETH,
@@ -662,8 +652,6 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
     isConfirmingTokenToToken ||
     isPendingETHToToken ||
     isConfirmingETHToToken ||
-    isPendingETHToTokenDirect ||
-    isConfirmingETHToTokenDirect ||
     isPendingTokenToETH ||
     isConfirmingTokenToETH;
   const isSwapConfirmed =
@@ -671,7 +659,6 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
     isConfirmedWithdraw ||
     isConfirmedTokenToToken ||
     isConfirmedETHToToken ||
-    isConfirmedETHToTokenDirect ||
     isConfirmedTokenToETH;
 
   // 禁用状态
@@ -701,6 +688,13 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
       toast.error(error?.message || '授权失败');
     }
   });
+
+  // 监听授权成功
+  useEffect(() => {
+    if (isConfirmedApprove) {
+      toast.success(`授权${fromToken.symbol}成功`);
+    }
+  }, [isConfirmedApprove, fromToken.symbol]);
 
   // 处理交换
   const handleSwap = form.handleSubmit(async () => {
@@ -773,28 +767,20 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
           });
 
           try {
-            // 首先尝试使用直接交易方式，绕过 simulateContract
-            await swapETHForTokensDirect(minAmountOut, swapPath, account as `0x${string}`, deadline, fromAmount);
-            console.log('✅ 直接交易模式成功');
-          } catch (directError: any) {
-            console.warn('⚠️ 直接交易模式失败，尝试标准模式:', directError.message);
+            await swapETHForTokens(minAmountOut, swapPath, account as `0x${string}`, deadline, fromAmount);
+            console.log('✅ 标准交易模式成功');
+          } catch (standardError: any) {
+            console.error('❌ 所有交易模式都失败了');
 
-            // 如果直接交易也失败，尝试标准模式
-            try {
-              await swapETHForTokens(minAmountOut, swapPath, account as `0x${string}`, deadline, fromAmount);
-              console.log('✅ 标准交易模式成功');
-            } catch (standardError: any) {
-              console.error('❌ 所有交易模式都失败了');
-
-              // 如果是已知的 position out of bounds 错误，给出特殊提示
-              if (standardError.message?.includes('Position') && standardError.message?.includes('out of bounds')) {
-                toast.error('检测到 viem 库的已知解析问题，但交易本身应该是有效的。请直接在钱包中确认交易。');
-                console.warn('💡 建议: 这是前端库的问题，合约功能正常');
-              } else {
-                throw standardError; // 抛出其他未知错误
-              }
-            }
+            // // 如果是已知的 position out of bounds 错误，给出特殊提示
+            // if (standardError.message?.includes('Position') && standardError.message?.includes('out of bounds')) {
+            //   toast.error('检测到 viem 库的已知解析问题，但交易本身应该是有效的。请直接在钱包中确认交易。');
+            //   console.warn('💡 建议: 这是前端库的问题，合约功能正常');
+            // } else {
+            //   throw standardError; // 抛出其他未知错误
+            // }
           }
+
           break;
 
         case 'UniswapV2_TOKEN_TO_ETH':
@@ -868,7 +854,6 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
       errWithdraw,
       errTokenToToken,
       errETHToToken,
-      errETHToTokenDirect,
       errTokenToETH,
       amountsOutError,
     ];
@@ -877,16 +862,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
         handleContractError(error, 'swap');
       }
     });
-  }, [
-    errApprove,
-    errDeposit,
-    errWithdraw,
-    errTokenToToken,
-    errETHToToken,
-    errETHToTokenDirect,
-    errTokenToETH,
-    amountsOutError,
-  ]);
+  }, [errApprove, errDeposit, errWithdraw, errTokenToToken, errETHToToken, errTokenToETH, amountsOutError]);
 
   // --------------------------------------------------
   // 9. 加载状态
@@ -1171,7 +1147,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
         )}
       </div>
 
-      <LoadingOverlay isLoading={isLoadingOverlay} text={isApproving ? '授权中...' : '交换中...'} />
+      <LoadingOverlay isLoading={isLoadingOverlay} text={isApproving ? '授权中...' : '兑换中...'} />
     </div>
   );
 };

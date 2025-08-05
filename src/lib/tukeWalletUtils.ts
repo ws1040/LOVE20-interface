@@ -64,26 +64,18 @@ export const sendTransactionForTuke = async (
     const overrides: any = {};
     if (value && value > 0n) {
       overrides.value = ethers.BigNumber.from(value.toString());
-      console.log('添加value:', overrides.value.toString());
     }
 
-    // 🔍 步骤1: 模拟调用（除非显式跳过）
+    // 🔍 步骤1: 模拟调用
     if (!options?.skipSimulation) {
-      console.log('🔍 步骤1: 执行模拟调用验证交易...');
+      console.log('步骤1: 执行模拟调用验证交易...');
 
       try {
         // 使用callStatic进行模拟调用
         const simulationResult = await contract.callStatic[functionName](...ethersArgs, overrides);
-        console.log('✅ 模拟调用成功，交易预期会成功');
-        console.log('📋 模拟结果:', simulationResult);
-
-        // 可以根据模拟结果做一些额外的验证或提示
-        if (simulationResult !== undefined) {
-          console.log('🎯 模拟调用返回值:', simulationResult);
-        }
+        console.log('模拟结果:', simulationResult);
       } catch (simulationError: any) {
-        console.error('❌ 模拟调用失败，交易可能会失败:');
-        console.error('模拟错误:', simulationError);
+        console.error('❌ 模拟错误:', simulationError);
 
         // 分析模拟错误并提供更友好的错误信息
         let errorMessage = '交易模拟失败';
@@ -102,7 +94,7 @@ export const sendTransactionForTuke = async (
     }
 
     // 📤 步骤2: 发送真实交易
-    console.log('📤 步骤2: 发送真实交易...');
+    console.log('步骤2: 发送真实交易...');
     console.log(`调用: contract.${functionName}(...args, overrides)`);
     const tx = await contract[functionName](...ethersArgs, overrides);
     console.log('✅ 交易已发送!');
