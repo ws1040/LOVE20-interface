@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react';
 import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
-import { useGovData } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useGovData } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { useAccount } from 'wagmi';
 

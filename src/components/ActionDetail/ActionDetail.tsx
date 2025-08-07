@@ -4,15 +4,14 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 // my hooks
-import { useActionInfo } from '@/src/hooks/contracts/useLOVE20Submit';
-import { useActionSubmits } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useActionInfo, useSubmitInfo } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my types & funcs
-import { ActionInfo, ActionSubmit } from '@/src/types/love20types';
+import { ActionInfo } from '@/src/types/love20types';
 import { formatTokenAmount } from '@/src/lib/format';
 import { LinkIfUrl } from '@/src/lib/stringUtils';
 
@@ -52,14 +51,13 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
 
   // 发起提案者
   const {
-    actionSubmits,
-    isPending: isPendingActionSubmits,
-    error: errorActionSubmits,
-  } = useActionSubmits(token?.address as `0x${string}`, showSubmitter ? round : 0n);
+    submitInfo,
+    isPending: isPendingSubmitInfo,
+    error: errorSubmitInfo,
+  } = useSubmitInfo(token?.address as `0x${string}`, showSubmitter ? round : 0n, actionId);
 
   // 找到当前动作的提交者
-  const submitter =
-    actionSubmits?.find((submit: ActionSubmit) => submit.actionId == Number(actionId))?.submitter || 'N/A';
+  const submitter = submitInfo?.submitter || 'N/A';
 
   // 错误提示
   const { handleContractError } = useHandleContractError();
@@ -67,10 +65,10 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
     if (errorActionInfo) {
       handleContractError(errorActionInfo, 'submit');
     }
-    if (errorActionSubmits) {
-      handleContractError(errorActionSubmits, 'submit');
+    if (errorSubmitInfo) {
+      handleContractError(errorSubmitInfo, 'submit');
     }
-  }, [errorActionInfo, errorActionSubmits]);
+  }, [errorActionInfo, errorSubmitInfo]);
 
   if (isPendingActionInfo) {
     return <LoadingIcon />;
@@ -100,11 +98,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
           {showSubmitter && (
             <div className="flex items-center">
               推举人{' '}
-              {isPendingActionSubmits ? (
-                <LoadingIcon />
-              ) : (
-                <AddressWithCopyButton address={submitter as `0x${string}`} />
-              )}
+              {isPendingSubmitInfo ? <LoadingIcon /> : <AddressWithCopyButton address={submitter as `0x${string}`} />}
             </div>
           )}
         </div>

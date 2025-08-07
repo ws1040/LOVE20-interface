@@ -1,14 +1,15 @@
 'use client';
 import { useRouter } from 'next/router';
 import { ChevronRight, UserPen } from 'lucide-react';
+import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
 import React, { useContext, useEffect } from 'react';
 
 // my hooks
-import { ActionInfo, ActionSubmit } from '@/src/types/love20types';
-import { useActionSubmits, useActionInfosByIds, useVotesNums } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { VotingAction } from '@/src/types/love20types';
+import { useVotingActions } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -27,61 +28,30 @@ interface VotingActionListProps {
 }
 
 const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => {
+  const { address: account } = useAccount();
   const { token } = useContext(TokenContext) || {};
   const router = useRouter();
 
-  // 投票数
-  const {
-    votes,
-    actionIds: votesActionIds,
-    isPending: isPendingVotesNums,
-    error: errorVotesNums,
-  } = useVotesNums((token?.address as `0x${string}`) || '', currentRound);
-
-  // 推举信息
-  const {
-    actionSubmits,
-    isPending: isPendingActionSubmits,
-    error: errorActionSubmits,
-  } = useActionSubmits((token?.address as `0x${string}`) || '', currentRound);
-
-  // 行动详情
-  const actionIds = actionSubmits?.map((actionSubmit: ActionSubmit) => BigInt(actionSubmit.actionId)) || [];
-  const uniqueActionIds = Array.from(new Set(actionIds)).sort((a, b) => Number(a) - Number(b)); //从小到大排列
-  const {
-    actionInfos,
-    isPending: isPendingActionInfosByIds,
-    error: errorActionInfosByIds,
-  } = useActionInfosByIds((token?.address as `0x${string}`) || '', uniqueActionIds);
-  console.log('actionInfos', actionInfos);
-
-  // 创建一个根据actionId获取投票数的函数
-  const getVotesByActionId = (actionId: bigint): bigint => {
-    if (!votesActionIds || !votes) return 0n;
-    const index = votesActionIds.findIndex((id) => id === actionId);
-    return index !== -1 ? votes[index] : 0n;
-  };
+  // 获取所有投票中的行动
+  const { votingActions, isPending, error } = useVotingActions(
+    (token?.address as `0x${string}`) || '',
+    currentRound,
+    account as `0x${string}`,
+  );
 
   // 计算投票总数： 累计
-  const totalVotes = votes?.reduce((acc, vote) => acc + vote, 0n) || 0n;
+  const totalVotes = votingActions.reduce((acc, votingAction) => acc + votingAction.votesNum, 0n);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
-    if (errorVotesNums) {
-      handleContractError(errorVotesNums, 'vote');
+    if (error) {
+      handleContractError(error, 'vote');
     }
-    if (errorActionInfosByIds) {
-      handleContractError(errorActionInfosByIds, 'submit');
-    }
-  }, [errorVotesNums, errorActionInfosByIds]);
+  }, [error, handleContractError]);
 
   // 加载中
-  if (
-    isPendingVotesNums ||
-    isPendingActionSubmits ||
-    (uniqueActionIds && uniqueActionIds.length > 0 && isPendingActionInfosByIds)
-  ) {
+  if (isPending) {
     return (
       <div className="p-4 flex justify-center items-center">
         <LoadingIcon />
@@ -109,12 +79,11 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
         )}
       </div>
       <div className="space-y-4">
-        {uniqueActionIds.length > 0 ? (
+        {votingActions.length > 0 ? (
           <>
-            {actionInfos?.map((action: ActionInfo, index: number) => {
-              const submitter = actionSubmits?.find(
-                (submit: ActionSubmit) => BigInt(submit.actionId) === BigInt(action.head.id),
-              )?.submitter;
+            {votingActions?.map((votingAction: VotingAction, index: number) => {
+              const action = votingAction.action;
+              // const submitter = votingAction.submitter;
 
               return (
                 <Card key={action.head.id} className="shadow-none flex items-center relative">
@@ -142,16 +111,14 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
                         </span>
                         <span>
                           <span className="text-greyscale-400 mr-1">投票数</span>
-                          <span className="text-secondary">
-                            {formatTokenAmount(getVotesByActionId(BigInt(action.head.id)))}
-                          </span>
+                          <span className="text-secondary">{formatTokenAmount(votingAction.votesNum)}</span>
                         </span>
                         <span>
                           <span className="text-greyscale-400 mr-1">占比</span>
                           <span className="text-secondary">
-                            {formatPercentage(
-                              (Number(getVotesByActionId(BigInt(action.head.id))) * 100) / Number(totalVotes),
-                            )}
+                            {totalVotes === 0n
+                              ? '-'
+                              : formatPercentage((Number(votingAction.votesNum) * 100) / Number(totalVotes))}
                           </span>
                         </span>
                       </div>

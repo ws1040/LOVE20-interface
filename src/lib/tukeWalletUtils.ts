@@ -2,6 +2,9 @@
 import { ethers } from 'ethers';
 
 export const isTukeWallet = (): boolean => {
+  // // todo: 这里是测试，正式环境需要去掉！ 目的是给 TUKE 团队测试新版本
+  // return false;
+
   if (typeof window === 'undefined') return false;
   if (!window.ethereum) return false;
 

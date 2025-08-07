@@ -1,10 +1,8 @@
 // hooks/contracts/useLOVE20Vote.ts
-import { useState, useEffect } from 'react';
-import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
-import { simulateContract, writeContract } from '@wagmi/core';
+import { useEffect } from 'react';
+import { useReadContract } from 'wagmi';
 import { useUniversalTransaction } from '@/src/lib/universalTransaction';
-import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
-import { config } from '@/src/wagmi';
+import { logError, logWeb3Error } from '@/src/lib/debugUtils';
 
 import { LOVE20VoteAbi } from '@/src/abis/LOVE20Vote';
 import { safeToBigInt } from '@/src/lib/clientUtils';
@@ -14,20 +12,6 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_VOTE as `0x${s
 // =======================
 // ===== Read Hooks ======
 // =======================
-
-/**
- * Hook to check if tokens can be voted.
- */
-export const useCanBeVoted = (tokenAddress: `0x${string}`, round: bigint, actionIds: bigint[]) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VoteAbi,
-    functionName: 'canBeVoted',
-    args: [tokenAddress, round, actionIds],
-  });
-
-  return { canBeVoted: data as boolean | undefined, isPending, error };
-};
 
 /**
  * Hook to check if an account can vote.
@@ -99,34 +83,6 @@ export const useOriginBlocks = (flag: boolean) => {
   });
 
   return { originBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
-};
-
-/**
- * Hook to get the round blocks.
- */
-export const useRoundBlocks = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VoteAbi,
-    functionName: 'phaseBlocks',
-    args: [],
-  });
-
-  return { phaseBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
-};
-
-/**
- * Hook to get the round by block number.
- */
-export const useRoundByBlockNumber = (blockNumber: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VoteAbi,
-    functionName: 'roundByBlockNumber',
-    args: [blockNumber],
-  });
-
-  return { round: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**

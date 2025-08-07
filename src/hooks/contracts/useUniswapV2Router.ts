@@ -1,12 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useReadContract, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
-import { simulateContract, writeContract } from '@wagmi/core';
-import { encodeFunctionData } from 'viem';
+import { useEffect } from 'react';
+import { useReadContract } from 'wagmi';
 import { useUniversalTransaction } from '@/src/lib/universalTransaction';
 
-import { config } from '@/src/wagmi';
 import { UniswapV2RouterAbi } from '@/src/abis/UniswapV2Router';
-import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
+import { logError, logWeb3Error } from '@/src/lib/debugUtils';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_ROUTER as `0x${string}`;
 
@@ -60,7 +57,6 @@ export function useSwapExactTokensForTokens() {
     UniswapV2RouterAbi,
     CONTRACT_ADDRESS,
     'swapExactTokensForTokens',
-    { skipSimulation: true },
   );
 
   const swap = async (
@@ -105,7 +101,7 @@ export function useSwapExactETHForTokens() {
     UniswapV2RouterAbi,
     CONTRACT_ADDRESS,
     'swapExactETHForTokens',
-    { skipSimulation: true },
+    // { skipSimulation: true },
   );
 
   const swap = async (
@@ -150,7 +146,6 @@ export function useSwapExactTokensForETH() {
     UniswapV2RouterAbi,
     CONTRACT_ADDRESS,
     'swapExactTokensForETH',
-    { skipSimulation: true },
   );
 
   const swap = async (

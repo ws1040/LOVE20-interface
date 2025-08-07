@@ -21,7 +21,7 @@ import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useApprove, useBalanceOf, useAllowance } from '@/src/hooks/contracts/useLOVE20Token';
 import { useJoin } from '@/src/hooks/contracts/useLOVE20Join';
-import { useVerificationInfosByAccount } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useVerificationInfosByAccount } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 
 // contexts / types / etc
 import { ActionInfo } from '@/src/types/love20types';

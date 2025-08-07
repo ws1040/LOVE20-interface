@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
-import { simulateContract, writeContract } from '@wagmi/core';
-import { config } from '@/src/wagmi';
+import { useEffect } from 'react';
+import { useReadContract } from 'wagmi';
 import { LOVE20SubmitAbi } from '@/src/abis/LOVE20Submit';
 import { safeToBigInt } from '@/src/lib/clientUtils';
-import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
+import { logError, logWeb3Error } from '@/src/lib/debugUtils';
 import { useUniversalTransaction } from '@/src/lib/universalTransaction';
+import { ActionSubmitInfo } from '@/src/types/love20types';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_SUBMIT as `0x${string}`;
 
@@ -115,45 +114,20 @@ export const useOriginBlocks = () => {
 };
 
 /**
- * Hook for phaseBlocks
+ * Hook for submitInfo
  */
-export const useRoundBlocks = () => {
+export const useSubmitInfo = (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20SubmitAbi,
-    functionName: 'phaseBlocks',
-    args: [],
+    functionName: 'submitInfo',
+    args: [tokenAddress, round, actionId],
+    query: {
+      enabled: !!tokenAddress && !!round && !!actionId,
+    },
   });
 
-  return { phaseBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
-};
-
-/**
- * Hook for roundByBlockNumber
- */
-export const useRoundByBlockNumber = (blockNumber: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20SubmitAbi,
-    functionName: 'roundByBlockNumber',
-    args: [blockNumber],
-  });
-
-  return { round: data ? safeToBigInt(data) : undefined, isPending, error };
-};
-
-/**
- * Hook for stakeAddress
- */
-export const useStakeAddress = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20SubmitAbi,
-    functionName: 'stakeAddress',
-    args: [],
-  });
-
-  return { stakeAddress: data as `0x${string}` | undefined, isPending, error };
+  return { submitInfo: data as ActionSubmitInfo | undefined, isPending, error };
 };
 
 // =====================
@@ -206,7 +180,6 @@ export function useSubmitNewAction() {
     LOVE20SubmitAbi,
     CONTRACT_ADDRESS,
     'submitNewAction',
-    { skipSimulation: true },
   );
 
   const submitNewAction = async (

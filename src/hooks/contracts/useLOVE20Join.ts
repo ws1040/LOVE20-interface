@@ -84,33 +84,6 @@ export const useOriginBlocks = () => {
 };
 
 /**
- * Hook for phaseBlocks
- */
-export const useRoundBlocks = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20JoinAbi,
-    functionName: 'phaseBlocks',
-  });
-
-  return { phaseBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
-};
-
-/**
- * Hook for roundByBlockNumber
- */
-export const useRoundByBlockNumber = (blockNumber: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20JoinAbi,
-    functionName: 'roundByBlockNumber',
-    args: [blockNumber],
-  });
-
-  return { round: data ? safeToBigInt(data) : undefined, isPending, error };
-};
-
-/**
  * Hook for stakedAmountByAccount
  */
 export const useStakedAmountByAccount = (tokenAddress: `0x${string}`, account: `0x${string}`) => {

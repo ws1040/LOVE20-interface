@@ -1,7 +1,7 @@
 // src/contexts/TokenContext.tsx
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/router';
-import { useTokenDetailBySymbol } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useTokenDetailBySymbol } from '@/src/hooks/contracts/useLOVE20TokenViewer';
 import { useOriginBlocks } from '@/src/hooks/contracts/useLOVE20Vote';
 import { isClient } from '@/src/lib/clientUtils';
 
@@ -176,7 +176,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   // Step 5. 当 token 变化时，更新 Local Storage
   useEffect(() => {
     if (!isClient()) return;
-    
+
     try {
       if (token) {
         localStorage.setItem('currentToken', JSON.stringify(token));

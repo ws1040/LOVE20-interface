@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useAccount } from 'wagmi';
 import { ChevronRight, UserPen } from 'lucide-react';
 
-import { JoinableActionDetail } from '@/src/types/love20types';
+import { JoinableAction } from '@/src/types/love20types';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 
 // my utils
@@ -16,7 +16,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
-import { useJoinableActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useJoinableActions } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 import { useRewardAvailable } from '@/src/hooks/contracts/useLOVE20Mint';
 
 // my components
@@ -34,7 +34,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   const { address: account } = useAccount();
 
   // 获取行动参与相关数据
-  const { joinableActionDetails, joinedActions, isPending, error } = useJoinableActions(
+  const { joinableActions, isPending, error } = useJoinableActions(
     (token?.address as `0x${string}`) || '',
     currentRound ? currentRound : 0n,
     account as `0x${string}`,
@@ -45,11 +45,8 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
     error: errorRewardAvailable,
   } = useRewardAvailable((token?.address as `0x${string}`) || '');
 
-  // 对返回的 joinableActionDetails 根据 action 的 id 进行排序
-  joinableActionDetails?.sort((a, b) => Number(a.action.head.id) - Number(b.action.head.id));
-
-  // 计算所有 joinableActionDetails 的总票数，用于计算投票占比
-  const totalVotes = joinableActionDetails?.reduce((acc, action) => acc + action.votesNum, 0n) || 0n;
+  // 计算所有 joinableActions 的总票数，用于计算投票占比
+  const totalVotes = joinableActions?.reduce((acc, action) => acc + action.votesNum, 0n) || 0n;
 
   // 计算预计新增铸币
   const displayRound = token ? currentRound - BigInt(token.initialStakeRound) + 1n : 0n;
@@ -76,75 +73,82 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
           <LoadingIcon />
         </div>
       )}
-      {account && !isPending && !joinableActionDetails?.length && (
+      {account && !isPending && !joinableActions?.length && (
         <div className="text-sm mt-4 text-greyscale-500 text-center">本轮暂无行动</div>
       )}
-      {!isPending && joinableActionDetails && joinableActionDetails.length > 0 && (
+      {!isPending && joinableActions && joinableActions.length > 0 && (
         <div className="mt-2 space-y-4">
-          {joinableActionDetails.map((actionDetail: JoinableActionDetail, index: number) => {
-            // 判断当前账户是否已经加入该行动
-            const isJoined = joinedActions?.some(
-              (joinedAction) => joinedAction.action.head.id === actionDetail.action.head.id,
-            );
+          {joinableActions
+            ?.sort((a, b) => {
+              // 按照 votesNum 从大到小排序（票数大的显示在上面）
+              const votesA = Number(a.votesNum);
+              const votesB = Number(b.votesNum);
+              return votesB - votesA;
+            })
+            .map((actionDetail: JoinableAction, index: number) => {
+              // 判断当前账户是否已经加入该行动
+              const isJoined = actionDetail.joinedAmountOfAccount > 0n;
 
-            // 计算投票占比
-            const voteRatio =
-              Number(totalVotes) > 0 ? Number(joinableActionDetails[index].votesNum || 0n) / Number(totalVotes) : 0;
+              // 计算投票占比
+              const voteRatio =
+                Number(totalVotes) > 0 ? Number(joinableActions[index].votesNum || 0n) / Number(totalVotes) : 0;
 
-            // 根据是否已加入，设置不同的链接
-            const href = isJoined
-              ? `/action/detail?id=${actionDetail.action.head.id}&type=join&symbol=${token?.symbol}`
-              : `/acting/join?id=${actionDetail.action.head.id}&symbol=${token?.symbol}`;
+              // 根据是否已加入，设置不同的链接
+              const href = isJoined
+                ? `/action/detail?id=${actionDetail.action.head.id}&type=join&symbol=${token?.symbol}`
+                : `/acting/join?id=${actionDetail.action.head.id}&symbol=${token?.symbol}`;
 
-            return (
-              <Card key={actionDetail.action.head.id} className="shadow-none">
-                <Link href={href} className="relative block">
-                  <CardHeader className="px-3 pt-2 pb-1 flex-row items-baseline">
-                    <span className="text-greyscale-400 text-sm">{`No.`}</span>
-                    <span className="text-secondary text-xl font-bold mr-2">{String(actionDetail.action.head.id)}</span>
-                    <span className="font-bold text-greyscale-800">{`${actionDetail.action.body.title}`}</span>
-                  </CardHeader>
-                  <CardContent className="px-3 pt-1 pb-2">
-                    <div className="flex justify-between mt-1 text-sm">
-                      <span className="flex items-center">
-                        <UserPen className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />
-                        <span className="text-greyscale-400">
-                          <AddressWithCopyButton
-                            address={joinableActionDetails[index].action.head.author as `0x${string}`}
-                            showCopyButton={false}
-                            colorClassName2="text-secondary"
-                          />
-                        </span>
+              return (
+                <Card key={actionDetail.action.head.id} className="shadow-none">
+                  <Link href={href} className="relative block">
+                    <CardHeader className="px-3 pt-2 pb-1 flex-row items-baseline">
+                      <span className="text-greyscale-400 text-sm">{`No.`}</span>
+                      <span className="text-secondary text-xl font-bold mr-2">
+                        {String(actionDetail.action.head.id)}
                       </span>
-                      {voteRatio * 100 < Number(process.env.NEXT_PUBLIC_ACTION_REWARD_MIN_VOTE_PER_THOUSAND) / 10 ? (
-                        <span className="flex justify-between text-error text-sm">无铸币奖励</span>
-                      ) : (
-                        <span>
-                          <span className="text-greyscale-400 mr-1">预估年化(APY)</span>
-                          <span className="text-secondary">
-                            {isPendingRewardAvailable ? (
-                              <LoadingIcon />
-                            ) : (
-                              calculateActionAPY(
-                                BigInt(Math.floor(Number(expectedReward || 0n) * voteRatio)),
-                                joinableActionDetails[index].joinedAmount,
-                              )
-                            )}
+                      <span className="font-bold text-greyscale-800">{`${actionDetail.action.body.title}`}</span>
+                    </CardHeader>
+                    <CardContent className="px-3 pt-1 pb-2">
+                      <div className="flex justify-between mt-1 text-sm">
+                        <span className="flex items-center">
+                          <UserPen className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />
+                          <span className="text-greyscale-400">
+                            <AddressWithCopyButton
+                              address={joinableActions[index].action.head.author as `0x${string}`}
+                              showCopyButton={false}
+                              colorClassName2="text-secondary"
+                            />
                           </span>
                         </span>
-                      )}
+                        {!actionDetail.hasReward ? (
+                          <span className="flex justify-between text-error text-sm">无铸币奖励</span>
+                        ) : (
+                          <span>
+                            <span className="text-greyscale-400 mr-1">预估年化(APY)</span>
+                            <span className="text-secondary">
+                              {isPendingRewardAvailable ? (
+                                <LoadingIcon />
+                              ) : (
+                                calculateActionAPY(
+                                  BigInt(Math.floor(Number(expectedReward || 0n) * voteRatio)),
+                                  joinableActions[index].joinedAmount,
+                                )
+                              )}
+                            </span>
+                          </span>
+                        )}
 
-                      <span>
-                        <span className="text-greyscale-400 mr-1">投票</span>
-                        <span className="text-secondary">{formatPercentage(voteRatio * 100)}</span>
-                      </span>
-                    </div>
-                  </CardContent>
-                  <ChevronRight className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-greyscale-400 pointer-events-none" />
-                </Link>
-              </Card>
-            );
-          })}
+                        <span>
+                          <span className="text-greyscale-400 mr-1">投票</span>
+                          <span className="text-secondary">{formatPercentage(voteRatio * 100)}</span>
+                        </span>
+                      </div>
+                    </CardContent>
+                    <ChevronRight className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-greyscale-400 pointer-events-none" />
+                  </Link>
+                </Card>
+              );
+            })}
 
           <div className="text-sm mt-4 text-greyscale-500 text-center">
             <span className="text-red-500 font-bold">提醒：</span>

@@ -367,7 +367,6 @@ export function useLaunchToken() {
     LOVE20LaunchAbi,
     CONTRACT_ADDRESS,
     'launchToken',
-    { skipSimulation: true },
   );
 
   const launchToken = async (symbol: string, parent: Address) => {

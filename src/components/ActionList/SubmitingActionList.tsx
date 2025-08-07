@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
 
 // my hooks
-import { useActionInfosByPage, useActionSubmits } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useActionInfosByPage, useActionSubmits } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my context

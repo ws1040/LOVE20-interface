@@ -6,7 +6,7 @@ import Link from 'next/link';
 import React from 'react';
 
 // my hooks
-import { useJoinedActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useJoinedActions } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Join';
 
@@ -23,11 +23,11 @@ import RoundLite from '@/src/components/Common/RoundLite';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import AddressWithCopyButton from '../Common/AddressWithCopyButton';
 
-interface MyStakedActionListProps {
+interface MyJoinedActionListProps {
   token: Token | null | undefined;
 }
 
-const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
+const MyJoinedActionList: React.FC<MyJoinedActionListProps> = ({ token }) => {
   const { address: account } = useAccount();
   const { currentRound } = useCurrentRound();
   const {
@@ -64,7 +64,7 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
       ) : (
         <div className="mt-4 space-y-4">
           {[...joinedActions]
-            .sort((a, b) => Number(b.stakedAmount) - Number(a.stakedAmount))
+            .sort((a, b) => Number(b.joinedAmountOfAccount) - Number(a.joinedAmountOfAccount))
             .map((action: JoinedAction, index: number) => (
               <Card key={action.action.head.id} className="shadow-none">
                 <Link
@@ -79,8 +79,7 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
                       <span className="font-bold text-greyscale-800">{`${action.action.body.title}`}</span>
                     </div>
                     {action.votesNum > 0 ? (
-                      Number(action.votePercent) / 100 >=
-                      Number(process.env.NEXT_PUBLIC_ACTION_REWARD_MIN_VOTE_PER_THOUSAND) / 10 ? (
+                      action.hasReward ? (
                         <span className="text-secondary text-xs">进行中</span>
                       ) : (
                         <span className="text-error text-xs">无铸币奖励</span>
@@ -90,7 +89,6 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
                     )}
                   </CardHeader>
                   <CardContent className="px-3 pt-1 pb-2">
-                    {/* <div className="text-greyscale-500">{action.action.body.consensus}</div> */}
                     <div className="flex justify-between mt-1 text-sm">
                       <span className="flex items-center">
                         <UserPen className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />
@@ -105,12 +103,14 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
                       {action.votesNum > 0 && (
                         <span>
                           <span className="text-greyscale-400 mr-1">投票</span>
-                          <span className="text-secondary">{formatPercentage(Number(action.votePercent) / 100)}</span>
+                          <span className="text-secondary">
+                            {formatPercentage(Number(action.votePercentPerTenThousand) / 100)}
+                          </span>
                         </span>
                       )}
                       <span>
                         <span className="text-greyscale-400 mr-1">我参与代币</span>
-                        <span className="text-secondary">{formatTokenAmount(action.stakedAmount)}</span>
+                        <span className="text-secondary">{formatTokenAmount(action.joinedAmountOfAccount)}</span>
                       </span>
                     </div>
                   </CardContent>
@@ -124,4 +124,4 @@ const MyStakedActionList: React.FC<MyStakedActionListProps> = ({ token }) => {
   );
 };
 
-export default MyStakedActionList;
+export default MyJoinedActionList;

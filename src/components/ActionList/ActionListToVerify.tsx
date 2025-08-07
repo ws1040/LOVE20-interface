@@ -6,7 +6,7 @@ import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 // my hooks
-import { useVerifingActionsByAccount } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useVerifingActionsByAccount } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts

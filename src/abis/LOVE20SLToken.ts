@@ -415,6 +415,29 @@ export const LOVE20SLTokenAbi = [
   },
   {
     "type": "function",
+    "name": "uniswapV2PairReserves",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "tokenReserve",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "parentTokenReserve",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "totalLp",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "withdrawFee",
     "inputs": [
       {
@@ -472,6 +495,30 @@ export const LOVE20SLTokenAbi = [
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
+      },
+      {
+        "name": "tokenAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "parentTokenAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "uniswapTokenReserve",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "uniswapParentTokenReserve",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       }
     ],
     "anonymous": false
@@ -494,6 +541,30 @@ export const LOVE20SLTokenAbi = [
       },
       {
         "name": "lpAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "tokenAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "parentTokenAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "uniswapTokenReserve",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "uniswapParentTokenReserve",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -550,6 +621,18 @@ export const LOVE20SLTokenAbi = [
       },
       {
         "name": "parentTokenAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "uniswapTokenReserve",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "uniswapParentTokenReserve",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"

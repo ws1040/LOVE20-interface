@@ -10,7 +10,7 @@ import Link from 'next/link';
 // my hooks
 import { useCurrentRound, useVotesNumByAccount, useVote } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
-import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my types & functions

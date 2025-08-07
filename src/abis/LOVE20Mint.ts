@@ -56,30 +56,6 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "function",
-    "name": "abstentionActionRewardBurned",
-    "inputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "actionReward",
     "inputs": [
       {
@@ -98,6 +74,30 @@ export const LOVE20MintAbi = [
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "actionRewardBurned",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "stateMutability": "view"
@@ -788,7 +788,7 @@ export const LOVE20MintAbi = [
       {
         "name": "round",
         "type": "uint256",
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256"
       },
       {
@@ -800,7 +800,7 @@ export const LOVE20MintAbi = [
       {
         "name": "account",
         "type": "address",
-        "indexed": false,
+        "indexed": true,
         "internalType": "address"
       },
       {

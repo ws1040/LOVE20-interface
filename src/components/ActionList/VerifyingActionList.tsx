@@ -7,7 +7,7 @@ import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 // my hooks
-import { useVerifyingActions } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useVerifyingActions } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -26,7 +26,7 @@ interface VerifingActionListProps {
 }
 
 // 所有需要验证的行动列表
-const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound }) => {
+const VerifyingActionList: React.FC<VerifingActionListProps> = ({ currentRound }) => {
   const { token } = useContext(TokenContext) || {};
   const { address } = useAccount();
   const router = useRouter();
@@ -118,4 +118,4 @@ const VerifingActionList: React.FC<VerifingActionListProps> = ({ currentRound })
   );
 };
 
-export default VerifingActionList;
+export default VerifyingActionList;

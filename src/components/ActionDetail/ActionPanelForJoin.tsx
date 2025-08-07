@@ -13,7 +13,7 @@ import {
   useJoinedAmountByActionId,
   useWithdraw,
 } from '@/src/hooks/contracts/useLOVE20Join';
-import { useVerificationInfosByAccount } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useVerificationInfosByAccount } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 import { useIsSubmitted } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 

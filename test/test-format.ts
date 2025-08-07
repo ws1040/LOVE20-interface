@@ -5,6 +5,7 @@
 import { formatTokenAmount } from '../src/lib/format';
 
 console.log('formatTokenAmount(1000000000000000000) =', formatTokenAmount(1000000000000000000n)); // 1 ETH
+console.log('formatTokenAmount(1000000000000000000-1) =', formatTokenAmount(1000000000000000000n - 1n)); // 0.999999999999999999 ETH
 console.log('formatTokenAmount(100000000000000000) =', formatTokenAmount(100000000000000000n)); // 0.1 ETH
 console.log('formatTokenAmount(10000000000000000) =', formatTokenAmount(10000000000000000n)); // 0.01 ETH
 console.log('formatTokenAmount(1000000000000000) =', formatTokenAmount(1000000000000000n)); // 0.001 ETH

@@ -668,6 +668,12 @@ export const LOVE20StakeAbi = [
         "internalType": "address"
       },
       {
+        "name": "promisedWaitingPhases",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
         "name": "govVotes",
         "type": "uint256",
         "indexed": false,
@@ -709,6 +715,12 @@ export const LOVE20StakeAbi = [
         "type": "address",
         "indexed": true,
         "internalType": "address"
+      },
+      {
+        "name": "promisedWaitingPhases",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
       {
         "name": "slAmount",

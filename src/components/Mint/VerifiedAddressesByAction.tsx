@@ -7,7 +7,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 // my hooks
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useMintActionReward } from '@/src/hooks/contracts/useLOVE20Mint';
-import { useVerificationInfosByAction, useVerifiedAddressesByAction } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useVerificationInfosByAction, useVerifiedAddressesByAction } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
