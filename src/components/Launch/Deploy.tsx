@@ -61,19 +61,20 @@ export default function TokenDeployment() {
 
   // 2. 部署合约相关 Hook
   const { launchToken, isPending, writeError, isConfirming, isConfirmed } = useLaunchToken();
-  const { remainingLaunchCount } = useRemainingLaunchCount(
+  const { remainingLaunchCount, isPending: isRemainingLaunchCountPending } = useRemainingLaunchCount(
     token ? token.address : '0x0000000000000000000000000000000000000000',
     account as `0x${string}`,
   );
 
-  const { numOfMintGovRewardByAccount } = useNumOfMintGovRewardByAccount(
-    token ? token.address : '0x0000000000000000000000000000000000000000',
-    account as `0x${string}`,
-  );
+  const { numOfMintGovRewardByAccount, isPending: isNumOfMintGovRewardByAccountPending } =
+    useNumOfMintGovRewardByAccount(
+      token ? token.address : '0x0000000000000000000000000000000000000000',
+      account as `0x${string}`,
+    );
   // 获取等待铸币次数
   const MIN_GOV_REWARD_MINTS = Number(process.env.NEXT_PUBLIC_MIN_GOV_REWARD_MINTS_TO_LAUNCH) || 180n;
   const remainingMintTimes =
-    Number(MIN_GOV_REWARD_MINTS) - (Number(numOfMintGovRewardByAccount) % Number(MIN_GOV_REWARD_MINTS));
+    Number(MIN_GOV_REWARD_MINTS) - (Number(numOfMintGovRewardByAccount ?? 0) % Number(MIN_GOV_REWARD_MINTS));
 
   // 3. 错误处理
   const { handleContractError } = useHandleContractError();
@@ -142,8 +143,7 @@ export default function TokenDeployment() {
     setPendingConfirm(null);
   };
 
-  // 如果 TokenContext 中还未读取到 token，就显示加载
-  if (!token) {
+  if (!token || isRemainingLaunchCountPending || isNumOfMintGovRewardByAccountPending) {
     return <LoadingIcon />;
   }
 
