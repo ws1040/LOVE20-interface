@@ -26,15 +26,16 @@ const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
     error: launchInfoError,
   } = useLaunchInfo(token ? token.address : '0x0000000000000000000000000000000000000000');
 
-  const { remainingLaunchCount } = useRemainingLaunchCount(
+  const { remainingLaunchCount, isPending: isRemainingLaunchCountPending } = useRemainingLaunchCount(
     token ? token.address : '0x0000000000000000000000000000000000000000',
     account as `0x${string}`,
   );
 
-  const { numOfMintGovRewardByAccount } = useNumOfMintGovRewardByAccount(
-    token ? token.address : '0x0000000000000000000000000000000000000000',
-    account as `0x${string}`,
-  );
+  const { numOfMintGovRewardByAccount, isPending: isNumOfMintGovRewardByAccountPending } =
+    useNumOfMintGovRewardByAccount(
+      token ? token.address : '0x0000000000000000000000000000000000000000',
+      account as `0x${string}`,
+    );
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -44,17 +45,15 @@ const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
     }
   }, [launchInfoError]);
 
-  if (isLaunchInfoPending || !blockNumber) {
+  if (isLaunchInfoPending || !blockNumber || isRemainingLaunchCountPending || isNumOfMintGovRewardByAccountPending) {
     return <></>;
   }
 
   // 获取等待铸币次数
   const MIN_GOV_REWARD_MINTS = Number(process.env.NEXT_PUBLIC_MIN_GOV_REWARD_MINTS_TO_LAUNCH) || 180n;
   const remainingMintTimes =
-    Number(MIN_GOV_REWARD_MINTS) - (Number(numOfMintGovRewardByAccount) % Number(MIN_GOV_REWARD_MINTS));
-  console.log('remainingLaunchCount', remainingLaunchCount);
-  console.log('numOfMintGovRewardByAccount', numOfMintGovRewardByAccount);
-  console.log('remainingMintTimes', remainingMintTimes);
+    Number(MIN_GOV_REWARD_MINTS) - (Number(numOfMintGovRewardByAccount ?? 0) % Number(MIN_GOV_REWARD_MINTS));
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-2">
