@@ -4,12 +4,13 @@ import { toast } from 'react-hot-toast';
 import { UserPen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { useAccount } from 'wagmi';
 import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
 
 // my hooks
-import { ActionInfo, ActionSubmit } from '@/src/types/love20types';
-import { useActionSubmits, useActionInfosByIds, useVotesNums } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { VotingAction } from '@/src/types/love20types';
+import { useVotingActions } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 
 // my utils
 import { useHandleContractError } from '@/src/lib/errorUtils';
@@ -28,39 +29,16 @@ interface VotingActionListProps {
 }
 
 const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => {
+  const { address: account } = useAccount();
   const { token } = useContext(TokenContext) || {};
   const router = useRouter();
 
-  // 投票数
-  const {
-    votes,
-    actionIds: votesActionIds,
-    isPending: isPendingVotesNums,
-    error: errorVotesNums,
-  } = useVotesNums((token?.address as `0x${string}`) || '', currentRound);
-
-  // 推举信息
-  const {
-    actionSubmits,
-    isPending: isPendingActionSubmits,
-    error: errorActionSubmits,
-  } = useActionSubmits((token?.address as `0x${string}`) || '', currentRound);
-
-  // 行动详情
-  const actionIds = actionSubmits?.map((actionSubmit: ActionSubmit) => BigInt(actionSubmit.actionId)) || [];
-  const uniqueActionIds = Array.from(new Set(actionIds)).sort((a, b) => Number(a) - Number(b)); //从小到大排列
-  const {
-    actionInfos,
-    isPending: isPendingActionInfosByIds,
-    error: errorActionInfosByIds,
-  } = useActionInfosByIds((token?.address as `0x${string}`) || '', uniqueActionIds);
-
-  // 创建一个根据actionId获取投票数的函数
-  const getVotesByActionId = (actionId: bigint): bigint => {
-    if (!votesActionIds || !votes) return 0n;
-    const index = votesActionIds.findIndex((id) => id === actionId);
-    return index !== -1 ? votes[index] : 0n;
-  };
+  // 获取所有投票中的行动
+  const { votingActions, isPending, error } = useVotingActions(
+    (token?.address as `0x${string}`) || '',
+    currentRound,
+    account as `0x${string}`,
+  );
 
   // 选择复选框
   const [selectedActions, setSelectedActions] = useState<Set<bigint>>(new Set());
@@ -77,7 +55,7 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
   };
 
   // 计算投票总数： 累计
-  const totalVotes = votes?.reduce((acc, vote) => acc + vote, 0n) || 0n;
+  const totalVotes = votingActions.reduce((acc, votingAction) => acc + votingAction.votesNum, 0n);
 
   // 投票
   const handleSubmit = () => {
@@ -92,20 +70,13 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
   // 错误处理
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
-    if (errorVotesNums) {
-      handleContractError(errorVotesNums, 'vote');
+    if (error) {
+      handleContractError(error, 'vote');
     }
-    if (errorActionInfosByIds) {
-      handleContractError(errorActionInfosByIds, 'submit');
-    }
-  }, [errorVotesNums, errorActionInfosByIds]);
+  }, [error, handleContractError]);
 
   // 加载中
-  if (
-    isPendingVotesNums ||
-    isPendingActionSubmits ||
-    (uniqueActionIds && uniqueActionIds.length > 0 && isPendingActionInfosByIds)
-  ) {
+  if (isPending) {
     return (
       <div className="p-4 flex justify-center items-center">
         <LoadingIcon />
@@ -118,8 +89,8 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
   }
 
   // // 如果只有1个投票，就直接跳到投票页面
-  // if (uniqueActionIds.length === 1) {
-  //   router.push(`/vote/vote?ids=${uniqueActionIds[0]}&symbol=${token?.symbol}`);
+  // if (votingActions.length === 1) {
+  //   router.push(`/vote/vote?ids=${votingActions[0].action.head.id}&symbol=${token?.symbol}`);
   // }
 
   return (
@@ -138,64 +109,61 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
         )}
       </div>
       <div className="space-y-4">
-        {uniqueActionIds.length > 0 ? (
+        {votingActions.length > 0 ? (
           <>
-            {actionInfos?.map((action: ActionInfo, index: number) => {
-              const submitter = actionSubmits?.find(
-                (submit: ActionSubmit) => BigInt(submit.actionId) === BigInt(action.head.id),
-              )?.submitter;
+            {votingActions
+              .sort((a, b) => Number(b.votesNum - a.votesNum)) // 按投票数倒序排序
+              .map((votingAction: VotingAction, index: number) => {
+                const action = votingAction.action;
+                // const submitter = votingAction.submitter;
 
-              return (
-                <Card key={action.head.id} className="shadow-none flex items-center">
-                  <input
-                    type="checkbox"
-                    className="checkbox accent-secondary ml-2"
-                    checked={selectedActions.has(BigInt(action.head.id))}
-                    onChange={() => handleCheckboxChange(BigInt(action.head.id))}
-                  />
-                  <Link
-                    href={`/action/detail?id=${action.head.id}&type=vote&symbol=${token?.symbol}`}
-                    key={action.head.id}
-                    className="w-full"
-                  >
-                    <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
-                      <span className="text-greyscale-400 text-sm mr-1">{`No.`}</span>
-                      <span className="text-secondary text-xl font-bold mr-2">{String(action.head.id)}</span>
-                      <span className="font-bold text-greyscale-800">{`${action.body.title}`}</span>
-                    </CardHeader>
-                    <CardContent className="px-3 pt-1 pb-2">
-                      <div className="flex justify-between mt-1 text-sm">
-                        <span className="flex items-center">
-                          <UserPen className="text-greyscale-400 mr-1 h-3 w-3" />
-                          <span className="text-greyscale-400">
-                            <AddressWithCopyButton
-                              address={action.head.author as `0x${string}`}
-                              showCopyButton={false}
-                            />
+                return (
+                  <Card key={action.head.id} className="shadow-none flex items-center">
+                    <input
+                      type="checkbox"
+                      className="checkbox accent-secondary ml-2"
+                      checked={selectedActions.has(BigInt(action.head.id))}
+                      onChange={() => handleCheckboxChange(BigInt(action.head.id))}
+                    />
+                    <Link
+                      href={`/action/detail?id=${action.head.id}&type=vote&symbol=${token?.symbol}`}
+                      key={action.head.id}
+                      className="w-full"
+                    >
+                      <CardHeader className="px-3 pt-2 pb-1 flex-row justify-start items-baseline">
+                        <span className="text-greyscale-400 text-sm mr-1">{`No.`}</span>
+                        <span className="text-secondary text-xl font-bold mr-2">{String(action.head.id)}</span>
+                        <span className="font-bold text-greyscale-800">{`${action.body.title}`}</span>
+                      </CardHeader>
+                      <CardContent className="px-3 pt-1 pb-2">
+                        <div className="flex justify-between mt-1 text-sm">
+                          <span className="flex items-center">
+                            <UserPen className="text-greyscale-400 mr-1 h-3 w-3" />
+                            <span className="text-greyscale-400">
+                              <AddressWithCopyButton
+                                address={action.head.author as `0x${string}`}
+                                showCopyButton={false}
+                              />
+                            </span>
                           </span>
-                        </span>
-                        <span>
-                          <span className="text-greyscale-400 mr-1">投票数</span>
-                          <span className="text-secondary">
-                            {formatTokenAmount(getVotesByActionId(BigInt(action.head.id)))}
+                          <span>
+                            <span className="text-greyscale-400 mr-1">投票数</span>
+                            <span className="text-secondary">{formatTokenAmount(votingAction.votesNum)}</span>
                           </span>
-                        </span>
-                        <span>
-                          <span className="text-greyscale-400 mr-1">占比</span>
-                          <span className="text-secondary">
-                            {totalVotes === 0n
-                              ? '-'
-                              : formatPercentage(
-                                  (Number(getVotesByActionId(BigInt(action.head.id))) * 100) / Number(totalVotes),
-                                )}
+                          <span>
+                            <span className="text-greyscale-400 mr-1">占比</span>
+                            <span className="text-secondary">
+                              {totalVotes === 0n
+                                ? '-'
+                                : formatPercentage((Number(votingAction.votesNum) * 100) / Number(totalVotes))}
+                            </span>
                           </span>
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Link>
-                </Card>
-              );
-            })}
+                        </div>
+                      </CardContent>
+                    </Link>
+                  </Card>
+                );
+              })}
             <div className="flex justify-center mt-4">
               <Button variant="outline" className="w-1/2 text-secondary border-secondary" onClick={handleSubmit}>
                 给选中的行动投票

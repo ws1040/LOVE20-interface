@@ -6,7 +6,7 @@ import React, { useContext, useEffect } from 'react';
 // my hooks
 import { formatTokenAmount } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
-import { useGovData } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useGovData } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 import { useTokenAmounts } from '@/src/hooks/contracts/useLOVE20SLToken';
 
 // my contexts

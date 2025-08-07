@@ -7,7 +7,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { useRouter } from 'next/router';
 
 // my hooks
-import { useTokenDetails, useTokensByPage, useChildTokensByPage } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useTokenDetails, useTokensByPage, useChildTokensByPage } from '@/src/hooks/contracts/useLOVE20TokenViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { formatPercentage } from '@/src/lib/format';
 

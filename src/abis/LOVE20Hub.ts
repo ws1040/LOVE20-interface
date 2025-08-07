@@ -22,7 +22,7 @@ export const LOVE20HubAbi = [
   },
   {
     "type": "function",
-    "name": "contributeWithETH",
+    "name": "contributeFirstTokenWithETH",
     "inputs": [
       {
         "name": "tokenAddress",
@@ -246,7 +246,7 @@ export const LOVE20HubAbi = [
   },
   {
     "type": "event",
-    "name": "ContributeWithETH",
+    "name": "ContributeFirstTokenWithETH",
     "inputs": [
       {
         "name": "tokenAddress",
@@ -261,13 +261,56 @@ export const LOVE20HubAbi = [
         "internalType": "address"
       },
       {
-        "name": "ethAmount",
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "StakeLiquidity",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "to",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "tokenAmountDesired",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
       },
       {
-        "name": "wethAmount",
+        "name": "parentTokenAmountDesired",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "tokenAmountReal",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "parentTokenAmountReal",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "promisedWaitingPhases",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"

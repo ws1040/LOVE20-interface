@@ -15,7 +15,7 @@ import Header from '@/src/components/Header';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import MyTokenPanel from '@/src/components/My/MyTokenPanel';
 import MyGovernanceAssetsPanel from '@/src/components/My/MyGovernanceAssetsPanel';
-import MyStakedActionList from '@/src/components/ActionList/MyStakedActionList';
+import MyJoinedActionList from '@/src/components/ActionList/MyJoinedActionList';
 import TokenTab from '@/src/components/Token/TokenTab';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 
@@ -59,7 +59,7 @@ const MyPage = () => {
               </div>
               <MyGovernanceAssetsPanel token={token} />
             </div>
-            <MyStakedActionList token={token} />
+            <MyJoinedActionList token={token} />
           </>
         )}
       </main>

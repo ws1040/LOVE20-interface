@@ -5,26 +5,29 @@ import React, { useContext, useEffect } from 'react';
 import { Info } from 'lucide-react';
 
 // my hooks
-import { useGovData } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useGovData, useEstimatedGovRewardOfCurrentRound } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-// import Round from '@/src/components/Common/Round';
 
 // my utils
 import { calculateAPY } from '@/src/lib/domainUtils';
 import { formatTokenAmount } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
-import { calculateExpectedGovReward } from '@/src/lib/domainUtils';
 
-const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound }) => {
+const GovernanceDataPanel: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
 
-  // 使用 useGovData 获取治理数据
+  // 获取治理数据
   const { govData, isPending, error } = useGovData(token?.address as `0x${string}`);
+  const {
+    reward: expectedReward,
+    isPending: isPendingEstimatedGovReward,
+    error: errorEstimatedGovReward,
+  } = useEstimatedGovRewardOfCurrentRound((token?.address as `0x${string}`) || '');
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -32,17 +35,14 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
     if (error) {
       handleContractError(error, 'govData');
     }
-  }, [error]);
+    if (errorEstimatedGovReward) {
+      handleContractError(errorEstimatedGovReward, 'dataViewer');
+    }
+  }, [error, errorEstimatedGovReward]);
 
   if (!token) {
     return <LoadingIcon />;
   }
-
-  // 计算预计新增铸币
-  const displayRound = currentRound - BigInt(token.initialStakeRound) + 1n;
-
-  // 根据轮次计算预计新增铸币
-  let expectedReward = calculateExpectedGovReward(govData?.rewardAvailable, displayRound);
 
   return (
     <div className="mb-2">
@@ -57,12 +57,17 @@ const GovernanceDataPanel: React.FC<{ currentRound: bigint }> = ({ currentRound 
           <div className="stat place-items-center pb-2 pl-1">
             <div className="stat-title text-sm pb-1">预计新增铸币</div>
             <div className="stat-value text-secondary text-xl">
-              {isPending ? <LoadingIcon /> : formatTokenAmount(expectedReward)}
+              {isPendingEstimatedGovReward ? <LoadingIcon /> : formatTokenAmount(expectedReward)}
             </div>
           </div>
         </div>
         <div className="text-center text-xs mx-8 text-greyscale-500 border-b border-greyscale-200 pb-2">
-          预估年化收益率（APY）：{calculateAPY(govData?.rewardAvailable, govData?.tokenAmountForSl, govData?.stAmount)}
+          预估年化收益率（APY）：
+          {isPending || isPendingEstimatedGovReward ? (
+            <LoadingIcon />
+          ) : (
+            calculateAPY(govData?.rewardAvailable, govData?.tokenAmountForSl, govData?.stAmount)
+          )}
         </div>
 
         <div className="stats w-full grid grid-cols-2 divide-x-0 mt-2">

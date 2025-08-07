@@ -21,7 +21,7 @@ import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { LaunchInfo } from '@/src/types/love20types';
 import { useContribute, useContributed } from '@/src/hooks/contracts/useLOVE20Launch';
-import { useContributeWithETH } from '@/src/hooks/contracts/useLOVE20Hub';
+import { useContributeFirstTokenWithETH } from '@/src/hooks/contracts/useLOVE20Hub';
 import { useAllowance, useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
 import { useError } from '@/src/contexts/ErrorContext';
 
@@ -172,12 +172,12 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
 
   // 4. "申购"相关逻辑 - 根据类型选择不同的hook
   const {
-    contribute: contributeWithETH,
+    contribute: contributeFirstTokenWithETH,
     isPending: isPendingContributeETH,
     isConfirming: isConfirmingContributeETH,
     isConfirmed: isConfirmedContributeETH,
     writeError: errContributeETH,
-  } = useContributeWithETH();
+  } = useContributeFirstTokenWithETH();
 
   const {
     contribute: contributeWithToken,
@@ -203,7 +203,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     try {
       const amountBigInt = parseUnits(data.contributeAmount) ?? 0n;
       if (isNativeContribute) {
-        await contributeWithETH(token?.address as `0x${string}`, account as `0x${string}`, amountBigInt);
+        await contributeFirstTokenWithETH(token?.address as `0x${string}`, account as `0x${string}`, amountBigInt);
       } else {
         await contributeWithToken(token?.address as `0x${string}`, amountBigInt, account as `0x${string}`);
       }

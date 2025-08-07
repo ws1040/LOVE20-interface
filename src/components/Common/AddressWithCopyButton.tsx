@@ -52,6 +52,7 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
         </span>
       )}
       {showCopyButton && (
+        // @ts-ignore
         <CopyToClipboard text={address} onCopy={handleCopy}>
           <button
             className="flex items-center justify-center p-1 rounded hover:bg-gray-200 focus:outline-none"

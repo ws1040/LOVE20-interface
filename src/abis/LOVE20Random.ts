@@ -149,7 +149,7 @@ export const LOVE20RandomAbi = [
   },
   {
     "type": "event",
-    "name": "RandomSeedUpdate",
+    "name": "UpdateRandomSeed",
     "inputs": [
       {
         "name": "round",

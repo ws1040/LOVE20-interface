@@ -43,7 +43,7 @@ const coreFilesToConvert = [
   'UniswapV2Pair',
 ];
 
-const peripheralFilesToConvert = ['LOVE20DataViewer', 'LOVE20Hub'];
+const peripheralFilesToConvert = ['LOVE20TokenViewer', 'LOVE20RoundViewer', 'LOVE20Hub', 'LOVE20DataViewer'];
 
 // 用于生成 TypeScript 文件的函数
 const generateTsFiles = (abiDirPath: string, filesToConvert: string[]) => {

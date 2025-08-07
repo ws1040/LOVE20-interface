@@ -459,7 +459,7 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
-    "name": "randomAccountsByActionIdByRoundAtIndex",
+    "name": "randomAccountsByActionIdAtIndex",
     "inputs": [
       {
         "name": "tokenAddress",
@@ -493,7 +493,7 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
-    "name": "randomAccountsByActionIdByRoundCount",
+    "name": "randomAccountsByActionIdCount",
     "inputs": [
       {
         "name": "tokenAddress",
@@ -609,6 +609,11 @@ export const LOVE20JoinAbi = [
         "internalType": "address"
       },
       {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
         "name": "verificationKeys_",
         "type": "string[]",
         "internalType": "string[]"
@@ -635,6 +640,11 @@ export const LOVE20JoinAbi = [
         "name": "account",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
         "name": "verificationKey",
@@ -666,6 +676,11 @@ export const LOVE20JoinAbi = [
         "internalType": "address"
       },
       {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
         "name": "verificationKey",
         "type": "string",
         "internalType": "string"
@@ -687,7 +702,7 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
-    "name": "verificationInfoUpdateRoundsByAccountAtIndex",
+    "name": "verificationInfoUpdateRoundsAtIndex",
     "inputs": [
       {
         "name": "tokenAddress",
@@ -698,6 +713,11 @@ export const LOVE20JoinAbi = [
         "name": "account",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
         "name": "verificationKey",
@@ -721,7 +741,7 @@ export const LOVE20JoinAbi = [
   },
   {
     "type": "function",
-    "name": "verificationInfoUpdateRoundsByAccountCount",
+    "name": "verificationInfoUpdateRoundsCount",
     "inputs": [
       {
         "name": "tokenAddress",
@@ -732,6 +752,11 @@ export const LOVE20JoinAbi = [
         "name": "account",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
         "name": "verificationKey",
@@ -868,6 +893,12 @@ export const LOVE20JoinAbi = [
         "type": "address",
         "indexed": true,
         "internalType": "address"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
       {
         "name": "verificationKey",

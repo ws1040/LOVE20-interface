@@ -1,11 +1,9 @@
 // hooks/contracts/useLOVE20Verify.ts
 
-import { useState, useEffect } from 'react';
-import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
-import { simulateContract, writeContract } from '@wagmi/core';
+import { useEffect } from 'react';
+import { useReadContract } from 'wagmi';
 import { useUniversalTransaction } from '@/src/lib/universalTransaction';
-import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
-import { config } from '@/src/wagmi';
+import { logError, logWeb3Error } from '@/src/lib/debugUtils';
 
 import { LOVE20VerifyAbi } from '@/src/abis/LOVE20Verify';
 import { safeToBigInt } from '@/src/lib/clientUtils';
@@ -54,49 +52,6 @@ export const useOriginBlocks = () => {
   });
 
   return { originBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
-};
-
-/**
- * Hook for randomAddress
- */
-export const useRandomAddress = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'randomAddress',
-  });
-
-  return { randomAddress: data as `0x${string}` | undefined, isPending, error };
-};
-
-/**
- * Hook for phaseBlocks
- */
-export const useRoundBlocks = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'phaseBlocks',
-  });
-
-  return { phaseBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
-};
-
-/**
- * Hook for roundByBlockNumber
- */
-export const useRoundByBlockNumber = (blockNumber: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20VerifyAbi,
-    functionName: 'roundByBlockNumber',
-    args: [blockNumber],
-    query: {
-      enabled: blockNumber !== undefined,
-    },
-  });
-
-  return { roundByBlockNumber: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 /**

@@ -12,7 +12,7 @@ import { ActionInfo } from '@/src/types/love20types';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
-import { useVerificationInfosByAction } from '@/src/hooks/contracts/useLOVE20DataViewer';
+import { useVerificationInfosByAction } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 import { useVerify } from '@/src/hooks/contracts/useLOVE20Verify';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 

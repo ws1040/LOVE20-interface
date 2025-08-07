@@ -124,35 +124,6 @@ export const useOriginBlocks = () => {
 };
 
 /**
- * 获取 phaseBlocks 的值
- */
-export const useRoundBlocks = () => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20StakeAbi,
-    functionName: 'phaseBlocks',
-    args: [],
-  });
-
-  return { phaseBlocks: data ? safeToBigInt(data) : undefined, isPending, error };
-};
-
-/**
- * 根据区块号获取对应的轮次
- * @param blockNumber 区块号
- */
-export const useRoundByBlockNumber = (blockNumber: bigint) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20StakeAbi,
-    functionName: 'roundByBlockNumber',
-    args: [blockNumber],
-  });
-
-  return { round: data ? safeToBigInt(data) : undefined, isPending, error };
-};
-
-/**
  * 获取有效的治理投票数
  * @param tokenAddress 代币地址
  * @param account 账户地址
@@ -183,7 +154,6 @@ export const useStakeLiquidity = () => {
     LOVE20StakeAbi,
     CONTRACT_ADDRESS,
     'stakeLiquidity',
-    { skipSimulation: true },
   );
 
   const stakeLiquidity = async (
@@ -275,7 +245,6 @@ export const useUnstake = () => {
     LOVE20StakeAbi,
     CONTRACT_ADDRESS,
     'unstake',
-    { skipSimulation: true },
   );
 
   const unstake = async (tokenAddress: `0x${string}`) => {
@@ -315,7 +284,6 @@ export const useWithdraw = () => {
     LOVE20StakeAbi,
     CONTRACT_ADDRESS,
     'withdraw',
-    { skipSimulation: true },
   );
 
   /**

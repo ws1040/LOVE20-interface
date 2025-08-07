@@ -97,7 +97,7 @@ const GovPage = () => {
                 </div>
               </TabsContent>
               <TabsContent value="community-assets">
-                <GovernanceDataPanel currentRound={currentVoteRound ? currentVoteRound : 0n} />
+                <GovernanceDataPanel />
               </TabsContent>
             </Tabs>
             {isPendingValidGovVotes ? (

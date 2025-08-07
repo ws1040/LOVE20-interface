@@ -3,18 +3,19 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { ArrowUpDown, HelpCircle } from 'lucide-react';
+import { ArrowUpDown, HelpCircle, Settings, Zap } from 'lucide-react';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 // my utils
 import { checkWalletConnection } from '@/src/lib/web3';
@@ -22,13 +23,14 @@ import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { formatPhaseText } from '@/src/lib/domainUtils';
 
 // my contexts
-import { TokenContext, Token } from '@/src/contexts/TokenContext';
+import { TokenContext } from '@/src/contexts/TokenContext';
 import { useError } from '@/src/contexts/ErrorContext';
 
 // my hooks
 import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
-import { useTokenPairInfoWithAccount } from '@/src/hooks/contracts/useLOVE20DataViewer';
-import { useAccountStakeStatus, useStakeLiquidity, useInitialStakeRound } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useTokenPairInfoWithAccount } from '@/src/hooks/contracts/useLOVE20TokenViewer';
+import { useAccountStakeStatus, useInitialStakeRound } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useStakeLiquidity } from '@/src/hooks/contracts/useLOVE20Hub';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my components
@@ -115,11 +117,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     pairInfo,
     isPending: isPendingPair,
     error: errorPair,
-  } = useTokenPairInfoWithAccount(
-    account as `0x${string}`,
-    token?.address as `0x${string}`,
-    token?.parentTokenAddress as `0x${string}`,
-  );
+  } = useTokenPairInfoWithAccount(account as `0x${string}`, token?.address as `0x${string}`);
 
   // 从 pairInfo 中读取余额及授权额度
   const tokenBalance = pairInfo?.balanceOfToken ?? 0n;
@@ -194,7 +192,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     try {
       const stakeAmount = parseUnits(data.stakeToken);
       if (stakeAmount === null) throw new Error('无效的输入格式');
-      await approveToken(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, stakeAmount);
+      await approveToken(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_HUB as `0x${string}`, stakeAmount);
     } catch (error) {
       console.error('Token 授权失败', error);
       toast.error('token 授权失败，请检查输入格式');
@@ -206,7 +204,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     try {
       const parentAmount = parseUnits(data.parentToken);
       if (parentAmount === null) throw new Error('无效的输入格式');
-      await approveParentToken(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, parentAmount);
+      await approveParentToken(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_HUB as `0x${string}`, parentAmount);
     } catch (error) {
       console.error('父币授权失败', error);
       toast.error('父币授权失败，请检查输入格式');
@@ -317,12 +315,18 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
       toast.error('转换金额时出错，请检查输入格式');
       return;
     }
+    // 添加滑点计算
+    const slippageBigInt = BigInt(Math.round(slippage * 10)); // 将百分比转换为千分之一
+    const tokenAmountMin = (stakeAmount * (1000n - slippageBigInt)) / 1000n;
+    const parentTokenAmountMin = (parentAmount * (1000n - slippageBigInt)) / 1000n;
 
     try {
       await stakeLiquidity(
         token?.address as `0x${string}`,
         stakeAmount,
         parentAmount,
+        tokenAmountMin,
+        parentTokenAmountMin,
         BigInt(data.releasePeriod),
         account as `0x${string}`,
       );
@@ -441,6 +445,11 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
 
   // 添加比例显示切换状态
   const [showTokenToParent, setShowTokenToParent] = useState(false);
+
+  // 滑点设置状态
+  const [slippage, setSlippage] = useState(2.5); // 默认2.5%
+  const [isSlippageDialogOpen, setIsSlippageDialogOpen] = useState(false);
+  const [customSlippage, setCustomSlippage] = useState('');
 
   if (!token || isPendingAccountStakeStatus || isPendingInitialStakeRound) {
     return <LoadingIcon />;
@@ -653,6 +662,94 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                         </div>
                       </div>
                     )}
+                    {/* 滑点设置区域 */}
+                    <div className="flex items-center text-sm mt-2">
+                      <div className="text-gray-600 flex items-center gap-1 mr-2">
+                        <Zap className="w-4 h-4" />
+                        滑点上限：{slippage}%
+                      </div>
+                      <Dialog open={isSlippageDialogOpen} onOpenChange={setIsSlippageDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 px-2 text-xs hover:bg-gray-100 transition-colors"
+                            title="设置滑点"
+                          >
+                            <Settings className="h-3 w-3" />
+                            设置
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>滑点设置</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">选择滑点</label>
+                              <div className="grid grid-cols-3 gap-2">
+                                {[0.5, 1.0, 2.5].map((preset) => (
+                                  <Button
+                                    key={preset}
+                                    type="button"
+                                    variant={slippage === preset ? 'default' : 'outline'}
+                                    size="sm"
+                                    onClick={() => {
+                                      setSlippage(preset);
+                                      setCustomSlippage('');
+                                      setIsSlippageDialogOpen(false);
+                                    }}
+                                    className="text-xs"
+                                  >
+                                    {preset}%
+                                  </Button>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">自定义滑点</label>
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  type="number"
+                                  placeholder="输入滑点百分比"
+                                  value={customSlippage}
+                                  onChange={(e) => setCustomSlippage(e.target.value)}
+                                  className="flex-1"
+                                  min="0"
+                                  max="50"
+                                  step="0.1"
+                                />
+                                <span className="text-sm text-gray-500">%</span>
+                              </div>
+                              {customSlippage && (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  onClick={() => {
+                                    const value = parseFloat(customSlippage);
+                                    if (value >= 0 && value <= 50) {
+                                      setSlippage(value);
+                                      setIsSlippageDialogOpen(false);
+                                    } else {
+                                      toast.error('滑点应在 0-50% 之间');
+                                    }
+                                  }}
+                                  className="w-full"
+                                >
+                                  应用自定义滑点
+                                </Button>
+                              )}
+                            </div>
+                            <div className="text-xs text-gray-500 space-y-1">
+                              <p>• 滑点是指实际执行价格与预期价格之间的差异</p>
+                              <p>• 较低的滑点可能导致交易失败，较高的滑点可能导致不利的价格</p>
+                              <p>• 建议设置在 0.5% - 5% 之间</p>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

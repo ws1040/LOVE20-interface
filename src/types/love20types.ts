@@ -19,27 +19,32 @@ export interface ActionInfo {
   body: ActionBody;
 }
 
-export interface ActionSubmit {
+export interface ActionSubmitInfo {
   submitter: string;
   actionId: number;
 }
 
-export interface JoinableAction {
-  actionId: bigint;
+export interface VotingAction {
+  action: ActionInfo;
+  submitter: string;
   votesNum: bigint;
-  joinedAmount: bigint;
+  myVotesNum: bigint;
 }
 
-export interface JoinableActionDetail {
+export interface JoinableAction {
   action: ActionInfo;
   votesNum: bigint;
+  hasReward: boolean;
   joinedAmount: bigint;
+  joinedAmountOfAccount: bigint;
 }
+
 export interface JoinedAction {
   action: ActionInfo;
-  stakedAmount: bigint;
   votesNum: bigint;
-  votePercent: bigint;
+  votePercentPerTenThousand: bigint;
+  hasReward: boolean;
+  joinedAmountOfAccount: bigint;
 }
 
 export interface VerifyingAction {
@@ -47,12 +52,14 @@ export interface VerifyingAction {
   votesNum: bigint;
   verificationScore: bigint;
   myVotesNum: bigint;
+  myVerificationScore: bigint;
 }
 
 export interface MyVerifyingAction {
   action: ActionInfo;
-  myVotesNum: bigint;
   totalVotesNum: bigint;
+  myVotesNum: bigint;
+  myVerificationScore: bigint;
 }
 
 export interface VerifiedAddress {

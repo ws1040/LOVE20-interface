@@ -216,6 +216,7 @@ export function WalletButton({ className }: WalletButtonProps = {}) {
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-gray-700">钱包地址</span>
             {address && (
+              // @ts-ignore
               <CopyToClipboard text={address} onCopy={handleCopyAddress}>
                 <Button variant="ghost" size="sm" className="h-6 px-2 text-xs">
                   {copied ? (

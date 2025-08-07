@@ -13,13 +13,13 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_HUB
 // =====================
 
 /**
- * Hook for contributeWithETH
+ * Hook for contributeFirstTokenWithETH
  */
-export function useContributeWithETH() {
+export function useContributeFirstTokenWithETH() {
   const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
     LOVE20HubAbi,
     CONTRACT_ADDRESS,
-    'contributeWithETH',
+    'contributeFirstTokenWithETH',
   );
 
   const contribute = async (tokenAddress: `0x${string}`, to: `0x${string}`, ethAmount: bigint) => {
@@ -30,7 +30,7 @@ export function useContributeWithETH() {
   // 错误日志记录
   useEffect(() => {
     if (hash) {
-      console.log('contributeWithETH tx hash:', hash);
+      console.log('contributeFirstTokenWithETH tx hash:', hash);
     }
     if (error) {
       console.log('提交contributeWithETH交易错误:');
@@ -45,6 +45,69 @@ export function useContributeWithETH() {
     isConfirming,
     writeError: error,
     isConfirmed,
+    hash,
+    isTukeMode,
+  };
+}
+
+/**
+ * Hook for stakeLiquidity
+ */
+export function useStakeLiquidity() {
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20HubAbi,
+    CONTRACT_ADDRESS,
+    'stakeLiquidity',
+  );
+
+  const stakeLiquidity = async (
+    tokenAddress: `0x${string}`,
+    tokenAmount: bigint,
+    parentTokenAmount: bigint,
+    tokenAmountMin: bigint,
+    parentTokenAmountMin: bigint,
+    promisedWaitingPhases: bigint,
+    to: `0x${string}`,
+  ) => {
+    console.log('提交stakeLiquidity交易:', {
+      tokenAddress,
+      tokenAmount,
+      parentTokenAmount,
+      tokenAmountMin,
+      parentTokenAmountMin,
+      promisedWaitingPhases,
+      to,
+      isTukeMode,
+    });
+    return await execute([
+      tokenAddress,
+      tokenAmount,
+      parentTokenAmount,
+      tokenAmountMin,
+      parentTokenAmountMin,
+      promisedWaitingPhases,
+      to,
+    ]);
+  };
+
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('stakeLiquidity tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交stakeLiquidity交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
+
+  return {
+    stakeLiquidity,
+    isPending,
+    isConfirming,
+    isConfirmed,
+    writeError: error,
     hash,
     isTukeMode,
   };
