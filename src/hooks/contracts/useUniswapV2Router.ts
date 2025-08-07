@@ -101,7 +101,7 @@ export function useSwapExactETHForTokens() {
     UniswapV2RouterAbi,
     CONTRACT_ADDRESS,
     'swapExactETHForTokens',
-    // { skipSimulation: true },
+    { skipSimulation: true },
   );
 
   const swap = async (
