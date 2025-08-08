@@ -2,15 +2,13 @@ import { useState, useEffect, useCallback, useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { toast } from 'react-hot-toast';
 import { useDebouncedCallback } from 'use-debounce';
-import { useRouter } from 'next/router';
 
 // my hooks
 import { useTokenDetails, useTokensByPage, useChildTokensByPage } from '@/src/hooks/contracts/useLOVE20TokenViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { formatPercentage } from '@/src/lib/format';
-
+import { NavigationUtils } from '@/src/lib/navigationUtils';
 // my contexts
 import { Token, TokenContext } from '@/src/contexts/TokenContext';
 
@@ -33,8 +31,7 @@ interface TokenWithLaunchInfo extends Token {
 }
 
 export default function TokenList({ parentTokenAddress }: TokenListProps) {
-  const router = useRouter();
-  const { token: currentToken, setToken } = useContext(TokenContext) || {};
+  const { token: currentToken } = useContext(TokenContext) || {};
 
   const [start, setStart] = useState<bigint>(0n);
   const [end, setEnd] = useState<bigint>(BigInt(PAGE_SIZE));
@@ -113,31 +110,11 @@ export default function TokenList({ parentTokenAddress }: TokenListProps) {
 
   // 切换代币
   const handleTokenClick = (token: TokenWithLaunchInfo) => {
-    if (!setToken) {
-      toast.error('请先选择代币');
-      return;
-    }
-    // 创建一个标准的 Token 对象（不包含额外的发射进度字段）
-    const standardToken: Token = {
-      name: token.name,
-      symbol: token.symbol,
-      address: token.address,
-      decimals: token.decimals,
-      hasEnded: token.hasEnded,
-      parentTokenAddress: token.parentTokenAddress,
-      parentTokenSymbol: token.parentTokenSymbol,
-      slTokenAddress: token.slTokenAddress,
-      stTokenAddress: token.stTokenAddress,
-      initialStakeRound: token.initialStakeRound,
-      voteOriginBlocks: token.voteOriginBlocks,
-    };
-    //切换代币
-    setToken(standardToken);
     //跳转代币详情页
     if (token.hasEnded) {
-      window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/acting/?symbol=${token.symbol}`;
+      NavigationUtils.redirectWithOverlay(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/acting/?symbol=${token.symbol}`);
     } else {
-      window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/launch/?symbol=${token.symbol}`;
+      NavigationUtils.redirectWithOverlay(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/launch/?symbol=${token.symbol}`);
     }
   };
 
