@@ -29,7 +29,7 @@ const REWARDS_PER_PAGE = 20n;
 const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
   const { address: account, chain: accountChain } = useAccount();
-  const { currentRound, error: errorCurrentRound } = useCurrentRound();
+  const { currentRound, error: errorCurrentRound, isPending: isLoadingCurrentRound } = useCurrentRound();
   const [startRound, setStartRound] = useState<bigint>(0n);
   const [endRound, setEndRound] = useState<bigint>(0n);
   const [hasMoreRewards, setHasMoreRewards] = useState(true);
@@ -140,6 +140,10 @@ const GovRewardsPage: React.FC = () => {
       observer.disconnect();
     };
   }, [loadMoreRewards]);
+
+  if (isLoadingCurrentRound) {
+    return <LoadingIcon />;
+  }
 
   return (
     <>

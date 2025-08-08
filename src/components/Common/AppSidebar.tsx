@@ -135,10 +135,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             token.parentTokenSymbol !== process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL
               ? [
                   {
-                    title: '回到父币',
+                    title: '返回父币',
                     url: `/acting/?symbol=${token.parentTokenSymbol}`,
                     isActive: false,
                     icon: UserCog,
+                    forceReload: true, // 仅此项使用强制刷新
                   },
                 ]
               : []),
@@ -229,7 +230,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuButton
                       isActive={subItem.isActive || false}
                       className={cn(subItem.isActive && '!bg-transparent !text-white font-bold')}
-                      onClick={() => handleLinkClick(subItem.url)}
+                      onClick={() => {
+                        if (isMobile) {
+                          setOpenMobile(false);
+                        }
+                        if (subItem.forceReload) {
+                          const target = basePath ? `${basePath}${subItem.url}` : subItem.url;
+                          window.location.href = target;
+                        } else {
+                          handleLinkClick(subItem.url);
+                        }
+                      }}
                     >
                       <span className="text-base">{subItem.title}</span>
                     </SidebarMenuButton>
