@@ -129,7 +129,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
         </div>
       )}
       <div className="flex justify-center mt-2">
-        <RoundLite currentRound={currentRound} roundType="verify" showCountdown={false} />
+        <RoundLite currentRound={currentRound} roundType="verify" />
       </div>
     </div>
   );
