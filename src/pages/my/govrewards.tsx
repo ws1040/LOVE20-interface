@@ -143,7 +143,7 @@ const GovRewardsPage: React.FC = () => {
 
   return (
     <>
-      <Header title="治理激励" />
+      <Header title="治理激励" showBackButton={true} />
       <main className="flex-grow">
         {!token ? (
           <LoadingIcon />
