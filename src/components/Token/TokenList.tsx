@@ -66,19 +66,6 @@ export default function TokenList({ parentTokenAddress }: TokenListProps) {
 
   useEffect(() => {
     if (tokenAddresses && tokens && launchInfos) {
-      console.log('=== 调试发射进度数据 ===');
-      launchInfos.forEach((launchInfo, index) => {
-        console.log(`Token ${index}:`, {
-          symbol: tokens[index]?.symbol,
-          launchAmount: launchInfo.launchAmount.toString(),
-          parentTokenFundraisingGoal: launchInfo.parentTokenFundraisingGoal.toString(),
-          totalContributed: launchInfo.totalContributed.toString(),
-          hasEnded: launchInfo.hasEnded,
-          correctRatio: Number(launchInfo.totalContributed) / Number(launchInfo.parentTokenFundraisingGoal),
-          wrongRatio: Number(launchInfo.launchAmount) / Number(launchInfo.parentTokenFundraisingGoal),
-        });
-      });
-
       const newTokens: TokenWithLaunchInfo[] = tokens.map((token: TokenInfo, index: number) => ({
         name: token.name,
         symbol: token.symbol,
@@ -148,9 +135,9 @@ export default function TokenList({ parentTokenAddress }: TokenListProps) {
     setToken(standardToken);
     //跳转代币详情页
     if (token.hasEnded) {
-      router.push(`/acting/?symbol=${token.symbol}`);
+      window.location.href = `/acting/?symbol=${token.symbol}`;
     } else {
-      router.push(`/launch/?symbol=${token.symbol}`);
+      window.location.href = `/launch/?symbol=${token.symbol}`;
     }
   };
 

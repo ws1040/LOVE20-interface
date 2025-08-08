@@ -272,6 +272,14 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
     requestedUnstakeRound &&
     currentRound > requestedUnstakeRound + (promisedWaitingPhases || BigInt(0));
 
+  console.log('---------------begin----------------');
+  console.log('canWithdraw', canWithdraw);
+  console.log('enableWithdraw', enableWithdraw);
+  console.log('requestedUnstakeRound', requestedUnstakeRound);
+  console.log('currentRound', currentRound);
+  console.log('promisedWaitingPhases', promisedWaitingPhases);
+  console.log('----------------end----------------');
+
   return (
     <>
       <div className="stats w-full grid grid-cols-2 divide-x-0 ">
