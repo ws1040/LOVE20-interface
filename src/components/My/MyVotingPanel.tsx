@@ -105,7 +105,7 @@ const MyVotingPanel: React.FC<MyVotingPanelProps> = ({
         )}
       </div>
       <div className="flex justify-center mt-2">
-        <RoundLite currentRound={currentRound} roundType="vote" showCountdown={false} />
+        <RoundLite currentRound={currentRound} roundType="vote" />
       </div>
     </div>
   );
