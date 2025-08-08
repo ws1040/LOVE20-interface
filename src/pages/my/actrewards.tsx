@@ -41,7 +41,7 @@ const ActRewardsPage = () => {
 
   return (
     <>
-      <Header title="行动激励" />
+      <Header title="行动激励" showBackButton={true} />
       <main className="flex-grow">
         {isPendingCurrentJoinRound ? (
           <LoadingIcon />

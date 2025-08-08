@@ -15,9 +15,10 @@ import { TokenContext } from '../contexts/TokenContext';
 
 interface HeaderProps {
   title: string;
+  showBackButton?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ title }) => {
+const Header: React.FC<HeaderProps> = ({ title, showBackButton = false }) => {
   const { address, chain } = useAccount();
   const chainName = process.env.NEXT_PUBLIC_CHAIN;
   const { setError } = useError();
@@ -119,15 +120,17 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
       <header className="flex justify-between items-center py-2 px-4">
         <div className="flex items-center gap-3">
           <SidebarTrigger className="-ml-1" />
-          {/* <Button
-            variant="outline"
-            size="sm"
-            onClick={handleGoBack}
-            className="flex items-center gap-2 px-3 py-2 text-gray-700 border-gray-300 hover:bg-gray-50 hover:text-gray-900"
-            title="返回上一页"
-          >
-            <span className="text-sm font-medium">&lt;&nbsp;返回</span>
-          </Button> */}
+          {showBackButton && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleGoBack}
+              className="flex items-center gap-2 px-3 py-2 text-gray-700 border-gray-300 hover:bg-gray-50 hover:text-gray-900"
+              title="返回上一页"
+            >
+              <span className="text-sm font-medium">&lt;&nbsp;返回</span>
+            </Button>
+          )}
         </div>
         <WalletButton />
       </header>
