@@ -135,9 +135,9 @@ export default function TokenList({ parentTokenAddress }: TokenListProps) {
     setToken(standardToken);
     //跳转代币详情页
     if (token.hasEnded) {
-      window.location.href = `/acting/?symbol=${token.symbol}`;
+      window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/acting/?symbol=${token.symbol}`;
     } else {
-      window.location.href = `/launch/?symbol=${token.symbol}`;
+      window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/launch/?symbol=${token.symbol}`;
     }
   };
 
