@@ -30,7 +30,7 @@ const ActionPage = () => {
 
   return (
     <>
-      <Header title="行动详情" />
+      <Header title="行动详情" showBackButton={true} />
       <main className="flex-grow">
         {typeParam === 'submit' && (
           <ActionPanelForSubmit

@@ -216,6 +216,7 @@ export default function NewAction() {
                   <FormControl>
                     <Textarea
                       placeholder="验证者，会根据这个规则来打分"
+                      rows={6}
                       className="!ring-secondary-foreground"
                       {...field}
                     />

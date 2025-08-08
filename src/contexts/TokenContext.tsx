@@ -88,26 +88,23 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     const ifNoSymbol = !tokenSymbol || tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase();
 
     try {
-      if (ifNoSymbol) {
-        // 没有指定token时, 清掉 localStorage
-        clearToken();
-      } else {
-        const cacheCleared = checkAndClearCache();
+      const cacheCleared = checkAndClearCache();
 
-        if (!cacheCleared && isClient()) {
-          // 从 Local Storage 加载 token
-          try {
-            const storedToken = localStorage.getItem('currentToken');
-            if (storedToken && JSON.parse(storedToken)) {
-              const _token = JSON.parse(storedToken);
-              if (ifNoSymbol || tokenSymbol === _token.symbol) {
-                setToken(_token);
-                return; // 从 Local Storage 中找到了token，直接返回
-              }
+      // 优先从本地缓存恢复（无论是否有 symbol，只要缓存可用）
+      if (!cacheCleared && isClient()) {
+        try {
+          const storedToken = localStorage.getItem('currentToken');
+          if (storedToken) {
+            const parsed = JSON.parse(storedToken);
+            // 情况1：无 symbol，则直接沿用最近一次的 token
+            // 情况2：有 symbol，且与缓存一致，则直接使用缓存
+            if (ifNoSymbol || (parsed && parsed.symbol === tokenSymbol)) {
+              setToken(parsed);
+              return; // 命中缓存，直接返回
             }
-          } catch (error) {
-            console.error('Failed to load token from localStorage:', error);
           }
+        } catch (error) {
+          console.error('Failed to load token from localStorage:', error);
         }
       }
 
@@ -115,7 +112,9 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
       if (tokenSymbol && tokenSymbol.length > 0 && !ifNoSymbol) {
         setSymbolToGetDetail(tokenSymbol as string); //有指定token
       } else {
-        setSymbolToGetDetail(process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || ''); //没有指定token时,用默认token
+        // 没有指定 symbol 时，不再主动清空 token；
+        // 若没有缓存，则回退到默认 token（通过环境变量配置）
+        setSymbolToGetDetail(process.env.NEXT_PUBLIC_FIRST_TOKEN_SYMBOL || '');
       }
     } catch (error) {
       console.error('Failed to load token from localStorage:', error);

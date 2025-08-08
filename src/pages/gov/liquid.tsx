@@ -7,7 +7,7 @@ import StakedLiquidDataPanel from '@/src/components/DataPanel/StakedLiquidDataPa
 const ActingPage = () => {
   return (
     <>
-      <Header title="流动性质押数据" />
+      <Header title="流动性质押数据" showBackButton={true} />
       <main className="flex-grow">
         <StakedLiquidDataPanel />
       </main>
