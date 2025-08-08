@@ -83,6 +83,85 @@ export class NavigationUtils {
   }
 
   /**
+   * 强制整页跳转前显示加载遮罩，降低“卡顿/白屏”感知
+   */
+  static redirectWithOverlay(url: string, text: string = '正在跳转...'): void {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      // 非浏览器环境直接跳转
+      (globalThis as any).location.href = url;
+      return;
+    }
+
+    try {
+      // 避免重复叠加
+      const existing = document.querySelector('[data-hard-redirect-overlay="true"]');
+      if (!existing) {
+        const overlay = document.createElement('div');
+        overlay.setAttribute('data-hard-redirect-overlay', 'true');
+        overlay.style.position = 'fixed';
+        overlay.style.inset = '0';
+        overlay.style.zIndex = '2147483647';
+        overlay.style.background = 'rgba(17, 24, 39, 0.5)'; // 与全局遮罩一致的半透色
+        overlay.style.backdropFilter = 'blur(1px)';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.pointerEvents = 'auto';
+        overlay.style.touchAction = 'none';
+
+        // 阻止背景滚动
+        try {
+          document.body.style.overflow = 'hidden';
+        } catch {}
+
+        // 容器
+        const container = document.createElement('div');
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.alignItems = 'center';
+        container.style.color = '#ffffff';
+
+        // 简单的 CSS Spinner
+        const spinner = document.createElement('div');
+        spinner.style.width = '32px';
+        spinner.style.height = '32px';
+        spinner.style.border = '3px solid rgba(255,255,255,0.35)';
+        spinner.style.borderTopColor = '#ffffff';
+        spinner.style.borderRadius = '50%';
+        spinner.style.animation = 'redirect-spin 0.9s linear infinite';
+
+        const textNode = document.createElement('div');
+        textNode.textContent = text;
+        textNode.style.marginTop = '8px';
+        textNode.style.fontSize = '14px';
+        textNode.style.fontWeight = '500';
+
+        container.appendChild(spinner);
+        container.appendChild(textNode);
+        overlay.appendChild(container);
+
+        // 注入一次性 keyframes
+        if (!document.getElementById('redirect-spin-style')) {
+          const style = document.createElement('style');
+          style.id = 'redirect-spin-style';
+          style.innerHTML =
+            '@keyframes redirect-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }';
+          document.head.appendChild(style);
+        }
+
+        document.body.appendChild(overlay);
+      }
+
+      // 允许浏览器有机会渲染遮罩，然后再跳转
+      setTimeout(() => {
+        window.location.href = url;
+      }, 0);
+    } catch {
+      window.location.href = url;
+    }
+  }
+
+  /**
    * 处理外部链接 - 尝试在系统浏览器中打开
    */
   static handleExternalLink(url: string): void {

@@ -31,6 +31,7 @@ import {
   SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { NavigationUtils } from '@/src/lib/navigationUtils';
 
 // 修改后的 AppSidebar 组件
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -236,7 +237,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         }
                         if (subItem.forceReload) {
                           const target = basePath ? `${basePath}${subItem.url}` : subItem.url;
-                          window.location.href = target;
+                          NavigationUtils.redirectWithOverlay(target, '正在跳转...');
                         } else {
                           handleLinkClick(subItem.url);
                         }

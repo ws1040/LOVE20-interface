@@ -1,4 +1,5 @@
 import type { AppProps } from 'next/app';
+import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { SidebarInset } from '@/components/ui/sidebar';
@@ -12,6 +13,7 @@ import Footer from '@/src/components/Footer';
 import ErrorBoundary from '@/src/components/ErrorBoundary';
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -41,12 +43,30 @@ const ClientWrapper = dynamic(() => Promise.resolve(({ children }: { children: R
 });
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [navLoading, setNavLoading] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     initVConsole();
   }, []);
+
+  // 路由切换时显示全局加载遮罩
+  useEffect(() => {
+    const handleStart = () => setNavLoading(true);
+    const handleDone = () => setNavLoading(false);
+
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleDone);
+    router.events.on('routeChangeError', handleDone);
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleDone);
+      router.events.off('routeChangeError', handleDone);
+    };
+  }, [router.events]);
 
   // 在服务端或客户端未完成挂载时显示loading
   if (!mounted) {
@@ -62,6 +82,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ErrorBoundary>
       <ClientWrapper>
+        <LoadingOverlay isLoading={navLoading} text="网络加载中..." />
         <WagmiProvider config={config}>
           <QueryClientProvider client={client}>
             <TokenProvider>
