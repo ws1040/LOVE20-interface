@@ -246,7 +246,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
         const computedStakeTokenStr = Number(formatUnits(computedStakeToken))
           .toFixed(12)
           .replace(/\.?0+$/, '');
-        form.setValue('stakeToken', computedStakeTokenStr);
+        form.setValue('stakeToken', computedStakeTokenStr, { shouldValidate: true });
         setIsParentTokenChangedByUser(false);
         setIsTokenChangedByUser(false);
       }
@@ -262,7 +262,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
         const computedParentTokenStr = Number(formatUnits(computedParentToken))
           .toFixed(12)
           .replace(/\.?0+$/, '');
-        form.setValue('parentToken', computedParentTokenStr);
+        form.setValue('parentToken', computedParentTokenStr, { shouldValidate: true });
         setIsParentTokenChangedByUser(false);
         setIsTokenChangedByUser(false);
       }
@@ -516,7 +516,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                         type="button"
                                         onClick={() => {
                                           const amount = (parentTokenBalance * BigInt(percentage)) / 100n;
-                                          form.setValue('parentToken', formatUnits(amount));
+                                          form.setValue('parentToken', formatUnits(amount), { shouldValidate: true });
                                           setIsParentTokenChangedByUser(true);
                                         }}
                                         disabled={hadStartedApprove || parentTokenBalance <= 0n}
@@ -530,7 +530,9 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                       size="sm"
                                       type="button"
                                       onClick={() => {
-                                        form.setValue('parentToken', formatUnits(parentTokenBalance || 0n));
+                                        form.setValue('parentToken', formatUnits(parentTokenBalance || 0n), {
+                                          shouldValidate: true,
+                                        });
                                         setIsParentTokenChangedByUser(true);
                                       }}
                                       disabled={parentTokenBalance <= 0n}
@@ -586,7 +588,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                         type="button"
                                         onClick={() => {
                                           const amount = (tokenBalance * BigInt(percentage)) / 100n;
-                                          form.setValue('stakeToken', formatUnits(amount));
+                                          form.setValue('stakeToken', formatUnits(amount), { shouldValidate: true });
                                           setIsTokenChangedByUser(true);
                                         }}
                                         disabled={tokenBalance <= 0n}
@@ -600,7 +602,9 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
                                       size="sm"
                                       type="button"
                                       onClick={() => {
-                                        form.setValue('stakeToken', formatUnits(tokenBalance || 0n));
+                                        form.setValue('stakeToken', formatUnits(tokenBalance || 0n), {
+                                          shouldValidate: true,
+                                        });
                                         setIsTokenChangedByUser(true);
                                       }}
                                       disabled={tokenBalance <= 0n}

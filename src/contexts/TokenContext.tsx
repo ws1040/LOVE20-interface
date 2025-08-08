@@ -80,6 +80,9 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     initTokenBySymbol(router.query.symbol as string);
   }, [router.isReady, router.query.symbol]);
 
+  console.log('token', token);
+  console.log('router.query.symbol', router.query.symbol);
+
   // Step 2. 根据 symbol 初始化 token，逻辑：
   // (1)如果localstorage有该tokenSymbol缓存，直接从缓存中加载（不设置symbolToGetDetail）
   // (2)否则设置symbolToGetDetail，用hook从合约获取token信息
