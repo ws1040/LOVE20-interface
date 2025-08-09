@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { HandCoins, Info, TableOfContents, Pickaxe, Layers, Blocks, BarChart2, Landmark, Rocket } from 'lucide-react';
+import { HandCoins, Info, TableOfContents, Pickaxe, Blocks, BarChart2, Users, Rocket } from 'lucide-react';
 
 // my context
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -302,7 +302,7 @@ const TokenPage = () => {
                     <Card>
                       <CardHeader className="px-4 pt-4 pb-2">
                         <CardTitle className="flex items-center gap-2 text-lg">
-                          <Landmark className="h-5 w-5 text-primary" />
+                          <Users className="h-5 w-5 text-primary" />
                           治理情况
                         </CardTitle>
                       </CardHeader>

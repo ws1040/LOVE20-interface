@@ -96,7 +96,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return {
       navMain: [
         {
-          title: '首页',
+          title: '代币',
           url: '#',
           items: [
             {
@@ -104,6 +104,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               url: `/token/?symbol=${token.symbol}`,
               isActive: isActiveUrl(`${basePath}/token/`),
               icon: Home,
+            },
+            {
+              title: '代币介绍',
+              url: `/token/intro?symbol=${token.symbol}`,
+              isActive: isActiveUrl(`${basePath}/token/intro`),
+              icon: Info,
             },
           ],
         },
@@ -198,12 +204,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               isActive: isActiveUrl(`${basePath}/my/`),
               icon: User,
             },
-            {
-              title: '关于协议',
-              url: `/about?symbol=${token.symbol}`,
-              isActive: isActiveUrl(`${basePath}/about`),
-              icon: Info,
-            },
+            // {
+            //   title: '关于协议',
+            //   url: `/about?symbol=${token.symbol}`,
+            //   isActive: isActiveUrl(`${basePath}/about`),
+            //   icon: Info,
+            // },
           ],
         },
       ],
