@@ -53,7 +53,10 @@ const TokenIntroPage = () => {
       SYMBOL: token?.symbol,
       NAME: token?.name,
       DECIMALS: token?.decimals,
-      PARENT_SYMBOL: token?.parentTokenSymbol,
+      PARENT_SYMBOL:
+        token?.address == process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_TOKEN
+          ? process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL
+          : token?.parentTokenSymbol,
       PARENT_NAME: token?.parentTokenName,
       TOKEN_ADDRESS: token?.address,
       PARENT_ADDRESS: token?.parentTokenAddress,
