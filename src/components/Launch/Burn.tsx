@@ -128,7 +128,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
     if (isConfirmedBurn) {
       toast.success('销毁成功');
       setTimeout(() => {
-        router.push(`/dex/swap/?symbol=${token?.symbol}&from=${token?.parentTokenSymbol}`);
+        router.push(`/my?symbol=${token?.symbol}`);
       }, 1000);
     }
   }, [isConfirmedBurn, router, token?.symbol]);

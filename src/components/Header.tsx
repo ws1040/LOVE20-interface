@@ -118,7 +118,7 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton = false, backUrl 
   return (
     <>
       <Head>
-        <title>{`${token?.symbol}`}</title>
+        <title>{`${token?.symbol ?? 'LOVE20'}`}</title>
         <meta name={`${title} - ${token?.symbol}`} content="A Web3 DApp for LOVE20 token management" />
       </Head>
 

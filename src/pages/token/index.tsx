@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { HandCoins, Info, TableOfContents, Pickaxe, Layers, Blocks, BarChart2, Landmark, Rocket } from 'lucide-react';
+import { HandCoins, Info, TableOfContents, Pickaxe, Blocks, BarChart2, Users, Rocket } from 'lucide-react';
 
 // my context
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -29,8 +29,8 @@ import { formatPercentage } from '@/src/lib/format';
 function Field({ label, value, percentage }: { label: string; value: string; percentage?: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <div className="text-sm text-muted-foreground">{label}</div>
-      <div className="text-sm font-medium break-all text-secondary">
+      <div className="text-sm text-muted-foreground font-mono">{label}</div>
+      <div className="text-sm font-medium break-all text-secondary font-mono">
         {value}
         {percentage && <span className="text-sm text-muted-foreground ml-1">({percentage})</span>}
       </div>
@@ -164,7 +164,7 @@ const TokenPage = () => {
               <div className="flex items-center gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <h1 className="text-2xl font-semibold tracking-tight">{currentToken.symbol}</h1>
+                    <h1 className="text-2xl font-semibold tracking-tight font-mono">{currentToken.symbol}</h1>
                     <Badge variant="secondary" className="font-mono">
                       {currentToken.name}
                     </Badge>
@@ -173,7 +173,7 @@ const TokenPage = () => {
                     <span className="inline-flex items-center gap-1">
                       <Pickaxe className="h-4 w-4" />
                       已铸造：
-                      <span>{`${formatAmount(totalSupply, decimals)}`}</span>
+                      <span className="font-mono">{`${formatAmount(totalSupply, decimals)}`}</span>
                     </span>
                     <Separator orientation="vertical" className="h-4" />
                     <span className="inline-flex items-center gap-1">
@@ -302,7 +302,7 @@ const TokenPage = () => {
                     <Card>
                       <CardHeader className="px-4 pt-4 pb-2">
                         <CardTitle className="flex items-center gap-2 text-lg">
-                          <Landmark className="h-5 w-5 text-primary" />
+                          <Users className="h-5 w-5 text-primary" />
                           治理情况
                         </CardTitle>
                       </CardHeader>

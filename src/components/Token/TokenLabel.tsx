@@ -20,7 +20,7 @@ const TokenLabel: React.FC<TokenLabelProps> = ({}) => {
     <div className="flex items-center">
       <div className="mr-2">
         <div className="flex items-center">
-          <span className="font-bold text-2xl mr-2">{token.symbol}</span>
+          <span className="font-bold text-2xl mr-2 font-mono">{token.symbol}</span>
           <AddressWithCopyButton address={token.address as `0x${string}`} />
           <AddToMetamask
             tokenAddress={token.address as `0x${string}`}

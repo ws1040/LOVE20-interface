@@ -71,7 +71,7 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
       </div>
       <div className="stats bg-gray-100 w-full grid grid-cols-2 divide-x-0">
         <div className="stat place-items-center pb-3">
-          <div className="stat-title text-sm flex items-center">
+          <div className="stat-title text-sm flex items-center font-mono">
             持有 {token?.symbol}
             <AddressWithCopyButton address={token.address as `0x${string}`} showAddress={false} />
             <AddToMetamask
@@ -86,7 +86,7 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
           <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light">不含质押、锁定</div>
         </div>
         <div className="stat place-items-center pb-3">
-          <div className="stat-title text-sm flex items-center">
+          <div className="stat-title text-sm flex items-center font-mono">
             持有 {token?.parentTokenSymbol}
             <AddressWithCopyButton address={token.parentTokenAddress as `0x${string}`} showAddress={false} />
             <AddToMetamask
