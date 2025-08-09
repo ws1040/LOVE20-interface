@@ -414,23 +414,43 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   const [fromAmount, setFromAmount] = useState<bigint>(0n);
   const [toAmount, setToAmount] = useState<bigint>(0n);
 
+  // 基于测试前缀的原生代币使用上限（仅在存在 NEXT_PUBLIC_TOKEN_PREFIX 时生效）
+  const maxNativeInputLimit = useMemo(() => {
+    const hasPrefix = !!process.env.NEXT_PUBLIC_TOKEN_PREFIX;
+    if (!hasPrefix) return undefined;
+    if (!fromToken.isNative) return undefined;
+    const limitStr = toToken.isWETH ? '1' : '0.0001';
+    return parseUnits(limitStr);
+  }, [fromToken.isNative, toToken.isWETH]);
+
   // 监听输入数量变化
   const watchFromAmount = form.watch('fromTokenAmount');
   useEffect(() => {
     try {
       const amount = parseUnits(watchFromAmount || '0');
-      setFromAmount(amount);
+      let finalAmount = amount;
+      if (maxNativeInputLimit && amount > maxNativeInputLimit) {
+        finalAmount = maxNativeInputLimit;
+        const limitedStr = formatUnits(finalAmount);
+        if (watchFromAmount && watchFromAmount !== limitedStr) {
+          form.setValue('fromTokenAmount', limitedStr);
+          toast('测试环境限制：最多可使用 ' + limitedStr + ' ' + fromToken.symbol);
+        }
+      }
+      setFromAmount(finalAmount);
     } catch {
       setFromAmount(0n);
     }
-  }, [watchFromAmount]);
+  }, [watchFromAmount, maxNativeInputLimit, form, fromToken.symbol]);
 
   // --------------------------------------------------
   // 4. 组件交互：设置最大数量、切换代币
   // --------------------------------------------------
   // 设置最大数量
   const setMaxAmount = () => {
-    const maxStr = formatUnits(fromBalance || 0n);
+    const rawMax = fromBalance || 0n;
+    const capped = maxNativeInputLimit ? (rawMax > maxNativeInputLimit ? maxNativeInputLimit : rawMax) : rawMax;
+    const maxStr = formatUnits(capped);
     form.setValue('fromTokenAmount', maxStr);
   };
 
@@ -701,6 +721,14 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
     if (!checkWalletConnection(accountChain)) return;
 
     try {
+      // 预检查0：测试环境原生币输入上限
+      if (maxNativeInputLimit && fromAmount > maxNativeInputLimit) {
+        const limitedStr = formatUnits(maxNativeInputLimit);
+        form.setValue('fromTokenAmount', limitedStr);
+        toast.error(`输入超出测试环境上限，已调整为 ${limitedStr} ${fromToken.symbol}`);
+        return;
+      }
+
       // 预检查1：验证环境变量
       const wethAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN;
       const routerAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_ROUTER;
@@ -962,8 +990,13 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                                 size="sm"
                                 type="button"
                                 onClick={() => {
-                                  const amount = ((fromBalance ?? 0n) * BigInt(percentage)) / 100n;
-                                  form.setValue('fromTokenAmount', formatUnits(amount));
+                                  const base = ((fromBalance ?? 0n) * BigInt(percentage)) / 100n;
+                                  const capped = maxNativeInputLimit
+                                    ? base > maxNativeInputLimit
+                                      ? maxNativeInputLimit
+                                      : base
+                                    : base;
+                                  form.setValue('fromTokenAmount', formatUnits(capped));
                                 }}
                                 disabled={isDisabled || (fromBalance || 0n) <= 0n}
                                 className="text-xs h-7 px-2 rounded-lg"
@@ -986,6 +1019,13 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                             {formatTokenAmount(fromBalance || 0n)} {fromToken.symbol}
                           </span>
                         </div>
+                        {maxNativeInputLimit && (
+                          <div className="text-xs text-gray-500 mt-2">
+                            测试环境限制：
+                            {toToken.isWETH ? '最多可使用 1 ' : '最多可使用 0.0001 '}
+                            {fromToken.symbol}
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                     <FormMessage />
