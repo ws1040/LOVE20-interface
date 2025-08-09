@@ -106,7 +106,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               icon: Home,
             },
             {
-              title: '代币介绍',
+              title: '代币简介',
               url: `/token/intro?symbol=${token.symbol}`,
               isActive: isActiveUrl(`${basePath}/token/intro`),
               icon: Info,
