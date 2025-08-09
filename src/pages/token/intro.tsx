@@ -65,7 +65,10 @@ const TokenIntroPage = () => {
       ST_ADDRESS: token?.stTokenAddress,
       PAIR_ADDRESS: token?.uniswapV2PairAddress,
       WITHDRAW_WAITING_BLOCKS: process.env.NEXT_PUBLIC_WITHDRAW_WAITING_BLOCKS ?? '?',
-      MIN_VALIDATOR_VOTE_PERCENT: formatPercentage(Number(process.env.NEXT_PUBLIC_SUBMIT_MIN_PER_THOUSAND ?? 0) / 10),
+      SUBMIT_MIN_PERCENT: formatPercentage(Number(process.env.NEXT_PUBLIC_SUBMIT_MIN_PER_THOUSAND ?? 0) / 10),
+      ACTION_REWARD_MIN_VOTE_PERCENT: formatPercentage(
+        Number(process.env.NEXT_PUBLIC_ACTION_REWARD_MIN_VOTE_PER_THOUSAND ?? 0) / 10,
+      ),
     } as const;
     return applyPlaceholders(rawMd, vars);
   }, [rawMd, token]);
