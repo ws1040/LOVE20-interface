@@ -39,7 +39,7 @@ const GovRewardsPage: React.FC = () => {
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (currentRound && token) {
+    if (currentRound !== undefined && token) {
       if (currentRound <= BigInt(token.initialStakeRound)) {
         setEndRound(0n);
       } else {
@@ -168,12 +168,7 @@ const GovRewardsPage: React.FC = () => {
 
             {endRound === 0n && currentRound !== undefined ? (
               <div className="text-center text-gray-500 py-4">当前还不能铸造奖励，请耐心等待</div>
-            ) : rewardList.length === 0 && endRound !== 0n ? (
-              <div className="flex justify-center items-center">
-                {isLoadingRewards ? '' : <span className="text-sm text-gray-500">暂无数据</span>}
-              </div>
             ) : (
-              // 当已有部分数据时，始终展示表格
               <>
                 <table className="table w-full table-auto">
                   <thead>
@@ -184,29 +179,37 @@ const GovRewardsPage: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {rewardList.map((item) => (
-                      <tr key={item.round.toString()} className="border-b border-gray-100">
-                        <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
-                        <td className="text-center">{formatTokenAmount(item.reward || 0n)}</td>
-                        <td className="text-center">
-                          {item.reward > 0n && !item.isMinted ? (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-secondary border-secondary"
-                              onClick={() => handleClaim(item.round)}
-                              disabled={isPending || isConfirming}
-                            >
-                              铸造
-                            </Button>
-                          ) : item.isMinted ? (
-                            <span className="text-greyscale-500">已铸造</span>
-                          ) : (
-                            <span className="text-greyscale-500">-</span>
-                          )}
+                    {rewardList.length === 0 && !isLoadingRewards ? (
+                      <tr>
+                        <td colSpan={3} className="text-center text-sm text-gray-500 py-4">
+                          暂无数据
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      rewardList.map((item) => (
+                        <tr key={item.round.toString()} className="border-b border-gray-100">
+                          <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
+                          <td className="text-center">{formatTokenAmount(item.reward || 0n)}</td>
+                          <td className="text-center">
+                            {item.reward > 0n && !item.isMinted ? (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-secondary border-secondary"
+                                onClick={() => handleClaim(item.round)}
+                                disabled={isPending || isConfirming}
+                              >
+                                铸造
+                              </Button>
+                            ) : item.isMinted ? (
+                              <span className="text-greyscale-500">已铸造</span>
+                            ) : (
+                              <span className="text-greyscale-500">-</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
                 <div ref={loadMoreRef} className="h-12 flex justify-center items-center">
