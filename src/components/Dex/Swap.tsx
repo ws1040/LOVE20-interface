@@ -961,16 +961,20 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                                     }}
                                     disabled={isDisabled}
                                   >
-                                    <SelectTrigger className="w-auto border-none bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors border border-gray-200">
+                                    <SelectTrigger className="w-auto border-none bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors border border-gray-200 font-mono">
                                       <div className="flex items-center gap-2">
-                                        <span className="font-medium text-gray-800">{fromToken.symbol}</span>
+                                        <span className="font-medium text-gray-800 font-mono">{fromToken.symbol}</span>
                                       </div>
                                     </SelectTrigger>
                                     <SelectContent>
                                       {supportedTokens.map((tokenConfig) => (
-                                        <SelectItem key={tokenConfig.address} value={tokenConfig.address}>
+                                        <SelectItem
+                                          key={tokenConfig.address}
+                                          value={tokenConfig.address}
+                                          className="font-mono"
+                                        >
                                           <div className="flex items-center gap-2">
-                                            <span>{tokenConfig.symbol}</span>
+                                            <span className="font-mono">{tokenConfig.symbol}</span>
                                           </div>
                                         </SelectItem>
                                       ))}
@@ -1088,16 +1092,20 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                               }}
                               disabled={isDisabled}
                             >
-                              <SelectTrigger className="w-auto border-none bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors border border-gray-200">
+                              <SelectTrigger className="w-auto border-none bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors border border-gray-200 font-mono">
                                 <div className="flex items-center gap-2">
-                                  <span className="font-medium text-gray-800">{toToken.symbol}</span>
+                                  <span className="font-medium text-gray-800 font-mono">{toToken.symbol}</span>
                                 </div>
                               </SelectTrigger>
                               <SelectContent>
                                 {supportedTokens.map((tokenConfig) => (
-                                  <SelectItem key={tokenConfig.address} value={tokenConfig.address}>
+                                  <SelectItem
+                                    key={tokenConfig.address}
+                                    value={tokenConfig.address}
+                                    className="font-mono"
+                                  >
                                     <div className="flex items-center gap-2">
-                                      <span>{tokenConfig.symbol}</span>
+                                      <span className="font-mono">{tokenConfig.symbol}</span>
                                     </div>
                                   </SelectItem>
                                 ))}

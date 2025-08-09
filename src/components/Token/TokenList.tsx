@@ -141,7 +141,7 @@ export default function TokenList({ parentTokenAddress }: TokenListProps) {
             <CardContent className="p-4 flex justify-between items-center">
               <div>
                 <p className="flex items-center">
-                  <span className="font-semibold">{token.symbol}</span>
+                  <span className="font-semibold font-mono">{token.symbol}</span>
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {token.hasEnded ? (
@@ -165,7 +165,7 @@ export default function TokenList({ parentTokenAddress }: TokenListProps) {
               <div className="flex items-center gap-2">
                 <span>
                   <span className="text-greyscale-500 text-sm">父币 </span>
-                  <span className="text-sm">{token.parentTokenSymbol}</span>
+                  <span className="text-sm font-mono">{token.parentTokenSymbol}</span>
                 </span>
                 <Button variant="ghost" size="icon">
                   <ChevronRight className="h-4 w-4" />
