@@ -29,10 +29,10 @@ import { formatPercentage } from '@/src/lib/format';
 function Field({ label, value, percentage }: { label: string; value: string; percentage?: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-sm text-muted-foreground">{label}</div>
       <div className="text-sm font-medium break-all text-secondary">
         {value}
-        {percentage && <span className="text-xs text-muted-foreground ml-1">({percentage})</span>}
+        {percentage && <span className="text-sm text-muted-foreground ml-1">({percentage})</span>}
       </div>
     </div>
   );
@@ -200,13 +200,13 @@ const TokenPage = () => {
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                   <div className="lg:col-span-2 space-y-6">
                     <Card>
-                      <CardHeader className="pb-2">
+                      <CardHeader className="px-4 pt-4 pb-2">
                         <CardTitle className="flex items-center gap-2 text-lg">
                           <TableOfContents className="h-5 w-5 text-primary" />
                           基本信息
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="grid gap-4 grid-cols-2">
+                      <CardContent className="grid gap-4 grid-cols-2 px-4 pt-2 pb-4">
                         <Field label="Symbol" value={currentToken.symbol} />
                         <Field label="Name" value={currentToken.name} />
                         <Field label="父币 Symbol" value={parentSymbol} />
@@ -215,13 +215,13 @@ const TokenPage = () => {
                     </Card>
 
                     <Card>
-                      <CardHeader className="pb-2">
+                      <CardHeader className="px-4 pt-4 pb-2">
                         <CardTitle className="flex items-center gap-2 text-lg">
                           <Pickaxe className="h-5 w-5 text-primary" />
                           铸造情况
                         </CardTitle>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="px-4 pt-2 pb-4">
                         <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
                           <Field label="最大铸造量" value={formatAmount(maxSupply, decimals)} />
                           <Field
@@ -249,13 +249,13 @@ const TokenPage = () => {
                     </Card>
 
                     <Card>
-                      <CardHeader className="pb-2">
+                      <CardHeader className="px-4 pt-4 pb-2">
                         <CardTitle className="flex items-center gap-2 text-lg">
                           <HandCoins className="h-5 w-5 text-primary" />
                           已铸代币分布
                         </CardTitle>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="px-4 pt-2 pb-4">
                         <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
                           <Field label="已铸代币量（流通量）" value={formatAmount(totalSupply, decimals)} />
                           <Field
@@ -285,13 +285,13 @@ const TokenPage = () => {
 
                   <div className="space-y-6">
                     <Card>
-                      <CardHeader className="pb-2">
+                      <CardHeader className="px-4 pt-4 pb-2">
                         <CardTitle className="flex items-center gap-2 text-lg">
                           <Rocket className="h-5 w-5 text-primary" />
                           发射情况
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="grid grid-cols-2 gap-4">
+                      <CardContent className="grid grid-cols-2 gap-4 px-4 pt-2 pb-4">
                         <Field label="启动公平发射区块" value={formatBigIntWithCommas(startBlock)} />
                         <Field label="完成公平发射区块" value={formatBigIntWithCommas(endBlock)} />
                         <Field label="托底池父币数量" value={formatAmount(parentPool, decimals, parentSymbol)} />
@@ -299,15 +299,15 @@ const TokenPage = () => {
                     </Card>
 
                     <Card>
-                      <CardHeader className="pb-2">
+                      <CardHeader className="px-4 pt-4 pb-2">
                         <CardTitle className="flex items-center gap-2 text-lg">
                           <Landmark className="h-5 w-5 text-primary" />
                           治理情况
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="grid grid-cols-2 gap-4">
-                        <Field label="首次治理绝对轮次" value={String(currentToken.initialStakeRound ?? 0)} />
-                        <Field label="已完成轮次" value={formatBigIntWithCommas(finishedRounds)} />
+                      <CardContent className="grid grid-cols-2 gap-4 px-4 pt-2 pb-4">
+                        <Field label="首次治理轮次" value={String(currentToken.initialStakeRound ?? 0)} />
+                        <Field label="已完成轮数" value={formatBigIntWithCommas(finishedRounds)} />
                         <Field label="累计发起行动数" value={formatBigIntWithCommas(actionsCount)} />
                         <Field label="进行中的行动数" value={formatBigIntWithCommas(joiningActionsCount)} />
                       </CardContent>
@@ -319,10 +319,10 @@ const TokenPage = () => {
               <TabsContent value="contracts" className="mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Card>
-                    <CardHeader className="pb-2">
+                    <CardHeader className="px-4 pt-4 pb-2">
                       <CardTitle className="text-lg">LOVE20 核心合约地址：</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid gap-3">
+                    <CardContent className="grid gap-3 px-4 pt-2 pb-4">
                       <AddressItem name="TokenFactory" address={constantsAddresses.TokenFactory} />
                       <AddressItem name="Launch" address={constantsAddresses.Launch} />
                       <AddressItem name="Stake" address={constantsAddresses.Stake} />
@@ -335,12 +335,12 @@ const TokenPage = () => {
                   </Card>
 
                   <Card>
-                    <CardHeader className="pb-2">
+                    <CardHeader className="px-4 pt-4 pb-2">
                       <CardTitle className="text-lg">{`${currentToken.symbol} 相关代币地址：`}</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid gap-3">
-                      <AddressItem name={`${currentToken.symbol}代币`} address={currentAddresses.token} />
-                      <AddressItem name={`父币(${currentToken.parentTokenSymbol})`} address={currentAddresses.parent} />
+                    <CardContent className="grid gap-3 px-4 pt-2 pb-4">
+                      <AddressItem name={`${currentToken.symbol}(当前代币)`} address={currentAddresses.token} />
+                      <AddressItem name={`${currentToken.parentTokenSymbol}(父币)`} address={currentAddresses.parent} />
                       <AddressItem name="流动性质押凭证SL代币" address={currentAddresses.sl} />
                       <AddressItem name="代币质押凭证ST代币" address={currentAddresses.st} />
                       <AddressItem name="UniswapV2Pair" address={currentAddresses.pair} />

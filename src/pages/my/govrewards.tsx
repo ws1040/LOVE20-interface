@@ -71,13 +71,15 @@ const GovRewardsPage: React.FC = () => {
     if (rewards) {
       const sortedRewards = [...rewards].sort((a, b) => (a.round > b.round ? -1 : 1)); // 按 round 倒序排列
       setRewardList(sortedRewards);
-
-      // Check if there are more rewards to load
-      setHasMoreRewards(
-        endRound - startRound > REWARDS_PER_PAGE && rewards.length >= endRound - startRound - REWARDS_PER_PAGE,
-      );
     }
   }, [rewards]);
+
+  // 根据当前起始轮次判断是否还有更多可以加载
+  useEffect(() => {
+    if (!token) return;
+    const initialStake = BigInt(token.initialStakeRound);
+    setHasMoreRewards(startRound > initialStake);
+  }, [startRound, token]);
 
   // 铸造治理奖励
   const { mintGovReward, isPending, isConfirming, isConfirmed, writeError: errorMintGovReward } = useMintGovReward();
@@ -130,18 +132,25 @@ const GovRewardsPage: React.FC = () => {
   // 使用 IntersectionObserver 监控底部 sentinel 元素
   useEffect(() => {
     if (!loadMoreRef.current) return;
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          loadMoreRewards();
-        }
-      });
-    });
-    observer.observe(loadMoreRef.current);
+    const target = loadMoreRef.current;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (!isLoadingRewards && hasMoreRewards) {
+              loadMoreRewards();
+            }
+          }
+        });
+      },
+      { root: null, rootMargin: '200px', threshold: 0 },
+    );
+    observer.observe(target);
     return () => {
+      observer.unobserve(target);
       observer.disconnect();
     };
-  }, [loadMoreRewards]);
+  }, [loadMoreRewards, isLoadingRewards, hasMoreRewards]);
 
   if (isLoadingCurrentRound) {
     return <LoadingIcon />;
@@ -205,10 +214,8 @@ const GovRewardsPage: React.FC = () => {
                     <LoadingIcon />
                   ) : hasMoreRewards ? (
                     <span className="text-sm text-gray-500">加载更多...</span>
-                  ) : startRound > token.initialStakeRound ? (
-                    <span className="text-sm text-gray-500">没有更多奖励</span>
                   ) : (
-                    ''
+                    <span className="text-sm text-gray-500">没有更多奖励</span>
                   )}
                 </div>
               </>
