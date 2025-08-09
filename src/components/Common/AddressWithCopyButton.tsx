@@ -43,12 +43,17 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
     <span className="inline-flex items-center space-x-2">
       {word && <span className="text-xs">{word}</span>}
       {showAddress && !colorClassName2 && (
-        <span className={`text-xs ${colorClassName ?? 'text-greyscale-500'}`}>{abbreviateAddress(address)}</span>
+        <span className={`font-mono text-xs ${colorClassName ?? 'text-greyscale-500'}`}>
+          {abbreviateAddress(address)}
+        </span>
       )}
       {showAddress && colorClassName2 && (
         <span className="text-[0px]">
-          <span className={`text-xs ${colorClassName ?? 'text-greyscale-500'}`}>{`${address.substring(0, 6)}...`}</span>
-          <span className={`text-xs ${colorClassName2}`}>{`${address.substring(address.length - 4)}`}</span>
+          <span className={`font-mono text-xs ${colorClassName ?? 'text-greyscale-500'}`}>{`${address.substring(
+            0,
+            6,
+          )}...`}</span>
+          <span className={`font-mono text-xs ${colorClassName2}`}>{`${address.substring(address.length - 4)}`}</span>
         </span>
       )}
       {showCopyButton && (
