@@ -173,8 +173,7 @@ const TokenPage = () => {
                     <span className="inline-flex items-center gap-1">
                       <Pickaxe className="h-4 w-4" />
                       已铸造：
-                      <span className="text-secondary">{`${formatAmount(totalSupply, decimals)}`}</span>
-                      {` (${formatPercentage((Number(totalSupply) / Number(maxSupply)) * 100)})`}
+                      <span>{`${formatAmount(totalSupply, decimals)}`}</span>
                     </span>
                     <Separator orientation="vertical" className="h-4" />
                     <span className="inline-flex items-center gap-1">
