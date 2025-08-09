@@ -768,6 +768,112 @@ export const LOVE20RoundViewerAbi = [
   },
   {
     "type": "function",
+    "name": "tokenStatistics",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct TokenStats",
+        "components": [
+          {
+            "name": "maxSupply",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalSupply",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "reservedAvailable",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "rewardAvailable",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "pairReserveParentToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "pairReserveToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalLpSupply",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "stakedTokenAmountForSt",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "joinedTokenAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalSLSupply",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalSTSupply",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "parentTokenAmountForSl",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "tokenAmountForSl",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "parentPool",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "finishedRounds",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actionsCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "joiningActionsCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "verificationInfosByAccount",
     "inputs": [
       {

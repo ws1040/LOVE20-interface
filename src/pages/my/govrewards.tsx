@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useContext, useRef, useCallback } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
+import toast from 'react-hot-toast';
 
 // my functions & types
 import { checkWalletConnection } from '@/src/lib/web3';
@@ -84,6 +85,7 @@ const GovRewardsPage: React.FC = () => {
   useEffect(() => {
     if (isConfirmed) {
       setRewardList((prev) => prev.map((item) => (item.round === mintingRound ? { ...item, isMinted: true } : item)));
+      toast.success(`铸造成功`);
     }
   }, [isConfirmed, mintingRound]);
 

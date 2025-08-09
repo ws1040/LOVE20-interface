@@ -96,6 +96,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return {
       navMain: [
         {
+          title: '首页',
+          url: '#',
+          items: [
+            {
+              title: '代币首页',
+              url: `/token/?symbol=${token.symbol}`,
+              isActive: isActiveUrl(`${basePath}/token/`),
+              icon: Home,
+            },
+          ],
+        },
+        {
           title: '社区',
           url: '#',
           items: [

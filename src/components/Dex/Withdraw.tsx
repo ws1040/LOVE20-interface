@@ -96,7 +96,7 @@ const Withdraw: React.FC = () => {
     mode: 'onChange',
   });
 
-  // 3. 提交时调用 deposit
+  // 3. 提交
   async function onSubmit(data: WithdrawFormValues) {
     // 也可在这里检测是否连接正确网络
     if (!checkWalletConnection(accountChain)) {
@@ -155,7 +155,7 @@ const Withdraw: React.FC = () => {
     }
   }, [errBalance, errorBalanceOfERC20Token, errWithdraw, handleContractError]);
 
-  if (isLoadingBalance) {
+  if (isLoadingBalance || isPendingBalanceOfERC20Token) {
     return <LoadingIcon />;
   }
 

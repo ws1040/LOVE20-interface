@@ -89,9 +89,12 @@ export interface TokenInfo {
   name: string;
   symbol: string;
   decimals: number;
+  parentTokenAddress: `0x${string}`;
   parentTokenSymbol: string;
+  parentTokenName: string;
   slAddress: `0x${string}`;
   stAddress: `0x${string}`;
+  uniswapV2PairAddress: `0x${string}`;
   initialStakeRound: number;
 }
 
@@ -122,4 +125,24 @@ export interface PairInfo {
 export interface VerificationInfo {
   account: `0x${string}`;
   infos: string[];
+}
+
+export interface TokenStats {
+  maxSupply: bigint;
+  totalSupply: bigint;
+  reservedAvailable: bigint;
+  rewardAvailable: bigint;
+  pairReserveParentToken: bigint;
+  pairReserveToken: bigint;
+  totalLpSupply: bigint;
+  stakedTokenAmountForSt: bigint;
+  joinedTokenAmount: bigint;
+  totalSLSupply: bigint;
+  totalSTSupply: bigint;
+  parentTokenAmountForSl: bigint;
+  tokenAmountForSl: bigint;
+  parentPool: bigint;
+  finishedRounds: bigint;
+  actionsCount: bigint;
+  joiningActionsCount: bigint;
 }

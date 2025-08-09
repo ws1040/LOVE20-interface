@@ -572,17 +572,17 @@ export const LOVE20VoteAbi = [
   },
   {
     "type": "error",
+    "name": "ActionNotSubmitted",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "AlreadyInitialized",
     "inputs": []
   },
   {
     "type": "error",
     "name": "CannotVote",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "InvalidActionIds",
     "inputs": []
   },
   {

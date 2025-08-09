@@ -37,6 +37,7 @@ jobs:
           NEXT_PUBLIC_APP_VERSION: 1.1.0
 
           NEXT_PUBLIC_CHAIN: thinkium70001
+          NEXT_PUBLIC_CHAIN_NAME: 'Thinkium Mainnet Chain 1'
           NEXT_PUBLIC_THINKIUM_RPC_URL: https://proxy1.thinkiumrpc.net
           NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL: TKM
           NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL: TestTKM20
