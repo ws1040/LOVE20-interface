@@ -171,8 +171,10 @@ const TokenPage = () => {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <span className="inline-flex items-center gap-1">
-                      <Layers className="h-4 w-4" />
-                      {process.env.NEXT_PUBLIC_CHAIN_NAME ?? process.env.NEXT_PUBLIC_CHAIN}
+                      <Pickaxe className="h-4 w-4" />
+                      已铸造：
+                      <span className="text-secondary">{`${formatAmount(totalSupply, decimals)}`}</span>
+                      {` (${formatPercentage((Number(totalSupply) / Number(maxSupply)) * 100)})`}
                     </span>
                     <Separator orientation="vertical" className="h-4" />
                     <span className="inline-flex items-center gap-1">
