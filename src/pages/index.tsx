@@ -27,9 +27,9 @@ const Home: NextPage = () => {
     const symbol = router.query.symbol as string;
     if (symbol) {
       setHasRedirected(true);
-      target = `/acting/?symbol=${symbol}`;
+      target = `/token/?symbol=${symbol}`;
     } else {
-      target = `/acting/`;
+      target = `/token/`;
     }
     router.push(target).catch((err) => {
       console.log('路由跳转被取消或出错：', err);

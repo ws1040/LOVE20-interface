@@ -16,11 +16,12 @@ import { TokenContext } from '../contexts/TokenContext';
 interface HeaderProps {
   title: string;
   showBackButton?: boolean;
+  backUrl?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ title, showBackButton = false }) => {
+const Header: React.FC<HeaderProps> = ({ title, showBackButton = false, backUrl = '' }) => {
   const { address, chain } = useAccount();
-  const chainName = process.env.NEXT_PUBLIC_CHAIN;
+  const chainName = process.env.NEXT_PUBLIC_CHAIN_NAME ?? process.env.NEXT_PUBLIC_CHAIN;
   const { setError } = useError();
   const { token } = useContext(TokenContext) || {};
   const router = useRouter();
@@ -107,7 +108,11 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton = false }) => {
 
   // 返回上一页处理函数
   const handleGoBack = () => {
-    router.back();
+    if (backUrl) {
+      router.push(backUrl);
+    } else {
+      router.back();
+    }
   };
 
   return (
@@ -120,7 +125,7 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton = false }) => {
       <header className="flex justify-between items-center py-2 px-4">
         <div className="flex items-center gap-3">
           <SidebarTrigger className="-ml-1" />
-          {showBackButton && (
+          {(showBackButton || backUrl !== '') && (
             <Button
               variant="outline"
               size="sm"

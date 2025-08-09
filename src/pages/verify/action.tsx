@@ -1,11 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 // my hooks
 import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Verify';
 import { useHandleContractError } from '@/src/lib/errorUtils';
+import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my types
 import { ActionInfo } from '@/src/types/love20types';
@@ -24,7 +25,7 @@ const VerifyPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const actionId = BigInt((id as string) || '0');
-
+  const { token } = useContext(TokenContext) || {};
   const { currentRound, error: errorCurrentRound } = useCurrentRound();
 
   // 错误处理
@@ -48,7 +49,7 @@ const VerifyPage = () => {
 
   return (
     <>
-      <Header title="验证" />
+      <Header title="验证" backUrl={`/verify/actions/?symbol=${token?.symbol}`} />
       <main className="flex-grow">
         {remainingVotes > 0 && (
           <div className="px-4 pt-4">

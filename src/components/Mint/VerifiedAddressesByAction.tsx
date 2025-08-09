@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useAccount } from 'wagmi';
-import { formatEther } from 'viem';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 // my hooks
 import { useHandleContractError } from '@/src/lib/errorUtils';
@@ -39,7 +39,7 @@ const VerifiedAddressesByAction: React.FC<{
 
   useEffect(() => {
     if (token && currentJoinRound - BigInt(token.initialStakeRound) >= 2n) {
-      setSelectedRound(currentJoinRound - 1n);
+      setSelectedRound(currentJoinRound - 2n);
     }
   }, [currentJoinRound, token]);
 
@@ -91,6 +91,7 @@ const VerifiedAddressesByAction: React.FC<{
   useEffect(() => {
     if (isConfirmedMint) {
       setAddresses((prev) => prev.map((addr) => (addr.account === account ? { ...addr, isMinted: true } : addr)));
+      toast.success(`铸造成功`);
     }
   }, [isConfirmedMint, account]);
 

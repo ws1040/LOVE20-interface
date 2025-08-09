@@ -265,7 +265,17 @@ export const LOVE20TokenViewerAbi = [
             "internalType": "uint256"
           },
           {
+            "name": "parentTokenAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
             "name": "parentTokenSymbol",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "parentTokenName",
             "type": "string",
             "internalType": "string"
           },
@@ -276,6 +286,11 @@ export const LOVE20TokenViewerAbi = [
           },
           {
             "name": "stAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "uniswapV2PairAddress",
             "type": "address",
             "internalType": "address"
           },
@@ -388,7 +403,17 @@ export const LOVE20TokenViewerAbi = [
             "internalType": "uint256"
           },
           {
+            "name": "parentTokenAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
             "name": "parentTokenSymbol",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "parentTokenName",
             "type": "string",
             "internalType": "string"
           },
@@ -399,6 +424,11 @@ export const LOVE20TokenViewerAbi = [
           },
           {
             "name": "stAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "uniswapV2PairAddress",
             "type": "address",
             "internalType": "address"
           },
@@ -511,7 +541,17 @@ export const LOVE20TokenViewerAbi = [
             "internalType": "uint256"
           },
           {
+            "name": "parentTokenAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
             "name": "parentTokenSymbol",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "parentTokenName",
             "type": "string",
             "internalType": "string"
           },
@@ -522,6 +562,11 @@ export const LOVE20TokenViewerAbi = [
           },
           {
             "name": "stAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "uniswapV2PairAddress",
             "type": "address",
             "internalType": "address"
           },

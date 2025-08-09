@@ -14,8 +14,10 @@ export interface Token {
   hasEnded: boolean; //发射是否结束
   parentTokenAddress: `0x${string}`;
   parentTokenSymbol: string;
+  parentTokenName: string;
   slTokenAddress: `0x${string}`;
   stTokenAddress: `0x${string}`;
+  uniswapV2PairAddress: `0x${string}`;
   initialStakeRound: number;
   voteOriginBlocks: number;
 }
@@ -144,9 +146,11 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
             decimals: Number(tokenInfoBySymbol.decimals),
             hasEnded: launchInfoBySymbol.hasEnded,
             parentTokenAddress: launchInfoBySymbol.parentTokenAddress,
+            parentTokenName: tokenInfoBySymbol.parentTokenName,
             parentTokenSymbol: tokenInfoBySymbol.parentTokenSymbol,
             slTokenAddress: tokenInfoBySymbol.slAddress,
             stTokenAddress: tokenInfoBySymbol.stAddress,
+            uniswapV2PairAddress: tokenInfoBySymbol.uniswapV2PairAddress,
             initialStakeRound: Number(tokenInfoBySymbol.initialStakeRound),
             voteOriginBlocks: prevToken === null ? 0 : prevToken.voteOriginBlocks,
           } as Token),
