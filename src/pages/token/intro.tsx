@@ -9,7 +9,8 @@ import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import { formatPercentage } from '@/src/lib/format';
 
-const INTRO_MD_URL = '/token/INTRO.md';
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+const INTRO_MD_URL = basePath + '/token/INTRO.md';
 
 function applyPlaceholders(md: string, vars: Record<string, string | number | undefined | null>): string {
   let out = md;
