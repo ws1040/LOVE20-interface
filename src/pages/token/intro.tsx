@@ -7,7 +7,10 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
-import { formatPercentage } from '@/src/lib/format';
+
+import { formatPercentage, formatTokenAmount, parseUnits } from '@/src/lib/format';
+import { useLaunchInfo } from '@/src/hooks/contracts/useLOVE20Launch';
+import { useHandleContractError } from '@/src/lib/errorUtils';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 const INTRO_MD_URL = basePath + '/token/INTRO.md';
@@ -26,6 +29,12 @@ const TokenIntroPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [rawMd, setRawMd] = useState<string>('');
+
+  const {
+    launchInfo,
+    error: errorLaunchInfo,
+    isPending: isPendingLaunchInfo,
+  } = useLaunchInfo((token?.address as `0x${string}`) || '0x0000000000000000000000000000000000000000');
 
   useEffect(() => {
     let cancelled = false;
@@ -49,6 +58,10 @@ const TokenIntroPage = () => {
     };
   }, []);
 
+  const launchAmount = parseUnits(process.env.NEXT_PUBLIC_LAUNCH_AMOUNT ?? '0');
+  const launchGoal = parseUnits(launchInfo?.parentTokenFundraisingGoal?.toString() ?? '0');
+  const price = launchGoal === 0n ? 0n : launchAmount / launchGoal;
+
   const renderedMd = useMemo(() => {
     const vars = {
       SYMBOL: token?.symbol,
@@ -69,15 +82,23 @@ const TokenIntroPage = () => {
       ACTION_REWARD_MIN_VOTE_PERCENT: formatPercentage(
         Number(process.env.NEXT_PUBLIC_ACTION_REWARD_MIN_VOTE_PER_THOUSAND ?? 0) / 10,
       ),
+      LAUNCH_GOAL: formatTokenAmount(launchInfo?.parentTokenFundraisingGoal ?? 0n),
+      PRICE: price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     } as const;
     return applyPlaceholders(rawMd, vars);
-  }, [rawMd, token]);
+  }, [rawMd, token, launchInfo]);
+
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorLaunchInfo) handleContractError(errorLaunchInfo, 'launch');
+  }, [errorLaunchInfo]);
 
   return (
     <>
       <Header title="代币介绍" />
       <main className="flex-grow">
-        {loading ? (
+        {loading || isPendingLaunchInfo ? (
           <div className="flex justify-center items-center h-[60vh]">
             <LoadingIcon />
           </div>

@@ -7,7 +7,7 @@ import { formatUnits as viemFormatUnits } from 'viem';
 // ui
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { HandCoins, Info, TableOfContents, Pickaxe, Blocks, BarChart2, Users, Rocket } from 'lucide-react';
 
@@ -26,11 +26,21 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 import { formatPercentage } from '@/src/lib/format';
 
 // 简单的字段组件
-function Field({ label, value, percentage }: { label: string; value: string; percentage?: string }) {
+function Field({
+  label,
+  value,
+  percentage,
+  font,
+}: {
+  label: string;
+  value: string;
+  percentage?: string;
+  font?: string;
+}) {
   return (
     <div className="flex flex-col gap-1">
-      <div className="text-sm text-muted-foreground font-mono">{label}</div>
-      <div className="text-sm font-medium break-all text-secondary font-mono">
+      <div className={`text-sm text-muted-foreground ${font}`}>{label}</div>
+      <div className={`text-sm font-medium break-all text-secondary ${font}`}>
         {value}
         {percentage && <span className="text-sm text-muted-foreground ml-1">({percentage})</span>}
       </div>
@@ -96,7 +106,6 @@ const TokenPage = () => {
   }, [errorTokenStatistics, errorLaunchInfo]);
 
   const decimals = currentToken?.decimals ?? 18;
-  const symbol = currentToken?.symbol ?? '';
   const parentSymbol = currentToken?.parentTokenSymbol ?? '';
 
   // 代币统计（变量命名与 TokenStats 保持一致）
@@ -208,10 +217,10 @@ const TokenPage = () => {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="grid gap-4 grid-cols-2 px-4 pt-2 pb-4">
-                        <Field label="Symbol" value={currentToken.symbol} />
-                        <Field label="Name" value={currentToken.name} />
-                        <Field label="父币 Symbol" value={parentSymbol} />
-                        <Field label="父币 Name" value={currentToken.parentTokenName} />
+                        <Field label="Symbol" value={currentToken.symbol} font="font-mono" />
+                        <Field label="Name" value={currentToken.name} font="font-mono" />
+                        <Field label="父币 Symbol" value={parentSymbol} font="font-mono" />
+                        <Field label="父币 Name" value={currentToken.parentTokenName} font="font-mono" />
                       </CardContent>
                     </Card>
 
