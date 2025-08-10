@@ -58,9 +58,9 @@ const TokenIntroPage = () => {
     };
   }, []);
 
-  const launchAmount = parseUnits(process.env.NEXT_PUBLIC_LAUNCH_AMOUNT ?? '0');
-  const launchGoal = parseUnits(launchInfo?.parentTokenFundraisingGoal?.toString() ?? '0');
-  const price = launchGoal === 0n ? 0n : launchAmount / launchGoal;
+  const launchAmount = Number(process.env.NEXT_PUBLIC_LAUNCH_AMOUNT ?? 0);
+  const launchGoal = Number(launchInfo?.parentTokenFundraisingGoal ?? 0);
+  const price = launchGoal === 0 ? 0 : launchAmount / launchGoal;
 
   const renderedMd = useMemo(() => {
     const vars = {
