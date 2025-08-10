@@ -14,8 +14,8 @@ jobs:
     with:
       destination_dir: 'test'
       publish_branch: 'gh-pages'
-      base_path: '/interface/test'
-      asset_prefix: '/interface/test'
+      base_path: '/interface-test'
+      asset_prefix: '/interface-test'
       out_dir: 'out'
       node_version: '20'
       install_script: 'yarn install'

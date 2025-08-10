@@ -34,8 +34,8 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 import { Loader2 } from 'lucide-react';
 
-// 定义带有动态验证的 FormSchema
-const getFormSchema = (balance: bigint) =>
+// 定义带有动态验证的 FormSchema（可选接入“测试环境上限”）
+const getFormSchema = (balance: bigint, maxAllowed?: bigint, maxAllowedLabel?: string) =>
   z.object({
     contributeAmount: z
       .string()
@@ -50,6 +50,16 @@ const getFormSchema = (balance: bigint) =>
         },
         {
           message: `申购数量不能超过余额 (${formatUnits(balance)})`,
+        },
+      )
+      .refine(
+        (val) => {
+          if (!maxAllowed) return true;
+          const amount = parseUnits(val) ?? 0n;
+          return amount <= maxAllowed;
+        },
+        {
+          message: `测试环境限制：首个父币最多可申购 ${maxAllowedLabel ?? '0.001'}`,
         },
       ),
   });
@@ -91,17 +101,33 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     error: contributedError,
   } = useContributed(token?.address as `0x${string}`, account as `0x${string}`);
 
+  // 测试环境是否开启（基于 NEXT_PUBLIC_TOKEN_PREFIX）
+  const hasTestPrefix = !!process.env.NEXT_PUBLIC_TOKEN_PREFIX;
+  // 是否为“首个父币”（原生代币参与申购场景）
+  const isLimitActive = hasTestPrefix && isNativeContribute;
+  // 测试环境上限（0.001 父币）
+  const maxAllowedForFirstParent = parseUnits('0.001');
+
+  console.log('hasTestPrefix', hasTestPrefix);
+  console.log('isLimitActive', isLimitActive);
+  console.log('maxAllowedForFirstParent', maxAllowedForFirstParent);
+
   // 2. 初始化 React Hook Form，传入动态的 FormSchema
   const form = useForm<z.infer<ReturnType<typeof getFormSchema>>>({
-    resolver: zodResolver(getFormSchema(balance)),
+    resolver: zodResolver(getFormSchema(balance, isLimitActive ? maxAllowedForFirstParent : undefined, '0.001')),
     defaultValues: {
       contributeAmount: '',
     },
   });
 
-  // 表单内点击"最高"时，设置最大值
+  // 表单内点击"最高"时，设置最大值（测试环境+首个父币时，不超过 0.001）
   const setMaxAmount = () => {
-    form.setValue('contributeAmount', formatUnits(balance));
+    if (isLimitActive) {
+      const capped = balance > maxAllowedForFirstParent ? maxAllowedForFirstParent : balance;
+      form.setValue('contributeAmount', formatUnits(capped));
+    } else {
+      form.setValue('contributeAmount', formatUnits(balance));
+    }
   };
 
   // 3. ERC20代币授权相关逻辑（仅在非native代币时使用）
@@ -202,6 +228,11 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     }
     try {
       const amountBigInt = parseUnits(data.contributeAmount) ?? 0n;
+      // 测试环境限制：首个父币最多 0.001
+      if (isLimitActive && amountBigInt > maxAllowedForFirstParent) {
+        toast('测试环境限制：首个父币最多可申购 0.001');
+        return;
+      }
       if (isNativeContribute) {
         await contributeFirstTokenWithETH(token?.address as `0x${string}`, account as `0x${string}`, amountBigInt);
       } else {
@@ -318,6 +349,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
                   <FormControl>
                     <Input
                       type="number"
+                      max={isLimitActive ? 0.001 : undefined}
                       placeholder={`请填写${parentTokenSymbol}数量`}
                       disabled={(!isNativeContribute && hasStartedApproving) || balance <= 0n}
                       className="!ring-secondary-foreground"
@@ -325,6 +357,9 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
                     />
                   </FormControl>
                   <FormMessage />
+                  {isLimitActive && (
+                    <div className="text-xs text-greyscale-400 mt-1">测试环境限制：首个父币最多可申购 0.001</div>
+                  )}
                 </FormItem>
               )}
             />
