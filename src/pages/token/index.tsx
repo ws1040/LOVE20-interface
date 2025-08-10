@@ -245,12 +245,12 @@ const TokenPage = () => {
                             percentage={formatPercentage((Number(unminted) / Number(maxSupply)) * 100)}
                           />
                           <Field
-                            label="未分配待铸造量"
+                            label="未来轮次待铸造量"
                             value={formatAmount(rewardAvailable, decimals)}
                             percentage={formatPercentage((Number(rewardAvailable) / Number(maxSupply)) * 100)}
                           />
                           <Field
-                            label="已分配待铸造量"
+                            label="过去轮次已分配未铸造量"
                             value={formatAmount(reservedAvailable, decimals)}
                             percentage={formatPercentage((Number(reservedAvailable) / Number(maxSupply)) * 100)}
                           />

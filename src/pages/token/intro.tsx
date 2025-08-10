@@ -61,16 +61,17 @@ const TokenIntroPage = () => {
   const launchAmount = Number(process.env.NEXT_PUBLIC_LAUNCH_AMOUNT ?? 0);
   const launchGoal = Number(launchInfo?.parentTokenFundraisingGoal ?? 0);
   const price = launchGoal === 0 ? 0 : launchAmount / launchGoal;
+  const parentSymbol =
+    token?.address == process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_TOKEN
+      ? process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL
+      : token?.parentTokenSymbol;
 
   const renderedMd = useMemo(() => {
     const vars = {
       SYMBOL: token?.symbol,
       NAME: token?.name,
       DECIMALS: token?.decimals,
-      PARENT_SYMBOL:
-        token?.address == process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_TOKEN
-          ? process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL
-          : token?.parentTokenSymbol,
+      PARENT_SYMBOL: parentSymbol,
       PARENT_NAME: token?.parentTokenName,
       TOKEN_ADDRESS: token?.address,
       PARENT_ADDRESS: token?.parentTokenAddress,
