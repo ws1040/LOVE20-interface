@@ -118,6 +118,8 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
     defaultValues: {
       contributeAmount: '',
     },
+    mode: 'onChange',
+    reValidateMode: 'onChange',
   });
 
   // 表单内点击"最高"时，设置最大值（测试环境+首个父币时，不超过 0.001）

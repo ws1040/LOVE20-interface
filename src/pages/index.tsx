@@ -29,9 +29,10 @@ const Home: NextPage = () => {
       try {
         if (typeof window !== 'undefined') {
           localStorage.removeItem('currentToken');
+          console.log('清理本地缓存成功');
         }
       } catch (e) {
-        console.log('清理本地缓存失败：', e);
+        console.error('清理本地缓存失败：', e);
       }
     }
     if (symbol) {
