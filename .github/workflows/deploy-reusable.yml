@@ -1,0 +1,131 @@
+name: Reusable Deploy to GitHub Pages (subdir)
+
+on:
+  workflow_call:
+    inputs:
+      # 代码安装/构建/产物/Node 版本
+      install_script:
+        type: string
+        required: false
+        default: "yarn install"
+      build_script:
+        type: string
+        required: false
+        default: "yarn build"
+      node_version:
+        type: string
+        required: false
+        default: "20"
+      out_dir:
+        type: string
+        required: false
+        default: "out"
+
+      # 发布到 gh-pages 的哪个子目录（如：test / prod）
+      destination_dir:
+        type: string
+        required: true
+
+      # 发布到哪个分支（通常 gh-pages）
+      publish_branch:
+        type: string
+        required: false
+        default: "gh-pages"
+
+      # BASE_PATH / ASSET_PREFIX（如：/interface/test），
+      # 如果 .env 文件里也定义了同名变量，以 .env 为准。
+      base_path:
+        type: string
+        required: true
+      asset_prefix:
+        type: string
+        required: false
+        default: ""
+
+      # 可选：把环境变量集中放在一个 .env 文件里（KEY=VALUE，每行一个）
+      # 例如 .env.test.pages / .env.prod.pages
+      env_file:
+        type: string
+        required: false
+        default: ""
+
+      # 触发策略
+      concurrency_group:
+        type: string
+        required: false
+        default: "gh-pages"
+      cancel_in_progress:
+        type: boolean
+        required: false
+        default: false
+
+    secrets:
+      # 可选：如果你需要额外的私密变量，调用方可以用 "secrets: inherit"
+      # 或者在这里显式声明需要的 secret 名称
+      GITHUB_TOKEN:
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ inputs.concurrency_group }}
+  cancel-in-progress: ${{ inputs.cancel_in_progress }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Install dependencies
+        run: ${{ inputs.install_script }}
+
+      # 将 inputs.env_file（如果提供了）注入到 GITHUB_ENV
+      - name: Load env file (optional)
+        if: ${{ inputs.env_file != '' }}
+        run: |
+          echo "Loading env file: ${{ inputs.env_file }}"
+          # 仅导入非注释、包含等号的 KEY=VALUE 行
+          sed -n 's/^\([^#][^=]*\)=\(.*\)$/\1=\2/p' "${{ inputs.env_file }}" >> "$GITHUB_ENV"
+
+      # 设置 BASE_PATH/ASSET_PREFIX（若 .env 已定义则保持 .env 中的值）
+      - name: Ensure BASE_PATH & ASSET_PREFIX
+        run: |
+          : "${BASE_PATH:=${{ inputs.base_path }}}"
+          if [ -z "${{ inputs.asset_prefix }}" ]; then
+            : "${ASSET_PREFIX:=${BASE_PATH}}"
+          else
+            : "${ASSET_PREFIX:=${{ inputs.asset_prefix }}}"
+          fi
+          echo "BASE_PATH=$BASE_PATH" >> "$GITHUB_ENV"
+          echo "ASSET_PREFIX=$ASSET_PREFIX" >> "$GITHUB_ENV"
+          echo "NEXT_PUBLIC_BASE_PATH=${BASE_PATH}" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: ${{ inputs.build_script }}
+
+      - name: Add 404.html (SPA routing)
+        run: |
+          if [ -f "${{ inputs.out_dir }}/index.html" ]; then
+            cp "${{ inputs.out_dir }}/index.html" "${{ inputs.out_dir }}/404.html"
+          fi
+
+      - name: List build files
+        run: ls -R "${{ inputs.out_dir }}/"
+
+      - name: Deploy to GitHub Pages subdir
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ inputs.out_dir }}
+          publish_branch: ${{ inputs.publish_branch }}
+          destination_dir: ${{ inputs.destination_dir }}
+          keep_files: true

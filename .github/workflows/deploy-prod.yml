@@ -1,8 +1,8 @@
-name: Deploy Test (calls reusable)
+name: Deploy Prod (calls reusable)
 
 on:
   push:
-    branches: [test]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -12,15 +12,15 @@ jobs:
   deploy:
     uses: LOVE20TKM/interface/.github/workflows/deploy-reusable.yml@main
     with:
-      destination_dir: 'test'
+      destination_dir: 'prod'
       publish_branch: 'gh-pages'
-      base_path: '/interface/test'
-      asset_prefix: '/interface/test'
+      base_path: '/interface/prod'
+      asset_prefix: '/interface/prod'
       out_dir: 'out'
-      node_version: '20'
+      env_file: '.env.prod.pages' # 自己维护的 prod 环境变量文件
       install_script: 'yarn install'
       build_script: 'yarn build'
-      concurrency_group: 'gh-pages-test'
+      node_version: '20'
+      concurrency_group: 'gh-pages-prod'
       cancel_in_progress: false
-      env_file: '.env.test.pages'
     secrets: inherit
