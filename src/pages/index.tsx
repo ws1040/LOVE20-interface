@@ -25,6 +25,15 @@ const Home: NextPage = () => {
 
     let target = '';
     const symbol = router.query.symbol as string;
+    if (!symbol) {
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('currentToken');
+        }
+      } catch (e) {
+        console.log('清理本地缓存失败：', e);
+      }
+    }
     if (symbol) {
       setHasRedirected(true);
       target = `/token/?symbol=${symbol}`;
