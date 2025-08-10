@@ -23,6 +23,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // my utils
 import { LinkIfUrl } from '@/src/lib/stringUtils';
+import { NavigationUtils } from '@/src/lib/navigationUtils';
 import { formatPercentage } from '@/src/lib/format';
 
 interface VerifyAddressesProps {
@@ -191,7 +192,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
         duration: 2000, // 2秒
       });
       setTimeout(() => {
-        router.push(`/verify/?symbol=${token?.symbol}`);
+        NavigationUtils.reloadWithOverlay();
       }, 2000);
     }
   }, [isConfirmed, submitError]);
