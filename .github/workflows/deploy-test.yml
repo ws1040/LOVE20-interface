@@ -1,9 +1,10 @@
-name: Deploy to GitHub Pages
+name: Deploy Test to GitHub Pages (subdir)
 
 on:
   push:
     branches:
-      - main
+      - test
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -19,26 +20,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 检出仓库代码
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 设置 Node.js 环境
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20' # 根据项目需求选择 Node.js 版本
+          node-version: '20'
 
-      # 安装依赖
       - name: Install dependencies
         run: yarn install
 
-      # 构建项目
-      - name: Build
+      - name: Build TEST (/interface/test)
         env:
-          BASE_PATH: /interface
-          ASSET_PREFIX: /interface
-          NEXT_PUBLIC_BASE_PATH: /interface
+          BASE_PATH: /interface/test
+          ASSET_PREFIX: /interface/test
+          NEXT_PUBLIC_BASE_PATH: /interface/test
 
           NEXT_PUBLIC_APP_VERSION: 1.1.1
 
@@ -87,22 +84,18 @@ jobs:
           NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_HUB: '0xA6B78658F5327CfaE9FA8d68988520E75b44a396'
           NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_ROUTER: '0x349a2CECf43722a2f572B7ED37877cC368111A5a'
 
-          # 添加其他环境变量，如果有的话
         run: |
           yarn build
           cp out/index.html out/404.html
 
-      # 检查静态文件
       - name: List build files
         run: ls -R out/
 
-      # 部署到 gh-pages 分支
-      - name: Deploy to GitHub Pages
+      - name: Deploy Test to GitHub Pages subdir
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./out
           publish_branch: gh-pages
+          destination_dir: test
           keep_files: true
-          # 如果需要自定义域名，可以添加以下内容
-          # cname: your-custom-domain.com
