@@ -76,6 +76,18 @@ jobs:
           echo "Loading env file: ${{ inputs.env_file }}"
           sed -n 's/^\([^#][^=]*\)=\(.*\)$/\1=\2/p' "${{ inputs.env_file }}" >> "$GITHUB_ENV"
 
+      # 删除 .env.production 文件，防止 Next.js 自动加载生产环境变量
+      - name: Remove .env.production to prevent override
+        if: ${{ inputs.env_file != '' }}
+        run: |
+          echo "Removing .env.production to prevent Next.js from auto-loading production env vars"
+          if [ -f ".env.production" ]; then
+            rm ".env.production"
+            echo "Removed .env.production"
+          else
+            echo ".env.production not found, skipping removal"
+          fi
+
       # 设置 BASE_PATH/ASSET_PREFIX（.env 已定义的值优先生效）
       - name: Ensure BASE_PATH & ASSET_PREFIX
         run: |
