@@ -3,67 +3,48 @@ name: Reusable Deploy to GitHub Pages (subdir)
 on:
   workflow_call:
     inputs:
-      # 代码安装/构建/产物/Node 版本
       install_script:
         type: string
         required: false
-        default: "yarn install"
+        default: 'yarn install'
       build_script:
         type: string
         required: false
-        default: "yarn build"
+        default: 'yarn build'
       node_version:
         type: string
         required: false
-        default: "20"
+        default: '20'
       out_dir:
         type: string
         required: false
-        default: "out"
-
-      # 发布到 gh-pages 的哪个子目录（如：test / prod）
+        default: 'out'
       destination_dir:
         type: string
         required: true
-
-      # 发布到哪个分支（通常 gh-pages）
       publish_branch:
         type: string
         required: false
-        default: "gh-pages"
-
-      # BASE_PATH / ASSET_PREFIX（如：/interface/test），
-      # 如果 .env 文件里也定义了同名变量，以 .env 为准。
+        default: 'gh-pages'
       base_path:
         type: string
         required: true
       asset_prefix:
         type: string
         required: false
-        default: ""
-
-      # 可选：把环境变量集中放在一个 .env 文件里（KEY=VALUE，每行一个）
-      # 例如 .env.test.pages / .env.prod.pages
+        default: ''
       env_file:
         type: string
         required: false
-        default: ""
-
-      # 触发策略
+        default: ''
       concurrency_group:
         type: string
         required: false
-        default: "gh-pages"
+        default: 'gh-pages'
       cancel_in_progress:
         type: boolean
         required: false
         default: false
-
-    secrets:
-      # 可选：如果你需要额外的私密变量，调用方可以用 "secrets: inherit"
-      # 或者在这里显式声明需要的 secret 名称
-      GITHUB_TOKEN:
-        required: false
 
 permissions:
   contents: write
@@ -88,15 +69,14 @@ jobs:
       - name: Install dependencies
         run: ${{ inputs.install_script }}
 
-      # 将 inputs.env_file（如果提供了）注入到 GITHUB_ENV
+      # 加载 .env 文件（可选）
       - name: Load env file (optional)
         if: ${{ inputs.env_file != '' }}
         run: |
           echo "Loading env file: ${{ inputs.env_file }}"
-          # 仅导入非注释、包含等号的 KEY=VALUE 行
           sed -n 's/^\([^#][^=]*\)=\(.*\)$/\1=\2/p' "${{ inputs.env_file }}" >> "$GITHUB_ENV"
 
-      # 设置 BASE_PATH/ASSET_PREFIX（若 .env 已定义则保持 .env 中的值）
+      # 设置 BASE_PATH/ASSET_PREFIX（.env 已定义的值优先生效）
       - name: Ensure BASE_PATH & ASSET_PREFIX
         run: |
           : "${BASE_PATH:=${{ inputs.base_path }}}"
