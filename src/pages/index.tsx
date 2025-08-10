@@ -23,15 +23,13 @@ const Home: NextPage = () => {
       return;
     }
 
-    // 统一拼接 basePath，确保在 /interface/test 下不会丢失 /test 前缀
-    const base = (router.basePath || (process.env.NEXT_PUBLIC_BASE_PATH as string) || '').replace(/\/$/, '');
     let target = '';
     const symbol = router.query.symbol as string;
     if (symbol) {
       setHasRedirected(true);
-      target = `${base}/token/?symbol=${symbol}`;
+      target = `/token/?symbol=${symbol}`;
     } else {
-      target = `${base}/token/`;
+      target = `/token/`;
     }
     router.push(target).catch((err) => {
       console.log('路由跳转被取消或出错：', err);
