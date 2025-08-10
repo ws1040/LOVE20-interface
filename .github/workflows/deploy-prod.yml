@@ -17,7 +17,7 @@ jobs:
       base_path: '/interface/prod'
       asset_prefix: '/interface/prod'
       out_dir: 'out'
-      env_file: '.env.prod.pages' # 自己维护的 prod 环境变量文件
+      env_file: '.env.prod.pages'
       install_script: 'yarn install'
       build_script: 'yarn build'
       node_version: '20'
