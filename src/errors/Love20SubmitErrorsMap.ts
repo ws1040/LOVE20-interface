@@ -10,7 +10,7 @@ export const LOVE20SubmitErrorsMap: Record<string, string> = {
   MaxRandomAccountsZero: '最大随机账户数量必须大于0',
   TitleEmpty: '标题不能为空',
   VerificationRuleEmpty: '验证规则不能为空',
-  VerificationKeyLengthExceeded: '验证密钥长度超出限制',
+  VerificationKeyLengthExceeded: '验证信息的关键词长度超出限制',
   AlreadySubmitted: '该提案已提交，请勿重复提交',
   OnlyOneSubmitPerRound: '每个轮次，1个地址只能提交1个行动',
 };

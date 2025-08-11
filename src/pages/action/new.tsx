@@ -35,16 +35,50 @@ import { formatTokenAmount, parseUnits } from '@/src/lib/format';
 
 // 获取环境变量
 const SUBMIT_MIN_PERCENTAGE = Number(process.env.NEXT_PUBLIC_SUBMIT_MIN_PER_THOUSAND || '0') / 1000;
+const MAX_VERIFICATION_KEY_BYTES = Number(process.env.NEXT_PUBLIC_MAX_VERIFICATION_KEY_LENGTH || '0');
+const MAX_VERIFICATION_KEY_CHARS = Math.floor(MAX_VERIFICATION_KEY_BYTES / 3);
+
+// 工具方法：按字符数与字节数进行统计
+const getCharLength = (str: string) => Array.from(str).length;
+const getUtf8ByteLength = (str: string) => new TextEncoder().encode(str).length;
+
+/**
+【创建行动 - 文字长度限制】
+- 行动标题：最长20个汉字；
+- 验证规则：最长1万字；
+- 验证关键词/key：不能超过 process.env.NEXT_PUBLIC_MAX_VERIFICATION_KEY_LENGTH 个 bytes
+- 验证提示：最长1000字；
+ */
 
 const FormSchema = z.object({
-  actionName: z.string().min(1, { message: '行动名称不能为空' }),
-  verificationRule: z.string().min(1, { message: '验证规则不能为空' }),
+  actionName: z
+    .string()
+    .min(1, { message: '行动名称不能为空' })
+    .refine((val) => getCharLength(val) <= 20, { message: '行动名称不能超过20个字' }),
+  verificationRule: z
+    .string()
+    .min(1, { message: '验证规则不能为空' })
+    .refine((val) => getCharLength(val) <= 10000, { message: '验证规则不能超过10000字' }),
 
   // 使用数组存储多组 key-value
   verificationPairs: z.array(
     z.object({
-      key: z.string().min(1, { message: '验证名称不能为空' }),
-      value: z.string().min(1, { message: '验证信息提示不能为空' }),
+      key: z
+        .string()
+        .min(1, { message: '验证名称不能为空' })
+        .refine(
+          (val) => {
+            if (!MAX_VERIFICATION_KEY_BYTES || Number.isNaN(MAX_VERIFICATION_KEY_BYTES)) return true;
+            return getUtf8ByteLength(val) <= MAX_VERIFICATION_KEY_BYTES;
+          },
+          {
+            message: `关键词最多${MAX_VERIFICATION_KEY_CHARS}个汉字或${MAX_VERIFICATION_KEY_BYTES}个英文数字`,
+          },
+        ),
+      value: z
+        .string()
+        .min(1, { message: '验证信息提示不能为空' })
+        .refine((val) => getCharLength(val) <= 1000, { message: '验证信息内容（value）不能超过1000字' }),
     }),
   ),
 
@@ -199,7 +233,13 @@ export default function NewAction() {
                 <FormItem>
                   <FormLabel>行动名称</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="一句话说明行动" className="!ring-secondary-foreground" {...field} />
+                    <Input
+                      type="text"
+                      placeholder="一句话说明行动"
+                      className="!ring-secondary-foreground"
+                      maxLength={32}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -218,6 +258,7 @@ export default function NewAction() {
                       placeholder="验证者，会根据这个规则来打分"
                       rows={6}
                       className="!ring-secondary-foreground"
+                      maxLength={10010}
                       {...field}
                     />
                   </FormControl>
@@ -276,6 +317,7 @@ export default function NewAction() {
                                   type="text"
                                   placeholder="提示信息，比如 '例如 https://weibo.com/12345678'"
                                   className="!ring-secondary-foreground"
+                                  maxLength={1010}
                                   {...field}
                                 />
                               </FormControl>
