@@ -1,7 +1,7 @@
 'use client';
 
-import { useAccount } from 'wagmi';
-import { useContext, useEffect, useMemo } from 'react';
+import { useAccount, useChainId } from 'wagmi';
+import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
@@ -30,7 +30,7 @@ import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // others
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, parseUnits } from '@/src/lib/format';
 
 // 获取环境变量
@@ -111,7 +111,7 @@ const FormSchema = z.object({
 type FormValues = z.infer<typeof FormSchema>;
 
 export default function NewAction() {
-  const { chain: accountChain } = useAccount();
+  const chainId = useChainId();
   const { token } = useContext(TokenContext) || {};
 
   // 初始化表单
@@ -154,7 +154,7 @@ export default function NewAction() {
     writeError: submitError,
   } = useSubmitNewAction();
   const onSubmit = async (values: FormValues) => {
-    if (!checkWalletConnection(accountChain)) return;
+    if (!checkWalletConnectionByChainId(chainId)) return;
 
     // 检查是否有足够的治理票权
     if (!hasEnoughVotes) {

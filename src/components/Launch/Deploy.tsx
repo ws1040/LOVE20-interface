@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 
@@ -25,7 +25,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 // my funcs
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount } from '@/src/lib/format';
 import { safeToBigInt } from '@/src/lib/clientUtils';
 
@@ -56,7 +56,8 @@ type TokenFormValues = z.infer<typeof TokenFormSchema>;
 export default function TokenDeployment() {
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
-  const { address: account, chain: accountChain } = useAccount();
+  const { address: account } = useAccount();
+  const chainId = useChainId();
   const [symbol, setSymbol] = useState('');
 
   // 2. 部署合约相关 Hook
@@ -94,7 +95,7 @@ export default function TokenDeployment() {
 
   // 5. 提交逻辑
   async function onSubmit(data: TokenFormValues) {
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       toast.error('请切换到正确的网络');
       return;
     }

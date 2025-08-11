@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useContext, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { toast } from 'react-hot-toast';
 
 // ui components
@@ -16,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
 
 // my hooks
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useApprove, useBalanceOf, useAllowance } from '@/src/hooks/contracts/useLOVE20Token';
@@ -50,7 +50,8 @@ interface SubmitJoinProps {
 const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: myStakedAmount }) => {
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
-  const { address: account, chain: accountChain } = useAccount();
+  const { address: account } = useAccount();
+  const chainId = useChainId();
 
   // 获取代币余额
   const { balance: tokenBalance, error: errorTokenBalance } = useBalanceOf(
@@ -183,7 +184,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   }, [isPendingAllowanceToken]);
 
   async function handleApprove(values: FormValues) {
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return;
     }
 
@@ -232,7 +233,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   } = useJoin();
 
   async function handleJoin(values: FormValues) {
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return;
     }
 

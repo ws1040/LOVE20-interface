@@ -1,7 +1,7 @@
 'use client';
 
 import { useContext, useEffect, useRef, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Loader2 } from 'lucide-react';
 // my funcs
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { formatPhaseText } from '@/src/lib/domainUtils';
 
@@ -58,7 +58,8 @@ function stakeSchemaFactory(tokenBalance: bigint) {
 }
 
 const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
-  const { address: account, chain: accountChain } = useAccount();
+  const { address: account } = useAccount();
+  const chainId = useChainId();
   const { token } = useContext(TokenContext) || {};
 
   // 状态变量：是否完成授权的
@@ -128,7 +129,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
   // 3. 授权按钮点击
   const handleApprove = async (data: z.infer<ReturnType<typeof stakeSchemaFactory>>) => {
     // 先检查钱包 & 链
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return;
     }
     try {
@@ -154,7 +155,7 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
   // 4. 质押按钮点击
   const handleStake = async (data: z.infer<ReturnType<typeof stakeSchemaFactory>>) => {
     // 先检查钱包 & 链
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return;
     }
     try {

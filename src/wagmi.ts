@@ -44,7 +44,7 @@ const thinkium70001: Chain = {
   rpcUrls: {
     default: { http: [process.env.NEXT_PUBLIC_THINKIUM_RPC_URL || 'https://proxy1.thinkiumrpc.net'] },
   },
-  testnet: true,
+  testnet: false,
 };
 
 // 映射链名称到链配置

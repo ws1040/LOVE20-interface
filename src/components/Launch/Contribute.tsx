@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
 
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, useChainId } from 'wagmi';
 import { toast } from 'react-hot-toast';
 
 // UI & shadcn components
@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 // my hooks
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { LaunchInfo } from '@/src/types/love20types';
@@ -65,7 +65,8 @@ const getFormSchema = (balance: bigint, maxAllowed?: bigint, maxAllowedLabel?: s
   });
 
 const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
-  const { address: account, chain: accountChain, isConnected } = useAccount();
+  const { address: account, isConnected } = useAccount();
+  const chainId = useChainId();
   const router = useRouter();
 
   // 判断是否使用native代币申购
@@ -186,7 +187,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   }, [contributeAmount, allowanceParentTokenApproved, isNativeContribute]);
 
   const onApprove = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return;
     }
     try {
@@ -221,7 +222,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   const isConfirmedContribute = isNativeContribute ? isConfirmedContributeETH : isConfirmedContributeToken;
 
   const onContribute = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return;
     }
     if (!isNativeContribute && !isTokenApproved) {

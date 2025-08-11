@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -23,7 +23,7 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // my funcs
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatRoundForDisplay, formatTokenAmountInteger } from '@/src/lib/format';
 import { LinkIfUrl } from '@/src/lib/stringUtils';
 
@@ -33,7 +33,8 @@ const VerifiedAddressesByAction: React.FC<{
   actionInfo: ActionInfo;
 }> = ({ currentJoinRound, actionId, actionInfo }) => {
   const { token } = useContext(TokenContext) || {};
-  const { address: account, chain: accountChain } = useAccount();
+  const { address: account } = useAccount();
+  const chainId = useChainId();
   const [selectedRound, setSelectedRound] = useState(0n);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
@@ -81,7 +82,7 @@ const VerifiedAddressesByAction: React.FC<{
     writeError: mintError,
   } = useMintActionReward();
   const handleClaim = async (item: VerifiedAddress) => {
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return;
     }
     if (account && item.reward > 0n && !item.isMinted && token) {

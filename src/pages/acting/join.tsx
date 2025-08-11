@@ -52,7 +52,7 @@ const JoinPage = () => {
 
   return (
     <>
-      <Header title="加入行动" />
+      <Header title="加入行动" showBackButton={true} />
       <main className="flex-grow">
         {!id || Array.isArray(id) || isPendingActionInfo || isPendingCurrentRound ? (
           <LoadingIcon />
