@@ -269,9 +269,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
 
   // 是否可以取回代币
   const canWithdraw =
-    enableWithdraw &&
-    requestedUnstakeRound &&
-    currentRound > requestedUnstakeRound + (promisedWaitingPhases || BigInt(0));
+    requestedUnstakeRound && currentRound > requestedUnstakeRound + (promisedWaitingPhases || BigInt(0));
 
   console.log('---------------begin----------------');
   console.log('canWithdraw', canWithdraw);
