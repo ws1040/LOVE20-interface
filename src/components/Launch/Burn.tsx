@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
 
@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { LaunchInfo } from '@/src/types/love20types';
 import { useBalanceOf, useBurnForParentToken, useTotalSupply } from '@/src/hooks/contracts/useLOVE20Token';
@@ -24,7 +24,8 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
-  const { address: account, chain: accountChain } = useAccount();
+  const { address: account } = useAccount();
+  const chainId = useChainId();
   const router = useRouter();
 
   // 读取我的代币余额
@@ -116,7 +117,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
   } = useBurnForParentToken(token?.address as `0x${string}`);
 
   const onBurn = async (data: z.infer<typeof FormSchema>) => {
-    if (!checkWalletConnection(accountChain)) return;
+    if (!checkWalletConnectionByChainId(chainId)) return;
     try {
       await burnForParentToken(parseUnits(data.burnAmount));
     } catch (error) {
@@ -133,7 +134,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
     }
   }, [isConfirmedBurn, router, token?.symbol]);
 
-  // "全选"按钮逻辑
+  // "最高"按钮逻辑
   const setMaxAmount = () => {
     form.setValue('burnAmount', formatUnits(balanceOfToken || 0n));
   };
@@ -179,26 +180,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
         <div className="mt-6">
           <Form {...form}>
             <form onSubmit={(e) => e.preventDefault()}>
-              <FormField
-                control={form.control}
-                name="burnAmount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>要销毁的 {token.symbol} 数量：</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="请输入数量"
-                        disabled={(balanceOfToken || 0n) <= 0n || isPendingBurn || isConfirmingBurn}
-                        className="!ring-secondary-foreground"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex items-center text-sm">
+              <div className="flex items-center text-sm my-0">
                 <span className="text-greyscale-400">
                   我的 {token.symbol}: <span className="text-secondary">{formatTokenAmount(balanceOfToken || 0n)}</span>
                 </span>
@@ -209,11 +191,29 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
                   disabled={(balanceOfToken || 0n) <= 0n || isPendingBurn || isConfirmingBurn}
                   className="text-secondary"
                 >
-                  全选
+                  最高
                 </Button>
               </div>
 
-              <div className="flex items-center justify-end text-sm my-2">
+              <FormField
+                control={form.control}
+                name="burnAmount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder={`请输入要销毁的 ${token.symbol} 数量`}
+                        disabled={(balanceOfToken || 0n) <= 0n || isPendingBurn || isConfirmingBurn}
+                        className="!ring-secondary-foreground"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex items-center text-sm mt-1 mb-2">
                 <span className="text-greyscale-400">
                   预计可取回 <span className="text-secondary">{formatTokenAmount(expectedParentTokenBalance)}</span>{' '}
                   {token.parentTokenSymbol}

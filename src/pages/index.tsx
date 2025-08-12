@@ -1,13 +1,14 @@
 'use client';
 
 import type { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
 
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import { NavigationUtils } from '@/src/lib/navigationUtils';
+import { TokenContext } from '../contexts/TokenContext';
 
 const Home: NextPage = () => {
   // const router = useRouter();
@@ -43,8 +44,8 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>LOVE20 - 区块链项目</title>
-        <meta name="description" content="LOVE20 区块链项目测试页面" />
+        <title>LOVE20</title>
+        <meta name="description" content="LOVE20 测试页面" />
       </Head>
 
       {/* 覆盖默认布局，使用全屏显示 */}
