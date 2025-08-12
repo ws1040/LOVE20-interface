@@ -134,7 +134,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
     }
   }, [isConfirmedBurn, router, token?.symbol]);
 
-  // "全选"按钮逻辑
+  // "最高"按钮逻辑
   const setMaxAmount = () => {
     form.setValue('burnAmount', formatUnits(balanceOfToken || 0n));
   };
@@ -180,7 +180,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
         <div className="mt-6">
           <Form {...form}>
             <form onSubmit={(e) => e.preventDefault()}>
-              <div className="flex items-center justify-end text-sm my-0">
+              <div className="flex items-center text-sm my-0">
                 <span className="text-greyscale-400">
                   我的 {token.symbol}: <span className="text-secondary">{formatTokenAmount(balanceOfToken || 0n)}</span>
                 </span>
@@ -191,7 +191,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
                   disabled={(balanceOfToken || 0n) <= 0n || isPendingBurn || isConfirmingBurn}
                   className="text-secondary"
                 >
-                  全选
+                  最高
                 </Button>
               </div>
 
