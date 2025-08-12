@@ -174,7 +174,7 @@ export default function TokenDeployment() {
                     <FormControl>
                       <Input
                         id="symbol"
-                        placeholder="例如: TENNIS, FOOTBALL"
+                        placeholder="例如: TENNIS, GAME20"
                         disabled={isLoading || isConfirmed}
                         className="!ring-secondary-foreground"
                         {...field}

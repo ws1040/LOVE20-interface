@@ -16,19 +16,21 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form';
 
-// my hooks & funcs
+// my funcs
 import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatIntegerStringWithCommas, formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my hooks
 import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
+import { useDeposit, useWithdraw } from '@/src/hooks/contracts/useWETH';
+import { useInitialStakeRound } from '@/src/hooks/contracts/useLOVE20Stake';
 import {
   useGetAmountsOut,
   useSwapExactTokensForTokens,
   useSwapExactETHForTokens,
-  // useSwapExactETHForTokensDirect,
   useSwapExactTokensForETH,
 } from '@/src/hooks/contracts/useUniswapV2Router';
-import { useDeposit, useWithdraw } from '@/src/hooks/contracts/useWETH';
 
 // my context
 import useTokenContext from '@/src/hooks/context/useTokenContext';
@@ -377,6 +379,11 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   // 余额查询
   const { balance: fromBalance, isPending: isPendingFromBalance } = useTokenBalance(fromToken, account);
   const { balance: toBalance, isPending: isPendingToBalance } = useTokenBalance(toToken, account);
+  const {
+    initialStakeRound,
+    isPending: isPendingInitialStakeRound,
+    error: errInitialStakeRound,
+  } = useInitialStakeRound(token?.address as `0x${string}`);
 
   // 调试信息
   useEffect(() => {
@@ -516,7 +523,9 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
     }
   }, [swapMethod, fromToken, toToken, swapPath]);
 
-  // 改进价格查询，添加更详细的错误处理
+  // 价格查询
+  const useCurrentToken = fromToken.symbol === token?.symbol || toToken.symbol === token?.symbol;
+  const canSwap = !useCurrentToken || !!initialStakeRound;
   const {
     data: amountsOut,
     error: amountsOutError,
@@ -525,7 +534,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
     fromAmount,
     swapPath,
     // 只有当路径有效且金额大于0时才启用查询
-    swapMethod !== 'WETH9' && fromAmount > 0n && swapPath.length >= 2,
+    canSwap && swapMethod !== 'WETH9' && fromAmount > 0n && swapPath.length >= 2,
   );
 
   // 添加详细的错误日志
@@ -720,6 +729,10 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   // 处理交换
   const handleSwap = form.handleSubmit(async () => {
     if (!checkWalletConnectionByChainId(chainId)) return;
+    if (!canSwap) {
+      toast.error('当前代币尚未开始质押，无法进行兑换');
+      return;
+    }
 
     try {
       // 预检查0：测试环境原生币输入上限
@@ -760,7 +773,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
 
       // 预检查3：验证金额合理性
       if (toAmount <= 0n) {
-        toast.error('无法获取兑换价格，请检查流动性池');
+        toast.error('无法获取兑换价格，流动池可能不足');
         return;
       }
 
@@ -878,6 +891,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
     const errors = [
+      errInitialStakeRound,
       errApprove,
       errDeposit,
       errWithdraw,
@@ -891,7 +905,16 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
         handleContractError(error, 'swap');
       }
     });
-  }, [errApprove, errDeposit, errWithdraw, errTokenToToken, errETHToToken, errTokenToETH, amountsOutError]);
+  }, [
+    errInitialStakeRound,
+    errApprove,
+    errDeposit,
+    errWithdraw,
+    errTokenToToken,
+    errETHToToken,
+    errTokenToETH,
+    amountsOutError,
+  ]);
 
   // --------------------------------------------------
   // 9. 加载状态
