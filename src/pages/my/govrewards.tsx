@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useEffect, useState, useContext, useRef, useCallback } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
 
 // my functions & types
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 import { RewardInfo } from '@/src/types/love20types';
 
@@ -29,7 +29,8 @@ const REWARDS_PER_PAGE = 20n;
 
 const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
-  const { address: account, chain: accountChain } = useAccount();
+  const { address: account } = useAccount();
+  const chainId = useChainId();
   const { currentRound, error: errorCurrentRound, isPending: isLoadingCurrentRound } = useCurrentRound();
   const [startRound, setStartRound] = useState<bigint>(0n);
   const [endRound, setEndRound] = useState<bigint>(0n);
@@ -92,7 +93,7 @@ const GovRewardsPage: React.FC = () => {
   }, [isConfirmed, mintingRound]);
 
   const handleClaim = async (round: bigint) => {
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return;
     }
     if (token?.address && account) {

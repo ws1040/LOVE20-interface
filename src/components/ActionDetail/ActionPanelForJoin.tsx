@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useContext } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -18,7 +18,7 @@ import { useIsSubmitted } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my funcs
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -49,7 +49,8 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
   onStakedAmountChange,
   showJoinButton = true,
 }) => {
-  const { address: account, chain: accountChain } = useAccount();
+  const { address: account } = useAccount();
+  const chainId = useChainId();
   const { token } = useContext(TokenContext) || {};
   const router = useRouter();
 
@@ -120,7 +121,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
   } = useWithdraw();
 
   const handleWithdraw = async () => {
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return;
     }
     // 如果代币为0, toast

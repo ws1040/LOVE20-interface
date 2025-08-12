@@ -91,10 +91,8 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
     return <LoadingIcon />;
   }
 
-  const parentTokenSymbol =
-    token.parentTokenSymbol == process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL
-      ? process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL
-      : token.parentTokenSymbol;
+  const ifFirstToken = token.parentTokenSymbol == process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL;
+  const parentTokenSymbol = ifFirstToken ? process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL : token.parentTokenSymbol;
 
   return (
     <div className="px-4 mt-2">

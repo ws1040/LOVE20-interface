@@ -319,7 +319,7 @@ export const useHandleContractError = () => {
    */
   const handleContractError = useCallback(
     (error: any, context: string) => {
-      console.error('Context:', context);
+      console.error('error:', error);
 
       // 尝试从多个可能的位置提取错误信息
       let errorMessage = '';

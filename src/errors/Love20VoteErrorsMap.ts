@@ -4,8 +4,8 @@
  */
 export const LOVE20VoteErrorsMap: Record<string, string> = {
   AlreadyInitialized: '已初始化，无需再次初始化',
-  InvalidActionIds: '无效的提案ID',
-  CannotVote: '没有权限投票',
+  ActionNotSubmitted: '该行动本轮未被推举，无法投票',
+  CannotVote: '没有剩余治理票，无法投票',
   NotEnoughVotesLeft: '投票数量不足',
   VotesMustBeGreaterThanZero: '投票数量必须大于0',
 };

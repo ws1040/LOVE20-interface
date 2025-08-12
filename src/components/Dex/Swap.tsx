@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, useChainId } from 'wagmi';
 import { useForm } from 'react-hook-form';
 
 // UI components
@@ -17,7 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form';
 
 // my hooks & funcs
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatIntegerStringWithCommas, formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
@@ -214,7 +214,8 @@ type SwapFormValues = z.infer<ReturnType<typeof getSwapFormSchema>>;
 // ================================================
 const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   const router = useRouter();
-  const { address: account, chain: accountChain } = useAccount();
+  const { address: account } = useAccount();
+  const chainId = useChainId();
   const { token } = useTokenContext();
 
   // --------------------------------------------------
@@ -699,7 +700,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   // --------------------------------------------------
   // 处理授权
   const handleApprove = form.handleSubmit(async () => {
-    if (!checkWalletConnection(accountChain)) return;
+    if (!checkWalletConnectionByChainId(chainId)) return;
 
     try {
       await approve(approvalTarget, fromAmount);
@@ -718,7 +719,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
 
   // 处理交换
   const handleSwap = form.handleSubmit(async () => {
-    if (!checkWalletConnection(accountChain)) return;
+    if (!checkWalletConnectionByChainId(chainId)) return;
 
     try {
       // 预检查0：测试环境原生币输入上限

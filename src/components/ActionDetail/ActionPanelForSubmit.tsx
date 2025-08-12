@@ -3,10 +3,10 @@ import React, { useEffect, useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 
 // my hooks
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { useCurrentRound, useSubmit } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useCanSubmit } from '@/src/hooks/util/useCanSubmit';
@@ -28,7 +28,7 @@ interface ActionPanelForJoinProps {
 
 const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, submitted, onRoundChange }) => {
   const { token } = useContext(TokenContext) || {};
-  const { chain: accountChain } = useAccount();
+  const chainId = useChainId();
   const router = useRouter();
 
   // 获取当前轮次, 并设置状态给父组件
@@ -53,7 +53,7 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
   // 提交
   const { submit, isPending, isConfirming, isConfirmed, writeError: errSubmit } = useSubmit();
   const handleSubmit = () => {
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return;
     }
     if (isPending || isConfirming) {

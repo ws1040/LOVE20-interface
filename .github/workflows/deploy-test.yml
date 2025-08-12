@@ -1,3 +1,4 @@
+# .github/workflows/deploy-test.yml
 name: Deploy Test (calls reusable)
 
 on:
@@ -12,10 +13,10 @@ jobs:
   deploy:
     uses: LOVE20TKM/interface/.github/workflows/deploy-reusable.yml@main
     with:
-      destination_dir: 'test'
+      destination_dir: ''
       publish_branch: 'gh-pages'
-      base_path: '/interface/test'
-      asset_prefix: '/interface/test'
+      base_path: '/interface-test'
+      asset_prefix: '/interface-test'
       out_dir: 'out'
       node_version: '20'
       install_script: 'yarn install'

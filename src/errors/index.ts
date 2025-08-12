@@ -9,6 +9,8 @@ import { LOVE20SLTokenErrorsMap } from './Love20SLTokenErrorsMap';
 import { LOVE20STTokenErrorsMap } from './Love20STTokenErrorsMap';
 import { LOVE20VerifyErrorsMap } from './Love20VerifyErrorsMap';
 import { LOVE20VoteErrorsMap } from './Love20VoteErrorsMap';
+import { LOVE20TokenFactoryErrorsMap } from './Love20TokenFactoryErrorsMap';
+import { LOVE20RandomErrorsMap } from './Love20RandomErrorsMap';
 import { UniswapV2RouterErrorsMap } from './UniswapV2RouterErrorsMap';
 import { CommonErrorsMap } from './CommonErrorsMap';
 
@@ -27,6 +29,8 @@ export const ContractErrorsMaps: Record<string, Record<string, string>> = {
   stToken: LOVE20STTokenErrorsMap,
   verify: LOVE20VerifyErrorsMap,
   vote: LOVE20VoteErrorsMap,
+  tokenFactory: LOVE20TokenFactoryErrorsMap,
+  random: LOVE20RandomErrorsMap,
   uniswapV2Router: UniswapV2RouterErrorsMap,
 };
 
@@ -38,11 +42,14 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
   // 通用错误（多个合约共享）
   common: {
     '0x0dc149f0': 'AlreadyInitialized',
-    '0xe622e040': 'AddressCannotBeZero',
     '0x8aa3a72f': 'InvalidToAddress',
     '0xf55a5f82': 'NotEnoughWaitingBlocks',
-    '0x54331660': 'NotEligibleToMint',
     '0xe6c4247b': 'InvalidAddress',
+    '0x8e9c6e1c': 'RoundNotStarted',
+  },
+
+  // IPhase 相关错误
+  phase: {
     '0x8e9c6e1c': 'RoundNotStarted',
   },
 
@@ -75,7 +82,6 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
     '0x0dc149f0': 'AlreadyInitialized',
     '0xaec0699e': 'CannotSubmitAction',
     '0x0bc2eb6a': 'ActionIdNotExist',
-    '0x7bb17d5a': 'StartGreaterThanEnd',
     '0x077294b9': 'MinStakeZero',
     '0x8ed5f448': 'MaxRandomAccountsZero',
     '0x5d0ff12d': 'TitleEmpty',
@@ -109,6 +115,7 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
     '0xe169fb70': 'NotEligibleToLaunchToken',
     '0x6a25ec6f': 'LaunchAlreadyEnded',
     '0x34ad25cc': 'LaunchNotEnded',
+    '0xb15ca316': 'ClaimDelayNotPassed',
     '0x65c7efcc': 'NoContribution',
     '0xf55a5f82': 'NotEnoughWaitingBlocks',
     '0xa4f81929': 'TokensAlreadyClaimed',
@@ -118,7 +125,6 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
     '0x1eb00b06': 'InvalidTokenAddress',
     '0x8aa3a72f': 'InvalidToAddress',
     '0x670ff944': 'InvalidParentToken',
-    '0xf1266c59': 'NotEnoughChildTokenWaitingBlocks',
   },
 
   // ILOVE20Token 相关错误
@@ -142,6 +148,7 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
   mint: {
     '0x0dc149f0': 'AlreadyInitialized',
     '0x6d363c45': 'NoRewardAvailable',
+    '0xddefae28': 'AlreadyMinted',
     '0x694832c9': 'RoundNotReadyToMint',
     '0xc9d2c178': 'NotEnoughReward',
     '0xce0a57ff': 'NotEnoughRewardToBurn',
@@ -150,7 +157,7 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
   // ILOVE20Vote 相关错误
   vote: {
     '0x0dc149f0': 'AlreadyInitialized',
-    '0x3a2ac8fc': 'InvalidActionIds',
+    '0xf62bae8c': 'ActionNotSubmitted',
     '0xc527094f': 'CannotVote',
     '0xcc1f40e6': 'NotEnoughVotesLeft',
     '0xc94f8246': 'VotesMustBeGreaterThanZero',
@@ -162,6 +169,7 @@ export const ErrorSelectorsMap: Record<string, Record<string, string>> = {
     '0xe6c4247b': 'InvalidAddress',
     '0xb951d9d6': 'NoTokensToBurn',
     '0xbb55fd27': 'InsufficientLiquidity',
+    '0x9b50a4dc': 'UniswapLpMintedIsZero',
     '0xe98204b2': 'TotalLpExceedsBalance',
   },
 

@@ -123,7 +123,7 @@ export const useSubmitInfo = (tokenAddress: `0x${string}`, round: bigint, action
     functionName: 'submitInfo',
     args: [tokenAddress, round, actionId],
     query: {
-      enabled: !!tokenAddress && !!round && !!actionId,
+      enabled: !!tokenAddress && !!round,
     },
   });
 

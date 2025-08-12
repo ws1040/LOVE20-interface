@@ -8,6 +8,7 @@ import { HelpCircle } from 'lucide-react';
 import { useActionInfo } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Join';
 import { useHandleContractError } from '@/src/lib/errorUtils';
+import { formatPercentage } from '@/src/lib/format';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -18,7 +19,6 @@ import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import ActionPanelForJoin from '@/src/components/ActionDetail/ActionPanelForJoin';
 import SubmitJoin from '@/src/components/Join/SubmitJoin';
-import LeftTitle from '@/src/components/Common/LeftTitle';
 
 const JoinPage = () => {
   const router = useRouter();
@@ -52,7 +52,7 @@ const JoinPage = () => {
 
   return (
     <>
-      <Header title="加入行动" />
+      <Header title="加入行动" showBackButton={true} />
       <main className="flex-grow">
         {!id || Array.isArray(id) || isPendingActionInfo || isPendingCurrentRound ? (
           <LoadingIcon />
@@ -77,7 +77,9 @@ const JoinPage = () => {
                   1、验证阶段会随机抽取地址验证打分，然后按得分比例给这些地址分配代币激励
                 </div>
                 <div className="text-sm text-blue-700">
-                  2、只有当1个行动获得的验证票数，达到该轮总投票数5%时，参与该行动才有激励
+                  2、只有当1个行动获得的验证票数，达到该轮总投票数
+                  {formatPercentage(Number(process.env.NEXT_PUBLIC_ACTION_REWARD_MIN_VOTE_PER_THOUSAND) / 10)}
+                  时，参与该行动才有激励
                 </div>
                 <div className="text-base font-bold text-blue-700 pt-2 pb-1">参与代币：</div>
                 <div className="text-sm text-blue-700">1、参与代币越多，被选中验证并获得奖励的概率越大</div>

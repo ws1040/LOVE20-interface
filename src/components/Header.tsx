@@ -8,8 +8,7 @@ import { WalletButton } from '@/src/components/WalletButton';
 import { ErrorAlert } from '@/src/components/Common/ErrorAlert';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { useError } from '@/src/contexts/ErrorContext';
 import { TokenContext } from '../contexts/TokenContext';
 
@@ -20,7 +19,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ title, showBackButton = false, backUrl = '' }) => {
-  const { address, chain } = useAccount();
+  const { address, status } = useAccount();
+  const chainId = useChainId();
   const chainName = process.env.NEXT_PUBLIC_CHAIN_NAME ?? process.env.NEXT_PUBLIC_CHAIN;
   const { setError } = useError();
   const { token } = useContext(TokenContext) || {};
@@ -95,16 +95,13 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton = false, backUrl 
 
   // 钱包网络检测逻辑
   useEffect(() => {
-    if (address && !chain) {
-      setError({
-        name: '钱包网络错误',
-        message: `请切换到 ${chainName} 网络`,
-      });
+    if (status !== 'connected') return; // 避免钱包尚未完成注入/授权时误判
+    if (address && !chainId) {
+      setError({ name: '钱包网络错误', message: `请切换到 ${chainName} 网络` });
     } else {
-      // 钱包网络正常，清除错误状态
       setError(null);
     }
-  }, [address, chain, setError, chainName]);
+  }, [address, chainId, status, chainName, setError]);
 
   // 返回上一页处理函数
   const handleGoBack = () => {
