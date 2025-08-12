@@ -12,10 +12,10 @@ jobs:
   deploy:
     uses: LOVE20TKM/interface/.github/workflows/deploy-reusable.yml@main
     with:
-      destination_dir: 'prod'
+      destination_dir: ''
       publish_branch: 'gh-pages'
-      base_path: '/interface/prod'
-      asset_prefix: '/interface/prod'
+      base_path: '/interface'
+      asset_prefix: '/interface'
       out_dir: 'out'
       env_file: '.env.prod.pages'
       install_script: 'yarn install'
