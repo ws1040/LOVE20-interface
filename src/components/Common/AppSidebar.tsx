@@ -4,19 +4,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/router';
-import {
-  SmilePlus,
-  Home,
-  SatelliteDish,
-  Landmark,
-  Bitcoin,
-  Rocket,
-  List,
-  TicketCheck,
-  User,
-  Info,
-  UserCog,
-} from 'lucide-react';
+import { SmilePlus, Home, SatelliteDish, Landmark, Rocket, List, TicketCheck, User, Info, UserCog } from 'lucide-react';
 
 import {
   Sidebar,
@@ -103,7 +91,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               title: '代币首页',
               url: `/token/?symbol=${token.symbol}`,
               isActive: isActiveUrl(`${basePath}/token/`),
-              icon: Bitcoin,
+              icon: Home,
             },
             {
               title: '代币简介',
