@@ -9,7 +9,6 @@ import {
   Home,
   SatelliteDish,
   Landmark,
-  Nfc,
   Bitcoin,
   Rocket,
   List,
