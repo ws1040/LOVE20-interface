@@ -57,11 +57,11 @@ const Home: NextPage = () => {
           </div>
 
           <div className="space-y-6 text-gray-600">
-            <p className="text-lg font-medium">LOVE20目前正在测试中</p>
+            <p className="text-lg font-medium">LOVE20 目前正在测试中</p>
 
             <div className="space-y-4">
               <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
-                <p className="text-sm text-gray-500 mb-2">测试环境</p>
+                <p className="text-sm text-gray-500 mb-2">测试环境：</p>
                 <Link
                   href="https://love20tkm.github.io/interface-test"
                   target="_blank"
@@ -73,7 +73,7 @@ const Home: NextPage = () => {
               </div>
 
               <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
-                <p className="text-sm text-gray-500 mb-2">项目文档</p>
+                <p className="text-sm text-gray-500 mb-2">白皮书：</p>
                 <Link
                   href="https://love20tkm.github.io/docs/"
                   target="_blank"
