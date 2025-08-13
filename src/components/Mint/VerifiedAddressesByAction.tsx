@@ -25,6 +25,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 // my funcs
 import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatRoundForDisplay, formatTokenAmountInteger } from '@/src/lib/format';
+import { setActionRewardNeedMinted } from '@/src/lib/actionRewardNotice';
 import { LinkIfUrl } from '@/src/lib/stringUtils';
 
 const VerifiedAddressesByAction: React.FC<{
@@ -93,6 +94,10 @@ const VerifiedAddressesByAction: React.FC<{
     if (isConfirmedMint) {
       setAddresses((prev) => prev.map((addr) => (addr.account === account ? { ...addr, isMinted: true } : addr)));
       toast.success(`铸造成功`);
+
+      if (typeof window !== 'undefined' && token?.address && account) {
+        setActionRewardNeedMinted(account, token.address, false);
+      }
     }
   }, [isConfirmedMint, account]);
 

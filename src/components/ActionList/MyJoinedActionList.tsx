@@ -70,7 +70,7 @@ const MyJoinedActionList: React.FC<MyJoinedActionListProps> = ({ token }) => {
               .map((action: JoinedAction, index: number) => (
                 <Card key={action.action.head.id} className="shadow-none">
                   <Link
-                    href={`/my/actrewards?id=${action.action.head.id}&symbol=${token?.symbol}`}
+                    href={`/my/myaction?id=${action.action.head.id}&symbol=${token?.symbol}`}
                     key={action.action.head.id}
                     className="relative block"
                   >
