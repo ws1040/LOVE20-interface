@@ -2,7 +2,6 @@
 
 import { useReadContract } from 'wagmi';
 import { LOVE20RoundViewerAbi } from '@/src/abis/LOVE20RoundViewer';
-import { safeToBigInt } from '@/src/lib/clientUtils';
 import {
   JoinedAction,
   VerifiedAddress,
@@ -13,6 +12,7 @@ import {
   VerifyingAction,
   MyVerifyingAction,
   VotingAction,
+  TokenStats,
 } from '@/src/types/love20types';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_ROUNDVIEWER as `0x${string}`;
@@ -396,4 +396,20 @@ export const useEstimatedGovRewardOfCurrentRound = (tokenAddress: `0x${string}`)
     },
   });
   return { reward: data as bigint, isPending, error };
+};
+
+/**
+ * Hook for tokenStatistics
+ */
+export const useTokenStatistics = (tokenAddress: `0x${string}`) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20RoundViewerAbi,
+    functionName: 'tokenStatistics',
+    args: [tokenAddress],
+    query: {
+      enabled: !!tokenAddress,
+    },
+  });
+  return { tokenStatistics: data as TokenStats, isPending, error };
 };

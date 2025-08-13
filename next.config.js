@@ -4,6 +4,7 @@ const nextConfig = {
   trailingSlash: true, // GitHub Pages 需要这个设置
   reactStrictMode: false,
   output: 'export',
+  images: { unoptimized: true },
   basePath: process.env.BASE_PATH || '',
   assetPrefix: process.env.ASSET_PREFIX || '',
   transpilePackages: ['@tanstack/query-core', '@tanstack/react-query', '@tanstack/react-query-devtools'],
@@ -13,6 +14,8 @@ const nextConfig = {
       '/': { page: '/' },
       '/about': { page: '/about' },
       '/acting': { page: '/acting' },
+      '/token': { page: '/token' },
+      '/token/intro': { page: '/token/intro' },
       '/acting/join': { page: '/acting/join' },
       '/action/detail': { page: '/action/detail' },
       '/action/new': { page: '/action/new' },

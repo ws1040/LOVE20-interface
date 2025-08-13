@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect, useContext } from 'react';
 
 // my types & funcs
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { ActionInfo } from '@/src/types/love20types';
 
 // my contexts
@@ -23,6 +23,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // my utils
 import { LinkIfUrl } from '@/src/lib/stringUtils';
+import { NavigationUtils } from '@/src/lib/navigationUtils';
 import { formatPercentage } from '@/src/lib/format';
 
 interface VerifyAddressesProps {
@@ -39,7 +40,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
   remainingVotes,
 }) => {
   const { token } = useContext(TokenContext) || {};
-  const { chain: accountChain } = useAccount();
+  const chainId = useChainId();
   const router = useRouter();
 
   // 获取参与验证的地址
@@ -104,7 +105,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
   // 提交验证
   const { verify, isPending, isConfirming, isConfirmed, writeError: submitError } = useVerify();
   const checkInput = () => {
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return false;
     }
     if (remainingVotes <= 2n) {
@@ -191,7 +192,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
         duration: 2000, // 2秒
       });
       setTimeout(() => {
-        router.push(`/verify/?symbol=${token?.symbol}`);
+        NavigationUtils.reloadWithOverlay();
       }, 2000);
     }
   }, [isConfirmed, submitError]);

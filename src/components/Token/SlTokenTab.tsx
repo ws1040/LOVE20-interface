@@ -46,7 +46,7 @@ export default function SlTokenTab() {
         <div className="flex items-center">
           <div className="mr-2">
             <div className="flex items-center">
-              <span className="font-bold text-2xl mr-2">sl{token.symbol}</span>
+              <span className="font-bold text-2xl mr-2 font-mono">sl{token.symbol}</span>
               <AddressWithCopyButton address={token.slTokenAddress as `0x${string}`} />
               <AddToMetamask
                 tokenAddress={token.slTokenAddress as `0x${string}`}

@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useEffect, useState, useContext, useRef, useCallback } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { Button } from '@/components/ui/button';
+import toast from 'react-hot-toast';
 
 // my functions & types
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 import { RewardInfo } from '@/src/types/love20types';
 
@@ -28,8 +29,9 @@ const REWARDS_PER_PAGE = 20n;
 
 const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
-  const { address: account, chain: accountChain } = useAccount();
-  const { currentRound, error: errorCurrentRound } = useCurrentRound();
+  const { address: account } = useAccount();
+  const chainId = useChainId();
+  const { currentRound, error: errorCurrentRound, isPending: isLoadingCurrentRound } = useCurrentRound();
   const [startRound, setStartRound] = useState<bigint>(0n);
   const [endRound, setEndRound] = useState<bigint>(0n);
   const [hasMoreRewards, setHasMoreRewards] = useState(true);
@@ -38,7 +40,7 @@ const GovRewardsPage: React.FC = () => {
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (currentRound && token) {
+    if (currentRound !== undefined && token) {
       if (currentRound <= BigInt(token.initialStakeRound)) {
         setEndRound(0n);
       } else {
@@ -70,13 +72,15 @@ const GovRewardsPage: React.FC = () => {
     if (rewards) {
       const sortedRewards = [...rewards].sort((a, b) => (a.round > b.round ? -1 : 1)); // 按 round 倒序排列
       setRewardList(sortedRewards);
-
-      // Check if there are more rewards to load
-      setHasMoreRewards(
-        endRound - startRound > REWARDS_PER_PAGE && rewards.length >= endRound - startRound - REWARDS_PER_PAGE,
-      );
     }
   }, [rewards]);
+
+  // 根据当前起始轮次判断是否还有更多可以加载
+  useEffect(() => {
+    if (!token) return;
+    const initialStake = BigInt(token.initialStakeRound);
+    setHasMoreRewards(startRound > initialStake);
+  }, [startRound, token]);
 
   // 铸造治理奖励
   const { mintGovReward, isPending, isConfirming, isConfirmed, writeError: errorMintGovReward } = useMintGovReward();
@@ -84,11 +88,12 @@ const GovRewardsPage: React.FC = () => {
   useEffect(() => {
     if (isConfirmed) {
       setRewardList((prev) => prev.map((item) => (item.round === mintingRound ? { ...item, isMinted: true } : item)));
+      toast.success(`铸造成功`);
     }
   }, [isConfirmed, mintingRound]);
 
   const handleClaim = async (round: bigint) => {
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return;
     }
     if (token?.address && account) {
@@ -128,18 +133,29 @@ const GovRewardsPage: React.FC = () => {
   // 使用 IntersectionObserver 监控底部 sentinel 元素
   useEffect(() => {
     if (!loadMoreRef.current) return;
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          loadMoreRewards();
-        }
-      });
-    });
-    observer.observe(loadMoreRef.current);
+    const target = loadMoreRef.current;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (!isLoadingRewards && hasMoreRewards) {
+              loadMoreRewards();
+            }
+          }
+        });
+      },
+      { root: null, rootMargin: '200px', threshold: 0 },
+    );
+    observer.observe(target);
     return () => {
+      observer.unobserve(target);
       observer.disconnect();
     };
-  }, [loadMoreRewards]);
+  }, [loadMoreRewards, isLoadingRewards, hasMoreRewards]);
+
+  if (isLoadingCurrentRound) {
+    return <LoadingIcon />;
+  }
 
   return (
     <>
@@ -153,12 +169,7 @@ const GovRewardsPage: React.FC = () => {
 
             {endRound === 0n && currentRound !== undefined ? (
               <div className="text-center text-gray-500 py-4">当前还不能铸造奖励，请耐心等待</div>
-            ) : rewardList.length === 0 && endRound !== 0n ? (
-              <div className="flex justify-center items-center">
-                {isLoadingRewards ? '' : <span className="text-sm text-gray-500">暂无数据</span>}
-              </div>
             ) : (
-              // 当已有部分数据时，始终展示表格
               <>
                 <table className="table w-full table-auto">
                   <thead>
@@ -169,29 +180,37 @@ const GovRewardsPage: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {rewardList.map((item) => (
-                      <tr key={item.round.toString()} className="border-b border-gray-100">
-                        <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
-                        <td className="text-center">{formatTokenAmount(item.reward || 0n)}</td>
-                        <td className="text-center">
-                          {item.reward > 0n && !item.isMinted ? (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-secondary border-secondary"
-                              onClick={() => handleClaim(item.round)}
-                              disabled={isPending || isConfirming}
-                            >
-                              铸造
-                            </Button>
-                          ) : item.isMinted ? (
-                            <span className="text-greyscale-500">已铸造</span>
-                          ) : (
-                            <span className="text-greyscale-500">-</span>
-                          )}
+                    {rewardList.length === 0 && !isLoadingRewards ? (
+                      <tr>
+                        <td colSpan={3} className="text-center text-sm text-gray-500 py-4">
+                          暂无数据
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      rewardList.map((item) => (
+                        <tr key={item.round.toString()} className="border-b border-gray-100">
+                          <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
+                          <td className="text-center">{formatTokenAmount(item.reward || 0n)}</td>
+                          <td className="text-center">
+                            {item.reward > 0n && !item.isMinted ? (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-secondary border-secondary"
+                                onClick={() => handleClaim(item.round)}
+                                disabled={isPending || isConfirming}
+                              >
+                                铸造
+                              </Button>
+                            ) : item.isMinted ? (
+                              <span className="text-greyscale-500">已铸造</span>
+                            ) : (
+                              <span className="text-greyscale-500">-</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
                 <div ref={loadMoreRef} className="h-12 flex justify-center items-center">
@@ -199,10 +218,8 @@ const GovRewardsPage: React.FC = () => {
                     <LoadingIcon />
                   ) : hasMoreRewards ? (
                     <span className="text-sm text-gray-500">加载更多...</span>
-                  ) : startRound > token.initialStakeRound ? (
-                    <span className="text-sm text-gray-500">没有更多奖励</span>
                   ) : (
-                    ''
+                    <span className="text-sm text-gray-500">没有更多奖励</span>
                   )}
                 </div>
               </>

@@ -14,8 +14,10 @@ export interface Token {
   hasEnded: boolean; //发射是否结束
   parentTokenAddress: `0x${string}`;
   parentTokenSymbol: string;
+  parentTokenName: string;
   slTokenAddress: `0x${string}`;
   stTokenAddress: `0x${string}`;
+  uniswapV2PairAddress: `0x${string}`;
   initialStakeRound: number;
   voteOriginBlocks: number;
 }
@@ -80,6 +82,9 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     initTokenBySymbol(router.query.symbol as string);
   }, [router.isReady, router.query.symbol]);
 
+  console.log('token', token);
+  console.log('router.query.symbol', router.query.symbol);
+
   // Step 2. 根据 symbol 初始化 token，逻辑：
   // (1)如果localstorage有该tokenSymbol缓存，直接从缓存中加载（不设置symbolToGetDetail）
   // (2)否则设置symbolToGetDetail，用hook从合约获取token信息
@@ -141,9 +146,11 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
             decimals: Number(tokenInfoBySymbol.decimals),
             hasEnded: launchInfoBySymbol.hasEnded,
             parentTokenAddress: launchInfoBySymbol.parentTokenAddress,
+            parentTokenName: tokenInfoBySymbol.parentTokenName,
             parentTokenSymbol: tokenInfoBySymbol.parentTokenSymbol,
             slTokenAddress: tokenInfoBySymbol.slAddress,
             stTokenAddress: tokenInfoBySymbol.stAddress,
+            uniswapV2PairAddress: tokenInfoBySymbol.uniswapV2PairAddress,
             initialStakeRound: Number(tokenInfoBySymbol.initialStakeRound),
             voteOriginBlocks: prevToken === null ? 0 : prevToken.voteOriginBlocks,
           } as Token),

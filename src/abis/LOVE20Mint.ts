@@ -80,7 +80,7 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "function",
-    "name": "actionRewardBurned",
+    "name": "actionRewardBurnChecked",
     "inputs": [
       {
         "name": "",
@@ -177,7 +177,7 @@ export const LOVE20MintAbi = [
   },
   {
     "type": "function",
-    "name": "boostRewardBurned",
+    "name": "boostRewardBurnCheckeded",
     "inputs": [
       {
         "name": "",

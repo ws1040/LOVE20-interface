@@ -81,20 +81,17 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
     }
   }, [claimError, claimInfoError, contributedError]);
 
+  console.log('contributed', contributed);
+
   if (!account) {
     return '';
   }
-  if (isClaimInfoPending) {
-    return <LoadingIcon />;
-  }
-  if (!token) {
+  if (isClaimInfoPending || isContributedPending || !token) {
     return <LoadingIcon />;
   }
 
-  const parentTokenSymbol =
-    token.parentTokenSymbol == process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL
-      ? process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL
-      : token.parentTokenSymbol;
+  const ifFirstToken = token.parentTokenSymbol == process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL;
+  const parentTokenSymbol = ifFirstToken ? process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL : token.parentTokenSymbol;
 
   return (
     <div className="px-4 mt-2">
@@ -111,16 +108,17 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
       </div>
 
       <div className="flex justify-center space-x-4">
-        {Number(contributed) <= 0 && (
-          <>
-            <Button className="w-1/2" disabled>
-              未申购
-            </Button>
-            <Button className="w-1/2" asChild>
-              <Link href={`/launch/burn?symbol=${token?.symbol}`}>换回父币</Link>
-            </Button>
-          </>
-        )}
+        {Number(contributed) <= 0 ||
+          (!contributed && (
+            <>
+              <Button className="w-1/2" disabled>
+                未申购
+              </Button>
+              <Button className="w-1/2" asChild>
+                <Link href={`/launch/burn?symbol=${token?.symbol}`}>换回父币</Link>
+              </Button>
+            </>
+          ))}
         {Number(contributed) > 0 && !claimed && (
           <Button
             className="w-1/2"

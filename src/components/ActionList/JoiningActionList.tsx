@@ -101,12 +101,18 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
               return (
                 <Card key={actionDetail.action.head.id} className="shadow-none">
                   <Link href={href} className="relative block">
-                    <CardHeader className="px-3 pt-2 pb-1 flex-row items-baseline">
-                      <span className="text-greyscale-400 text-sm">{`No.`}</span>
-                      <span className="text-secondary text-xl font-bold mr-2">
-                        {String(actionDetail.action.head.id)}
+                    <CardHeader className="px-3 pt-2 pb-1 flex-row justify-between items-baseline">
+                      <div className="flex items-baseline">
+                        <span className="text-greyscale-400 text-sm">{`No.`}</span>
+                        <span className="text-secondary text-xl font-bold mr-2">
+                          {String(actionDetail.action.head.id)}
+                        </span>
+                        <span className="font-bold text-greyscale-800">{`${actionDetail.action.body.title}`}</span>
+                      </div>
+                      <span>
+                        <span className="text-greyscale-400 text-xs mr-1">投票占</span>
+                        <span className="text-secondary text-xs">{formatPercentage(voteRatio * 100)}</span>
                       </span>
-                      <span className="font-bold text-greyscale-800">{`${actionDetail.action.body.title}`}</span>
                     </CardHeader>
                     <CardContent className="px-3 pt-1 pb-2">
                       <div className="flex justify-between mt-1 text-sm">
@@ -124,8 +130,8 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                           <span className="flex justify-between text-error text-sm">无铸币奖励</span>
                         ) : (
                           <span>
-                            <span className="text-greyscale-400 mr-1">预估年化(APY)</span>
-                            <span className="text-secondary">
+                            <span className="text-greyscale-400 text-xs mr-1">预估年化(APY)</span>
+                            <span className="text-secondary text-xs">
                               {isPendingRewardAvailable ? (
                                 <LoadingIcon />
                               ) : (
@@ -137,11 +143,6 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                             </span>
                           </span>
                         )}
-
-                        <span>
-                          <span className="text-greyscale-400 mr-1">投票</span>
-                          <span className="text-secondary">{formatPercentage(voteRatio * 100)}</span>
-                        </span>
                       </div>
                     </CardContent>
                     <ChevronRight className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-greyscale-400 pointer-events-none" />

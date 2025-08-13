@@ -1,0 +1,27 @@
+# .github/workflows/deploy-test.yml
+name: Deploy Test (calls reusable)
+
+on:
+  push:
+    branches: [test]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    uses: LOVE20TKM/interface/.github/workflows/deploy-reusable.yml@main
+    with:
+      destination_dir: ''
+      publish_branch: 'gh-pages'
+      base_path: '/interface-test'
+      asset_prefix: '/interface-test'
+      out_dir: 'out'
+      node_version: '20'
+      install_script: 'yarn install'
+      build_script: 'yarn build'
+      concurrency_group: 'gh-pages-test'
+      cancel_in_progress: false
+      env_file: '.env.test.pages'
+    secrets: inherit

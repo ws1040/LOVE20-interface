@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -15,7 +15,7 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my types & functions
 import { ActionInfo } from '@/src/types/love20types';
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount } from '@/src/lib/format';
 
 // my contexts
@@ -29,7 +29,8 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 const VotingSubmitPage = () => {
   const { token } = useContext(TokenContext) || {};
   const [percentages, setPercentages] = useState<{ [key: number]: number }>({});
-  const { address: account, chain: accountChain } = useAccount();
+  const { address: account } = useAccount();
+  const chainId = useChainId();
   const { currentRound, isPending: isPendingCurrentRound, error: errCurrentRound } = useCurrentRound();
 
   const router = useRouter();
@@ -102,7 +103,7 @@ const VotingSubmitPage = () => {
 
   // 检查输入
   const checkInput = () => {
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return false;
     }
 

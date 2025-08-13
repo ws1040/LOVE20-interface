@@ -114,8 +114,10 @@ export const formatSeconds = (seconds: number): string => {
     )}分`;
   } else if (seconds > 3600) {
     return `${Math.floor(seconds / 3600)}小时${Math.floor((seconds % 3600) / 60)}分`;
+  } else if (seconds > 60) {
+    return `${Math.floor(seconds / 60)}分${Math.ceil(seconds % 60)}秒`;
   } else {
-    return `${Math.floor(seconds / 60)}分${seconds % 60}秒`;
+    return `${Math.ceil(seconds)}秒`;
   }
 };
 

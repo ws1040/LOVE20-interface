@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, useChainId } from 'wagmi';
 import { useForm } from 'react-hook-form';
 
 // UI components
@@ -16,19 +16,21 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form';
 
-// my hooks & funcs
-import { checkWalletConnection } from '@/src/lib/web3';
+// my funcs
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatIntegerStringWithCommas, formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my hooks
 import { useBalanceOf, useApprove } from '@/src/hooks/contracts/useLOVE20Token';
+import { useDeposit, useWithdraw } from '@/src/hooks/contracts/useWETH';
+import { useInitialStakeRound } from '@/src/hooks/contracts/useLOVE20Stake';
 import {
   useGetAmountsOut,
   useSwapExactTokensForTokens,
   useSwapExactETHForTokens,
-  // useSwapExactETHForTokensDirect,
   useSwapExactTokensForETH,
 } from '@/src/hooks/contracts/useUniswapV2Router';
-import { useDeposit, useWithdraw } from '@/src/hooks/contracts/useWETH';
 
 // my context
 import useTokenContext from '@/src/hooks/context/useTokenContext';
@@ -214,7 +216,8 @@ type SwapFormValues = z.infer<ReturnType<typeof getSwapFormSchema>>;
 // ================================================
 const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   const router = useRouter();
-  const { address: account, chain: accountChain } = useAccount();
+  const { address: account } = useAccount();
+  const chainId = useChainId();
   const { token } = useTokenContext();
 
   // --------------------------------------------------
@@ -376,6 +379,11 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   // 余额查询
   const { balance: fromBalance, isPending: isPendingFromBalance } = useTokenBalance(fromToken, account);
   const { balance: toBalance, isPending: isPendingToBalance } = useTokenBalance(toToken, account);
+  const {
+    initialStakeRound,
+    isPending: isPendingInitialStakeRound,
+    error: errInitialStakeRound,
+  } = useInitialStakeRound(token?.address as `0x${string}`);
 
   // 调试信息
   useEffect(() => {
@@ -414,23 +422,43 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   const [fromAmount, setFromAmount] = useState<bigint>(0n);
   const [toAmount, setToAmount] = useState<bigint>(0n);
 
+  // 基于测试前缀的原生代币使用上限（仅在存在 NEXT_PUBLIC_TOKEN_PREFIX 时生效）
+  const maxNativeInputLimit = useMemo(() => {
+    const hasPrefix = !!process.env.NEXT_PUBLIC_TOKEN_PREFIX;
+    if (!hasPrefix) return undefined;
+    if (!fromToken.isNative) return undefined;
+    const limitStr = toToken.isWETH ? '1' : '0.0001';
+    return parseUnits(limitStr);
+  }, [fromToken.isNative, toToken.isWETH]);
+
   // 监听输入数量变化
   const watchFromAmount = form.watch('fromTokenAmount');
   useEffect(() => {
     try {
       const amount = parseUnits(watchFromAmount || '0');
-      setFromAmount(amount);
+      let finalAmount = amount;
+      if (maxNativeInputLimit && amount > maxNativeInputLimit) {
+        finalAmount = maxNativeInputLimit;
+        const limitedStr = formatUnits(finalAmount);
+        if (watchFromAmount && watchFromAmount !== limitedStr) {
+          form.setValue('fromTokenAmount', limitedStr);
+          toast('测试环境限制：最多可使用 ' + limitedStr + ' ' + fromToken.symbol);
+        }
+      }
+      setFromAmount(finalAmount);
     } catch {
       setFromAmount(0n);
     }
-  }, [watchFromAmount]);
+  }, [watchFromAmount, maxNativeInputLimit, form, fromToken.symbol]);
 
   // --------------------------------------------------
   // 4. 组件交互：设置最大数量、切换代币
   // --------------------------------------------------
   // 设置最大数量
   const setMaxAmount = () => {
-    const maxStr = formatUnits(fromBalance || 0n);
+    const rawMax = fromBalance || 0n;
+    const capped = maxNativeInputLimit ? (rawMax > maxNativeInputLimit ? maxNativeInputLimit : rawMax) : rawMax;
+    const maxStr = formatUnits(capped);
     form.setValue('fromTokenAmount', maxStr);
   };
 
@@ -495,7 +523,9 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
     }
   }, [swapMethod, fromToken, toToken, swapPath]);
 
-  // 改进价格查询，添加更详细的错误处理
+  // 价格查询
+  const useCurrentToken = fromToken.symbol === token?.symbol || toToken.symbol === token?.symbol;
+  const canSwap = !useCurrentToken || !!initialStakeRound;
   const {
     data: amountsOut,
     error: amountsOutError,
@@ -504,7 +534,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
     fromAmount,
     swapPath,
     // 只有当路径有效且金额大于0时才启用查询
-    swapMethod !== 'WETH9' && fromAmount > 0n && swapPath.length >= 2,
+    canSwap && swapMethod !== 'WETH9' && fromAmount > 0n && swapPath.length >= 2,
   );
 
   // 添加详细的错误日志
@@ -679,7 +709,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   // --------------------------------------------------
   // 处理授权
   const handleApprove = form.handleSubmit(async () => {
-    if (!checkWalletConnection(accountChain)) return;
+    if (!checkWalletConnectionByChainId(chainId)) return;
 
     try {
       await approve(approvalTarget, fromAmount);
@@ -698,9 +728,21 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
 
   // 处理交换
   const handleSwap = form.handleSubmit(async () => {
-    if (!checkWalletConnection(accountChain)) return;
+    if (!checkWalletConnectionByChainId(chainId)) return;
+    if (!canSwap) {
+      toast.error('当前代币尚未开始质押，无法进行兑换');
+      return;
+    }
 
     try {
+      // 预检查0：测试环境原生币输入上限
+      if (maxNativeInputLimit && fromAmount > maxNativeInputLimit) {
+        const limitedStr = formatUnits(maxNativeInputLimit);
+        form.setValue('fromTokenAmount', limitedStr);
+        toast.error(`输入超出测试环境上限，已调整为 ${limitedStr} ${fromToken.symbol}`);
+        return;
+      }
+
       // 预检查1：验证环境变量
       const wethAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN;
       const routerAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_ROUTER;
@@ -731,7 +773,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
 
       // 预检查3：验证金额合理性
       if (toAmount <= 0n) {
-        toast.error('无法获取兑换价格，请检查流动性池');
+        toast.error('无法获取兑换价格，流动池可能不足');
         return;
       }
 
@@ -849,6 +891,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
     const errors = [
+      errInitialStakeRound,
       errApprove,
       errDeposit,
       errWithdraw,
@@ -862,7 +905,16 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
         handleContractError(error, 'swap');
       }
     });
-  }, [errApprove, errDeposit, errWithdraw, errTokenToToken, errETHToToken, errTokenToETH, amountsOutError]);
+  }, [
+    errInitialStakeRound,
+    errApprove,
+    errDeposit,
+    errWithdraw,
+    errTokenToToken,
+    errETHToToken,
+    errTokenToETH,
+    amountsOutError,
+  ]);
 
   // --------------------------------------------------
   // 9. 加载状态
@@ -933,16 +985,20 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                                     }}
                                     disabled={isDisabled}
                                   >
-                                    <SelectTrigger className="w-auto border-none bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors border border-gray-200">
+                                    <SelectTrigger className="w-auto border-none bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors border border-gray-200 font-mono">
                                       <div className="flex items-center gap-2">
-                                        <span className="font-medium text-gray-800">{fromToken.symbol}</span>
+                                        <span className="font-medium text-gray-800 font-mono">{fromToken.symbol}</span>
                                       </div>
                                     </SelectTrigger>
                                     <SelectContent>
                                       {supportedTokens.map((tokenConfig) => (
-                                        <SelectItem key={tokenConfig.address} value={tokenConfig.address}>
+                                        <SelectItem
+                                          key={tokenConfig.address}
+                                          value={tokenConfig.address}
+                                          className="font-mono"
+                                        >
                                           <div className="flex items-center gap-2">
-                                            <span>{tokenConfig.symbol}</span>
+                                            <span className="font-mono">{tokenConfig.symbol}</span>
                                           </div>
                                         </SelectItem>
                                       ))}
@@ -962,8 +1018,13 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                                 size="sm"
                                 type="button"
                                 onClick={() => {
-                                  const amount = ((fromBalance ?? 0n) * BigInt(percentage)) / 100n;
-                                  form.setValue('fromTokenAmount', formatUnits(amount));
+                                  const base = ((fromBalance ?? 0n) * BigInt(percentage)) / 100n;
+                                  const capped = maxNativeInputLimit
+                                    ? base > maxNativeInputLimit
+                                      ? maxNativeInputLimit
+                                      : base
+                                    : base;
+                                  form.setValue('fromTokenAmount', formatUnits(capped));
                                 }}
                                 disabled={isDisabled || (fromBalance || 0n) <= 0n}
                                 className="text-xs h-7 px-2 rounded-lg"
@@ -986,6 +1047,13 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                             {formatTokenAmount(fromBalance || 0n)} {fromToken.symbol}
                           </span>
                         </div>
+                        {maxNativeInputLimit && (
+                          <div className="text-xs text-gray-500 mt-2">
+                            测试环境限制：
+                            {toToken.isWETH ? '最多可使用 1 ' : '最多可使用 0.0001 '}
+                            {fromToken.symbol}
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                     <FormMessage />
@@ -1048,16 +1116,20 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                               }}
                               disabled={isDisabled}
                             >
-                              <SelectTrigger className="w-auto border-none bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors border border-gray-200">
+                              <SelectTrigger className="w-auto border-none bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors border border-gray-200 font-mono">
                                 <div className="flex items-center gap-2">
-                                  <span className="font-medium text-gray-800">{toToken.symbol}</span>
+                                  <span className="font-medium text-gray-800 font-mono">{toToken.symbol}</span>
                                 </div>
                               </SelectTrigger>
                               <SelectContent>
                                 {supportedTokens.map((tokenConfig) => (
-                                  <SelectItem key={tokenConfig.address} value={tokenConfig.address}>
+                                  <SelectItem
+                                    key={tokenConfig.address}
+                                    value={tokenConfig.address}
+                                    className="font-mono"
+                                  >
                                     <div className="flex items-center gap-2">
-                                      <span>{tokenConfig.symbol}</span>
+                                      <span className="font-mono">{tokenConfig.symbol}</span>
                                     </div>
                                   </SelectItem>
                                 ))}

@@ -49,7 +49,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
     }
   }, [actionInfo]);
 
-  // 发起提案者
+  // 推举行动者
   const {
     submitInfo,
     isPending: isPendingSubmitInfo,

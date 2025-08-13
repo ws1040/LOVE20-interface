@@ -2,15 +2,13 @@ import { useState, useEffect, useCallback, useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { toast } from 'react-hot-toast';
 import { useDebouncedCallback } from 'use-debounce';
-import { useRouter } from 'next/router';
 
 // my hooks
 import { useTokenDetails, useTokensByPage, useChildTokensByPage } from '@/src/hooks/contracts/useLOVE20TokenViewer';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { formatPercentage } from '@/src/lib/format';
-
+import { NavigationUtils } from '@/src/lib/navigationUtils';
 // my contexts
 import { Token, TokenContext } from '@/src/contexts/TokenContext';
 
@@ -33,8 +31,7 @@ interface TokenWithLaunchInfo extends Token {
 }
 
 export default function TokenList({ parentTokenAddress }: TokenListProps) {
-  const router = useRouter();
-  const { token: currentToken, setToken } = useContext(TokenContext) || {};
+  const { token: currentToken } = useContext(TokenContext) || {};
 
   const [start, setStart] = useState<bigint>(0n);
   const [end, setEnd] = useState<bigint>(BigInt(PAGE_SIZE));
@@ -66,19 +63,6 @@ export default function TokenList({ parentTokenAddress }: TokenListProps) {
 
   useEffect(() => {
     if (tokenAddresses && tokens && launchInfos) {
-      console.log('=== 调试发射进度数据 ===');
-      launchInfos.forEach((launchInfo, index) => {
-        console.log(`Token ${index}:`, {
-          symbol: tokens[index]?.symbol,
-          launchAmount: launchInfo.launchAmount.toString(),
-          parentTokenFundraisingGoal: launchInfo.parentTokenFundraisingGoal.toString(),
-          totalContributed: launchInfo.totalContributed.toString(),
-          hasEnded: launchInfo.hasEnded,
-          correctRatio: Number(launchInfo.totalContributed) / Number(launchInfo.parentTokenFundraisingGoal),
-          wrongRatio: Number(launchInfo.launchAmount) / Number(launchInfo.parentTokenFundraisingGoal),
-        });
-      });
-
       const newTokens: TokenWithLaunchInfo[] = tokens.map((token: TokenInfo, index: number) => ({
         name: token.name,
         symbol: token.symbol,
@@ -86,8 +70,10 @@ export default function TokenList({ parentTokenAddress }: TokenListProps) {
         decimals: Number(token.decimals),
         parentTokenAddress: launchInfos[index].parentTokenAddress,
         parentTokenSymbol: token.parentTokenSymbol,
+        parentTokenName: token.parentTokenName,
         slTokenAddress: token.slAddress,
         stTokenAddress: token.stAddress,
+        uniswapV2PairAddress: token.uniswapV2PairAddress,
         initialStakeRound: Number(token.initialStakeRound),
         hasEnded: launchInfos[index].hasEnded,
         voteOriginBlocks: currentToken?.voteOriginBlocks ?? 0,
@@ -126,31 +112,11 @@ export default function TokenList({ parentTokenAddress }: TokenListProps) {
 
   // 切换代币
   const handleTokenClick = (token: TokenWithLaunchInfo) => {
-    if (!setToken) {
-      toast.error('请先选择代币');
-      return;
-    }
-    // 创建一个标准的 Token 对象（不包含额外的发射进度字段）
-    const standardToken: Token = {
-      name: token.name,
-      symbol: token.symbol,
-      address: token.address,
-      decimals: token.decimals,
-      hasEnded: token.hasEnded,
-      parentTokenAddress: token.parentTokenAddress,
-      parentTokenSymbol: token.parentTokenSymbol,
-      slTokenAddress: token.slTokenAddress,
-      stTokenAddress: token.stTokenAddress,
-      initialStakeRound: token.initialStakeRound,
-      voteOriginBlocks: token.voteOriginBlocks,
-    };
-    //切换代币
-    setToken(standardToken);
     //跳转代币详情页
     if (token.hasEnded) {
-      router.push(`/acting/?symbol=${token.symbol}`);
+      NavigationUtils.redirectWithOverlay(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/acting/?symbol=${token.symbol}`);
     } else {
-      router.push(`/launch/?symbol=${token.symbol}`);
+      NavigationUtils.redirectWithOverlay(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/launch/?symbol=${token.symbol}`);
     }
   };
 
@@ -175,7 +141,7 @@ export default function TokenList({ parentTokenAddress }: TokenListProps) {
             <CardContent className="p-4 flex justify-between items-center">
               <div>
                 <p className="flex items-center">
-                  <span className="font-semibold">{token.symbol}</span>
+                  <span className="font-semibold font-mono">{token.symbol}</span>
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {token.hasEnded ? (
@@ -199,7 +165,7 @@ export default function TokenList({ parentTokenAddress }: TokenListProps) {
               <div className="flex items-center gap-2">
                 <span>
                   <span className="text-greyscale-500 text-sm">父币 </span>
-                  <span className="text-sm">{token.parentTokenSymbol}</span>
+                  <span className="text-sm font-mono">{token.parentTokenSymbol}</span>
                 </span>
                 <Button variant="ghost" size="icon">
                   <ChevronRight className="h-4 w-4" />

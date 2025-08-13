@@ -78,6 +78,7 @@ function generateEnvFromParams(projectDir, network) {
   const targetKeywords = [
     'FIRST_TOKEN_SYMBOL',
     'PHASE_BLOCKS',
+    'LAUNCH_AMOUNT',
     'PARENT_TOKEN_FUNDRAISING_GOAL',
     'WITHDRAW_WAITING_BLOCKS',
     'MIN_GOV_REWARD_MINTS_TO_LAUNCH',
@@ -85,6 +86,7 @@ function generateEnvFromParams(projectDir, network) {
     'PROMISED_WAITING_PHASES_MIN',
     'PROMISED_WAITING_PHASES_MAX',
     'SUBMIT_MIN_PER_THOUSAND',
+    'MAX_VERIFICATION_KEY_LENGTH',
     'ACTION_REWARD_MIN_VOTE_PER_THOUSAND',
     'ROUND_REWARD_GOV_PER_THOUSAND',
     'ROUND_REWARD_ACTION_PER_THOUSAND',

@@ -78,7 +78,7 @@ const ContributeInfo: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> 
       refetchContributed();
       // 1秒后跳转到取回页面
       setTimeout(() => {
-        router.push(`/dex/swap/?symbol=${token?.symbol}&from=${token?.parentTokenSymbol}`);
+        router.push(`/launch/?symbol=${token?.symbol}`);
       }, 1000);
     }
   }, [isWithdrawConfirmed]);

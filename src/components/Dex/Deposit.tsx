@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, useChainId } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -13,7 +13,7 @@ import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 
 // my funcs
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 
 // my hooks
@@ -55,7 +55,8 @@ type DepositFormValues = z.infer<ReturnType<typeof getDepositFormSchema>>;
 
 const Deposit: React.FC = () => {
   const router = useRouter();
-  const { address: account, chain: accountChain } = useAccount();
+  const { address: account } = useAccount();
+  const chainId = useChainId();
   const { token } = useContext(TokenContext) || {};
 
   // 读取余额
@@ -98,7 +99,7 @@ const Deposit: React.FC = () => {
   // 3. 提交时调用 deposit
   async function onSubmit(data: DepositFormValues) {
     // 也可在这里检测是否连接正确网络
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       toast.error('请切换到正确的网络');
       return;
     }

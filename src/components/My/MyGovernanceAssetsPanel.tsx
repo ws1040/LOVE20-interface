@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 // my funcs
-import { checkWalletConnection } from '@/src/lib/web3';
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 import { formatPhaseText } from '@/src/lib/domainUtils';
 
@@ -37,7 +37,8 @@ interface MyGovernanceAssetsPanelProps {
 }
 
 const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token, enableWithdraw = false }) => {
-  const { address: account, chain: accountChain } = useAccount();
+  const { address: account } = useAccount();
+  const chainId = useChainId();
 
   // Hook：获取当前轮次
   const { currentRound, isPending: isPendingCurrentRound, error: errorCurrentRound } = useCurrentRound(enableWithdraw);
@@ -55,7 +56,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
 
   // 检查输入条件
   const checkInput = () => {
-    if (!checkWalletConnection(accountChain)) {
+    if (!checkWalletConnectionByChainId(chainId)) {
       return false;
     }
     if (!slAmount || slAmount <= 0n) {
@@ -268,9 +269,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
 
   // 是否可以取回代币
   const canWithdraw =
-    enableWithdraw &&
-    requestedUnstakeRound &&
-    currentRound > requestedUnstakeRound + (promisedWaitingPhases || BigInt(0));
+    requestedUnstakeRound && currentRound > requestedUnstakeRound + (promisedWaitingPhases || BigInt(0));
 
   return (
     <>

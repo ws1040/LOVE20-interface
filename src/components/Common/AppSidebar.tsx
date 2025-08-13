@@ -4,19 +4,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/router';
-import {
-  SmilePlus,
-  Home,
-  Landmark,
-  SatelliteDish,
-  BadgeDollarSign,
-  Rocket,
-  List,
-  TicketCheck,
-  User,
-  Info,
-  UserCog,
-} from 'lucide-react';
+import { SmilePlus, Home, SatelliteDish, Landmark, Rocket, List, TicketCheck, User, Info, UserCog } from 'lucide-react';
 
 import {
   Sidebar,
@@ -31,6 +19,7 @@ import {
   SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { NavigationUtils } from '@/src/lib/navigationUtils';
 
 // 修改后的 AppSidebar 组件
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -95,6 +84,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return {
       navMain: [
         {
+          title: '代币',
+          url: '#',
+          items: [
+            {
+              title: '代币首页',
+              url: `/token/?symbol=${token.symbol}`,
+              isActive: isActiveUrl(`${basePath}/token/`),
+              icon: Home,
+            },
+            {
+              title: '代币简介',
+              url: `/token/intro?symbol=${token.symbol}`,
+              isActive: isActiveUrl(`${basePath}/token/intro`),
+              icon: SatelliteDish,
+            },
+          ],
+        },
+        {
           title: '社区',
           url: '#',
           items: [
@@ -135,10 +142,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             token.parentTokenSymbol !== process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL
               ? [
                   {
-                    title: '回到父币',
+                    title: '返回父币',
                     url: `/acting/?symbol=${token.parentTokenSymbol}`,
                     isActive: false,
                     icon: UserCog,
+                    forceReload: true, // 仅此项使用强制刷新
                   },
                 ]
               : []),
@@ -184,12 +192,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               isActive: isActiveUrl(`${basePath}/my/`),
               icon: User,
             },
-            {
-              title: '关于协议',
-              url: `/about?symbol=${token.symbol}`,
-              isActive: isActiveUrl(`${basePath}/about`),
-              icon: Info,
-            },
+            // {
+            //   title: '关于协议',
+            //   url: `/about?symbol=${token.symbol}`,
+            //   isActive: isActiveUrl(`${basePath}/about`),
+            //   icon: Info,
+            // },
           ],
         },
       ],
@@ -229,7 +237,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuButton
                       isActive={subItem.isActive || false}
                       className={cn(subItem.isActive && '!bg-transparent !text-white font-bold')}
-                      onClick={() => handleLinkClick(subItem.url)}
+                      onClick={() => {
+                        if (isMobile) {
+                          setOpenMobile(false);
+                        }
+                        if (subItem.forceReload) {
+                          const target = basePath ? `${basePath}${subItem.url}` : subItem.url;
+                          NavigationUtils.redirectWithOverlay(target, '正在跳转...');
+                        } else {
+                          handleLinkClick(subItem.url);
+                        }
+                      }}
                     >
                       <span className="text-base">{subItem.title}</span>
                     </SidebarMenuButton>

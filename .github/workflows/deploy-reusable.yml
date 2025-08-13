@@ -1,0 +1,123 @@
+name: Reusable Deploy to GitHub Pages (subdir)
+
+on:
+  workflow_call:
+    inputs:
+      install_script:
+        type: string
+        required: false
+        default: 'yarn install'
+      build_script:
+        type: string
+        required: false
+        default: 'yarn build'
+      node_version:
+        type: string
+        required: false
+        default: '20'
+      out_dir:
+        type: string
+        required: false
+        default: 'out'
+      destination_dir:
+        type: string
+        required: true
+      publish_branch:
+        type: string
+        required: false
+        default: 'gh-pages'
+      base_path:
+        type: string
+        required: true
+      asset_prefix:
+        type: string
+        required: false
+        default: ''
+      env_file:
+        type: string
+        required: false
+        default: ''
+      concurrency_group:
+        type: string
+        required: false
+        default: 'gh-pages'
+      cancel_in_progress:
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ inputs.concurrency_group }}
+  cancel-in-progress: ${{ inputs.cancel_in_progress }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Install dependencies
+        run: ${{ inputs.install_script }}
+
+      # 加载 .env 文件（可选）
+      - name: Load env file (optional)
+        if: ${{ inputs.env_file != '' }}
+        run: |
+          echo "Loading env file: ${{ inputs.env_file }}"
+          sed -n 's/^\([^#][^=]*\)=\(.*\)$/\1=\2/p' "${{ inputs.env_file }}" >> "$GITHUB_ENV"
+
+      # 删除 .env.production 文件，防止 Next.js 自动加载生产环境变量
+      - name: Remove .env.production to prevent override
+        if: ${{ inputs.env_file != '' }}
+        run: |
+          echo "Removing .env.production to prevent Next.js from auto-loading production env vars"
+          if [ -f ".env.production" ]; then
+            rm ".env.production"
+            echo "Removed .env.production"
+          else
+            echo ".env.production not found, skipping removal"
+          fi
+
+      # 设置 BASE_PATH/ASSET_PREFIX（.env 已定义的值优先生效）
+      - name: Ensure BASE_PATH & ASSET_PREFIX
+        run: |
+          : "${BASE_PATH:=${{ inputs.base_path }}}"
+          if [ -z "${{ inputs.asset_prefix }}" ]; then
+            : "${ASSET_PREFIX:=${BASE_PATH}}"
+          else
+            : "${ASSET_PREFIX:=${{ inputs.asset_prefix }}}"
+          fi
+          echo "BASE_PATH=$BASE_PATH" >> "$GITHUB_ENV"
+          echo "ASSET_PREFIX=$ASSET_PREFIX" >> "$GITHUB_ENV"
+          echo "NEXT_PUBLIC_BASE_PATH=${BASE_PATH}" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: ${{ inputs.build_script }}
+
+      - name: Add 404.html (SPA routing)
+        run: |
+          if [ -f "${{ inputs.out_dir }}/index.html" ]; then
+            cp "${{ inputs.out_dir }}/index.html" "${{ inputs.out_dir }}/404.html"
+          fi
+
+      - name: List build files
+        run: ls -R "${{ inputs.out_dir }}/"
+
+      - name: Deploy to GitHub Pages subdir
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ inputs.out_dir }}
+          publish_branch: ${{ inputs.publish_branch }}
+          destination_dir: ${{ inputs.destination_dir }}
+          keep_files: true
