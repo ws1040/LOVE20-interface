@@ -25,11 +25,6 @@ const RoundLite: React.FC<RoundProps> = ({ currentRound, roundType, showCountdow
 
   const [currentTokenRound, setCurrentTokenRound] = useState(0n);
 
-  console.log('--------- test env -----------');
-  console.log('process.env.NEXT_PUBLIC_PHASE_BLOCKS', process.env.NEXT_PUBLIC_PHASE_BLOCKS);
-  console.log('process.env.NEXT_PUBLIC_BLOCK_TIME', process.env.NEXT_PUBLIC_BLOCK_TIME);
-  console.log('--------- end -----------');
-
   // 计算剩余时间相关变量
   const ROUND_BLOCKS = Number(process.env.NEXT_PUBLIC_PHASE_BLOCKS) || 0;
   const BLOCK_TIME = Number(process.env.NEXT_PUBLIC_BLOCK_TIME) || 0;

@@ -250,6 +250,128 @@ export const LOVE20RoundViewerAbi = [
   },
   {
     "type": "function",
+    "name": "actionRewardsByAccountOfLastRounds",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "LastRounds",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "actions",
+        "type": "tuple[]",
+        "internalType": "struct ActionInfo[]",
+        "components": [
+          {
+            "name": "head",
+            "type": "tuple",
+            "internalType": "struct ActionHead",
+            "components": [
+              {
+                "name": "id",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "author",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "createAtBlock",
+                "type": "uint256",
+                "internalType": "uint256"
+              }
+            ]
+          },
+          {
+            "name": "body",
+            "type": "tuple",
+            "internalType": "struct ActionBody",
+            "components": [
+              {
+                "name": "minStake",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "maxRandomAccounts",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "whiteListAddress",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "title",
+                "type": "string",
+                "internalType": "string"
+              },
+              {
+                "name": "verificationRule",
+                "type": "string",
+                "internalType": "string"
+              },
+              {
+                "name": "verificationKeys",
+                "type": "string[]",
+                "internalType": "string[]"
+              },
+              {
+                "name": "verificationInfoGuides",
+                "type": "string[]",
+                "internalType": "string[]"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "rewards",
+        "type": "tuple[]",
+        "internalType": "struct ActionReward[]",
+        "components": [
+          {
+            "name": "actionId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "round",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "reward",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "isMinted",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "actionSubmits",
     "inputs": [
       {
@@ -420,6 +542,35 @@ export const LOVE20RoundViewerAbi = [
             "internalType": "bool"
           }
         ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "hasUnmintedActionRewardOfLastRounds",
+    "inputs": [
+      {
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "latestRounds",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "stateMutability": "view"

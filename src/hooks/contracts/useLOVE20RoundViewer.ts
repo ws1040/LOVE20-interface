@@ -13,6 +13,8 @@ import {
   MyVerifyingAction,
   VotingAction,
   TokenStats,
+  ActionReward,
+  ActionInfo,
 } from '@/src/types/love20types';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_ROUNDVIEWER as `0x${string}`;
@@ -412,4 +414,40 @@ export const useTokenStatistics = (tokenAddress: `0x${string}`) => {
     },
   });
   return { tokenStatistics: data as TokenStats, isPending, error };
+};
+
+export const useActionRewardsByAccountOfLastRounds = (
+  tokenAddress: `0x${string}`,
+  account: `0x${string}`,
+  latestRounds: bigint,
+) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20RoundViewerAbi,
+    functionName: 'actionRewardsByAccountOfLastRounds',
+    args: [tokenAddress, account, latestRounds],
+    query: {
+      enabled: !!tokenAddress && !!account && !!latestRounds,
+    },
+  });
+  const actions = (data?.[0] as unknown as ActionInfo[]) || [];
+  const rewards = (data?.[1] as unknown as ActionReward[]) || [];
+  return { actions, rewards, isPending, error };
+};
+
+export const useHasUnmintedActionRewardOfLastRounds = (
+  tokenAddress: `0x${string}`,
+  account: `0x${string}`,
+  latestRounds: bigint,
+) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20RoundViewerAbi,
+    functionName: 'hasUnmintedActionRewardOfLastRounds',
+    args: [tokenAddress, account, latestRounds],
+    query: {
+      enabled: !!tokenAddress && !!account && !!latestRounds,
+    },
+  });
+  return { hasUnmintedActionRewardOfLastRounds: data as boolean, isPending, error };
 };

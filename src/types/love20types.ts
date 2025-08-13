@@ -75,6 +75,13 @@ export interface RewardInfo {
   isMinted: boolean;
 }
 
+export interface ActionReward {
+  actionId: bigint;
+  round: bigint;
+  reward: bigint;
+  isMinted: boolean;
+}
+
 export interface GovData {
   govVotes: bigint;
   slAmount: bigint;

@@ -1,0 +1,197 @@
+'use client';
+
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { useAccount, useChainId } from 'wagmi';
+import toast from 'react-hot-toast';
+
+// my contexts
+import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my hooks
+import { useActionRewardsByAccountOfLastRounds } from '@/src/hooks/contracts/useLOVE20RoundViewer';
+import { useMintActionReward } from '@/src/hooks/contracts/useLOVE20Mint';
+import { useHandleContractError } from '@/src/lib/errorUtils';
+
+// my components
+import Header from '@/src/components/Header';
+import LeftTitle from '@/src/components/Common/LeftTitle';
+import LoadingIcon from '@/src/components/Common/LoadingIcon';
+import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
+import { Button } from '@/components/ui/button';
+
+// utils
+import { checkWalletConnectionByChainId } from '@/src/lib/web3';
+import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
+import { setActionRewardNeedMinted } from '@/src/lib/actionRewardNotice';
+
+// types
+import { ActionInfo, ActionReward } from '@/src/types/love20types';
+
+const LAST_ROUNDS = 30n;
+
+type ActionRewardsGroup = {
+  action: ActionInfo;
+  rewards: ActionReward[];
+};
+
+const ActRewardsPage: React.FC = () => {
+  const { token } = useContext(TokenContext) || {};
+  const { address: account } = useAccount();
+  const chainId = useChainId();
+
+  // 获取最近 N 轮的行动激励
+  const {
+    actions,
+    rewards,
+    isPending: isLoadingRewards,
+    error: errorLoadingRewards,
+  } = useActionRewardsByAccountOfLastRounds(token?.address as `0x${string}`, account as `0x${string}`, LAST_ROUNDS);
+
+  // 将奖励按行动分组（仅展示奖励>0的记录）
+  const grouped = useMemo<ActionRewardsGroup[]>(() => {
+    if (!actions || !rewards) return [];
+    const actionMap = new Map<string, ActionInfo>();
+    for (const act of actions) {
+      actionMap.set(String(act.head.id), act);
+    }
+    const rewardsByAction = new Map<string, ActionReward[]>();
+    for (const r of rewards) {
+      if (r.reward <= 0n) continue;
+      const key = r.actionId.toString();
+      if (!rewardsByAction.has(key)) rewardsByAction.set(key, []);
+      rewardsByAction.get(key)!.push(r);
+    }
+    const list: ActionRewardsGroup[] = [];
+    for (const [actionIdStr, rs] of rewardsByAction.entries()) {
+      const act = actionMap.get(actionIdStr);
+      if (!act) continue;
+      // 按轮次倒序
+      rs.sort((a, b) => (a.round > b.round ? -1 : 1));
+      list.push({ action: act, rewards: rs });
+    }
+    // 按行动 id 倒序
+    list.sort((a, b) => (BigInt(a.action.head.id) > BigInt(b.action.head.id) ? -1 : 1));
+    return list;
+  }, [actions, rewards]);
+
+  // 铸造行动激励
+  const { mintActionReward, isPending, isConfirming, isConfirmed, writeError } = useMintActionReward();
+  const [mintingTarget, setMintingTarget] = useState<{ actionId: bigint; round: bigint } | null>(null);
+
+  useEffect(() => {
+    if (isConfirmed) {
+      toast.success('铸造成功');
+      if (typeof window !== 'undefined' && token?.address && account) {
+        setActionRewardNeedMinted(account, token.address, false);
+      }
+    }
+  }, [isConfirmed]);
+
+  const handleClaim = async (round: bigint, actionId: bigint) => {
+    if (!checkWalletConnectionByChainId(chainId)) {
+      return;
+    }
+    if (token?.address && account) {
+      setMintingTarget({ actionId, round });
+      await mintActionReward(token.address, round, actionId);
+    }
+  };
+
+  // 将成功状态映射到 UI（简单处理：本地更新为已铸造）
+  const displayedGroups = useMemo(() => {
+    if (!grouped) return [];
+    if (isConfirmed && mintingTarget) {
+      return grouped.map((g) => {
+        if (BigInt(g.action.head.id) !== mintingTarget.actionId) return g;
+        return {
+          ...g,
+          rewards: g.rewards.map((r) => (r.round === mintingTarget.round ? { ...r, isMinted: true } : r)),
+        };
+      });
+    }
+    return grouped;
+  }, [grouped, isConfirmed, mintingTarget]);
+
+  // 错误处理
+  const { handleContractError } = useHandleContractError();
+  useEffect(() => {
+    if (errorLoadingRewards) handleContractError(errorLoadingRewards, 'dataViewer');
+    if (writeError) handleContractError(writeError, 'mint');
+  }, [errorLoadingRewards, writeError, handleContractError]);
+
+  const noReward = !isLoadingRewards && displayedGroups.length === 0;
+
+  return (
+    <>
+      <Header title="行动激励" showBackButton={true} />
+      <main className="flex-grow">
+        {!token ? (
+          <LoadingIcon />
+        ) : (
+          <div className="flex flex-col space-y-6 p-4">
+            <LeftTitle title="铸造行动奖励" />
+
+            {isLoadingRewards ? (
+              <LoadingIcon />
+            ) : noReward ? (
+              <div className="text-center text-gray-500 py-8">近期没有获取激励</div>
+            ) : (
+              displayedGroups.map((group) => (
+                <div key={group.action.head.id} className="border border-gray-100 rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="flex items-baseline  mr-2">
+                      <span className="text-greyscale-500">No.</span>
+                      <span className="text-secondary text-xl font-bold mr-2">{String(group.action.head.id)}</span>
+                      <span className="font-bold text-greyscale-800">{`${group.action.body.title}`}</span>
+                    </div>
+                  </div>
+
+                  <table className="table w-full table-auto">
+                    <thead>
+                      <tr className="border-b border-gray-100">
+                        <th>轮次</th>
+                        <th className="text-center">可铸造激励</th>
+                        <th className="text-center">结果</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {group.rewards.map((item) => (
+                        <tr
+                          key={`${group.action.head.id}-${item.round.toString()}`}
+                          className="border-b border-gray-100"
+                        >
+                          <td>{formatRoundForDisplay(item.round, token).toString()}</td>
+                          <td className="text-center">{formatTokenAmount(item.reward || 0n)}</td>
+                          <td className="text-center">
+                            {item.reward > 0n && !item.isMinted ? (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-secondary border-secondary"
+                                onClick={() => handleClaim(item.round, BigInt(group.action.head.id))}
+                                disabled={isPending || isConfirming}
+                              >
+                                铸造
+                              </Button>
+                            ) : item.isMinted ? (
+                              <span className="text-greyscale-500">已铸造</span>
+                            ) : (
+                              <span className="text-greyscale-500">-</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+        <LoadingOverlay isLoading={isPending || isConfirming} text={isPending ? '提交交易...' : '确认交易...'} />
+      </main>
+    </>
+  );
+};
+
+export default ActRewardsPage;
