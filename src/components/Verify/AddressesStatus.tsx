@@ -48,7 +48,7 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     '0x0000000000000000000000000000000000000000',
   );
 
-  // 读取验证地址的奖励
+  // 读取验证地址的激励
   const {
     verifiedAddresses,
     isPending: isPendingVerifiedAddresses,

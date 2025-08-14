@@ -219,7 +219,7 @@ export default function TokenDeployment() {
             <DialogDescription>
               剩余可发射次数：{Number(remainingLaunchCount)} 次
               <br />
-              再完成 {remainingMintTimes} 次治理奖励铸币，可增加1次
+              再完成 {remainingMintTimes} 次治理激励铸币，可增加1次
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

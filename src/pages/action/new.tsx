@@ -209,7 +209,7 @@ export default function NewAction() {
 
   return (
     <>
-      <Header title="创建新行动" />
+      <Header title="创建新行动" showBackButton={true} />
       <div className="max-w-xl p-4">
         {!hasEnoughVotes && validGovVotes !== undefined && totalGovVotes && (
           <AlertBox

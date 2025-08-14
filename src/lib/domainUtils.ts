@@ -7,7 +7,7 @@ import { safeToBigInt } from './clientUtils';
 
 /**
  * 计算治理质押的预计年化收益率(APY)
- * @param rewardAvailable 可用奖励总量
+ * @param rewardAvailable 可用激励总量
  * @param tokenAmountForSl 流动性质押的代币数量
  * @param stAmount 代币质押的数量
  * @returns 格式化后的APY字符串，如"12.5%"
@@ -45,7 +45,7 @@ export const calculateAPY = (
 };
 
 /**
- * 计算行动奖励的年化收益率(APY)
+ * 计算行动激励的年化收益率(APY)
  * @param expectedReward 当轮行动激励
  * @param joinedAmount 参与行动代币
  * @returns 格式化后的APY百分比字符串
@@ -112,17 +112,17 @@ export const formatPhaseText = (phases: number, onlyBlockTime = false): string =
 };
 
 /**
- * 计算行动激励的预期奖励
- * @param rewardAvailable 可用奖励总量
+ * 计算行动激励的预期激励
+ * @param rewardAvailable 可用激励总量
  * @param displayRound 显示的轮次（从1开始）
- * @returns 计算得出的预期奖励数量
+ * @returns 计算得出的预期激励数量
  */
 export const calculateExpectedActionReward = (rewardAvailable: bigint | undefined, displayRound: bigint): bigint => {
   if (!rewardAvailable) {
     return BigInt(0);
   }
 
-  // 计算剩余奖励比例
+  // 计算剩余激励比例
   const rewardLeftRatio =
     1000n -
     safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '5') -
@@ -147,17 +147,17 @@ export const calculateExpectedActionReward = (rewardAvailable: bigint | undefine
 };
 
 /**
- * 计算治理激励的预期奖励
- * @param rewardAvailable 可用奖励总量
+ * 计算治理激励的预期激励
+ * @param rewardAvailable 可用激励总量
  * @param displayRound 显示的轮次（从1开始）
- * @returns 计算得出的预期奖励数量
+ * @returns 计算得出的预期激励数量
  */
 export const calculateExpectedGovReward = (rewardAvailable: bigint | undefined, displayRound: bigint): bigint => {
   if (!rewardAvailable) {
     return BigInt(0);
   }
 
-  // 计算剩余奖励比例
+  // 计算剩余激励比例
   const rewardLeftRatio =
     1000n -
     safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '5') -

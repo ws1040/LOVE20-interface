@@ -214,7 +214,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
             )
           ) : (
             <>
-              <div className="flex justify-center space-x-4 mt-2 w-full">
+              <div className="flex justify-center space-x-2 mt-2 w-full">
                 {joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= 2n ? (
                   <Button variant="outline" className="w-1/3 text-secondary border-secondary" disabled>
                     取回
@@ -236,6 +236,9 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
                   </Button>
                 )}
 
+                <Button variant="outline" className="w-1/3 text-secondary border-secondary" asChild>
+                  <Link href={`/my/rewardsofaction?id=${actionId}&symbol=${token?.symbol}`}>查看激励</Link>
+                </Button>
                 <Button variant="outline" className="w-1/3 text-secondary border-secondary" asChild>
                   <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
                 </Button>

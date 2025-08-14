@@ -14,6 +14,7 @@ import ErrorBoundary from '@/src/components/ErrorBoundary';
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
+import ActionRewardNotifier from '@/src/components/Common/ActionRewardNotifier';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -100,6 +101,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                           },
                         }}
                       />
+                      <ActionRewardNotifier />
                       <ErrorBoundary>
                         <Component {...pageProps} />
                       </ErrorBoundary>

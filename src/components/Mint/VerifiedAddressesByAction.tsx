@@ -25,6 +25,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 // my funcs
 import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatRoundForDisplay, formatTokenAmountInteger } from '@/src/lib/format';
+import { setActionRewardNeedMinted } from '@/src/lib/actionRewardNotice';
 import { LinkIfUrl } from '@/src/lib/stringUtils';
 
 const VerifiedAddressesByAction: React.FC<{
@@ -44,7 +45,7 @@ const VerifiedAddressesByAction: React.FC<{
     }
   }, [currentJoinRound, token]);
 
-  // 读取验证地址的奖励
+  // 读取验证地址的激励
   const {
     verifiedAddresses,
     isPending: isPendingVerifiedAddresses,
@@ -73,7 +74,7 @@ const VerifiedAddressesByAction: React.FC<{
     }
   }, [verifiedAddresses]);
 
-  // 领取奖励
+  // 领取激励
   const {
     mintActionReward,
     isPending: isMinting,
@@ -93,6 +94,10 @@ const VerifiedAddressesByAction: React.FC<{
     if (isConfirmedMint) {
       setAddresses((prev) => prev.map((addr) => (addr.account === account ? { ...addr, isMinted: true } : addr)));
       toast.success(`铸造成功`);
+
+      if (typeof window !== 'undefined' && token?.address && account) {
+        setActionRewardNeedMinted(account, token.address, false);
+      }
     }
   }, [isConfirmedMint, account]);
 
