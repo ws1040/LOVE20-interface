@@ -79,11 +79,11 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
       <div className="mx-auto p-4 pb-2 border-t border-greyscale-100">
         <div className="flex justify-between items-center mb-2">
           <LeftTitle title="行动详情" />
-          {showVerifyHistory && (
+          {/* {showVerifyHistory && (
             <Button variant="link" className="text-secondary border-secondary" asChild>
               <Link href={`/my/rewardsofaction?id=${actionId}&symbol=${token?.symbol}`}>查看我的激励 &gt;&gt;</Link>
             </Button>
-          )}
+          )} */}
         </div>
       </div>
       <div className="mx-auto p-4 pb-2 ">
