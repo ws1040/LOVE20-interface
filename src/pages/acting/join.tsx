@@ -82,7 +82,7 @@ const JoinPage = () => {
                   时，参与该行动才有激励
                 </div>
                 <div className="text-base font-bold text-blue-700 pt-2 pb-1">参与代币：</div>
-                <div className="text-sm text-blue-700">1、参与代币越多，被选中验证并获得奖励的概率越大</div>
+                <div className="text-sm text-blue-700">1、参与代币越多，被选中验证并获得激励的概率越大</div>
                 <div className="text-sm text-blue-700">2、参与的代币可随时取回，如不取回则自动参与此行动的后续轮次</div>
               </div>
             </div>

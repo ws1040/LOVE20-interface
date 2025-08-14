@@ -424,7 +424,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
       {!enableWithdraw && (
         <div className="flex justify-center space-x-4">
           <Button variant="outline" className="w-1/2 text-secondary border-secondary" asChild>
-            <Link href={`/my/govrewards?symbol=${token.symbol}`}>铸造 治理奖励 &gt;&gt;</Link>
+            <Link href={`/my/govrewards?symbol=${token.symbol}`}>铸造 治理激励 &gt;&gt;</Link>
           </Button>
           {requestedUnstakeRound && (
             <Button

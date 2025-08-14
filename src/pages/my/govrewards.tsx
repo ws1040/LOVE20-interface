@@ -165,7 +165,7 @@ const GovRewardsPage: React.FC = () => {
           <LoadingIcon />
         ) : (
           <div className="flex flex-col space-y-6 p-4">
-            <LeftTitle title="铸造治理奖励" />
+            <LeftTitle title="铸造治理激励" />
 
             {endRound === 0n && currentRound !== undefined ? (
               <div className="text-center text-gray-500 py-4">当前还不能铸造奖励，请耐心等待</div>

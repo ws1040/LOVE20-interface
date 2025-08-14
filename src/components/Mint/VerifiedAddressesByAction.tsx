@@ -45,7 +45,7 @@ const VerifiedAddressesByAction: React.FC<{
     }
   }, [currentJoinRound, token]);
 
-  // 读取验证地址的奖励
+  // 读取验证地址的激励
   const {
     verifiedAddresses,
     isPending: isPendingVerifiedAddresses,
@@ -74,7 +74,7 @@ const VerifiedAddressesByAction: React.FC<{
     }
   }, [verifiedAddresses]);
 
-  // 领取奖励
+  // 领取激励
   const {
     mintActionReward,
     isPending: isMinting,

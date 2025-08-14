@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { useAccount, useChainId } from 'wagmi';
 import toast from 'react-hot-toast';
+import { useAccount, useChainId } from 'wagmi';
+import { useRouter } from 'next/router';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -35,6 +36,7 @@ type ActionRewardsGroup = {
 };
 
 const ActRewardsPage: React.FC = () => {
+  const router = useRouter();
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
   const chainId = useChainId();
@@ -47,13 +49,11 @@ const ActRewardsPage: React.FC = () => {
     error: errorLoadingRewards,
   } = useActionRewardsByAccountOfLastRounds(token?.address as `0x${string}`, account as `0x${string}`, LAST_ROUNDS);
 
-  // 将奖励按行动分组（仅展示奖励>0的记录）
+  // 将奖励按行动分组（显示所有行动，没有激励的显示提示）
   const grouped = useMemo<ActionRewardsGroup[]>(() => {
     if (!actions || !rewards) return [];
-    const actionMap = new Map<string, ActionInfo>();
-    for (const act of actions) {
-      actionMap.set(String(act.head.id), act);
-    }
+
+    // 创建奖励映射
     const rewardsByAction = new Map<string, ActionReward[]>();
     for (const r of rewards) {
       if (r.reward <= 0n) continue;
@@ -61,14 +61,21 @@ const ActRewardsPage: React.FC = () => {
       if (!rewardsByAction.has(key)) rewardsByAction.set(key, []);
       rewardsByAction.get(key)!.push(r);
     }
+
+    // 为所有行动创建分组，包括没有激励的行动
     const list: ActionRewardsGroup[] = [];
-    for (const [actionIdStr, rs] of rewardsByAction.entries()) {
-      const act = actionMap.get(actionIdStr);
-      if (!act) continue;
-      // 按轮次倒序
-      rs.sort((a, b) => (a.round > b.round ? -1 : 1));
-      list.push({ action: act, rewards: rs });
+    for (const act of actions) {
+      const actionIdStr = String(act.head.id);
+      const actionRewards = rewardsByAction.get(actionIdStr) || [];
+
+      // 如果有奖励，按轮次倒序排序
+      if (actionRewards.length > 0) {
+        actionRewards.sort((a, b) => (a.round > b.round ? -1 : 1));
+      }
+
+      list.push({ action: act, rewards: actionRewards });
     }
+
     // 按行动 id 倒序
     list.sort((a, b) => (BigInt(a.action.head.id) > BigInt(b.action.head.id) ? -1 : 1));
     return list;
@@ -119,8 +126,6 @@ const ActRewardsPage: React.FC = () => {
     if (writeError) handleContractError(writeError, 'mint');
   }, [errorLoadingRewards, writeError, handleContractError]);
 
-  const noReward = !isLoadingRewards && displayedGroups.length === 0;
-
   return (
     <>
       <Header title="行动激励" showBackButton={true} />
@@ -133,8 +138,6 @@ const ActRewardsPage: React.FC = () => {
 
             {isLoadingRewards ? (
               <LoadingIcon />
-            ) : noReward ? (
-              <div className="text-center text-gray-500 py-8">近期没有获取激励</div>
             ) : (
               displayedGroups.map((group) => (
                 <div key={group.action.head.id} className="border border-gray-100 rounded-lg p-4 shadow-sm">
@@ -146,43 +149,62 @@ const ActRewardsPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <table className="table w-full table-auto">
-                    <thead>
-                      <tr className="border-b border-gray-100">
-                        <th>轮次</th>
-                        <th className="text-center">可铸造激励</th>
-                        <th className="text-center">结果</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {group.rewards.map((item) => (
-                        <tr
-                          key={`${group.action.head.id}-${item.round.toString()}`}
-                          className="border-b border-gray-100"
-                        >
-                          <td>{formatRoundForDisplay(item.round, token).toString()}</td>
-                          <td className="text-center">{formatTokenAmount(item.reward || 0n)}</td>
-                          <td className="text-center">
-                            {item.reward > 0n && !item.isMinted ? (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-secondary border-secondary"
-                                onClick={() => handleClaim(item.round, BigInt(group.action.head.id))}
-                                disabled={isPending || isConfirming}
-                              >
-                                铸造
-                              </Button>
-                            ) : item.isMinted ? (
-                              <span className="text-greyscale-500">已铸造</span>
-                            ) : (
-                              <span className="text-greyscale-500">-</span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  {group.rewards.length > 0 ? (
+                    <>
+                      <table className="table w-full table-auto">
+                        <thead>
+                          <tr className="border-b border-gray-100">
+                            <th>轮次</th>
+                            <th className="text-center">可铸造激励</th>
+                            <th className="text-center">结果</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {group.rewards.map((item, index) => (
+                            <tr
+                              key={`${group.action.head.id}-${item.round.toString()}`}
+                              className={
+                                index === group.rewards.length - 1 ? 'border-none' : 'border-b border-gray-100'
+                              }
+                            >
+                              <td>{formatRoundForDisplay(item.round, token).toString()}</td>
+                              <td className="text-center">{formatTokenAmount(item.reward || 0n)}</td>
+                              <td className="text-center">
+                                {item.reward > 0n && !item.isMinted ? (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="text-secondary border-secondary"
+                                    onClick={() => handleClaim(item.round, BigInt(group.action.head.id))}
+                                    disabled={isPending || isConfirming}
+                                  >
+                                    铸造
+                                  </Button>
+                                ) : item.isMinted ? (
+                                  <span className="text-greyscale-500">已铸造</span>
+                                ) : (
+                                  <span className="text-greyscale-500">-</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </>
+                  ) : (
+                    <div className="text-center text-greyscale-500 py-4">
+                      该行动最近 {LAST_ROUNDS.toString()} 轮没有获得激励
+                    </div>
+                  )}
+
+                  <div className="text-center">
+                    <button
+                      onClick={() => router.push(`/my/rewardsofaction?id=${group.action.head.id}`)}
+                      className="text-secondary hover:text-secondary/80 underline text-sm bg-transparent border-none cursor-pointer"
+                    >
+                      查看更多激励 &gt;&gt;
+                    </button>
+                  </div>
                 </div>
               ))
             )}
