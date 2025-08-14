@@ -108,9 +108,13 @@ const TokenIntroPage = () => {
             <div className="text-red-500">{error}</div>
           </div>
         ) : (
-          <div className="container mx-auto px-4 py-8 max-w-3xl">
+          <div className="container mx-auto px-4 pb-8 max-w-3xl">
             <article className="prose lg:prose-xl mx-auto">
-              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeHighlight]}
+                className="text-lg text-gray-800"
+              >
                 {renderedMd}
               </ReactMarkdown>
             </article>
