@@ -15,6 +15,7 @@ import { Wallet, Copy, LogOut, ChevronDown, Check, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { config } from '@/src/wagmi';
 
 interface WalletButtonProps {
   className?: string;
@@ -33,6 +34,69 @@ export function WalletButton({ className }: WalletButtonProps = {}) {
 
   // 获取注入式连接器
   const injectedConnector = connectors.find((c) => c.id === 'injected');
+  const chainName = process.env.NEXT_PUBLIC_CHAIN_NAME ?? process.env.NEXT_PUBLIC_CHAIN;
+
+  // 网络切换函数
+  const switchToValidNetwork = async (targetChainId: number) => {
+    try {
+      if (!window.ethereum) {
+        toast.error('未找到钱包');
+        return false;
+      }
+
+      const targetChain = config.chains[0];
+      if (!targetChain) {
+        toast.error('未配置目标网络');
+        return false;
+      }
+
+      const validChainId = '0x' + targetChainId.toString(16);
+      console.log('切换到网络:', targetChainId, validChainId);
+
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: validChainId }],
+      });
+
+      toast.success(`已成功连接到 ${chainName} 网络`);
+
+      return true;
+    } catch (error: any) {
+      console.log('网络切换错误:', error);
+
+      // 链未添加到钱包，尝试添加
+      if (error.code === 4902 || error.code === -32603) {
+        try {
+          const targetChain = config.chains[0];
+          const addParams = {
+            chainId: '0x' + targetChainId.toString(16),
+            chainName: chainName,
+            nativeCurrency: targetChain.nativeCurrency,
+            rpcUrls: targetChain.rpcUrls.default.http,
+            blockExplorerUrls: targetChain.blockExplorers ? [targetChain.blockExplorers.default.url] : undefined,
+          };
+
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [addParams],
+          });
+
+          toast.success(`已添加并切换到 ${chainName} 网络`);
+          return true;
+        } catch (addError: any) {
+          console.error('添加网络失败:', addError);
+          toast.error(`添加网络失败: ${addError.message || '未知错误'}`);
+          return false;
+        }
+      } else if (error.code === 4001) {
+        toast.error('用户取消了网络切换');
+        return false;
+      } else {
+        toast.error(`网络切换失败: ${error.message || '未知错误'}`);
+        return false;
+      }
+    }
+  };
 
   const shortenAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -124,13 +188,23 @@ export function WalletButton({ className }: WalletButtonProps = {}) {
     }
   }, [connectError]);
 
-  // 监听连接成功事件（仅在真正连接时触发，不在页面刷新时触发）
+  // 监听连接成功事件并切换网络
   const prevConnectedRef = useRef(isConnected);
   useEffect(() => {
-    // 只在从未连接变为已连接时显示提示
-    if (!prevConnectedRef.current && isConnected && address) {
-      toast.success(`已连接: ${shortenAddress(address)}`);
-    }
+    const handleNetworkCheck = async () => {
+      // 只在从未连接变为已连接时处理
+      if (!prevConnectedRef.current && isConnected && address) {
+        if (chainId) {
+          const chainName = process.env.NEXT_PUBLIC_CHAIN_NAME || config.chains[0]?.name || '目标网络';
+          const switched = await switchToValidNetwork(chainId);
+          if (!switched) {
+            toast.error(`网络切换失败，请手动切换到${chainName}`);
+          }
+        }
+      }
+    };
+
+    handleNetworkCheck();
     prevConnectedRef.current = isConnected;
   }, [isConnected, address]);
 
