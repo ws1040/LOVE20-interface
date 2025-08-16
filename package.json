@@ -4,7 +4,9 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0 --port 3000",
-    "build": "next build",
+    "build": "cross-env NODE_ENV=production next build",
+    "test": "cross-env NODE_ENV=test next build",
+    "public-test": "cp .env.public_test .env.local && next build",
     "start": "next start",
     "generate:abi": "cross-env NODE_ENV=development ts-node scripts/generateAbiTs.ts",
     "generate:env": "cross-env NODE_ENV=development ts-node scripts/generate-env.js",
