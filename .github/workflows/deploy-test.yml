@@ -19,8 +19,8 @@ jobs:
       asset_prefix: '/interface-test'
       out_dir: 'out'
       node_version: '20'
-      install_script: 'yarn public-test'
-      build_script: 'yarn test'
+      install_script: 'yarn install'
+      build_script: 'yarn public-test'
       concurrency_group: 'gh-pages-test'
       cancel_in_progress: false
     secrets: inherit
