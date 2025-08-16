@@ -39,7 +39,7 @@ const thinkium801: Chain = {
 // 定义自定义链 Thinkium Test
 const thinkium70001: Chain = {
   id: 70001,
-  name: 'thinkium70001',
+  name: 'Thinkium Mainnet Chain 1',
   nativeCurrency: { name: 'TKM', symbol: 'TKM', decimals: 18 },
   rpcUrls: {
     default: { http: [process.env.NEXT_PUBLIC_THINKIUM_RPC_URL || 'https://proxy1.thinkiumrpc.net'] },
