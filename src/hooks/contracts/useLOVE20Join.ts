@@ -1,11 +1,9 @@
 // hooks/useLove20Join.ts
 
-import { useState, useEffect } from 'react';
-import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
-import { simulateContract, writeContract } from '@wagmi/core';
+import { useEffect } from 'react';
+import { useReadContract } from 'wagmi';
 import { useUniversalTransaction } from '@/src/lib/universalTransaction';
-import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
-import { config } from '@/src/wagmi';
+import { logError, logWeb3Error } from '@/src/lib/debugUtils';
 
 import { LOVE20JoinAbi } from '@/src/abis/LOVE20Join';
 import { safeToBigInt } from '@/src/lib/clientUtils';

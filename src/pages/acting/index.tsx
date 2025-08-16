@@ -23,7 +23,7 @@ const ActingPage = () => {
   const { isConnected } = useAccount();
   const { token: currentToken } = useContext(TokenContext) || {};
 
-  const shouldCall = isConnected && currentToken?.hasEnded === true;
+  const shouldCall = isConnected && currentToken?.hasEnded === true && currentToken?.hasEnded;
   const { currentRound, error: errorCurrentRound, isPending: isPendingCurrentRound } = useCurrentRound(shouldCall);
 
   // 错误处理

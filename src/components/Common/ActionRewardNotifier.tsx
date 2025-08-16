@@ -38,7 +38,7 @@ const ActionRewardNotifier: React.FC = () => {
   const { address: account } = useAccount();
 
   // 当前轮次（用于“每轮检查一次”）
-  const { currentRound } = useCurrentRound(true);
+  const { currentRound } = useCurrentRound(!!token && token.hasEnded);
 
   // UI 展示用的 needMinted
   const [needMinted, setNeedMinted] = useState<boolean>(false);

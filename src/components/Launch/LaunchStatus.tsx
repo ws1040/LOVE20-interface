@@ -1,4 +1,5 @@
 import { useBlockNumber } from 'wagmi';
+import React, { useState, useEffect } from 'react';
 
 // my contexts
 import { LaunchInfo } from '@/src/types/love20types';
@@ -13,11 +14,31 @@ import { Token } from '@/src/contexts/TokenContext';
 // my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LeftTitle from '@/src/components/Common/LeftTitle';
+import LeftTime from '@/src/components/Common/LeftTime';
 
 const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = ({ token, launchInfo }) => {
   const ratio = Number(launchInfo.totalContributed) / Number(launchInfo.parentTokenFundraisingGoal);
   const ratioPercent = (ratio * 100).toFixed(1);
   const { data: blockNumber } = useBlockNumber();
+
+  // 倒计时相关状态 - 仿照 RoundLite.tsx
+  const BLOCK_TIME = Number(process.env.NEXT_PUBLIC_BLOCK_TIME) || 0;
+  const [currentTimeLeft, setCurrentTimeLeft] = useState(0);
+
+  // 添加剩余区块数状态 - 现在通过时间计算，参考 RoundLite.tsx
+  const [currentBlocksRemaining, setCurrentBlocksRemaining] = useState(0);
+
+  // 计算初始剩余区块数
+  useEffect(() => {
+    if (!blockNumber || !launchInfo) return;
+
+    if (ratio >= 0.5) {
+      const targetBlock = Number(launchInfo.secondHalfStartBlock) + Number(launchInfo.secondHalfMinBlocks);
+      const currentBlock = Number(blockNumber);
+      const remaining = targetBlock - currentBlock;
+      setCurrentBlocksRemaining(remaining > 0 ? remaining : 0);
+    }
+  }, [blockNumber, launchInfo, ratio]);
 
   if (!launchInfo) {
     return <div className="text-red-500">找不到发射信息</div>;
@@ -87,19 +108,31 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
                 {!launchInfo.hasEnded &&
                   ratio >= 0.5 &&
                   (() => {
-                    const targetBlock =
-                      Number(launchInfo.secondHalfStartBlock) + Number(launchInfo.secondHalfMinBlocks);
-                    const currentBlock = Number(blockNumber || 0);
-                    const blocksRemaining = targetBlock - currentBlock;
-
-                    if (blocksRemaining <= 0) {
+                    const timeRemaining =
+                      currentBlocksRemaining > 0 ? Math.ceil((currentBlocksRemaining * BLOCK_TIME) / 100) : 0;
+                    if (currentBlocksRemaining <= 0) {
                       if (ratio >= 1) {
                         return `（第 ${launchInfo.secondHalfStartBlock.toString()}区块），至少${launchInfo.secondHalfMinBlocks.toString()}个区块（已满足条件，任意一笔新的申购将触发公平发射结束）`;
                       } else {
                         return `（第 ${launchInfo.secondHalfStartBlock.toString()}区块），至少${launchInfo.secondHalfMinBlocks.toString()}个区块（已满足条件）`;
                       }
                     } else {
-                      return `（第 ${launchInfo.secondHalfStartBlock.toString()}区块），至少${launchInfo.secondHalfMinBlocks.toString()}个区块（当前区块：第${currentBlock}区块，还需等待${blocksRemaining}个区块）`;
+                      const initialTimeLeft = timeRemaining;
+                      // 通过时间倒计时计算动态区块数，参考 RoundLite.tsx
+                      const dynamicBlocksRemaining = Math.ceil((currentTimeLeft * 100) / BLOCK_TIME);
+                      return (
+                        <>
+                          （第 {launchInfo.secondHalfStartBlock.toString()}区块），至少
+                          {launchInfo.secondHalfMinBlocks.toString()}个区块（还需等待 {dynamicBlocksRemaining}个区块，约{' '}
+                          <LeftTime
+                            initialTimeLeft={initialTimeLeft}
+                            onTick={setCurrentTimeLeft}
+                            forceShowSeconds={true}
+                            fontClass="text-greyscale-600"
+                          />
+                          {'）'}
+                        </>
+                      );
                     }
                   })()}
                 {!launchInfo.hasEnded && ratio < 0.5 && `，至少${launchInfo.secondHalfMinBlocks.toString()}个区块`}

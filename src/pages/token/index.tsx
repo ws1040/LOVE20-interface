@@ -113,7 +113,7 @@ const TokenPage = () => {
   const parentSymbol = currentToken?.parentTokenSymbol ?? '';
 
   // 代币统计（变量命名与 TokenStats 保持一致）
-  const maxSupply = tokenStatistics?.maxSupply ?? 0n;
+  const maxSupply = BigInt(process.env.NEXT_PUBLIC_LAUNCH_AMOUNT ?? 0);
   const totalSupply = tokenStatistics?.totalSupply ?? 0n;
   const reservedAvailable = tokenStatistics?.reservedAvailable ?? 0n;
   const rewardAvailable = tokenStatistics?.rewardAvailable ?? 0n;
