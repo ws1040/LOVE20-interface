@@ -324,7 +324,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
 
   return (
     <>
-      <div className="px-6 pt-0 pb-2">
+      <div className="px-6 pt-6 pb-2">
         <LeftTitle title={myStakedAmount ? '增加参与代币' : '参与行动'} />
         <Form {...form}>
           <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
