@@ -113,8 +113,10 @@ const TokenPage = () => {
   const parentSymbol = currentToken?.parentTokenSymbol ?? '';
 
   // 代币统计（变量命名与 TokenStats 保持一致）
-  const maxSupply = BigInt(process.env.NEXT_PUBLIC_LAUNCH_AMOUNT ?? 0);
-  const totalSupply = tokenStatistics?.totalSupply ?? 0n;
+  const maxSupply = BigInt(process.env.NEXT_PUBLIC_MAX_SUPPLY ?? 0);
+  const totalSupply = launchEnded
+    ? tokenStatistics?.totalSupply ?? 0n
+    : BigInt(process.env.NEXT_PUBLIC_LAUNCH_AMOUNT ?? 0);
   const reservedAvailable = tokenStatistics?.reservedAvailable ?? 0n;
   const rewardAvailable = tokenStatistics?.rewardAvailable ?? 0n;
   const stakedTokenAmountForSt = tokenStatistics?.stakedTokenAmountForSt ?? 0n;

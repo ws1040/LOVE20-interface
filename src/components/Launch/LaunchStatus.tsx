@@ -21,12 +21,10 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
   const ratioPercent = (ratio * 100).toFixed(1);
   const { data: blockNumber } = useBlockNumber();
 
-  // 倒计时相关状态 - 仿照 RoundLite.tsx
-  const BLOCK_TIME = Number(process.env.NEXT_PUBLIC_BLOCK_TIME) || 0;
+  // 倒计时相关状态
   const [currentTimeLeft, setCurrentTimeLeft] = useState(0);
-
-  // 添加剩余区块数状态 - 现在通过时间计算，参考 RoundLite.tsx
   const [currentBlocksRemaining, setCurrentBlocksRemaining] = useState(0);
+  const BLOCK_TIME = Number(process.env.NEXT_PUBLIC_BLOCK_TIME) || 0;
 
   // 计算初始剩余区块数
   useEffect(() => {
