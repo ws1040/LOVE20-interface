@@ -86,11 +86,15 @@ const TokenPage = () => {
   const { isConnected } = useAccount();
   const { token: currentToken } = useContext(TokenContext) || {};
 
+  const launchEnded = !!currentToken && currentToken.hasEnded;
   const {
     tokenStatistics,
     error: errorTokenStatistics,
     isPending: isPendingTokenStatistics,
-  } = useTokenStatistics((currentToken?.address as `0x${string}`) || '0x0000000000000000000000000000000000000000');
+  } = useTokenStatistics(
+    (currentToken?.address as `0x${string}`) || '0x0000000000000000000000000000000000000000',
+    launchEnded,
+  );
 
   const {
     launchInfo,
@@ -149,7 +153,7 @@ const TokenPage = () => {
     pair: currentToken?.uniswapV2PairAddress,
   } as const;
 
-  if (isPendingTokenStatistics || isPendingLaunchInfo) {
+  if ((launchEnded && isPendingTokenStatistics) || isPendingLaunchInfo) {
     return (
       <div className="flex justify-center items-center h-screen">
         <LoadingIcon />

@@ -184,6 +184,8 @@ const removeTrailingZeros = (num: number, digits: number): string => {
 
 // 格式化百分比显示
 export const formatPercentage = (value: number | string): string => {
+  if (value === undefined || value === null || isNaN(Number(value))) return '-%';
+
   const num = typeof value === 'string' ? parseFloat(value) : value;
   const absNum = Math.abs(num);
 

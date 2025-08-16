@@ -109,10 +109,6 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   // 测试环境上限（0.001 父币）
   const maxAllowedForFirstParent = parseUnits('0.001');
 
-  console.log('hasTestPrefix', hasTestPrefix);
-  console.log('isLimitActive', isLimitActive);
-  console.log('maxAllowedForFirstParent', maxAllowedForFirstParent);
-
   // 2. 初始化 React Hook Form，传入动态的 FormSchema
   const form = useForm<z.infer<ReturnType<typeof getFormSchema>>>({
     resolver: zodResolver(getFormSchema(balance, isLimitActive ? maxAllowedForFirstParent : undefined, '0.001')),

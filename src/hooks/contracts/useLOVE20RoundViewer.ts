@@ -462,14 +462,14 @@ export const useEstimatedGovRewardOfCurrentRound = (tokenAddress: `0x${string}`)
 /**
  * Hook for tokenStatistics
  */
-export const useTokenStatistics = (tokenAddress: `0x${string}`) => {
+export const useTokenStatistics = (tokenAddress: `0x${string}`, flag: boolean = true) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20RoundViewerAbi,
     functionName: 'tokenStatistics',
     args: [tokenAddress],
     query: {
-      enabled: !!tokenAddress,
+      enabled: !!tokenAddress && flag,
     },
   });
   return { tokenStatistics: data as TokenStats, isPending, error };
