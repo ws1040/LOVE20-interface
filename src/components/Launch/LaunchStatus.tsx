@@ -59,7 +59,7 @@ const LaunchStatus: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> = 
         </div>
 
         <div className="stats w-full">
-          <div className="stat place-items-center">
+          <div className="stat place-items-center p-2">
             <div className="stat-title text-sm mr-6 ">申购累计筹集到</div>
             <div className="stat-value">
               <span className="text-3xl text-secondary">{formatTokenAmount(launchInfo.totalContributed)}</span>
