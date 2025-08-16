@@ -59,7 +59,7 @@ export function WalletButton({ className }: WalletButtonProps = {}) {
         params: [{ chainId: validChainId }],
       });
 
-      toast.success(`已成功连接到 ${chainName} 网络`);
+      toast.success(`已连接到 ${chainName}`);
 
       return true;
     } catch (error: any) {
@@ -82,7 +82,7 @@ export function WalletButton({ className }: WalletButtonProps = {}) {
             params: [addParams],
           });
 
-          toast.success(`已添加并切换到 ${chainName} 网络`);
+          toast.success(`已添加并连接到 ${chainName}`);
           return true;
         } catch (addError: any) {
           console.error('添加网络失败:', addError);
