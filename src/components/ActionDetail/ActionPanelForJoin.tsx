@@ -17,9 +17,6 @@ import { useVerificationInfosByAccount } from '@/src/hooks/contracts/useLOVE20Ro
 import { useIsSubmitted } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
-// my funcs
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
-
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
 
@@ -121,9 +118,6 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
   } = useWithdraw();
 
   const handleWithdraw = async () => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
     // 如果代币为0, toast
     if (joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= 2n) {
       toast.error('你还没有参与，无需取回');

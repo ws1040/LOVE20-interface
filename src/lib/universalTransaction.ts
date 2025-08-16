@@ -4,6 +4,7 @@ import { useWaitForTransactionReceipt } from 'wagmi';
 import { simulateContract, writeContract } from '@wagmi/core';
 import { config } from '@/src/wagmi';
 import { isTukeWallet, sendTransactionForTuke, waitForTukeTransaction } from './tukeWalletUtils';
+import { checkWalletNetworkStatus } from '@/src/lib/web3';
 
 /**
  * 统一交易发送函数
@@ -84,6 +85,15 @@ export function useUniversalTransaction(
     setIsConfirming(false);
 
     try {
+      // 交易前网络检查
+      const networkStatus = await checkWalletNetworkStatus();
+      if (!networkStatus.isValid) {
+        const errorMsg = `网络不匹配！请切换到 ${process.env.NEXT_PUBLIC_CHAIN_NAME} 网络`;
+        const networkError = new Error(errorMsg);
+        setError(networkError);
+        throw networkError;
+      }
+
       console.log(`发送交易: ${functionName}`, { args, value });
       const txHash = await sendUniversalTransaction(abi, address, functionName, args, value, options);
       setIsPending(false);
