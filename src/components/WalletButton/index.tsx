@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { config } from '@/src/wagmi';
+import { isTukeWallet } from '@/src/lib/tukeWalletUtils';
 
 interface WalletButtonProps {
   className?: string;
@@ -204,7 +205,9 @@ export function WalletButton({ className }: WalletButtonProps = {}) {
       }
     };
 
-    handleNetworkCheck();
+    if (!isTukeWallet()) {
+      handleNetworkCheck();
+    }
     prevConnectedRef.current = isConnected;
   }, [isConnected, address]);
 
