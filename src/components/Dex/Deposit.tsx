@@ -13,7 +13,6 @@ import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 
 // my funcs
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 
 // my hooks
@@ -98,12 +97,6 @@ const Deposit: React.FC = () => {
 
   // 3. 提交时调用 deposit
   async function onSubmit(data: DepositFormValues) {
-    // 也可在这里检测是否连接正确网络
-    if (!checkWalletConnectionByChainId(chainId)) {
-      toast.error('请切换到正确的网络');
-      return;
-    }
-
     try {
       await deposit(parseUnits(data.depositAmount));
     } catch (error) {

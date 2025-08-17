@@ -15,7 +15,6 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my types & functions
 import { ActionInfo } from '@/src/types/love20types';
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount } from '@/src/lib/format';
 
 // my contexts
@@ -103,10 +102,6 @@ const VotingSubmitPage = () => {
 
   // 检查输入
   const checkInput = () => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return false;
-    }
-
     // 检查剩余票数
     if (validGovVotes - votesNumByAccount < 2n) {
       toast.error('剩余票数不足，不能投票');

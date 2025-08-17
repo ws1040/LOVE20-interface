@@ -42,38 +42,38 @@ const LeftTime: React.FC<LeftTimeProps> = ({ initialTimeLeft, onTick, forceShowS
   const seconds = timeLeft % 60;
 
   return (
-    <div className="inline-flex gap-1 text-greyscale-400">
+    <span className="inline-flex gap-1 text-greyscale-400">
       {days > 0 && (
-        <div>
+        <span>
           <span className={`countdown font-mono ${fontClass}`}>
             <span style={{ '--value': days } as React.CSSProperties}></span>
           </span>
           <span className={fontClass}>天</span>
-        </div>
+        </span>
       )}
       {(hours > 0 || days > 0) && (
-        <div>
+        <span>
           <span className={`countdown font-mono ${fontClass}`}>
             <span style={{ '--value': hours } as React.CSSProperties}></span>
           </span>
           <span className={fontClass}>时</span>
-        </div>
+        </span>
       )}
-      <div>
+      <span>
         <span className={`countdown font-mono ${fontClass}`}>
           <span style={{ '--value': minutes } as React.CSSProperties}></span>
         </span>
         <span className={fontClass}>分</span>
-      </div>
+      </span>
       {(days <= 0 || forceShowSeconds) && (
-        <div>
+        <span>
           <span className={`countdown font-mono ${fontClass}`}>
             <span style={{ '--value': seconds } as React.CSSProperties}></span>
           </span>
           <span className={fontClass}>秒</span>
-        </div>
+        </span>
       )}
-    </div>
+    </span>
   );
 };
 

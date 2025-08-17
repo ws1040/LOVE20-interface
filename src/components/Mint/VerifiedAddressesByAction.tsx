@@ -23,7 +23,6 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // my funcs
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatRoundForDisplay, formatTokenAmountInteger } from '@/src/lib/format';
 import { setActionRewardNeedMinted } from '@/src/lib/actionRewardNotice';
 import { LinkIfUrl } from '@/src/lib/stringUtils';
@@ -83,9 +82,6 @@ const VerifiedAddressesByAction: React.FC<{
     writeError: mintError,
   } = useMintActionReward();
   const handleClaim = async (item: VerifiedAddress) => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
     if (account && item.reward > 0n && !item.isMinted && token) {
       await mintActionReward(token?.address as `0x${string}`, selectedRound, actionId);
     }

@@ -74,21 +74,22 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     checkAndClearCache();
   }, []);
 
+  // 使用 useEffect 来记录日志，避免在渲染过程中执行
+  useEffect(() => {
+    console.log('token', token);
+  }, [token]);
+
+  useEffect(() => {
+    console.log('router.query.symbol', router.query.symbol);
+  }, [router.query.symbol]);
+
   // Step 1. 获取当前token symbol: 从动态路由获取 symbol
   useEffect(() => {
     if (!router.isReady) {
       return;
     }
-    initTokenBySymbol(router.query.symbol as string);
-  }, [router.isReady, router.query.symbol]);
 
-  console.log('token', token);
-  console.log('router.query.symbol', router.query.symbol);
-
-  // Step 2. 根据 symbol 初始化 token，逻辑：
-  // (1)如果localstorage有该tokenSymbol缓存，直接从缓存中加载（不设置symbolToGetDetail）
-  // (2)否则设置symbolToGetDetail，用hook从合约获取token信息
-  const initTokenBySymbol = (tokenSymbol: string) => {
+    const tokenSymbol = router.query.symbol as string;
     // symbol是首字母是大写，所以小写字母开头是path或page名称
     const ifNoSymbol = !tokenSymbol || tokenSymbol.charAt(0) === tokenSymbol.charAt(0).toLowerCase();
 
@@ -124,14 +125,15 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     } catch (error) {
       console.error('Failed to load token from localStorage:', error);
     }
-  };
+  }, [router.isReady, router.query.symbol]);
 
   // Step 3. 如果localstorage没有token缓存，则从合约获取 token 信息
+  const shouldFetchTokenDetail = isProviderReady && !!symbolToGetDetail;
   const {
     token: tokenInfoBySymbol,
     launchInfo: launchInfoBySymbol,
     error: errorBySymbol,
-  } = useTokenDetailBySymbol(isProviderReady && symbolToGetDetail ? symbolToGetDetail : '');
+  } = useTokenDetailBySymbol(shouldFetchTokenDetail ? symbolToGetDetail : '');
 
   // 合约返回成功，更新 token
   useEffect(() => {
@@ -166,9 +168,11 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   }, [errorBySymbol]);
 
   // Step 4. 获取投票轮开始区块
-  const { originBlocks } = useOriginBlocks(isProviderReady && !!token && !token.voteOriginBlocks);
+  const shouldFetchOriginBlocks = isProviderReady && !!token && token.voteOriginBlocks === undefined;
+  const { originBlocks } = useOriginBlocks(shouldFetchOriginBlocks);
+
   useEffect(() => {
-    if (originBlocks) {
+    if (originBlocks && token) {
       setToken(
         (prevToken) =>
           ({
@@ -177,7 +181,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
           } as Token),
       );
     }
-  }, [originBlocks]);
+  }, [originBlocks, token]);
 
   // Step 5. 当 token 变化时，更新 Local Storage
   useEffect(() => {

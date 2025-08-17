@@ -24,7 +24,6 @@ export const isTukeWallet = (): boolean => {
     return true;
   }
 
-  console.log('未检测到TUKE钱包，使用标准模式');
   return false;
 };
 
@@ -41,7 +40,7 @@ export const sendTransactionForTuke = async (
   try {
     console.log('🚀 TUKE钱包交易开始');
     console.log('address:', address);
-    console.log('functionName:', functionName);
+    console.log('function:', functionName);
     console.log('args:', args);
 
     if (!window.ethereum) {
@@ -51,7 +50,7 @@ export const sendTransactionForTuke = async (
     const signer = provider.getSigner();
     const contract = new ethers.Contract(address, abi, signer);
 
-    // 转换参数：将BigInt转换为ethers.BigNumber
+    // 转换参数：将BigInt转换为ethers.BigNumber，兼容ethers v5 与 ES2015 语法
     const ethersArgs = args.map((arg) => {
       if (typeof arg === 'bigint') {
         const converted = ethers.BigNumber.from(arg.toString());
@@ -59,14 +58,12 @@ export const sendTransactionForTuke = async (
       }
       return arg;
     });
-    console.log('ethersArgs:', ethersArgs);
-
     const overrides: any = {};
     if (value && value > 0n) {
       overrides.value = ethers.BigNumber.from(value.toString());
     }
 
-    // 🔍 步骤1: 模拟调用
+    // 步骤1: 模拟调用
     if (!options?.skipSimulation) {
       console.log('步骤1: 执行模拟调用验证交易...');
 
@@ -93,7 +90,7 @@ export const sendTransactionForTuke = async (
       console.log('⚠️ 跳过模拟调用（根据选项设置）');
     }
 
-    // 📤 步骤2: 发送真实交易
+    // 步骤2: 发送真实交易
     console.log('步骤2: 发送真实交易...');
     console.log(`调用: contract.${functionName}(...args, overrides)`);
     const tx = await contract[functionName](...ethersArgs, overrides);

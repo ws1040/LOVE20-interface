@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 // my hooks
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { LaunchInfo } from '@/src/types/love20types';
@@ -183,9 +182,6 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   }, [contributeAmount, allowanceParentTokenApproved, isNativeContribute]);
 
   const onApprove = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
     try {
       // parseUnits 用于将 string 转换为 BigInt
       const amountBigInt = parseUnits(data.contributeAmount) ?? 0n;
@@ -218,9 +214,6 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   const isConfirmedContribute = isNativeContribute ? isConfirmedContributeETH : isConfirmedContributeToken;
 
   const onContribute = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
     if (!isNativeContribute && !isTokenApproved) {
       toast.error('请先授权');
       return;

@@ -17,7 +17,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form';
 
 // my funcs
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatIntegerStringWithCommas, formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
@@ -709,8 +708,6 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   // --------------------------------------------------
   // 处理授权
   const handleApprove = form.handleSubmit(async () => {
-    if (!checkWalletConnectionByChainId(chainId)) return;
-
     try {
       await approve(approvalTarget, fromAmount);
     } catch (error: any) {
@@ -728,7 +725,6 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
 
   // 处理交换
   const handleSwap = form.handleSubmit(async () => {
-    if (!checkWalletConnectionByChainId(chainId)) return;
     if (!canSwap) {
       toast.error('当前代币尚未开始质押，无法进行兑换');
       return;

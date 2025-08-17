@@ -115,7 +115,6 @@ export function useUniversalTransaction(
           setIsConfirming(false);
         }
       }
-      // 非TUKE钱包的确认由useWaitForTransactionReceipt自动处理
 
       return txHash;
     } catch (err: any) {
@@ -136,16 +135,10 @@ export function useUniversalTransaction(
   const combinedError = error ?? finalConfirmError;
 
   useEffect(() => {
-    if (hash) {
-      console.log('交易哈希:', hash);
-    }
     if (combinedError) {
       console.error('交易错误:', combinedError);
     }
-    if (finalIsConfirmed) {
-      console.log('交易最终确认成功');
-    }
-  }, [hash, combinedError, finalIsConfirmed]);
+  }, [combinedError]);
 
   return {
     execute,

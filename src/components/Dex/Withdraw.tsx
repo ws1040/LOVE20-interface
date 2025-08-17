@@ -13,7 +13,6 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormMessage } 
 import { toast } from 'react-hot-toast';
 
 // my funcs
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 
 // my hooks
@@ -99,12 +98,6 @@ const Withdraw: React.FC = () => {
 
   // 3. 提交
   async function onSubmit(data: WithdrawFormValues) {
-    // 也可在这里检测是否连接正确网络
-    if (!checkWalletConnectionByChainId(chainId)) {
-      toast.error('请切换到正确的网络');
-      return;
-    }
-
     try {
       await withdraw(parseUnits(data.withdrawAmount));
     } catch (error) {

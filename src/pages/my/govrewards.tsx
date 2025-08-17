@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
 
 // my functions & types
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 import { RewardInfo } from '@/src/types/love20types';
 
@@ -93,9 +92,6 @@ const GovRewardsPage: React.FC = () => {
   }, [isConfirmed, mintingRound]);
 
   const handleClaim = async (round: bigint) => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
     if (token?.address && account) {
       setMintingRound(round);
       await mintGovReward(token.address, round);

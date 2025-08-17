@@ -16,7 +16,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
 
 // my hooks
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useApprove, useBalanceOf, useAllowance } from '@/src/hooks/contracts/useLOVE20Token';
@@ -184,10 +183,6 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   }, [isPendingAllowanceToken]);
 
   async function handleApprove(values: FormValues) {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
-
     // 确保 newStake 始终为 bigint，避免 null
     const newStake = parseUnits(values.additionalStakeAmount) ?? 0n;
     if (newStake === 0n && myStakedAmount && myStakedAmount > 0n) {
@@ -233,10 +228,6 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   } = useJoin();
 
   async function handleJoin(values: FormValues) {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
-
     try {
       // 检查用户是否之前填写过验证信息
       const isFirstTimeSubmit =

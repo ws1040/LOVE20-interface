@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { LaunchInfo } from '@/src/types/love20types';
 import { useBalanceOf, useBurnForParentToken, useTotalSupply } from '@/src/hooks/contracts/useLOVE20Token';
@@ -117,7 +116,6 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
   } = useBurnForParentToken(token?.address as `0x${string}`);
 
   const onBurn = async (data: z.infer<typeof FormSchema>) => {
-    if (!checkWalletConnectionByChainId(chainId)) return;
     try {
       await burnForParentToken(parseUnits(data.burnAmount));
     } catch (error) {

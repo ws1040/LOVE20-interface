@@ -30,7 +30,6 @@ import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // others
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, parseUnits } from '@/src/lib/format';
 
 // 获取环境变量
@@ -154,8 +153,6 @@ export default function NewAction() {
     writeError: submitError,
   } = useSubmitNewAction();
   const onSubmit = async (values: FormValues) => {
-    if (!checkWalletConnectionByChainId(chainId)) return;
-
     // 检查是否有足够的治理票权
     if (!hasEnoughVotes) {
       const percentage = (SUBMIT_PERCENTAGE * 100).toFixed(2);

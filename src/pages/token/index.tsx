@@ -53,7 +53,7 @@ function AddressItem({ name, address }: { name: string; address?: string }) {
   return (
     <div className="rounded-lg">
       <div className="flex items-center justify-between gap-2">
-        <div className="text-sm">{name}</div>
+        <div className="text-base">{name}</div>
         <AddressWithCopyButton address={address as `0x${string}`} />
       </div>
     </div>

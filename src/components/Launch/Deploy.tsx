@@ -25,7 +25,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 // my funcs
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount } from '@/src/lib/format';
 import { safeToBigInt } from '@/src/lib/clientUtils';
 
@@ -95,10 +94,6 @@ export default function TokenDeployment() {
 
   // 5. 提交逻辑
   async function onSubmit(data: TokenFormValues) {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      toast.error('请切换到正确的网络');
-      return;
-    }
     try {
       const confirmed = await handleConfirm();
       if (!confirmed) return;

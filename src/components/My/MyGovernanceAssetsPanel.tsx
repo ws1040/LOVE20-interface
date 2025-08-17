@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 // my funcs
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 import { formatPhaseText } from '@/src/lib/domainUtils';
 
@@ -56,9 +55,6 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
 
   // 检查输入条件
   const checkInput = () => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return false;
-    }
     if (!slAmount || slAmount <= 0n) {
       toast.error('流动性质押数量为0，不用取消质押');
       return false;

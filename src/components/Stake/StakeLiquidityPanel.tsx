@@ -18,7 +18,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 // my utils
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { formatPhaseText } from '@/src/lib/domainUtils';
 
@@ -189,7 +188,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   } = useApprove(token?.parentTokenAddress as `0x${string}`);
 
   async function onApproveToken(data: z.infer<ReturnType<typeof buildFormSchema>>) {
-    if (!checkWalletConnectionByChainId(chainId)) return;
     try {
       const stakeAmount = parseUnits(data.stakeToken);
       if (stakeAmount === null) throw new Error('无效的输入格式');
@@ -201,7 +199,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   }
 
   async function onApproveParentToken(data: z.infer<ReturnType<typeof buildFormSchema>>) {
-    if (!checkWalletConnectionByChainId(chainId)) return;
     try {
       const parentAmount = parseUnits(data.parentToken);
       if (parentAmount === null) throw new Error('无效的输入格式');
@@ -299,10 +296,6 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   } = useStakeLiquidity();
 
   async function onStake(data: z.infer<ReturnType<typeof buildFormSchema>>) {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
-
     // 必须已完成授权
     const bothApproved = isTokenApproved && isParentTokenApproved;
     if (!bothApproved) {

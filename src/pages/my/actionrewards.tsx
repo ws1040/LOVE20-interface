@@ -21,7 +21,6 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 import { Button } from '@/components/ui/button';
 
 // utils
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 import { setActionRewardNeedMinted } from '@/src/lib/actionRewardNotice';
 
@@ -95,9 +94,6 @@ const ActRewardsPage: React.FC = () => {
   }, [isConfirmed]);
 
   const handleClaim = async (round: bigint, actionId: bigint) => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
     if (token?.address && account) {
       setMintingTarget({ actionId, round });
       await mintActionReward(token.address, round, actionId);

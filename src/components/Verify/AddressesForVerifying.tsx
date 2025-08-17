@@ -1,11 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
-import { useAccount, useChainId } from 'wagmi';
+import { useChainId } from 'wagmi';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect, useContext } from 'react';
 
 // my types & funcs
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { ActionInfo } from '@/src/types/love20types';
 
 // my contexts
@@ -105,9 +104,6 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
   // 提交验证
   const { verify, isPending, isConfirming, isConfirmed, writeError: submitError } = useVerify();
   const checkInput = () => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return false;
-    }
     if (remainingVotes <= 2n) {
       toast.error('剩余票数不足，无法验证');
       return false;
