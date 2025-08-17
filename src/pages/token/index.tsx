@@ -144,6 +144,7 @@ const TokenPage = () => {
     Verify: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_VERIFY,
     Mint: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MINT,
     Random: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_RANDOM,
+    UniswapV2Factory: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_FACTORY,
   } as const;
 
   // 当前代币相关地址
@@ -347,6 +348,7 @@ const TokenPage = () => {
                       <AddressItem name="Verify" address={constantsAddresses.Verify} />
                       <AddressItem name="Mint" address={constantsAddresses.Mint} />
                       <AddressItem name="Random" address={constantsAddresses.Random} />
+                      <AddressItem name="UniswapV2Factory" address={constantsAddresses.UniswapV2Factory} />
                     </CardContent>
                   </Card>
 

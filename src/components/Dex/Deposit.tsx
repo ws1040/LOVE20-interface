@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useAccount, useBalance, useChainId } from 'wagmi';
+import { useAccount, useBalance } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -55,7 +55,6 @@ type DepositFormValues = z.infer<ReturnType<typeof getDepositFormSchema>>;
 const Deposit: React.FC = () => {
   const router = useRouter();
   const { address: account } = useAccount();
-  const chainId = useChainId();
   const { token } = useContext(TokenContext) || {};
 
   // 读取余额

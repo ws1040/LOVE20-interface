@@ -1,12 +1,12 @@
-// hooks/useWETH.ts
+// hooks/contracts/useWETH.ts
 
-import { useState } from 'react';
-import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
-import { simulateContract, writeContract } from '@wagmi/core';
-import { config } from '@/src/wagmi';
+import { useEffect } from 'react';
+import { useReadContract } from 'wagmi';
 
 import { WETH9Abi } from '@/src/abis/WETH9';
 import { safeToBigInt } from '@/src/lib/clientUtils';
+import { useUniversalTransaction } from '@/src/lib/universalTransaction';
+import { logWeb3Error, logError } from '@/src/lib/debugUtils';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_ROOT_PARENT_TOKEN as `0x${string}`;
 
@@ -40,74 +40,74 @@ export const useBalanceOf = (token: `0x${string}`, account: `0x${string}`) => {
  * Hook for deposit
  */
 export const useDeposit = () => {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    WETH9Abi,
+    CONTRACT_ADDRESS,
+    'deposit',
+  );
 
   const deposit = async (ethAmount: bigint) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: WETH9Abi,
-        functionName: 'deposit',
-        args: [],
-        value: ethAmount,
-      });
-      const txHash = await writeContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: WETH9Abi,
-        functionName: 'deposit',
-        args: [],
-        value: ethAmount,
-      });
-      setHash(txHash);
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交deposit交易:', { ethAmount, isTukeMode });
+    return await execute([], ethAmount);
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('deposit tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交deposit交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
-  return { deposit, isPending, isConfirming, writeError: error, isConfirmed };
+  return {
+    deposit,
+    isPending,
+    isConfirming,
+    writeError: error,
+    isConfirmed,
+    hash,
+    isTukeMode,
+  };
 };
 
 /**
  * Hook for withdraw
  */
 export const useWithdraw = () => {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    WETH9Abi,
+    CONTRACT_ADDRESS,
+    'withdraw',
+  );
 
   const withdraw = async (wethAmount: bigint) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: WETH9Abi,
-        functionName: 'withdraw',
-        args: [wethAmount],
-      });
-      const txHash = await writeContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: WETH9Abi,
-        functionName: 'withdraw',
-        args: [wethAmount],
-      });
-      setHash(txHash);
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交withdraw交易:', { wethAmount, isTukeMode });
+    return await execute([wethAmount]);
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('withdraw tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交withdraw交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
-  return { withdraw, isPending, isConfirming, writeError: error, isConfirmed };
+  return {
+    withdraw,
+    isPending,
+    isConfirming,
+    writeError: error,
+    isConfirmed,
+    hash,
+    isTukeMode,
+  };
 };

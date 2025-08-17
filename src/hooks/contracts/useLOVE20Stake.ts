@@ -1,9 +1,7 @@
-import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
-import { simulateContract, writeContract } from '@wagmi/core';
-import { useState, useEffect } from 'react';
+import { useReadContract } from 'wagmi';
+import { useEffect } from 'react';
 import { useUniversalTransaction } from '@/src/lib/universalTransaction';
-import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
-import { config } from '@/src/wagmi';
+import { logError, logWeb3Error } from '@/src/lib/debugUtils';
 import { LOVE20StakeAbi } from '@/src/abis/LOVE20Stake';
 import { safeToBigInt } from '@/src/lib/clientUtils';
 
