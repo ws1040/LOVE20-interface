@@ -1,33 +1,40 @@
-import type { AppProps } from 'next/app';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
-import { SidebarInset } from '@/components/ui/sidebar';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import dynamic from 'next/dynamic';
+import type { AppProps } from 'next/app';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
-import { TokenProvider } from '@/src/contexts/TokenContext';
-import { AppSidebar } from '@/src/components/Common/AppSidebar';
 import { config } from '@/src/wagmi';
 import { ErrorProvider } from '@/src/contexts/ErrorContext';
-import Footer from '@/src/components/Footer';
-
-import dynamic from 'next/dynamic';
-import { useState, useEffect } from 'react';
+import { TokenProvider } from '@/src/contexts/TokenContext';
+import { AppSidebar } from '@/src/components/Common/AppSidebar';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 import ActionRewardNotifier from '@/src/components/Common/ActionRewardNotifier';
+import Footer from '@/src/components/Footer';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import '../styles/globals.css';
 
-// 开发环境下动态导入 vConsole
 const initVConsole = () => {
-  // if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
   if (typeof window !== 'undefined') {
-    import('vconsole').then((VConsole) => {
-      const vConsole = new VConsole.default();
-    });
+    // check saved debug value
+    const urlParams = new URLSearchParams(window.location.search);
+    const debugParam = urlParams.get('debug');
+    if (debugParam == 'true' || debugParam == 'false') {
+      localStorage.setItem('debug', debugParam);
+    }
+
+    // check debug value
+    const debugValue = localStorage.getItem('debug');
+    if (debugValue === 'true') {
+      import('vconsole').then((VConsole) => {
+        const vConsole = new VConsole.default();
+      });
+    }
   }
 };
 
