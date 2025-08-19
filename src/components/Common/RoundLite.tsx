@@ -28,8 +28,10 @@ const RoundLite: React.FC<RoundProps> = ({ currentRound, roundType, showCountdow
   // 计算剩余时间相关变量
   const ROUND_BLOCKS = Number(process.env.NEXT_PUBLIC_PHASE_BLOCKS) || 0;
   const BLOCK_TIME = Number(process.env.NEXT_PUBLIC_BLOCK_TIME) || 0;
+
   // 使用默认值防止 undefined 导致 NaN
   const voteOriginBlocks = token ? Number(token.voteOriginBlocks) : 0;
+
   // 根据当前区块数计算初始剩余区块数及剩余时间（秒）
   const leftBlocksStatic = ROUND_BLOCKS - ((Number(blockNumber) - voteOriginBlocks) % ROUND_BLOCKS);
   const initialTimeLeft = leftBlocksStatic > 0 ? Math.ceil((leftBlocksStatic * BLOCK_TIME) / 100) : 0;

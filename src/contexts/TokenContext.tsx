@@ -168,11 +168,12 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   }, [errorBySymbol]);
 
   // Step 4. 获取投票轮开始区块
-  const shouldFetchOriginBlocks = isProviderReady && !!token && token.voteOriginBlocks === undefined;
+  const shouldFetchOriginBlocks =
+    isProviderReady && !!token && (token.voteOriginBlocks === undefined || token.voteOriginBlocks === 0);
   const { originBlocks } = useOriginBlocks(shouldFetchOriginBlocks);
 
   useEffect(() => {
-    if (originBlocks && token) {
+    if (originBlocks && token && (!token.voteOriginBlocks || token.voteOriginBlocks === 0)) {
       setToken(
         (prevToken) =>
           ({
@@ -181,7 +182,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
           } as Token),
       );
     }
-  }, [originBlocks, token]);
+  }, [originBlocks]); // 只依赖 originBlocks，避免因 token 变化造成的循环
 
   // Step 5. 当 token 变化时，更新 Local Storage
   useEffect(() => {
