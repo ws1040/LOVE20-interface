@@ -64,8 +64,10 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
             <div className="stat-value text-xl text-secondary">
               {isPendingEstimatedActionReward ? (
                 <LoadingIcon />
+              ) : currentRound == 2n ? (
+                '9,000,000'
               ) : (
-                formatTokenAmount(currentRound == 2n ? 9000000n * 10n ** 18n : expectedReward ?? 0n)
+                formatTokenAmount(expectedReward ?? 0n)
               )}
             </div>
           </div>
