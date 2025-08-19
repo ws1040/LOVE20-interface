@@ -1,17 +1,35 @@
 'use client';
 
+import { useAccount } from 'wagmi';
 import type { NextPage } from 'next';
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
+// my components
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
+
+// my utils
 import { NavigationUtils } from '@/src/lib/navigationUtils';
-import { TokenContext } from '../contexts/TokenContext';
+
+// my context
+import { TokenContext } from '@/src/contexts/TokenContext';
+
+// my hooks
+import { useClaimInfo } from '@/src/hooks/contracts/useLOVE20Launch';
 
 const Home: NextPage = () => {
   const router = useRouter();
+  const { address: account } = useAccount();
   const { token } = useContext(TokenContext) || {};
   const [hasRedirected, setHasRedirected] = useState(false);
+
+  const {
+    receivedTokenAmount,
+    extraRefund,
+    isClaimed: claimed,
+    isPending: isClaimInfoPending,
+    error: claimInfoError,
+  } = useClaimInfo(token?.address as `0x${string}`, account as `0x${string}`);
 
   useEffect(() => {
     if (hasRedirected) {
@@ -39,18 +57,19 @@ const Home: NextPage = () => {
     }
 
     console.log('[token]', token);
-    if (token) {
+    if (token && !isClaimInfoPending) {
+      const needClaim = receivedTokenAmount > 0 && !claimed;
       if (symbol) {
         setHasRedirected(true);
-        target = token?.hasEnded ? `/acting/?symbol=${symbol}` : `/launch/?symbol=${symbol}`;
+        target = token?.hasEnded && !needClaim ? `/acting/?symbol=${symbol}` : `/launch/?symbol=${symbol}`;
       } else {
-        target = token?.hasEnded ? `/acting/` : `/launch/`;
+        target = token?.hasEnded && !needClaim ? `/acting/` : `/launch/`;
       }
       router.push(target).catch((err) => {
         console.log('路由跳转被取消或出错：', err);
       });
     }
-  }, [router, hasRedirected, token]);
+  }, [router, hasRedirected, token, isClaimInfoPending, claimed]);
 
   return <LoadingIcon />;
 };

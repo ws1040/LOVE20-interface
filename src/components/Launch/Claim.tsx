@@ -35,7 +35,7 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
     isPending: isClaimInfoPending,
     error: claimInfoError,
   } = useClaimInfo(token?.address as `0x${string}`, account as `0x${string}`);
-  console.log('receivedTokenAmount', receivedTokenAmount);
+
   // 领取代币hook
   const {
     claim,
