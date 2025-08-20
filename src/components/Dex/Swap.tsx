@@ -39,6 +39,9 @@ import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
+// 常量定义
+const MIN_NATIVE_TO_TOKEN = '0.1';
+
 // 交换方法类型
 type SwapMethod = 'WETH9' | 'UniswapV2_TOKEN_TO_TOKEN' | 'UniswapV2_ETH_TO_TOKEN' | 'UniswapV2_TOKEN_TO_ETH';
 
@@ -426,7 +429,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
     const hasPrefix = !!process.env.NEXT_PUBLIC_TOKEN_PREFIX;
     if (!hasPrefix) return undefined;
     if (!fromToken.isNative) return undefined;
-    const limitStr = toToken.isWETH ? '1' : '0.0001';
+    const limitStr = toToken.isWETH ? '1' : MIN_NATIVE_TO_TOKEN;
     return parseUnits(limitStr);
   }, [fromToken.isNative, toToken.isWETH]);
 
@@ -584,7 +587,8 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
     const feePercentage = 0.3;
     const val = parseFloat(watchFromAmount || '0');
     const calculatedFee = (val * feePercentage) / 100;
-    const feeAmount = calculatedFee < 0.0001 ? calculatedFee.toExponential(2) : calculatedFee.toFixed(6);
+    const feeAmount =
+      calculatedFee < parseFloat(MIN_NATIVE_TO_TOKEN) ? calculatedFee.toExponential(2) : calculatedFee.toFixed(6);
 
     return { feePercentage, feeAmount };
   }, [swapMethod, watchFromAmount]);
@@ -1046,7 +1050,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                         {maxNativeInputLimit && (
                           <div className="text-xs text-gray-500 mt-2">
                             测试环境限制：
-                            {toToken.isWETH ? '最多可使用 1 ' : '最多可使用 0.0001 '}
+                            {toToken.isWETH ? '最多可使用 1 ' : `最多可使用 ${MIN_NATIVE_TO_TOKEN} `}
                             {fromToken.symbol}
                           </div>
                         )}
