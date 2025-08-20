@@ -116,18 +116,19 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
           </div>
 
           <div className="mb-4">
-            <h3 className="text-sm font-bold">验证规则</h3>
+            <h3 className="text-sm font-bold mb-2">验证规则</h3>
             <p className="text-greyscale-500 whitespace-pre-wrap">
               <LinkIfUrl text={actionInfo?.body.verificationRule} />
             </p>
           </div>
           <div className="mb-4">
-            <h3 className="text-sm font-bold">报名参加行动时，行动者要提供的信息</h3>
+            <h3 className="text-sm font-bold mb-2">报名参加行动时，行动者要提供的信息</h3>
             {actionInfo?.body.verificationKeys && actionInfo?.body.verificationKeys.length > 0 ? (
               <ul className="list-disc pl-5">
                 {actionInfo.body.verificationKeys.map((key: string, index: number) => (
                   <li key={index} className="text-greyscale-500">
-                    {key} : {actionInfo.body.verificationInfoGuides[index]}
+                    <div>{key} :</div>
+                    <div>{actionInfo.body.verificationInfoGuides[index]}</div>
                   </li>
                 ))}
               </ul>
