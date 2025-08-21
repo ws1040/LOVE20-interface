@@ -145,6 +145,10 @@ const TokenPage = () => {
     Mint: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MINT,
     Random: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_RANDOM,
     UniswapV2Factory: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_FACTORY,
+    UniswapV2Router02: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_ROUTER,
+    TokenViewer: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_TOKENVIEWER,
+    RoundViewer: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_ROUNDVIEWER,
+    Hub: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_HUB,
   } as const;
 
   // 当前代币相关地址
@@ -348,7 +352,6 @@ const TokenPage = () => {
                       <AddressItem name="Verify" address={constantsAddresses.Verify} />
                       <AddressItem name="Mint" address={constantsAddresses.Mint} />
                       <AddressItem name="Random" address={constantsAddresses.Random} />
-                      <AddressItem name="UniswapV2Factory" address={constantsAddresses.UniswapV2Factory} />
                     </CardContent>
                   </Card>
 
@@ -361,7 +364,28 @@ const TokenPage = () => {
                       <AddressItem name={`${currentToken.parentTokenSymbol}(父币)`} address={currentAddresses.parent} />
                       <AddressItem name="流动性质押凭证SL代币" address={currentAddresses.sl} />
                       <AddressItem name="代币质押凭证ST代币" address={currentAddresses.st} />
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="px-4 pt-4 pb-2">
+                      <CardTitle className="text-lg">UniswapV2 合约地址：</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid gap-3 px-4 pt-2 pb-4">
+                      <AddressItem name="UniswapV2Factory" address={constantsAddresses.UniswapV2Factory} />
                       <AddressItem name="UniswapV2Pair" address={currentAddresses.pair} />
+                      <AddressItem name="UniswapV2Router02" address={constantsAddresses.UniswapV2Router02} />
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="px-4 pt-4 pb-2">
+                      <CardTitle className="text-lg">LOVE20 外围合约地址：</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid gap-3 px-4 pt-2 pb-4">
+                      <AddressItem name="TokenViewer" address={constantsAddresses.TokenViewer} />
+                      <AddressItem name="RoundViewer" address={constantsAddresses.RoundViewer} />
+                      <AddressItem name="Hub" address={constantsAddresses.Hub} />
                     </CardContent>
                   </Card>
                 </div>
