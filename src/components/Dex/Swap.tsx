@@ -808,21 +808,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
             value: fromAmount.toString(),
           });
 
-          try {
-            await swapETHForTokens(minAmountOut, swapPath, account as `0x${string}`, deadline, fromAmount);
-            console.log('✅ 标准交易模式成功');
-          } catch (standardError: any) {
-            console.error('❌ 所有交易模式都失败了');
-
-            // // 如果是已知的 position out of bounds 错误，给出特殊提示
-            // if (standardError.message?.includes('Position') && standardError.message?.includes('out of bounds')) {
-            //   toast.error('检测到 viem 库的已知解析问题，但交易本身应该是有效的。请直接在钱包中确认交易。');
-            //   console.warn('💡 建议: 这是前端库的问题，合约功能正常');
-            // } else {
-            //   throw standardError; // 抛出其他未知错误
-            // }
-          }
-
+          await swapETHForTokens(minAmountOut, swapPath, account as `0x${string}`, deadline, fromAmount);
           break;
 
         case 'UniswapV2_TOKEN_TO_ETH':
@@ -902,7 +888,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
     ];
     errors.forEach((error) => {
       if (error) {
-        handleContractError(error, 'swap');
+        handleContractError(error, 'uniswapV2Router');
       }
     });
   }, [

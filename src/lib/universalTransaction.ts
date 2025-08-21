@@ -111,6 +111,9 @@ export function useUniversalTransaction(
           setIsManuallyConfirmed(true);
         } catch (confirmErr) {
           console.error('TUKE交易确认失败:', confirmErr);
+          setError(confirmErr as Error);
+          setIsManuallyConfirmed(false);
+          throw confirmErr;
         } finally {
           setIsConfirming(false);
         }

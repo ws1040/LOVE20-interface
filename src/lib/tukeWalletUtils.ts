@@ -125,11 +125,19 @@ export const waitForTukeTransaction = async (txHash: string) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const receipt = await provider.waitForTransaction(txHash);
 
-    console.log('TUKE交易已确认！');
+    console.log('TUKE交易收据:', receipt);
     console.log('区块号:', receipt.blockNumber);
     console.log('Gas使用量:', receipt.gasUsed.toString());
-    console.log('交易收据:', receipt);
+    console.log('交易状态:', receipt.status);
 
+    // 检查交易状态：0=失败，1=成功
+    if (receipt.status === 0) {
+      const errorMsg = '交易执行失败（被区块链回滚）';
+      console.error('❌', errorMsg);
+      throw new Error(errorMsg);
+    }
+
+    console.log('✅ TUKE交易确认成功！');
     return receipt;
   } catch (error) {
     console.error('❌ TUKE交易确认失败:', error);

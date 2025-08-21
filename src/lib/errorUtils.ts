@@ -272,6 +272,17 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
   }
 
   // 2.解析传统格式的错误信息
+  // 首先检查 UniswapV2Router 特定格式：UniswapV2Router: ERROR_NAME
+  const uniswapMatch = rawMessage.match(/UniswapV2Router:\s*([A-Z_]+)/);
+  if (uniswapMatch && uniswapMatch[1]) {
+    const uniswapErrorName = uniswapMatch[1];
+    // 直接使用 UniswapV2Router 错误映射
+    const uniswapErrorMap = ContractErrorsMaps.uniswapV2Router;
+    if (uniswapErrorMap && uniswapErrorMap[uniswapErrorName]) {
+      return { name: '交易错误', message: uniswapErrorMap[uniswapErrorName] };
+    }
+  }
+
   const matched = rawMessage.match(/(?:([A-Za-z0-9_]+)\()|(?:ERC20:\s*(.+))/);
   let errorName = '';
   if (matched && (matched[1] != undefined || matched[2] != undefined)) {
