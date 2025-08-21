@@ -77,7 +77,7 @@ const JoinPage = () => {
                   1、验证阶段会随机抽取地址验证打分，然后按得分比例给这些地址分配代币激励
                 </div>
                 <div className="text-sm text-blue-700">
-                  2、只有当1个行动获得的验证票数，达到该轮总投票数
+                  2、只有当1个行动获得的投票数，达到该轮总投票数
                   {formatPercentage(Number(process.env.NEXT_PUBLIC_ACTION_REWARD_MIN_VOTE_PER_THOUSAND) / 10)}
                   时，参与该行动才有激励
                 </div>
