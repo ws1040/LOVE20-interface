@@ -524,7 +524,7 @@ export const LOVE20RoundViewerAbi = [
       {
         "name": "rewards",
         "type": "tuple[]",
-        "internalType": "struct RewardInfo[]",
+        "internalType": "struct GovReward[]",
         "components": [
           {
             "name": "round",
@@ -533,6 +533,16 @@ export const LOVE20RoundViewerAbi = [
           },
           {
             "name": "reward",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "verifyReward",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "boostReward",
             "type": "uint256",
             "internalType": "uint256"
           },

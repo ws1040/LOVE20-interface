@@ -15,6 +15,7 @@ import {
   TokenStats,
   ActionReward,
   ActionInfo,
+  GovReward,
 } from '@/src/types/love20types';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_ROUNDVIEWER as `0x${string}`;
@@ -407,7 +408,7 @@ export const useGovRewardsByAccountByRounds = (
     },
   });
 
-  return { rewards: data as RewardInfo[], isPending, error };
+  return { rewards: data as GovReward[], isPending, error };
 };
 
 /**

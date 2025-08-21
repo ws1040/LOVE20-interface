@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 
 // my functions & types
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
-import { RewardInfo } from '@/src/types/love20types';
+import { GovReward } from '@/src/types/love20types';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -66,7 +66,7 @@ const GovRewardsPage: React.FC = () => {
     error: errorLoadingRewards,
   } = useGovRewardsByAccountByRounds(token?.address as `0x${string}`, account as `0x${string}`, startRound, endRound);
 
-  const [rewardList, setRewardList] = useState<RewardInfo[]>([]);
+  const [rewardList, setRewardList] = useState<GovReward[]>([]);
   useEffect(() => {
     if (rewards) {
       const sortedRewards = [...rewards].sort((a, b) => (a.round > b.round ? -1 : 1)); // 按 round 倒序排列
@@ -160,7 +160,7 @@ const GovRewardsPage: React.FC = () => {
         {!token ? (
           <LoadingIcon />
         ) : (
-          <div className="flex flex-col space-y-6 p-4">
+          <div className="flex flex-col space-y-2 p-4">
             <LeftTitle title="铸造治理激励" />
 
             {endRound === 0n && currentRound !== undefined ? (
@@ -169,10 +169,12 @@ const GovRewardsPage: React.FC = () => {
               <>
                 <table className="table w-full table-auto">
                   <thead>
-                    <tr className="border-b border-gray-100">
+                    <tr className="border-b border-gray-200">
                       <th>轮次</th>
-                      <th className="text-center">可铸造激励</th>
-                      <th className="text-center">结果</th>
+                      <th className="text-center px-1">总激励</th>
+                      <th className="text-center px-2">验证激励</th>
+                      <th className="text-center px-2">加速激励</th>
+                      <th className="text-center px-2">结果</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -184,10 +186,16 @@ const GovRewardsPage: React.FC = () => {
                       </tr>
                     ) : (
                       rewardList.map((item) => (
-                        <tr key={item.round.toString()} className="border-b border-gray-100">
+                        <tr key={item.round.toString()} className="border-b border-gray-200">
                           <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
-                          <td className="text-center">{formatTokenAmount(item.reward || 0n)}</td>
-                          <td className="text-center">
+                          <td className="text-center px-1">{formatTokenAmount(item.reward || 0n)}</td>
+                          <td className="text-center px-2 bg-greyscale-100">
+                            {formatTokenAmount(item.verifyReward || 0n)}
+                          </td>
+                          <td className="text-center px-2 bg-greyscale-100">
+                            {formatTokenAmount(item.boostReward || 0n)}
+                          </td>
+                          <td className="text-center px-2">
                             {item.reward > 0n && !item.isMinted ? (
                               <Button
                                 variant="outline"
