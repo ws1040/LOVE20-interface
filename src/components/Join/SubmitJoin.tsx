@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useContext, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 
 // ui components
@@ -50,7 +50,6 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
-  const chainId = useChainId();
 
   // 获取代币余额
   const { balance: tokenBalance, error: errorTokenBalance } = useBalanceOf(

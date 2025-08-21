@@ -9,7 +9,7 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card';
 
 // my utils
 import { calculateActionAPY, calculateExpectedActionReward } from '@/src/lib/domainUtils';
-import { formatPercentage, formatSeconds } from '@/src/lib/format';
+import { formatPercentage, formatSeconds, formatTokenAmount } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -109,28 +109,35 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                         </span>
                         <span className="font-bold text-greyscale-800">{`${actionDetail.action.body.title}`}</span>
                       </div>
-                      <span>
-                        <span className="text-greyscale-400 text-xs mr-1">投票占</span>
-                        <span className="text-secondary text-xs">{formatPercentage(voteRatio * 100)}</span>
-                      </span>
                     </CardHeader>
                     <CardContent className="px-3 pt-1 pb-2">
-                      <div className="flex justify-between mt-1 text-sm">
+                      <div className="flex justify-between text-sm">
                         <span className="flex items-center">
-                          <UserPen className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />
+                          {/* <UserPen className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" /> */}
+                          <span className="text-greyscale-400 text-xs mr-1">发起人</span>
                           <span className="text-greyscale-400">
                             <AddressWithCopyButton
                               address={joinableActions[index].action.head.author as `0x${string}`}
                               showCopyButton={false}
-                              colorClassName2="text-secondary"
+                              // colorClassName2="text-secondary"
                             />
                           </span>
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>
+                          <span className="text-greyscale-400 text-xs mr-1">投票占</span>
+                          <span className="text-secondary text-xs">{formatPercentage(voteRatio * 100)}</span>
+                        </span>
+                        <span>
+                          <span className="text-greyscale-400 text-xs mr-1">参与代币</span>
+                          <span className="text-secondary text-xs">{formatTokenAmount(actionDetail.joinedAmount)}</span>
                         </span>
                         {!actionDetail.hasReward ? (
                           <span className="flex justify-between text-error text-sm">无铸币奖励</span>
                         ) : (
                           <span>
-                            <span className="text-greyscale-400 text-xs mr-1">预估年化(APY)</span>
+                            <span className="text-greyscale-400 text-xs mr-1">APY</span>
                             <span className="text-secondary text-xs">
                               {isPendingRewardAvailable ? (
                                 <LoadingIcon />
