@@ -37,7 +37,6 @@ interface MyGovernanceAssetsPanelProps {
 
 const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token, enableWithdraw = false }) => {
   const { address: account } = useAccount();
-  const chainId = useChainId();
 
   // Hook：获取当前轮次
   const { currentRound, isPending: isPendingCurrentRound, error: errorCurrentRound } = useCurrentRound(enableWithdraw);

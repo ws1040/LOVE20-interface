@@ -49,7 +49,7 @@ const VerifyPage = () => {
 
   return (
     <>
-      <Header title="验证" backUrl={`/verify/actions/?symbol=${token?.symbol}`} />
+      <Header title="验证" backUrl={`/verify/verify/?symbol=${token?.symbol}`} />
       <main className="flex-grow">
         {remainingVotes > 0 && (
           <div className="px-4 pt-4">
