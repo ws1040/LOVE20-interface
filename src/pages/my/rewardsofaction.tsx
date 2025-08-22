@@ -72,7 +72,7 @@ const ActRewardsPage: React.FC = () => {
   const { mintActionReward, isPending, isConfirming, isConfirmed, writeError } = useMintActionReward();
   const [mintingTarget, setMintingTarget] = useState<{ actionId: bigint; round: bigint } | null>(null);
 
-  // 本地状态缓存奖励数据，避免翻页时数据闪烁
+  // 本地状态缓存激励数据，避免翻页时数据闪烁
   const [rewardList, setRewardList] = useState<typeof rewards>([]);
 
   // 初始化分页范围
@@ -92,7 +92,7 @@ const ActRewardsPage: React.FC = () => {
     setHasMoreRewards(startRound > minRound);
   }, [startRound, token]);
 
-  // 更新本地奖励列表
+  // 更新本地激励列表
   useEffect(() => {
     if (rewards) {
       const sortedRewards = [...rewards].sort((a, b) => (a.round < b.round ? 1 : a.round > b.round ? -1 : 0));
@@ -124,7 +124,7 @@ const ActRewardsPage: React.FC = () => {
     }
   };
 
-  // 无限滚动加载更多奖励：当滚动到底部时更新 startRound
+  // 无限滚动加载更多激励：当滚动到底部时更新 startRound
   const loadMoreRewards = useCallback(() => {
     if (!token) return;
     const minRound = 0n;
@@ -207,7 +207,7 @@ const ActRewardsPage: React.FC = () => {
               </div>
             )}
 
-            {/* 奖励列表 */}
+            {/* 激励列表 */}
             <table className="table w-full table-auto">
               <thead>
                 <tr className="border-b border-gray-100">
@@ -261,7 +261,7 @@ const ActRewardsPage: React.FC = () => {
               ) : hasMoreRewards ? (
                 <span className="text-sm text-gray-500">上滑加载更多...</span>
               ) : (
-                <span className="text-sm text-gray-500">没有更多奖励</span>
+                <span className="text-sm text-gray-500">没有更多激励</span>
               )}
             </div>
           </div>

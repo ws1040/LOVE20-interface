@@ -83,8 +83,8 @@ const FormSchema = z.object({
 
   rewardAddressCount: z
     .string()
-    .min(1, { message: '奖励地址数不能为空' })
-    .refine((val) => Number(val) > 0, { message: '奖励地址数必须大于0' }),
+    .min(1, { message: '验证地址数不能为空' })
+    .refine((val) => Number(val) > 0, { message: '验证地址数必须大于0' }),
 
   minStake: z
     .string()
@@ -340,13 +340,13 @@ export default function NewAction() {
               </div>
             </div>
 
-            {/* 奖励地址数 */}
+            {/* 激励地址数 */}
             <FormField
               control={form.control}
               name="rewardAddressCount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>奖励地址数</FormLabel>
+                  <FormLabel>最大激励地址数</FormLabel>
                   <FormControl>
                     <Input
                       type="number"

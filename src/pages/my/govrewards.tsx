@@ -59,7 +59,7 @@ const GovRewardsPage: React.FC = () => {
     }
   }, [endRound, token]);
 
-  // 获取治理奖励数据
+  // 获取治理激励数据
   const {
     rewards,
     isPending: isLoadingRewards,
@@ -81,7 +81,7 @@ const GovRewardsPage: React.FC = () => {
     setHasMoreRewards(startRound > initialStake);
   }, [startRound, token]);
 
-  // 铸造治理奖励
+  // 铸造治理激励
   const { mintGovReward, isPending, isConfirming, isConfirmed, writeError: errorMintGovReward } = useMintGovReward();
   const [mintingRound, setMintingRound] = useState<bigint | null>(null);
   useEffect(() => {
@@ -112,7 +112,7 @@ const GovRewardsPage: React.FC = () => {
     }
   }, [errorLoadingRewards, errorCurrentRound, errorMintGovReward, handleContractError]);
 
-  // 无限滚动加载更多奖励：当滚动到底部时更新 startRound
+  // 无限滚动加载更多激励：当滚动到底部时更新 startRound
   const loadMoreRewards = useCallback(() => {
     if (!token) return;
     const initialStake = BigInt(token.initialStakeRound);
@@ -164,7 +164,7 @@ const GovRewardsPage: React.FC = () => {
             <LeftTitle title="铸造治理激励" />
 
             {endRound === 0n && currentRound !== undefined ? (
-              <div className="text-center text-gray-500 py-4">当前还不能铸造奖励，请耐心等待</div>
+              <div className="text-center text-gray-500 py-4">当前还不能铸造激励，请耐心等待</div>
             ) : (
               <>
                 <table className="table w-full table-auto">
@@ -223,7 +223,7 @@ const GovRewardsPage: React.FC = () => {
                   ) : hasMoreRewards ? (
                     <span className="text-sm text-gray-500">加载更多...</span>
                   ) : (
-                    <span className="text-sm text-gray-500">没有更多奖励</span>
+                    <span className="text-sm text-gray-500">没有更多激励</span>
                   )}
                 </div>
               </>

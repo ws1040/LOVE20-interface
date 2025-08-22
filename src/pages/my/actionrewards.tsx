@@ -48,11 +48,11 @@ const ActRewardsPage: React.FC = () => {
     error: errorLoadingRewards,
   } = useActionRewardsByAccountOfLastRounds(token?.address as `0x${string}`, account as `0x${string}`, LAST_ROUNDS);
 
-  // 将奖励按行动分组（显示所有行动，没有激励的显示提示）
+  // 将激励按行动分组（显示所有行动，没有激励的显示提示）
   const grouped = useMemo<ActionRewardsGroup[]>(() => {
     if (!actions || !rewards) return [];
 
-    // 创建奖励映射
+    // 创建激励映射
     const rewardsByAction = new Map<string, ActionReward[]>();
     for (const r of rewards) {
       if (r.reward <= 0n) continue;
@@ -67,7 +67,7 @@ const ActRewardsPage: React.FC = () => {
       const actionIdStr = String(act.head.id);
       const actionRewards = rewardsByAction.get(actionIdStr) || [];
 
-      // 如果有奖励，按轮次倒序排序
+      // 如果有激励，按轮次倒序排序
       if (actionRewards.length > 0) {
         actionRewards.sort((a, b) => (a.round > b.round ? -1 : 1));
       }
@@ -130,7 +130,7 @@ const ActRewardsPage: React.FC = () => {
           <LoadingIcon />
         ) : (
           <div className="flex flex-col space-y-6 p-4">
-            <LeftTitle title="铸造行动奖励" />
+            <LeftTitle title="铸造行动激励" />
 
             {isLoadingRewards ? (
               <LoadingIcon />

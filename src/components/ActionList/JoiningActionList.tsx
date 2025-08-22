@@ -134,7 +134,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                           <span className="text-secondary text-xs">{formatTokenAmount(actionDetail.joinedAmount)}</span>
                         </span>
                         {!actionDetail.hasReward ? (
-                          <span className="flex justify-between text-error text-sm">无铸币奖励</span>
+                          <span className="flex justify-between text-error text-sm">无铸币激励</span>
                         ) : (
                           <span>
                             <span className="text-greyscale-400 text-xs mr-1">APY</span>
