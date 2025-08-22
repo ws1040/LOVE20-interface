@@ -1,7 +1,7 @@
 'use client';
 
 import { useContext, useEffect, useMemo } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useBlockNumber } from 'wagmi';
 import { formatUnits as viemFormatUnits } from 'viem';
 
 // ui
@@ -22,6 +22,7 @@ import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton
 // my hooks
 import { useTokenStatistics } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 import { useLaunchInfo } from '@/src/hooks/contracts/useLOVE20Launch';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { formatPercentage } from '@/src/lib/format';
 
@@ -84,7 +85,9 @@ function formatAmount(value?: bigint, decimals?: number, symbol?: string) {
 
 const TokenPage = () => {
   const { isConnected } = useAccount();
+  const { data: currentBlockNumber } = useBlockNumber();
   const { token: currentToken } = useContext(TokenContext) || {};
+  const { currentRound, isPending: isPendingCurrentRound } = useCurrentRound();
 
   const launchEnded = !!currentToken && currentToken.hasEnded;
   const {
@@ -126,7 +129,6 @@ const TokenPage = () => {
   const finishedRounds = tokenStatistics?.finishedRounds ?? 0n;
   const actionsCount = tokenStatistics?.actionsCount ?? 0n;
   const joiningActionsCount = tokenStatistics?.joiningActionsCount ?? 0n;
-
   const unminted = maxSupply > totalSupply ? maxSupply - totalSupply : 0n;
   const otherBalance = totalSupply - joinedTokenAmount - tokenAmountForSl - stakedTokenAmountForSt;
 
@@ -196,10 +198,7 @@ const TokenPage = () => {
                       <span className="font-mono">{`${formatAmount(totalSupply, decimals)}`}</span>
                     </span>
                     <Separator orientation="vertical" className="h-4" />
-                    <span className="inline-flex items-center gap-1">
-                      <Info className="h-4 w-4" />
-                      {`Decimals: ${decimals}`}
-                    </span>
+                    <span className="inline-flex items-center gap-1">{`Decimals: ${decimals}`}</span>
                   </div>
                 </div>
               </div>
@@ -329,6 +328,8 @@ const TokenPage = () => {
                       <CardContent className="grid grid-cols-2 gap-4 px-4 pt-2 pb-4">
                         <Field label="首次治理轮次" value={String(currentToken.initialStakeRound ?? 0)} />
                         <Field label="已完成轮数" value={formatBigIntWithCommas(finishedRounds)} />
+                        <Field label="最新轮次" value={isPendingCurrentRound ? '...' : String(currentRound)} />
+                        <Field label="当前区块高度" value={String(currentBlockNumber)} />
                         <Field label="累计发起行动数" value={formatBigIntWithCommas(actionsCount)} />
                         <Field label="进行中的行动数" value={formatBigIntWithCommas(joiningActionsCount)} />
                       </CardContent>
