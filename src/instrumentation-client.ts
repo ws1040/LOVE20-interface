@@ -19,6 +19,9 @@ Sentry.init({
   // 按环境区分
   environment: process.env.NEXT_PUBLIC_APP_ENV || process.env.NODE_ENV,
 
+  // 显式设置 release，保证事件与 Source Maps 关联
+  release: process.env.NEXT_PUBLIC_SENTRY_RELEASE || process.env.SENTRY_RELEASE,
+
   // Define how likely Replay events are sampled.
   // This sets the sample rate to be 10%. You may want this to be 100% while
   // in development and sample at a lower rate in production

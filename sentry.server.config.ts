@@ -18,6 +18,9 @@ Sentry.init({
   // 根据部署环境设置 environment，便于在 Sentry 控制台按环境筛选
   environment: process.env.NEXT_PUBLIC_APP_ENV || process.env.NODE_ENV,
 
+  // 显式设置 release，保证事件与 Source Maps 正确关联
+  release: process.env.SENTRY_RELEASE || process.env.NEXT_PUBLIC_SENTRY_RELEASE,
+
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
   debug: false,
 });

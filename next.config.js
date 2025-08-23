@@ -68,8 +68,14 @@ module.exports = withSentryConfig(module.exports, {
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 
   org: 'ws1040',
-  project: 'javascript-nextjs',
-
+  project: 'love20-dapp',
+  authToken: process.env.SENTRY_AUTH_TOKEN || '',
+  sourcemaps: {
+    disable: false, // Enable source maps (default: false)
+    assets: ['**/*.js', '**/*.js.map'], // Specify which files to upload
+    ignore: ['**/node_modules/**'], // Files to exclude
+    deleteSourcemapsAfterUpload: true, // Security: delete after upload
+  },
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
 
