@@ -26,9 +26,8 @@ export const sendUniversalTransaction = async (
     return await sendTransactionForTuke(abi, address, functionName, args, value, options);
   } else {
     // 标准钱包模式：simulate + write
-    console.log('使用标准钱包模式发送交易');
-
     if (!options?.skipSimulation) {
+      console.log('步骤1: (标准模式)执行模拟调用 验证交易...');
       await simulateContract(config, {
         address,
         abi,
@@ -38,6 +37,7 @@ export const sendUniversalTransaction = async (
       });
     }
 
+    console.log('步骤2: (标准模式)执行真实交易...');
     return await writeContract(config, {
       address,
       abi,
@@ -139,7 +139,7 @@ export function useUniversalTransaction(
 
   useEffect(() => {
     if (combinedError) {
-      console.error('交易错误:', combinedError);
+      console.error('交易回执错误:', combinedError);
     }
   }, [combinedError]);
 

@@ -1,6 +1,7 @@
 // src/utils/errorUtils.ts
 
 import { ContractErrorsMaps, getErrorNameFromSelector } from '@/src/errors';
+import * as Sentry from '@sentry/nextjs';
 import { ErrorInfo } from '@/src/contexts/ErrorContext';
 import { useError } from '@/src/contexts/ErrorContext';
 import { useCallback } from 'react';
@@ -390,7 +391,35 @@ export const useHandleContractError = () => {
 
       console.error('Final Error Message:', finalError);
 
+      // 将错误设置到全局错误上下文，供 UI 提示
       setError(finalError);
+
+      // 在非用户主动取消交易的情况下，上报到 Sentry
+      try {
+        const isUserCancel = finalError?.message?.includes('用户取消') || finalError?.name === '交易提示';
+        // 仅在生产环境上报，避免本地开发噪音
+        const shouldReport = !isUserCancel;
+        if (shouldReport) {
+          Sentry.captureException(error ?? new Error(finalError?.message || 'Unknown contract error'), {
+            level: 'error',
+            tags: {
+              contractContext: context,
+              source: 'handleContractError',
+            },
+            extra: {
+              finalError,
+              rawErrorMessage: error?.message,
+              rawErrorReason: error?.reason,
+              rawErrorDetails: error?.details,
+              rawErrorShortMessage: error?.shortMessage,
+              stringified: errorStringified,
+            },
+          });
+        }
+      } catch (sentryError) {
+        // 避免上报过程本身影响用户操作流
+        console.warn('Sentry capture skipped or failed:', sentryError);
+      }
     },
     [setError],
   );
