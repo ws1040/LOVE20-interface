@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect, useState, useContext, useRef, useCallback } from 'react';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
+import { Info } from 'lucide-react';
 
 // my functions & types
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
@@ -29,7 +31,6 @@ const REWARDS_PER_PAGE = 20n;
 const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
-  const chainId = useChainId();
   const { currentRound, error: errorCurrentRound, isPending: isLoadingCurrentRound } = useCurrentRound();
   const [startRound, setStartRound] = useState<bigint>(0n);
   const [endRound, setEndRound] = useState<bigint>(0n);
@@ -172,8 +173,32 @@ const GovRewardsPage: React.FC = () => {
                     <tr className="border-b border-gray-200">
                       <th>轮次</th>
                       <th className="text-center px-1">总激励</th>
-                      <th className="text-center px-2">验证激励</th>
-                      <th className="text-center px-2">加速激励</th>
+                      <th className="text-center px-2">
+                        <div className="inline-flex items-center justify-center">
+                          <span>验证激励</span>
+                          <Link
+                            href={`/gov/stakelp/?symbol=${token?.symbol || ''}`}
+                            className="ml-1 text-greyscale-500 hover:text-secondary"
+                            aria-label="验证激励说明"
+                            title="验证激励说明"
+                          >
+                            <Info size={16} />
+                          </Link>
+                        </div>
+                      </th>
+                      <th className="text-center px-2">
+                        <div className="inline-flex items-center justify-center">
+                          <span>加速激励</span>
+                          <Link
+                            href={`/gov/staketoken/?symbol=${token?.symbol || ''}`}
+                            className="ml-1 text-greyscale-500 hover:text-secondary"
+                            aria-label="加速激励说明"
+                            title="加速激励说明"
+                          >
+                            <Info size={16} />
+                          </Link>
+                        </div>
+                      </th>
                       <th className="text-center px-2">结果</th>
                     </tr>
                   </thead>

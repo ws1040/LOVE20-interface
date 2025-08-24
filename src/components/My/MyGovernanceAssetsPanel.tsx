@@ -10,13 +10,8 @@ import { formatPhaseText } from '@/src/lib/domainUtils';
 
 // my hooks
 import { useHandleContractError } from '@/src/lib/errorUtils';
-import {
-  useAccountStakeStatus,
-  useUnstake,
-  useWithdraw,
-  useCurrentRound,
-  useValidGovVotes,
-} from '@/src/hooks/contracts/useLOVE20Stake';
+import { useAccountStakeStatus, useUnstake, useWithdraw, useValidGovVotes } from '@/src/hooks/contracts/useLOVE20Stake';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useApprove as useApproveST } from '@/src/hooks/contracts/useLOVE20STToken';
 import { useApprove as useApproveSL } from '@/src/hooks/contracts/useLOVE20SLToken';
 import { useAllowance } from '@/src/hooks/contracts/useLOVE20Token';
