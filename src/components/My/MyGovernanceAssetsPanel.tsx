@@ -34,7 +34,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
   const { address: account } = useAccount();
 
   // Hook：获取当前轮次
-  const { currentRound, isPending: isPendingCurrentRound, error: errorCurrentRound } = useCurrentRound(enableWithdraw);
+  const { currentRound, isPending: isPendingCurrentRound, error: errorCurrentRound } = useCurrentRound();
 
   // Hook：获取质押状态
   const {
