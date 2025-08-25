@@ -1,7 +1,7 @@
 'use client';
 
 import { useContext, useEffect, useState, useRef } from 'react';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import { z } from 'zod';
@@ -103,7 +103,6 @@ interface StakeLiquidityPanelProps {}
 
 const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   const { address: account } = useAccount();
-  const chainId = useChainId();
   const context = useContext(TokenContext);
   if (!context) {
     throw new Error('TokenContext 必须在 TokenProvider 内使用');
