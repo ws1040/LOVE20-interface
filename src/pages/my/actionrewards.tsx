@@ -83,15 +83,29 @@ const ActRewardsPage: React.FC = () => {
   // 铸造行动激励
   const { mintActionReward, isPending, isConfirming, isConfirmed, writeError } = useMintActionReward();
   const [mintingTarget, setMintingTarget] = useState<{ actionId: bigint; round: bigint } | null>(null);
+  const [locallyMinted, setLocallyMinted] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (isConfirmed) {
       toast.success('铸造成功');
+      if (mintingTarget) {
+        const key = `${mintingTarget.actionId.toString()}-${mintingTarget.round.toString()}`;
+        setLocallyMinted((prev) => {
+          const next = new Set(prev);
+          next.add(key);
+          return next;
+        });
+      }
       if (typeof window !== 'undefined' && token?.address && account) {
         setActionRewardNeedMinted(account, token.address, false);
       }
     }
-  }, [isConfirmed]);
+  }, [isConfirmed, mintingTarget, token?.address, account]);
+
+  // 账号或 Token 切换时重置本地已铸造集合
+  useEffect(() => {
+    setLocallyMinted(new Set());
+  }, [token?.address, account]);
 
   const handleClaim = async (round: bigint, actionId: bigint) => {
     if (token?.address && account) {
@@ -100,20 +114,17 @@ const ActRewardsPage: React.FC = () => {
     }
   };
 
-  // 将成功状态映射到 UI（简单处理：本地更新为已铸造）
+  // 结合本地已铸造集合覆盖 UI 展示
   const displayedGroups = useMemo(() => {
     if (!grouped) return [];
-    if (isConfirmed && mintingTarget) {
-      return grouped.map((g) => {
-        if (BigInt(g.action.head.id) !== mintingTarget.actionId) return g;
-        return {
-          ...g,
-          rewards: g.rewards.map((r) => (r.round === mintingTarget.round ? { ...r, isMinted: true } : r)),
-        };
-      });
-    }
-    return grouped;
-  }, [grouped, isConfirmed, mintingTarget]);
+    return grouped.map((g) => ({
+      ...g,
+      rewards: g.rewards.map((r) => {
+        const key = `${BigInt(g.action.head.id).toString()}-${r.round.toString()}`;
+        return locallyMinted.has(key) || r.isMinted ? { ...r, isMinted: true } : r;
+      }),
+    }));
+  }, [grouped, locallyMinted]);
 
   // 错误处理
   const { handleContractError } = useHandleContractError();

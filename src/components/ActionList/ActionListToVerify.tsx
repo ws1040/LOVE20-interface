@@ -45,12 +45,12 @@ const ActionListToVerify: React.FC<VerifingActionListProps> = ({ currentRound })
     }
   }, [error]);
 
-  // 如果只有1个行动，直接跳转到行动详情页
-  if (myVerifyingActions && myVerifyingActions.length === 1) {
-    const actionId = myVerifyingActions[0].action.head.id;
-    router.push(`/verify/action?id=${actionId}&symbol=${token?.symbol}&auto=true`);
-    return null;
-  }
+  // // 如果只有1个行动，直接跳转到行动详情页
+  // if (myVerifyingActions && myVerifyingActions.length === 1) {
+  //   const actionId = myVerifyingActions[0].action.head.id;
+  //   router.push(`/verify/action?id=${actionId}&symbol=${token?.symbol}&auto=true`);
+  //   return null;
+  // }
 
   if (!token || isPending) {
     return (

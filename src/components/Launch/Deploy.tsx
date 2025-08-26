@@ -175,7 +175,9 @@ export default function TokenDeployment() {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>只能用大写字母A~Z和数字0~9，最多 6 个字符。</FormDescription>
+                    <FormDescription>
+                      最多 6 个字符，首字母只能用大写字母A~Z，后5个字符只能用大写字母A~Z和数字0~9。
+                    </FormDescription>
                     {/* 有错误信息会渲染在这 */}
                     <FormMessage />
                   </FormItem>
