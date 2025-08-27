@@ -204,10 +204,18 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
 
   let selector = '';
 
+  // 优先匹配各类 "custom error 0xXXXXXXXX"（例如 anvil 或 viem 提示中的 reason: custom error ...）
+  const customErrorMatch = rawMessage.match(/custom error 0x([a-fA-F0-9]{8})/i);
+  if (customErrorMatch) {
+    selector = '0x' + customErrorMatch[1];
+  }
+
   // 匹配 Viem 格式：Data:   0xd6e1a062 (4 bytes)
-  const viemMatch = rawMessage.match(/Data:\s*0x([a-fA-F0-9]{8})\s*\(4 bytes\)/i);
-  if (viemMatch) {
-    selector = '0x' + viemMatch[1];
+  if (!selector) {
+    const viemMatch = rawMessage.match(/Data:\s*0x([a-fA-F0-9]{8})\s*\(4 bytes\)/i);
+    if (viemMatch) {
+      selector = '0x' + viemMatch[1];
+    }
   }
 
   // 匹配 JSON-RPC 格式：data: "0xa748da06" 或 data: 0xa748da06
@@ -224,14 +232,6 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
     const standaloneMatch = rawMessage.match(/(?:^|[^a-fA-F0-9])0x([a-fA-F0-9]{8})(?:[^a-fA-F0-9]|$)/);
     if (standaloneMatch) {
       selector = '0x' + standaloneMatch[1];
-    }
-  }
-
-  // 匹配 anvil 测试链的错误格式：custom error 0x50cd778e
-  if (!selector) {
-    const anvilMatch = rawMessage.match(/custom error 0x([a-fA-F0-9]{8})/i);
-    if (anvilMatch) {
-      selector = '0x' + anvilMatch[1];
     }
   }
 

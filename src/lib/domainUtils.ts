@@ -7,17 +7,17 @@ import { safeToBigInt } from './clientUtils';
 
 /**
  * 计算治理质押的预计年化收益率(APY)
- * @param rewardAvailable 可用激励总量
+ * @param rewardForPhase 本轮治理激励总量
  * @param tokenAmountForSl 流动性质押的代币数量
  * @param stAmount 代币质押的数量
  * @returns 格式化后的APY字符串，如"12.5%"
  */
 export const calculateAPY = (
-  rewardAvailable: bigint | undefined,
+  rewardForPhase: bigint | undefined,
   tokenAmountForSl: bigint | undefined,
   stAmount: bigint | undefined,
 ): string => {
-  if (!rewardAvailable || !tokenAmountForSl) return '0%';
+  if (!rewardForPhase || !tokenAmountForSl) return '0%';
 
   // 年区块数 = 365天 * 86400秒/天 / 每个区块的秒数
   const blocksPerYear = (365 * 86400 * 100) / Number(process.env.NEXT_PUBLIC_BLOCK_TIME || 0);
@@ -28,8 +28,6 @@ export const calculateAPY = (
     return '0%';
   }
 
-  // 本轮治理激励
-  const rewardForPhase = rewardAvailable ? (rewardAvailable * 99n * 99n) / 2000000n : BigInt(0);
   // 所有质押资产总和
   const totalStaked = (tokenAmountForSl * 2n || BigInt(0)) + (stAmount || BigInt(0));
   // 避免除以零

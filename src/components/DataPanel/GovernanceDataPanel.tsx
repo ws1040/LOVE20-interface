@@ -66,7 +66,7 @@ const GovernanceDataPanel: React.FC = () => {
           {isPending || isPendingEstimatedGovReward ? (
             <LoadingIcon />
           ) : (
-            calculateAPY(govData?.rewardAvailable, govData?.tokenAmountForSl, govData?.stAmount)
+            calculateAPY(expectedReward, govData?.tokenAmountForSl, govData?.stAmount)
           )}
         </div>
 
