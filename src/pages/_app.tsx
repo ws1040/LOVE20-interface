@@ -13,6 +13,7 @@ import { AppSidebar } from '@/src/components/Common/AppSidebar';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 import ActionRewardNotifier from '@/src/components/Common/ActionRewardNotifier';
 import Footer from '@/src/components/Footer';
+import { BottomNavigation } from '@/src/components/Common/BottomNavigation';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -97,7 +98,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <ErrorProvider>
                 <AppSidebar />
                 <SidebarInset>
-                  <div className="min-h-screen bg-background flex flex-col">
+                  <div className="min-h-screen bg-background flex flex-col pb-16 md:pb-0">
                     <Toaster
                       position="top-center"
                       toastOptions={{
@@ -110,6 +111,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <ActionRewardNotifier />
                     <Component {...pageProps} />
                     <Footer />
+                    <BottomNavigation />
                   </div>
                 </SidebarInset>
               </ErrorProvider>

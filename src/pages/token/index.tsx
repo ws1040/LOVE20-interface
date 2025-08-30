@@ -3,9 +3,11 @@
 import { useContext, useEffect, useMemo } from 'react';
 import { useAccount, useBlockNumber } from 'wagmi';
 import { formatUnits as viemFormatUnits } from 'viem';
+import Link from 'next/link';
 
 // ui
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -182,14 +184,14 @@ const TokenPage = () => {
           <LoadingIcon />
         ) : (
           <div className="p-4 md:p-6">
-            <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <header className="flex flex-col gap-4">
               <div className="flex items-center gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+                <div className="space-y-1 flex-1">
+                  <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-semibold tracking-tight font-mono">{currentToken.symbol}</h1>
-                    <Badge variant="secondary" className="font-mono">
-                      {currentToken.name}
-                    </Badge>
+                    <Button variant="outline" size="sm" className="text-secondary border-secondary -mt-2" asChild>
+                      <Link href={`/token/intro?symbol=${currentToken.symbol}`}>代币简介 &gt;&gt;</Link>
+                    </Button>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <span className="inline-flex items-center gap-1">
@@ -221,9 +223,23 @@ const TokenPage = () => {
                   <div className="lg:col-span-2 space-y-6">
                     <Card>
                       <CardHeader className="px-4 pt-4 pb-2">
-                        <CardTitle className="flex items-center gap-2 text-lg">
-                          <TableOfContents className="h-5 w-5 text-primary" />
-                          基本信息
+                        <CardTitle className="flex items-center justify-between text-lg">
+                          <div className="flex items-center gap-2">
+                            <TableOfContents className="h-5 w-5 text-primary" />
+                            基本信息
+                          </div>
+                          {/* 当存在父币且父币不是第一个父币时显示返回父币链接 */}
+                          {currentToken.parentTokenAddress &&
+                            currentToken.parentTokenAddress !== '0x0000000000000000000000000000000000000000' &&
+                            currentToken.parentTokenSymbol &&
+                            currentToken.parentTokenSymbol !== process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL && (
+                              <Link
+                                href={`/acting/?symbol=${currentToken.parentTokenSymbol}`}
+                                className="text-sm text-secondary hover:text-secondary/80 transition-colors"
+                              >
+                                返回父币 &gt;&gt;
+                              </Link>
+                            )}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="grid gap-4 grid-cols-2 px-4 pt-2 pb-4">
@@ -306,9 +322,17 @@ const TokenPage = () => {
                   <div className="space-y-6">
                     <Card>
                       <CardHeader className="px-4 pt-4 pb-2">
-                        <CardTitle className="flex items-center gap-2 text-lg">
-                          <Rocket className="h-5 w-5 text-primary" />
-                          发射情况
+                        <CardTitle className="flex items-center justify-between text-lg">
+                          <div className="flex items-center gap-2">
+                            <Rocket className="h-5 w-5 text-primary" />
+                            发射情况
+                          </div>
+                          <Link
+                            href="/launch"
+                            className="text-sm text-secondary hover:text-secondary/80 transition-colors"
+                          >
+                            查看公平发射 &gt;&gt;
+                          </Link>
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="grid grid-cols-2 gap-4 px-4 pt-2 pb-4">

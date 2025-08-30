@@ -121,7 +121,6 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton = false, backUrl 
 
       <header className="flex justify-between items-center py-2 px-4">
         <div className="flex items-center gap-3">
-          <SidebarTrigger className="-ml-1" />
           {(showBackButton || backUrl !== '') && (
             <Button
               variant="outline"

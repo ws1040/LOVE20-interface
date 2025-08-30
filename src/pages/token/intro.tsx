@@ -97,7 +97,7 @@ const TokenIntroPage = () => {
 
   return (
     <>
-      <Header title="代币介绍" />
+      <Header title="代币介绍" showBackButton={true} />
       <main className="flex-grow">
         {loading || isPendingLaunchInfo ? (
           <div className="flex justify-center items-center h-[60vh]">

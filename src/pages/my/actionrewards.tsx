@@ -22,7 +22,7 @@ import { Button } from '@/components/ui/button';
 
 // utils
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
-import { setActionRewardNeedMinted } from '@/src/lib/actionRewardNotice';
+import { setActionRewardNeedMinted, loadActionRewardNotice, buildActionRewardNoticeKey } from '@/src/lib/actionRewardNotice';
 
 // types
 import { ActionInfo, ActionReward } from '@/src/types/love20types';
@@ -106,6 +106,26 @@ const ActRewardsPage: React.FC = () => {
   useEffect(() => {
     setLocallyMinted(new Set());
   }, [token?.address, account]);
+
+  // 检查是否有未铸造的激励，如果没有则清除 localStorage 缓存
+  useEffect(() => {
+    if (!token?.address || !account || isLoadingRewards || !rewards) return;
+    
+    // 检查是否存在未铸造的激励
+    const hasUnmintedRewards = rewards.some(r => r.reward > 0n && !r.isMinted);
+    
+    // 如果没有未铸造的激励，且本地缓存显示需要铸造，则清除缓存
+    if (!hasUnmintedRewards) {
+      const cached = loadActionRewardNotice(account, token.address);
+      if (cached?.needMinted) {
+        // 清除 localStorage 缓存
+        const cacheKey = buildActionRewardNoticeKey(account, token.address);
+        localStorage.removeItem(cacheKey);
+        // 触发全局事件通知其他组件更新
+        setActionRewardNeedMinted(account, token.address, false);
+      }
+    }
+  }, [token?.address, account, isLoadingRewards, rewards]);
 
   const handleClaim = async (round: bigint, actionId: bigint) => {
     if (token?.address && account) {

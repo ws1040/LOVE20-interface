@@ -17,7 +17,7 @@ import { useHasUnmintedActionRewardOfLastRounds } from '@/src/hooks/contracts/us
 import AlertBox from '@/src/components/Common/AlertBox';
 
 // 最近检查的轮数范围
-const LAST_ROUNDS = 30n;
+const LAST_ROUNDS = 15n;
 
 type RewardNoticeState = {
   round: number;

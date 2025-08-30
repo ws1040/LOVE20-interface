@@ -163,8 +163,17 @@ a {
   }
 }
 
+/* 底部导航安全区域适配 */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
 /* 移动端输入法优化 - 解决MetaMask等移动端浏览器输入法问题 */
 @media (max-width: 768px) {
+  /* 为底部导航预留空间 */
+  .main-content {
+    padding-bottom: 4rem;
+  }
   input[type='text'],
   input[type='number'],
   textarea {
