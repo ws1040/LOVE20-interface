@@ -112,7 +112,7 @@ const VerifyStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionId, 
             </span>
           )}
         </div>
-        {verifiedVotesNum > 0 && (
+        {verificationInfos?.length > 0 && (
           <Link
             href={`/action/verify_detail?symbol=${token?.symbol}&id=${actionId}&round=${currentRound}`}
             className="text-sm text-secondary hover:text-secondary-600 "

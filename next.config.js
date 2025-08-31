@@ -33,6 +33,8 @@ const nextConfig = {
       '/acting/join': { page: '/acting/join' },
       '/action/detail': { page: '/action/detail' },
       '/action/new': { page: '/action/new' },
+      '/action/info': { page: '/action/info' },
+      '/action/verify_detail': { page: '/action/verify_detail' },
       '/articles': { page: '/articles' },
       '/dex/deposit': { page: '/dex/deposit' },
       '/dex/swap': { page: '/dex/swap' },
