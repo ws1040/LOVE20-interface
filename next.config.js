@@ -3,11 +3,25 @@
 const nextConfig = {
   trailingSlash: true, // GitHub Pages 需要这个设置
   reactStrictMode: false,
-  output: 'export',
-  images: { unoptimized: true },
+  ...(process.env.NODE_ENV !== 'development' && { output: 'export' }),
   basePath: process.env.BASE_PATH || '',
   assetPrefix: process.env.ASSET_PREFIX || '',
   transpilePackages: ['@tanstack/query-core', '@tanstack/react-query', '@tanstack/react-query-devtools'],
+  allowedDevOrigins: ['127.0.0.1:3000', 'localhost:3000', '127.0.0.1', 'localhost'],
+  productionBrowserSourceMaps: false, // 禁用生产环境源码映射以避免404错误
+
+  // 开发环境性能优化
+  ...(process.env.NODE_ENV === 'development' && {
+    // 禁用开发环境的源码映射以加快编译
+    productionBrowserSourceMaps: false,
+    // 优化开发环境的编译缓存
+    experimental: {
+      // 启用 SWC 编译器的缓存
+      swcTraceProfiling: false,
+      // 禁用某些开发时的检查
+      disableOptimizedLoading: true,
+    },
+  }),
   // 确保静态导出时跳过API路由
   async exportPathMap() {
     return {
@@ -63,40 +77,37 @@ const { withSentryConfig } = require('@sentry/nextjs');
 const enableSentryTunnel = process.env.SENTRY_TUNNEL === 'true' && nextConfig.output !== 'export';
 const sentryTunnelRoute = process.env.SENTRY_TUNNEL_ROUTE || '/monitoring';
 
-module.exports = withSentryConfig(module.exports, {
-  // For all available options, see:
-  // https://www.npmjs.com/package/@sentry/webpack-plugin#options
+// 开发环境下简化 Sentry 配置以提高编译速度
+const sentryConfig =
+  process.env.NODE_ENV === 'development'
+    ? {
+        org: 'ws1040',
+        project: 'love20-dapp',
+        authToken: process.env.SENTRY_AUTH_TOKEN || '',
+        sourcemaps: {
+          disable: true, // 开发环境禁用源码映射以加快编译
+        },
+        silent: true, // 开发环境静默 Sentry 日志
+        widenClientFileUpload: false, // 开发环境关闭以提高速度
+        disableLogger: true,
+        automaticVercelMonitors: false, // 开发环境关闭
+      }
+    : {
+        // 生产环境完整配置
+        org: 'ws1040',
+        project: 'love20-dapp',
+        authToken: process.env.SENTRY_AUTH_TOKEN || '',
+        sourcemaps: {
+          disable: false,
+          assets: ['**/*.js', '**/*.js.map'],
+          ignore: ['**/node_modules/**'],
+          deleteSourcemapsAfterUpload: true,
+        },
+        silent: !process.env.CI,
+        widenClientFileUpload: true,
+        tunnelRoute: enableSentryTunnel ? sentryTunnelRoute : undefined,
+        disableLogger: true,
+        automaticVercelMonitors: true,
+      };
 
-  org: 'ws1040',
-  project: 'love20-dapp',
-  authToken: process.env.SENTRY_AUTH_TOKEN || '',
-  sourcemaps: {
-    disable: false, // Enable source maps (default: false)
-    assets: ['**/*.js', '**/*.js.map'], // Specify which files to upload
-    ignore: ['**/node_modules/**'], // Files to exclude
-    deleteSourcemapsAfterUpload: true, // Security: delete after upload
-  },
-  // Only print logs for uploading source maps in CI
-  silent: !process.env.CI,
-
-  // For all available options, see:
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-
-  // Upload a larger set of source maps for prettier stack traces (increases build time)
-  widenClientFileUpload: true,
-
-  // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
-  // This can increase your server load as well as your hosting bill.
-  // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
-  // side errors will fail.
-  tunnelRoute: enableSentryTunnel ? sentryTunnelRoute : undefined,
-
-  // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: true,
-
-  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-  // See the following for more information:
-  // https://docs.sentry.io/product/crons/
-  // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: true,
-});
+module.exports = withSentryConfig(module.exports, sentryConfig);

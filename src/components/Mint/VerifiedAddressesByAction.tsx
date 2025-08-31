@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useAccount, useChainId } from 'wagmi';
-import { Button } from '@/components/ui/button';
+import { useAccount } from 'wagmi';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 // my hooks
 import { useHandleContractError } from '@/src/lib/errorUtils';
-import { useMintActionReward } from '@/src/hooks/contracts/useLOVE20Mint';
 import { useVerificationInfosByAction, useVerifiedAddressesByAction } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 
 // my contexts
@@ -24,7 +22,6 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // my funcs
 import { formatRoundForDisplay, formatTokenAmountInteger } from '@/src/lib/format';
-import { setActionRewardNeedMinted } from '@/src/lib/actionRewardNotice';
 import { LinkIfUrl } from '@/src/lib/stringUtils';
 
 const VerifiedAddressesByAction: React.FC<{
@@ -34,7 +31,6 @@ const VerifiedAddressesByAction: React.FC<{
 }> = ({ currentJoinRound, actionId, actionInfo }) => {
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
-  const chainId = useChainId();
   const [selectedRound, setSelectedRound] = useState(0n);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
@@ -73,30 +69,6 @@ const VerifiedAddressesByAction: React.FC<{
     }
   }, [verifiedAddresses]);
 
-  // 领取激励
-  const {
-    mintActionReward,
-    isPending: isMinting,
-    isConfirming: isConfirmingMint,
-    isConfirmed: isConfirmedMint,
-    writeError: mintError,
-  } = useMintActionReward();
-  const handleClaim = async (item: VerifiedAddress) => {
-    if (account && item.reward > 0n && !item.isMinted && token) {
-      await mintActionReward(token?.address as `0x${string}`, selectedRound, actionId);
-    }
-  };
-  useEffect(() => {
-    if (isConfirmedMint) {
-      setAddresses((prev) => prev.map((addr) => (addr.account === account ? { ...addr, isMinted: true } : addr)));
-      toast.success(`铸造成功`);
-
-      if (typeof window !== 'undefined' && token?.address && account) {
-        setActionRewardNeedMinted(account, token.address, false);
-      }
-    }
-  }, [isConfirmedMint, account]);
-
   const handleChangedRound = (round: number) => {
     setSelectedRound(BigInt(round));
   };
@@ -110,10 +82,7 @@ const VerifiedAddressesByAction: React.FC<{
     if (errorVerificationInfosByAction) {
       handleContractError(errorVerificationInfosByAction, 'dataViewer');
     }
-    if (mintError) {
-      handleContractError(mintError, 'mint');
-    }
-  }, [errorVerifiedAddresses, errorVerificationInfosByAction, mintError]);
+  }, [errorVerifiedAddresses, errorVerificationInfosByAction]);
 
   // 当地址数据加载完成后，展开获得验证票最多的地址
   useEffect(() => {
@@ -146,26 +115,33 @@ const VerifiedAddressesByAction: React.FC<{
   };
 
   return (
-    <div className="relative px-4 py-4">
+    <div className="relative ">
       {selectedRound === 0n && (
         <div className="flex items-center justify-center">
           <div className="text-center text-sm text-greyscale-500">暂无验证结果</div>
         </div>
       )}
-      <div className="flex items-center">
-        {selectedRound > 0 && (
-          <>
-            <LeftTitle title="验证结果" />
-            <span className="text-sm text-greyscale-500 ml-2">(</span>
-            <span className="text-sm text-greyscale-500">行动轮第</span>
-            <span className="text-sm text-secondary ml-1">{selectedRound.toString()}</span>
-            <span className="text-sm text-greyscale-500 ml-1">轮</span>
-            <ChangeRound
-              currentRound={token && currentJoinRound ? formatRoundForDisplay(currentJoinRound - 2n, token) : 0n}
-              handleChangedRound={handleChangedRound}
-            />
-            <span className="text-sm text-greyscale-500">)</span>
-          </>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          {selectedRound > 0 && (
+            <>
+              <LeftTitle title={`第 ${selectedRound.toString()} 轮验证结果`} />
+              <span className="text-sm text-greyscale-500 ml-2">(</span>
+              <ChangeRound
+                currentRound={token && currentJoinRound ? formatRoundForDisplay(currentJoinRound - 2n, token) : 0n}
+                handleChangedRound={handleChangedRound}
+              />
+              <span className="text-sm text-greyscale-500">)</span>
+            </>
+          )}
+        </div>
+        {selectedRound > 0 && addresses.length > 0 && (
+          <Link
+            href={`/action/verify_detail?symbol=${token?.symbol}&id=${actionId}&round=${selectedRound}`}
+            className="text-sm text-secondary hover:text-secondary-600 transition-colors"
+          >
+            查看明细 &gt;&gt;
+          </Link>
         )}
       </div>
       {isPendingVerifiedAddresses || isPendingVerificationInfosByAction ? (
@@ -182,7 +158,6 @@ const VerifiedAddressesByAction: React.FC<{
               <th>被抽中地址</th>
               <th className="px-1 text-right">获得验证票</th>
               <th className="px-1 text-right">可铸造激励</th>
-              <th className="text-right"></th>
             </tr>
           </thead>
           <tbody>
@@ -212,28 +187,12 @@ const VerifiedAddressesByAction: React.FC<{
                     </td>
                     <td className="px-1 text-right">{formatTokenAmountInteger(item.score)}</td>
                     <td className="px-1 text-right">{formatTokenAmountInteger(item.reward || 0n)}</td>
-                    <td className="px-1 text-right">
-                      {item.account === account &&
-                        (item.reward > 0n && !item.isMinted ? (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-secondary border-secondary"
-                            onClick={() => handleClaim(item)}
-                            disabled={isMinting || isConfirmingMint}
-                          >
-                            铸造
-                          </Button>
-                        ) : item.score > 0 ? (
-                          <span className="text-greyscale-500">已铸造</span>
-                        ) : null)}
-                    </td>
                   </tr>
 
                   {verificationInfo && actionInfo && isExpanded && (
                     <tr className="border-b border-gray-100 bg-gray-50">
                       <td></td>
-                      <td colSpan={4} className="px-1 py-3">
+                      <td colSpan={3} className="px-1 py-3">
                         <div className="text-sm text-greyscale-600">
                           <div className="text-xs text-greyscale-400 mb-2">验证信息:</div>
                           {actionInfo.body.verificationKeys.map((key, i) => (
@@ -252,8 +211,6 @@ const VerifiedAddressesByAction: React.FC<{
           </tbody>
         </table>
       )}
-
-      <LoadingOverlay isLoading={isMinting || isConfirmingMint} text={isMinting ? '提交交易...' : '确认交易...'} />
     </div>
   );
 };

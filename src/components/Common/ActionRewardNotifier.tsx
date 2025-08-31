@@ -11,7 +11,7 @@ import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
 import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Join';
-import { useHasUnmintedActionRewardOfLastRounds } from '@/src/hooks/contracts/useLOVE20RoundViewer';
+import { useHasUnmintedActionRewardOfLastRounds } from '@/src/hooks/contracts/useLOVE20MintViewer';
 
 // my components
 import AlertBox from '@/src/components/Common/AlertBox';

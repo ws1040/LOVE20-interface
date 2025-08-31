@@ -43,11 +43,7 @@ const ActionPage = () => {
           <ActionPanelForVoting actionId={BigInt(idParam || 0)} onRoundChange={handleRoundChange} />
         )}
         {(typeParam === 'join' || typeParam === undefined) && (
-          <ActionPanelForJoin
-            actionId={BigInt(idParam || 0)}
-            onRoundChange={handleRoundChange}
-            actionInfo={actionInfo}
-          />
+          <ActionPanelForJoin actionId={BigInt(idParam || 0)} actionInfo={actionInfo} />
         )}
         <ActionDetail
           actionId={BigInt(idParam || 0)}

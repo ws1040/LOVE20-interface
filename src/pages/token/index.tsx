@@ -6,12 +6,11 @@ import { formatUnits as viemFormatUnits } from 'viem';
 import Link from 'next/link';
 
 // ui
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { HandCoins, Info, TableOfContents, Pickaxe, Blocks, BarChart2, Users, Rocket } from 'lucide-react';
+import { HandCoins, TableOfContents, Pickaxe, Blocks, BarChart2, Users, Rocket } from 'lucide-react';
 
 // my context
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -22,7 +21,7 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 
 // my hooks
-import { useTokenStatistics } from '@/src/hooks/contracts/useLOVE20RoundViewer';
+import { useTokenStatistics } from '@/src/hooks/contracts/useLOVE20TokenViewer';
 import { useLaunchInfo } from '@/src/hooks/contracts/useLOVE20Launch';
 import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useHandleContractError } from '@/src/lib/errorUtils';
@@ -131,6 +130,9 @@ const TokenPage = () => {
   const finishedRounds = tokenStatistics?.finishedRounds ?? 0n;
   const actionsCount = tokenStatistics?.actionsCount ?? 0n;
   const joiningActionsCount = tokenStatistics?.joiningActionsCount ?? 0n;
+  const childTokensCount = tokenStatistics?.childTokensCount ?? 0n;
+  const launchingChildTokensCount = tokenStatistics?.launchingChildTokensCount ?? 0n;
+  const launchedChildTokensCount = tokenStatistics?.launchedChildTokensCount ?? 0n;
   const unminted = maxSupply > totalSupply ? maxSupply - totalSupply : 0n;
   const otherBalance = totalSupply - joinedTokenAmount - tokenAmountForSl - stakedTokenAmountForSt;
 
@@ -152,6 +154,7 @@ const TokenPage = () => {
     UniswapV2Router02: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_ROUTER,
     TokenViewer: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_TOKENVIEWER,
     RoundViewer: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_ROUNDVIEWER,
+    MintViewer: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_MINTVIEWER,
     Hub: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_HUB,
   } as const;
 
@@ -358,6 +361,28 @@ const TokenPage = () => {
                         <Field label="进行中的行动数" value={formatBigIntWithCommas(joiningActionsCount)} />
                       </CardContent>
                     </Card>
+
+                    <Card>
+                      <CardHeader className="px-4 pt-4 pb-2">
+                        <CardTitle className="flex items-center justify-between text-lg">
+                          <div className="flex items-center gap-2">
+                            <Blocks className="h-5 w-5 text-primary" />
+                            子币情况
+                          </div>
+                          <Link
+                            href={`/tokens/children/?symbol=${currentToken.symbol}`}
+                            className="text-sm text-secondary hover:text-secondary/80 transition-colors"
+                          >
+                            子币列表 &gt;&gt;
+                          </Link>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="grid grid-cols-2 gap-4 px-4 pt-2 pb-4">
+                        <Field label="子币数量" value={formatBigIntWithCommas(childTokensCount)} />
+                        <Field label="发射中的子币数量" value={formatBigIntWithCommas(launchingChildTokensCount)} />
+                        <Field label="发射完成的子币数量" value={formatBigIntWithCommas(launchedChildTokensCount)} />
+                      </CardContent>
+                    </Card>
                   </div>
                 </div>
               </TabsContent>
@@ -410,6 +435,7 @@ const TokenPage = () => {
                     <CardContent className="grid gap-3 px-4 pt-2 pb-4">
                       <AddressItem name="TokenViewer" address={constantsAddresses.TokenViewer} />
                       <AddressItem name="RoundViewer" address={constantsAddresses.RoundViewer} />
+                      <AddressItem name="MintViewer" address={constantsAddresses.MintViewer} />
                       <AddressItem name="Hub" address={constantsAddresses.Hub} />
                     </CardContent>
                   </Card>

@@ -9,6 +9,133 @@ export const LOVE20RoundViewerAbi = [
   },
   {
     "type": "function",
+    "name": "accountVotingHistory",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "startRound",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "endRound",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "accountActions",
+        "type": "tuple[]",
+        "internalType": "struct AccountVotingAction[]",
+        "components": [
+          {
+            "name": "actionId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "round",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "myVoteCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalVoteCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "name": "actionInfos",
+        "type": "tuple[]",
+        "internalType": "struct ActionInfo[]",
+        "components": [
+          {
+            "name": "head",
+            "type": "tuple",
+            "internalType": "struct ActionHead",
+            "components": [
+              {
+                "name": "id",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "author",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "createAtBlock",
+                "type": "uint256",
+                "internalType": "uint256"
+              }
+            ]
+          },
+          {
+            "name": "body",
+            "type": "tuple",
+            "internalType": "struct ActionBody",
+            "components": [
+              {
+                "name": "minStake",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "maxRandomAccounts",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "whiteListAddress",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "title",
+                "type": "string",
+                "internalType": "string"
+              },
+              {
+                "name": "verificationRule",
+                "type": "string",
+                "internalType": "string"
+              },
+              {
+                "name": "verificationKeys",
+                "type": "string[]",
+                "internalType": "string[]"
+              },
+              {
+                "name": "verificationInfoGuides",
+                "type": "string[]",
+                "internalType": "string[]"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "actionInfosByIds",
     "inputs": [
       {
@@ -194,184 +321,6 @@ export const LOVE20RoundViewerAbi = [
   },
   {
     "type": "function",
-    "name": "actionRewardsByAccountByActionIdByRounds",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "actionId",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "startRound",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "endRound",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "rewards",
-        "type": "tuple[]",
-        "internalType": "struct RewardInfo[]",
-        "components": [
-          {
-            "name": "round",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "reward",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "isMinted",
-            "type": "bool",
-            "internalType": "bool"
-          }
-        ]
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "actionRewardsByAccountOfLastRounds",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "LastRounds",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "actions",
-        "type": "tuple[]",
-        "internalType": "struct ActionInfo[]",
-        "components": [
-          {
-            "name": "head",
-            "type": "tuple",
-            "internalType": "struct ActionHead",
-            "components": [
-              {
-                "name": "id",
-                "type": "uint256",
-                "internalType": "uint256"
-              },
-              {
-                "name": "author",
-                "type": "address",
-                "internalType": "address"
-              },
-              {
-                "name": "createAtBlock",
-                "type": "uint256",
-                "internalType": "uint256"
-              }
-            ]
-          },
-          {
-            "name": "body",
-            "type": "tuple",
-            "internalType": "struct ActionBody",
-            "components": [
-              {
-                "name": "minStake",
-                "type": "uint256",
-                "internalType": "uint256"
-              },
-              {
-                "name": "maxRandomAccounts",
-                "type": "uint256",
-                "internalType": "uint256"
-              },
-              {
-                "name": "whiteListAddress",
-                "type": "address",
-                "internalType": "address"
-              },
-              {
-                "name": "title",
-                "type": "string",
-                "internalType": "string"
-              },
-              {
-                "name": "verificationRule",
-                "type": "string",
-                "internalType": "string"
-              },
-              {
-                "name": "verificationKeys",
-                "type": "string[]",
-                "internalType": "string[]"
-              },
-              {
-                "name": "verificationInfoGuides",
-                "type": "string[]",
-                "internalType": "string[]"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "rewards",
-        "type": "tuple[]",
-        "internalType": "struct ActionReward[]",
-        "components": [
-          {
-            "name": "actionId",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "round",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "reward",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "isMinted",
-            "type": "bool",
-            "internalType": "bool"
-          }
-        ]
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "actionSubmits",
     "inputs": [
       {
@@ -408,38 +357,87 @@ export const LOVE20RoundViewerAbi = [
   },
   {
     "type": "function",
-    "name": "estimatedActionRewardOfCurrentRound",
+    "name": "actionVerificationMatrix",
     "inputs": [
       {
         "name": "tokenAddress",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [
       {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
+        "name": "matrix",
+        "type": "tuple",
+        "internalType": "struct VerificationMatrix",
+        "components": [
+          {
+            "name": "verifiers",
+            "type": "address[]",
+            "internalType": "address[]"
+          },
+          {
+            "name": "verifiees",
+            "type": "address[]",
+            "internalType": "address[]"
+          },
+          {
+            "name": "scores",
+            "type": "uint256[][]",
+            "internalType": "uint256[][]"
+          }
+        ]
       }
     ],
     "stateMutability": "view"
   },
   {
     "type": "function",
-    "name": "estimatedGovRewardOfCurrentRound",
+    "name": "actionVoters",
     "inputs": [
       {
         "name": "tokenAddress",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [
       {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
+        "name": "voters",
+        "type": "tuple[]",
+        "internalType": "struct ActionVoter[]",
+        "components": [
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "voteCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
       }
     ],
     "stateMutability": "view"
@@ -497,98 +495,13 @@ export const LOVE20RoundViewerAbi = [
   },
   {
     "type": "function",
-    "name": "govRewardsByAccountByRounds",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "startRound",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "endRound",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "rewards",
-        "type": "tuple[]",
-        "internalType": "struct GovReward[]",
-        "components": [
-          {
-            "name": "round",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "reward",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "verifyReward",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "boostReward",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "isMinted",
-            "type": "bool",
-            "internalType": "bool"
-          }
-        ]
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "hasUnmintedActionRewardOfLastRounds",
-    "inputs": [
-      {
-        "name": "token",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "latestRounds",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "init",
     "inputs": [
+      {
+        "name": "launchAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
       {
         "name": "stakeAddress_",
         "type": "address",
@@ -890,6 +803,19 @@ export const LOVE20RoundViewerAbi = [
   },
   {
     "type": "function",
+    "name": "launchAddress",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "mintAddress",
     "inputs": [],
     "outputs": [
@@ -923,112 +849,6 @@ export const LOVE20RoundViewerAbi = [
         "name": "",
         "type": "address",
         "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "tokenStatistics",
-    "inputs": [
-      {
-        "name": "tokenAddress",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct TokenStats",
-        "components": [
-          {
-            "name": "maxSupply",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "totalSupply",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "reservedAvailable",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "rewardAvailable",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "pairReserveParentToken",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "pairReserveToken",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "totalLpSupply",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "stakedTokenAmountForSt",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "joinedTokenAmount",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "totalSLSupply",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "totalSTSupply",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "parentTokenAmountForSl",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "tokenAmountForSl",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "parentPool",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "finishedRounds",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "actionsCount",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "joiningActionsCount",
-            "type": "uint256",
-            "internalType": "uint256"
-          }
-        ]
       }
     ],
     "stateMutability": "view"

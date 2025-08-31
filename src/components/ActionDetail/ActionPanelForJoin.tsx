@@ -33,7 +33,6 @@ import { LinkIfUrl } from '@/src/lib/stringUtils';
 
 interface ActionPanelForJoinProps {
   actionId: bigint;
-  onRoundChange: (currentRound: bigint) => void;
   actionInfo: ActionInfo | undefined;
   onStakedAmountChange?: (stakedAmount: bigint) => void;
   showJoinButton?: boolean;
@@ -41,7 +40,6 @@ interface ActionPanelForJoinProps {
 
 const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
   actionId,
-  onRoundChange,
   actionInfo,
   onStakedAmountChange,
   showJoinButton = true,
@@ -51,13 +49,8 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
   const { token } = useContext(TokenContext) || {};
   const router = useRouter();
 
-  // 获取当前轮次, 并设置状态给父组件
+  // 获取当前轮次
   const { currentRound, error: errCurrentRound } = useCurrentRound();
-  useEffect(() => {
-    if (onRoundChange && typeof onRoundChange === 'function') {
-      onRoundChange(currentRound);
-    }
-  }, [currentRound, onRoundChange]);
 
   // 获取是否已提交
   const {
@@ -237,7 +230,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
                   <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
                 </Button>
               </div>
-              <div className="flex flex-col items-center mt-2 mb-4">
+              <div className="flex flex-col items-center my-4">
                 <div className="text-sm text-greyscale-600">
                   {isPendingVerificationInfo && '加载中...'}
                   {joinedAmountByActionIdByAccount != undefined &&

@@ -98,6 +98,23 @@ export const useStakedAmountByAccount = (tokenAddress: `0x${string}`, account: `
   return { stakedAmount: safeToBigInt(data), isPending, error };
 };
 
+/**
+ * Hook for numOfAccounts - 参与地址数
+ */
+export const useNumOfAccounts = (tokenAddress: `0x${string}`, actionId: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20JoinAbi,
+    functionName: 'numOfAccounts',
+    args: [tokenAddress, actionId],
+    query: {
+      enabled: !!tokenAddress && actionId !== undefined,
+    },
+  });
+
+  return { numOfAccounts: data ? safeToBigInt(data) : undefined, isPending, error };
+};
+
 // =====================
 // === 写入 Hook ===
 // =====================

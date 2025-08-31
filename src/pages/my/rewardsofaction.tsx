@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
-import { useActionRewardsByAccountByActionIdByRounds } from '@/src/hooks/contracts/useLOVE20RoundViewer';
+import { useActionRewardsByAccountByActionIdByRounds } from '@/src/hooks/contracts/useLOVE20MintViewer';
 import { useActionInfo } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Join';
 import { useMintActionReward } from '@/src/hooks/contracts/useLOVE20Mint';

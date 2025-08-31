@@ -1,12 +1,12 @@
 export interface ActionHead {
-  id: number;
-  author: string;
-  createAtBlock: number;
+  id: bigint;
+  author: `0x${string}`;
+  createAtBlock: bigint;
 }
 
 export interface ActionBody {
-  minStake: number;
-  maxRandomAccounts: number;
+  minStake: bigint;
+  maxRandomAccounts: bigint;
   whiteListAddress: `0x${string}`;
   title: string;
   verificationRule: string;
@@ -20,13 +20,13 @@ export interface ActionInfo {
 }
 
 export interface ActionSubmitInfo {
-  submitter: string;
-  actionId: number;
+  submitter: `0x${string}`;
+  actionId: bigint;
 }
 
 export interface VotingAction {
   action: ActionInfo;
-  submitter: string;
+  submitter: `0x${string}`;
   votesNum: bigint;
   myVotesNum: bigint;
 }
@@ -111,7 +111,7 @@ export interface TokenInfo {
   slAddress: `0x${string}`;
   stAddress: `0x${string}`;
   uniswapV2PairAddress: `0x${string}`;
-  initialStakeRound: number;
+  initialStakeRound: bigint;
 }
 
 export interface LaunchInfo {
@@ -161,4 +161,25 @@ export interface TokenStats {
   finishedRounds: bigint;
   actionsCount: bigint;
   joiningActionsCount: bigint;
+  childTokensCount: bigint;
+  launchingChildTokensCount: bigint;
+  launchedChildTokensCount: bigint;
+}
+
+export interface ActionVoter {
+  account: `0x${string}`;
+  voteCount: bigint;
+}
+
+export interface AccountVotingAction {
+  actionId: bigint;
+  round: bigint;
+  myVoteCount: bigint;
+  totalVoteCount: bigint;
+}
+
+export interface VerificationMatrix {
+  verifiers: `0x${string}`[];
+  verifiees: `0x${string}`[];
+  scores: bigint[][];
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useAccount } from 'wagmi';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 
 // my types & funcs
 import { ActionInfo } from '@/src/types/love20types';
@@ -30,7 +31,7 @@ interface VerifyAddressesProps {
   actionInfo: ActionInfo | undefined;
 }
 
-const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionId, actionInfo }) => {
+const VerifyStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionId, actionInfo }) => {
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
@@ -101,10 +102,24 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     ((Number(verifiedVotesNum) + Number(abstainVotes || 0n)) / Number(totalVotesNum || 0n)) * 100;
 
   return (
-    <div className="relative px-4 pb-4 w-full">
-      <div className="flex items-center">
-        <LeftTitle title="当前轮最新验证结果" />
-        <span className="text-sm text-greyscale-500 ml-2">(验证进度：{formatPercentage(verifiedVotesPercent)})</span>
+    <div className="relative pb-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <LeftTitle title={`第 ${currentRound} 轮验证`} />
+          {verifiedVotesPercent > 0 && (
+            <span className="text-sm text-greyscale-500 ml-2">
+              (当前进度：{formatPercentage(verifiedVotesPercent)})
+            </span>
+          )}
+        </div>
+        {verifiedVotesNum > 0 && (
+          <Link
+            href={`/action/verify_detail?symbol=${token?.symbol}&id=${actionId}&round=${currentRound}`}
+            className="text-sm text-secondary hover:text-secondary-600 "
+          >
+            查看明细 &gt;&gt;
+          </Link>
+        )}
       </div>
       <div className="flex justify-left mt-2">
         <RoundLite currentRound={currentRound} roundType="verify" />
@@ -173,7 +188,7 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                     {actionInfo && isExpanded && (
                       <tr className="border-b border-gray-100 bg-gray-50">
                         <td></td>
-                        <td colSpan={2} className="px-1 py-3">
+                        <td colSpan={3} className="px-1 py-3">
                           <div className="text-sm text-greyscale-600">
                             <div className="text-xs text-greyscale-400 mb-2">验证信息:</div>
                             {actionInfo.body.verificationKeys.map((key, i) => (
@@ -209,4 +224,4 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
   );
 };
 
-export default AddressesStatus;
+export default VerifyStatus;

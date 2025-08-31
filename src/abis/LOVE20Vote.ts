@@ -83,6 +83,69 @@ export const LOVE20VoteAbi = [
   },
   {
     "type": "function",
+    "name": "accountsByActionIdAtIndex",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "accountsByActionIdCount",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "round",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "actionId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "canVote",
     "inputs": [
       {

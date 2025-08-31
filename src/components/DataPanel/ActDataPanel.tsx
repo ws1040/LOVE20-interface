@@ -4,7 +4,7 @@ import React, { useContext, useEffect } from 'react';
 // my hooks
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useBalanceOf } from '@/src/hooks/contracts/useLOVE20Token';
-import { useEstimatedActionRewardOfCurrentRound } from '@/src/hooks/contracts/useLOVE20RoundViewer';
+import { useEstimatedActionRewardOfCurrentRound } from '@/src/hooks/contracts/useLOVE20MintViewer';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';

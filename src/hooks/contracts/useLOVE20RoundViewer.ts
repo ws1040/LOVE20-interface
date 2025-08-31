@@ -1,21 +1,21 @@
 // hooks/contracts/useLOVE20RoundViewer.ts
 
+import { useMemo } from 'react';
 import { useReadContract } from 'wagmi';
 import { LOVE20RoundViewerAbi } from '@/src/abis/LOVE20RoundViewer';
 import {
   JoinedAction,
   VerifiedAddress,
-  RewardInfo,
   VerificationInfo,
   JoinableAction,
   GovData,
   VerifyingAction,
   MyVerifyingAction,
   VotingAction,
-  TokenStats,
-  ActionReward,
+  ActionVoter,
+  AccountVotingAction,
+  VerificationMatrix,
   ActionInfo,
-  GovReward,
 } from '@/src/types/love20types';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_ROUNDVIEWER as `0x${string}`;
@@ -329,87 +329,7 @@ export const useVerificationInfosByAccount = (
   };
 };
 
-export const useActionRewardsByAccountOfLastRounds = (
-  tokenAddress: `0x${string}`,
-  account: `0x${string}`,
-  latestRounds: bigint,
-) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20RoundViewerAbi,
-    functionName: 'actionRewardsByAccountOfLastRounds',
-    args: [tokenAddress, account, latestRounds],
-    query: {
-      enabled: !!tokenAddress && !!account && !!latestRounds,
-    },
-  });
-  const actions = (data?.[0] as unknown as ActionInfo[]) || [];
-  const rewards = (data?.[1] as unknown as ActionReward[]) || [];
-  return { actions, rewards, isPending, error };
-};
 
-export const useHasUnmintedActionRewardOfLastRounds = (
-  tokenAddress: `0x${string}`,
-  account: `0x${string}`,
-  latestRounds: bigint,
-) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20RoundViewerAbi,
-    functionName: 'hasUnmintedActionRewardOfLastRounds',
-    args: [tokenAddress, account, latestRounds],
-    query: {
-      enabled: !!tokenAddress && !!account && !!latestRounds,
-    },
-  });
-  return { hasUnmintedActionRewardOfLastRounds: data as boolean, isPending, error };
-};
-
-export const useActionRewardsByAccountByActionIdByRounds = (
-  tokenAddress: `0x${string}`,
-  account: `0x${string}`,
-  actionId: bigint,
-  startRound: bigint,
-  endRound: bigint,
-) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20RoundViewerAbi,
-    functionName: 'actionRewardsByAccountByActionIdByRounds',
-    args: [tokenAddress, account, actionId, startRound, endRound],
-    query: {
-      enabled: !!tokenAddress && !!account && actionId !== undefined && startRound !== undefined && !!endRound,
-      // 翻页时保留上一页数据，避免数据瞬空导致 UI 闪烁
-      placeholderData: (previousData) => previousData,
-      refetchOnWindowFocus: false,
-    },
-  });
-  const rewards = (data as RewardInfo[]) || [];
-  return { rewards, isPending, error };
-};
-
-/**
- * Hook for govRewardsByAccountByRounds
- * Reads the gov rewards by account by rounds.
- */
-export const useGovRewardsByAccountByRounds = (
-  tokenAddress: `0x${string}`,
-  account: `0x${string}`,
-  startRound: bigint,
-  endRound: bigint,
-) => {
-  const { data, isPending, error } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: LOVE20RoundViewerAbi,
-    functionName: 'govRewardsByAccountByRounds',
-    args: [tokenAddress, account, startRound, endRound],
-    query: {
-      enabled: !!tokenAddress && !!account && startRound !== undefined && !!endRound,
-    },
-  });
-
-  return { rewards: data as GovReward[], isPending, error };
-};
 
 /**
  * Hook for govData
@@ -428,50 +348,86 @@ export const useGovData = (tokenAddress: `0x${string}`) => {
   return { govData: data as GovData, isPending, error };
 };
 
+
+
+
 /**
- * Hook for estimatedActionRewardOfCurrentRound
+ * Hook for actionVoters - 一个行动的投票详情
  */
-export const useEstimatedActionRewardOfCurrentRound = (tokenAddress: `0x${string}`) => {
+export const useActionVoters = (
+  tokenAddress: `0x${string}`,
+  round: bigint,
+  actionId: bigint
+) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20RoundViewerAbi,
-    functionName: 'estimatedActionRewardOfCurrentRound',
-    args: [tokenAddress],
+    functionName: 'actionVoters',
+    args: [tokenAddress, round, actionId],
     query: {
-      enabled: !!tokenAddress,
+      enabled: !!tokenAddress && round !== undefined && actionId !== undefined,
     },
   });
-  return { reward: data as bigint, isPending, error };
+
+  return { actionVoters: data as ActionVoter[] | undefined, isPending, error };
 };
 
 /**
- * Hook for estimatedGovRewardOfCurrentRound
+ * Hook for accountVotingHistory - 一个投票者的投票历史
  */
-export const useEstimatedGovRewardOfCurrentRound = (tokenAddress: `0x${string}`) => {
+export const useAccountVotingHistory = (
+  tokenAddress: `0x${string}`,
+  account: `0x${string}`,
+  startRound: bigint,
+  endRound: bigint
+) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20RoundViewerAbi,
-    functionName: 'estimatedGovRewardOfCurrentRound',
-    args: [tokenAddress],
+    functionName: 'accountVotingHistory',
+    args: [tokenAddress, account, startRound, endRound],
     query: {
-      enabled: !!tokenAddress,
+      enabled: !!tokenAddress && !!account && startRound !== undefined && endRound !== undefined,
     },
   });
-  return { reward: data as bigint, isPending, error };
+
+  const votingHistory = useMemo(() => {
+    if (!data) return undefined;
+    
+    const [accountActions, actionInfos] = data as readonly [readonly AccountVotingAction[], readonly ActionInfo[]];
+    
+    return {
+      accountActions: [...(accountActions || [])],
+      actionInfos: [...(actionInfos || [])],
+    };
+  }, [data]);
+
+  return {
+    votingHistory,
+    accountActions: votingHistory?.accountActions,
+    actionInfos: votingHistory?.actionInfos,
+    isPending,
+    error,
+  };
 };
 
 /**
- * Hook for tokenStatistics
+ * Hook for actionVerificationMatrix - 验证矩阵
  */
-export const useTokenStatistics = (tokenAddress: `0x${string}`, flag: boolean = true) => {
+export const useActionVerificationMatrix = (
+  tokenAddress: `0x${string}`,
+  round: bigint,
+  actionId: bigint
+) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20RoundViewerAbi,
-    functionName: 'tokenStatistics',
-    args: [tokenAddress],
+    functionName: 'actionVerificationMatrix',
+    args: [tokenAddress, round, actionId],
     query: {
-      enabled: !!tokenAddress && flag,
+      enabled: !!tokenAddress && round !== undefined && actionId !== undefined,
     },
   });
-  return { tokenStatistics: data as TokenStats, isPending, error };
+
+  return { verificationMatrix: data as VerificationMatrix | undefined, isPending, error };
 };

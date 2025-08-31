@@ -2,14 +2,14 @@
 import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
-import { ChevronRight, UserPen } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 import { JoinableAction } from '@/src/types/love20types';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 
 // my utils
 import { calculateActionAPY, calculateExpectedActionReward } from '@/src/lib/domainUtils';
-import { formatPercentage, formatSeconds, formatTokenAmount } from '@/src/lib/format';
+import { formatPercentage, formatTokenAmount } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -86,17 +86,12 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
               return votesB - votesA;
             })
             .map((actionDetail: JoinableAction, index: number) => {
-              // 判断当前账户是否已经加入该行动
-              const isJoined = actionDetail.joinedAmountOfAccount > 0n;
-
               // 计算投票占比
               const voteRatio =
                 Number(totalVotes) > 0 ? Number(joinableActions[index].votesNum || 0n) / Number(totalVotes) : 0;
 
               // 根据是否已加入，设置不同的链接
-              const href = isJoined
-                ? `/action/detail?id=${actionDetail.action.head.id}&type=join&symbol=${token?.symbol}`
-                : `/acting/join?id=${actionDetail.action.head.id}&symbol=${token?.symbol}`;
+              const href = `/action/info?id=${actionDetail.action.head.id}&symbol=${token?.symbol}`;
 
               return (
                 <Card key={actionDetail.action.head.id} className="shadow-none">
@@ -157,19 +152,6 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                 </Card>
               );
             })}
-
-          <div className="text-sm mt-4 text-greyscale-500 text-center">
-            <span className="text-red-500 font-bold">提醒：</span>
-            <span>
-              每个行动阶段，最后{process.env.NEXT_PUBLIC_JOIN_END_PHASE_BLOCKS}
-              个区块（约
-              {formatSeconds(
-                (Number(process.env.NEXT_PUBLIC_JOIN_END_PHASE_BLOCKS) * Number(process.env.NEXT_PUBLIC_BLOCK_TIME)) /
-                  100,
-              )}
-              ），无法参与行动报名
-            </span>
-          </div>
         </div>
       )}
     </div>

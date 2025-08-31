@@ -210,6 +210,14 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
     selector = '0x' + customErrorMatch[1];
   }
 
+  // 匹配 "Execution reverted with reason: custom error 0xXXXXXXXX" 格式
+  if (!selector) {
+    const executionRevertMatch = rawMessage.match(/Execution reverted with reason:\s*custom error 0x([a-fA-F0-9]{8})/i);
+    if (executionRevertMatch) {
+      selector = '0x' + executionRevertMatch[1];
+    }
+  }
+
   // 匹配 Viem 格式：Data:   0xd6e1a062 (4 bytes)
   if (!selector) {
     const viemMatch = rawMessage.match(/Data:\s*0x([a-fA-F0-9]{8})\s*\(4 bytes\)/i);

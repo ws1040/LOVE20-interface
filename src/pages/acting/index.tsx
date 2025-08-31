@@ -67,7 +67,7 @@ const ActingPage = () => {
         ) : (
           // 正常显示社区内容
           <>
-            <TokenTab />
+            {/* <TokenTab /> */}
             <ActDataPanel currentRound={currentRound} />
             <JoiningActionList currentRound={currentRound} />
           </>

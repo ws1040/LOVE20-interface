@@ -5,7 +5,8 @@ import React, { useContext, useEffect } from 'react';
 import { Info } from 'lucide-react';
 
 // my hooks
-import { useGovData, useEstimatedGovRewardOfCurrentRound } from '@/src/hooks/contracts/useLOVE20RoundViewer';
+import { useGovData } from '@/src/hooks/contracts/useLOVE20RoundViewer';
+import { useEstimatedGovRewardOfCurrentRound } from '@/src/hooks/contracts/useLOVE20MintViewer';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';

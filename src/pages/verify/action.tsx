@@ -74,12 +74,7 @@ const VerifyPage = () => {
             />
           )}
           {remainingVotes >= 0n && remainingVotes <= 1n && (
-            <AddressesStatus
-              currentRound={currentRound}
-              actionId={actionId}
-              actionInfo={actionInfo}
-              remainingVotes={remainingVotes}
-            />
+            <AddressesStatus currentRound={currentRound} actionId={actionId} actionInfo={actionInfo} />
           )}
           {remainingVotes < 0n && <LoadingIcon />}
         </div>

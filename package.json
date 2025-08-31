@@ -3,7 +3,8 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "next dev --hostname 0.0.0.0 --port 3000",
+    "dev": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" NEXT_TELEMETRY_DISABLED=1 next dev --hostname 0.0.0.0 --port 3000",
+    "dev:fast": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" NEXT_TELEMETRY_DISABLED=1 SENTRY_TUNNEL=false next dev --hostname 0.0.0.0 --port 3000",
     "build": "npx next build",
     "test": "cross-env NODE_ENV=test npx next build",
     "public-test": "cp .env.public_test .env.local && npx next build",

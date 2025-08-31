@@ -27,7 +27,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 const VotingSubmitPage = () => {
   const { token } = useContext(TokenContext) || {};
-  const [percentages, setPercentages] = useState<{ [key: number]: number }>({});
+  const [percentages, setPercentages] = useState<{ [key: string]: number }>({});
   const { address: account } = useAccount();
   const { currentRound, isPending: isPendingCurrentRound, error: errCurrentRound } = useCurrentRound();
 
@@ -61,7 +61,7 @@ const VotingSubmitPage = () => {
     }
   }, [idList, percentages]);
 
-  const handlePercentageChange = (actionId: number, value: number) => {
+  const handlePercentageChange = (actionId: string, value: number) => {
     if (idList.length === 1) {
       setPercentages({ [actionId]: value });
       return;
@@ -236,12 +236,12 @@ const VotingSubmitPage = () => {
                           max="100"
                           value={
                             idList.length === 1
-                              ? percentages[action.head.id] || 100
+                              ? percentages[action.head.id.toString()] || 100
                               : isLast
                               ? lastValue
-                              : percentages[action.head.id] || ''
+                              : percentages[action.head.id.toString()] || ''
                           }
-                          onChange={(e) => handlePercentageChange(action.head.id, Number(e.target.value))}
+                          onChange={(e) => handlePercentageChange(action.head.id.toString(), Number(e.target.value))}
                           className="p-2 border rounded w-16"
                           disabled={idList.length > 1 && isLast}
                           placeholder=""

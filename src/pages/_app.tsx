@@ -97,7 +97,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <SidebarProvider>
               <ErrorProvider>
                 <AppSidebar />
-                <SidebarInset>
+                <SidebarInset className="min-w-0">
                   <div className="min-h-screen bg-background flex flex-col pb-16 md:pb-0">
                     <Toaster
                       position="top-center"

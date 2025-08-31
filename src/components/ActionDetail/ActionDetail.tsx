@@ -1,7 +1,5 @@
 'use client';
 import React, { useContext, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
 // my hooks
 import { useActionInfo, useSubmitInfo } from '@/src/hooks/contracts/useLOVE20Submit';
@@ -76,16 +74,6 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
 
   return (
     <>
-      <div className="mx-auto p-4 pb-2 border-t border-greyscale-100">
-        <div className="flex justify-between items-center mb-2">
-          <LeftTitle title="行动详情" />
-          {/* {showVerifyHistory && (
-            <Button variant="link" className="text-secondary border-secondary" asChild>
-              <Link href={`/my/rewardsofaction?id=${actionId}&symbol=${token?.symbol}`}>查看我的激励 &gt;&gt;</Link>
-            </Button>
-          )} */}
-        </div>
-      </div>
       <div className="mx-auto p-4 pb-2 ">
         <div className="flex flex-col">
           <span className="text-sm text-greyscale-500">No.{actionInfo?.head.id.toString()}</span>

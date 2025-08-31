@@ -9,7 +9,8 @@ import { useRouter } from 'next/router';
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
-import { useActionRewardsByAccountOfLastRounds } from '@/src/hooks/contracts/useLOVE20RoundViewer';
+import { useActionRewardsByAccountOfLastRounds } from '@/src/hooks/contracts/useLOVE20MintViewer';
+import { useActionInfosByIds } from '@/src/hooks/contracts/useLOVE20RoundViewer';
 import { useMintActionReward } from '@/src/hooks/contracts/useLOVE20Mint';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
@@ -42,11 +43,25 @@ const ActRewardsPage: React.FC = () => {
 
   // 获取最近 N 轮的行动激励
   const {
-    actions,
     rewards,
     isPending: isLoadingRewards,
     error: errorLoadingRewards,
   } = useActionRewardsByAccountOfLastRounds(token?.address as `0x${string}`, account as `0x${string}`, LAST_ROUNDS);
+
+  // 获取唯一的行动 ID 列表
+  const actionIds = useMemo(() => {
+    if (!rewards) return [];
+    const uniqueIds = new Set<bigint>();
+    rewards.forEach(reward => uniqueIds.add(reward.actionId));
+    return Array.from(uniqueIds);
+  }, [rewards]);
+
+  // 获取行动信息
+  const {
+    actionInfos: actions,
+    isPending: isLoadingActions,
+    error: errorLoadingActions,
+  } = useActionInfosByIds(token?.address as `0x${string}`, actionIds);
 
   // 将激励按行动分组（显示所有行动，没有激励的显示提示）
   const grouped = useMemo<ActionRewardsGroup[]>(() => {
@@ -150,8 +165,9 @@ const ActRewardsPage: React.FC = () => {
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
     if (errorLoadingRewards) handleContractError(errorLoadingRewards, 'dataViewer');
+    if (errorLoadingActions) handleContractError(errorLoadingActions, 'dataViewer');
     if (writeError) handleContractError(writeError, 'mint');
-  }, [errorLoadingRewards, writeError, handleContractError]);
+  }, [errorLoadingRewards, errorLoadingActions, writeError, handleContractError]);
 
   return (
     <>
@@ -163,7 +179,7 @@ const ActRewardsPage: React.FC = () => {
           <div className="flex flex-col space-y-6 p-4">
             <LeftTitle title="铸造行动激励" />
 
-            {isLoadingRewards ? (
+            {(isLoadingRewards || isLoadingActions) ? (
               <LoadingIcon />
             ) : (
               displayedGroups.map((group) => (
