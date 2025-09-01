@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
 
 // my types & funcs
 import { ActionInfo } from '@/src/types/love20types';
@@ -32,6 +32,7 @@ interface VerifyAddressesProps {
 }
 
 const VerifyStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionId, actionInfo }) => {
+  const router = useRouter();
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
@@ -113,12 +114,14 @@ const VerifyStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionId, 
           )}
         </div>
         {verificationInfos?.length > 0 && (
-          <Link
-            href={`/action/verify_detail?symbol=${token?.symbol}&id=${actionId}&round=${currentRound}`}
+          <button
+            onClick={() =>
+              router.push(`/action/verify_detail?symbol=${token?.symbol}&id=${actionId}&round=${currentRound}`)
+            }
             className="text-sm text-secondary hover:text-secondary-600 "
           >
             查看明细 &gt;&gt;
-          </Link>
+          </button>
         )}
       </div>
       <div className="flex justify-left mt-2">

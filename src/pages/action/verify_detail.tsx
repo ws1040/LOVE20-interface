@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 
@@ -14,10 +14,12 @@ import Header from '@/src/components/Header';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import ActionHeader from '@/src/components/Action/ActionHeader';
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
+import ChangeRound from '@/src/components/Common/ChangeRound';
+import LeftTitle from '@/src/components/Common/LeftTitle';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
-import { formatPercentage, formatTokenAmount } from '@/src/lib/format';
+import { formatPercentage, formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 
 const VerifyDetailPage = () => {
   const router = useRouter();
@@ -26,25 +28,50 @@ const VerifyDetailPage = () => {
   const roundNum = round ? BigInt(round as string) : undefined;
   const { address: account } = useAccount();
   const { token } = useContext(TokenContext) || {};
+  const [selectedRound, setSelectedRound] = useState<bigint>(0n);
 
   // 零地址常量，用于识别弃权票
   const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
   // 获取页面数据
-  const { actionInfo, participantCount, totalAmount, userJoinedAmount, isJoined, isPending, error } = useActionPageData(
-    {
+  const { actionInfo, participantCount, totalAmount, userJoinedAmount, isJoined, isPending, error, currentRound } =
+    useActionPageData({
       tokenAddress: token?.address,
       actionId,
       account,
-    },
-  );
+    });
+
+  // 初始化selectedRound
+  useEffect(() => {
+    if (roundNum) {
+      // 如果URL中有round参数，使用它
+      setSelectedRound(roundNum);
+    } else if (token && currentRound && currentRound - BigInt(token.initialStakeRound) >= 2n) {
+      // 否则默认使用当前轮次-2（最新可验证轮次）
+      setSelectedRound(currentRound - 2n);
+    }
+  }, [roundNum, currentRound, token]);
 
   // 获取验证矩阵数据
   const {
     verificationMatrix,
     isPending: isMatrixPending,
     error: matrixError,
-  } = useActionVerificationMatrix(token?.address || '0x', roundNum || 0n, actionId || 0n);
+  } = useActionVerificationMatrix(token?.address || '0x', selectedRound || 0n, actionId || 0n);
+
+  // 处理轮次切换
+  const handleChangedRound = (round: number) => {
+    setSelectedRound(BigInt(round));
+    // 同时更新URL参数
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, round: round.toString() },
+      },
+      undefined,
+      { shallow: true },
+    );
+  };
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -133,15 +160,29 @@ const VerifyDetailPage = () => {
       <>
         {/* 标题部分 */}
         <div className="bg-white rounded-lg mx-4 mb-4">
-          <div className="px-4 py-4">
-            <h2 className="text-lg font-bold">第 {roundNum?.toString()} 轮验证明细公示：</h2>
+          <div className="px-4 ">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                {selectedRound > 0 && (
+                  <>
+                    <LeftTitle title={`第 ${selectedRound.toString()} 轮验证明细`} />
+                    <span className="text-sm text-greyscale-500 ml-2">(</span>
+                    <ChangeRound
+                      currentRound={token && currentRound ? formatRoundForDisplay(currentRound - 2n, token) : 0n}
+                      handleChangedRound={handleChangedRound}
+                    />
+                    <span className="text-sm text-greyscale-500">)</span>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
         {/* 表格外层包装器 - 严格控制宽度，防止影响页面 */}
         <div className="w-full max-w-full overflow-hidden px-4">
           {/* 表格容器 - 仅此处允许横向滚动，WebView优化 */}
-          <div className="overflow-x-auto bg-white rounded-lg border border-gray-200 max-w-full table-container-webview">
+          <div className="overflow-x-auto bg-white max-w-full table-container-webview">
             <table className="w-full min-w-[800px]" style={{ tableLayout: 'fixed' }}>
               <thead>
                 <tr>
@@ -154,7 +195,7 @@ const VerifyDetailPage = () => {
                     }}
                   >
                     <div className="text-gray-600 mb-1 whitespace-nowrap" style={{ fontSize: '12px' }}>
-                      验证者 \ 行动参与者
+                      验证者&nbsp;&nbsp;\&nbsp;&nbsp;行动参与者
                     </div>
                   </th>
                   {verifiees.map((verifiee, index) => (
@@ -251,6 +292,64 @@ const VerifyDetailPage = () => {
                     </tr>
                   );
                 })}
+
+                {/* 汇总行 */}
+                <tr className="">
+                  <td
+                    className="border border-gray-300 p-2 bg-blue-50 sticky left-0 z-10 font-bold"
+                    style={{
+                      WebkitTextSizeAdjust: '100%',
+                      width: '100px',
+                      minWidth: '100px',
+                    }}
+                  >
+                    <div className="text-center text-sm text-blue-600">汇总 ({verifiers.length} 验证者)</div>
+                  </td>
+                  {verifiees.map((verifiee, verifieeIndex) => {
+                    // 计算每列（每个被验证者）获得的总票数
+                    const columnTotal = verifiers.reduce((total, _, verifierIndex) => {
+                      const score = scores[verifierIndex]?.[verifieeIndex];
+                      return total + (score !== undefined ? Number(score) : 0);
+                    }, 0);
+
+                    // 计算百分比
+                    const grandTotal = verifierTotalScores.reduce((sum, score) => sum + score, 0);
+                    const percentage = grandTotal > 0 ? (columnTotal / grandTotal) * 100 : 0;
+
+                    return (
+                      <td
+                        key={`summary-${verifieeIndex}`}
+                        className="border border-gray-300 p-1 text-center bg-blue-50"
+                        style={{
+                          WebkitTextSizeAdjust: '100%',
+                          width: '100px',
+                          minWidth: '100px',
+                        }}
+                      >
+                        <div>
+                          <span className="text-sm font-mono font-bold text-blue-600 whitespace-nowrap">
+                            {formatTokenAmount(BigInt(columnTotal))}
+                          </span>
+                          <span className="text-blue-500">({formatPercentage(percentage)})</span>
+                        </div>
+                      </td>
+                    );
+                  })}
+                  {/* 总计列 */}
+                  <td
+                    className="border border-gray-300 p-1 text-center bg-blue-50"
+                    style={{
+                      WebkitTextSizeAdjust: '100%',
+                      width: '100px',
+                      minWidth: '100px',
+                      maxWidth: '100px',
+                    }}
+                  >
+                    <span className="text-sm font-mono font-bold text-blue-600">
+                      {formatTokenAmount(BigInt(verifierTotalScores.reduce((sum, score) => sum + score, 0)))}
+                    </span>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>

@@ -45,7 +45,7 @@ export default function BasicInfo({ actionInfo }: BasicInfoProps) {
       {actionInfo.body.verificationRule && (
         <div className="mt-4">
           <div className="font-bold text-sm mb-2">验证规则:</div>
-          <div className="text-gray-700 whitespace-pre-wrap">
+          <div className="whitespace-pre-wrap leading-loose bg-gray-50 p-2 rounded-md">
             <LinkIfUrl text={actionInfo.body.verificationRule} />
           </div>
         </div>
@@ -69,7 +69,7 @@ export default function BasicInfo({ actionInfo }: BasicInfoProps) {
         <span className="font-bold text-sm">白名单:</span>
         <div>
           {actionInfo.body.whiteListAddress === '0x0000000000000000000000000000000000000000' ? (
-            <span className="text-gray-400">无限制</span>
+            <span className="text-gray-400 text-sm">无限制</span>
           ) : (
             <AddressWithCopyButton
               address={actionInfo.body.whiteListAddress}

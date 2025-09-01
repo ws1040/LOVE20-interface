@@ -17,7 +17,7 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import AlertBox from '@/src/components/Common/AlertBox';
 import Header from '@/src/components/Header';
 
-type TabType = 'basic' | 'voting' | 'verification';
+type TabType = 'basic' | 'vote' | 'verify';
 
 export default function ActionInfoPage() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function ActionInfoPage() {
   const [activeTab, setActiveTab] = useState<TabType>('basic');
 
   // 从URL获取参数
-  const { symbol, id } = router.query;
+  const { symbol, id, tab } = router.query;
   const actionId = id ? BigInt(id as string) : undefined;
 
   // 获取页面数据
@@ -36,6 +36,13 @@ export default function ActionInfoPage() {
       actionId,
       account,
     });
+
+  // 初始化tab状态
+  useEffect(() => {
+    if (tab && ['basic', 'vote', 'verify'].includes(tab as string)) {
+      setActiveTab(tab as TabType);
+    }
+  }, [tab]);
 
   // URL参数验证
   useEffect(() => {
@@ -69,9 +76,26 @@ export default function ActionInfoPage() {
   // Tab配置
   const tabs: { key: TabType; label: string }[] = [
     { key: 'basic', label: '行动详情' },
-    { key: 'voting', label: '投票公示' },
-    { key: 'verification', label: '验证公示' },
+    { key: 'vote', label: '投票公示' },
+    { key: 'verify', label: '验证公示' },
   ];
+
+  // 处理tab切换
+  const handleTabChange = (tabKey: TabType) => {
+    setActiveTab(tabKey);
+    // 更新URL参数并添加到历史记录
+    const currentQuery = { ...router.query };
+    currentQuery.tab = tabKey;
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: currentQuery,
+      },
+      undefined,
+      { shallow: true },
+    );
+  };
 
   // 渲染Tab内容
   const renderTabContent = () => {
@@ -105,9 +129,9 @@ export default function ActionInfoPage() {
     switch (activeTab) {
       case 'basic':
         return <BasicInfo actionInfo={actionInfo} />;
-      case 'voting':
+      case 'vote':
         return <VotingDetails actionId={actionId} currentRound={currentRound} />;
-      case 'verification':
+      case 'verify':
         return <VerificationTabs actionId={actionId} currentRound={currentRound || 0n} actionInfo={actionInfo} />;
       default:
         return null;
@@ -136,7 +160,7 @@ export default function ActionInfoPage() {
             {tabs.map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => handleTabChange(tab.key)}
                 className={`flex-1 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === tab.key
                     ? 'border-primary text-primary'

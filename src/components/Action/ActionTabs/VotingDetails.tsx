@@ -1,4 +1,6 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -21,8 +23,21 @@ interface VotingDetailsProps {
 }
 
 export default function VotingDetails({ actionId, currentRound }: VotingDetailsProps) {
+  const router = useRouter();
   const { token } = useContext(TokenContext) || {};
   const [selectedRound, setSelectedRound] = useState<bigint>(currentRound || 1n);
+
+  // 从URL获取round参数
+  const { round: urlRound } = router.query;
+
+  // 初始化轮次状态
+  useEffect(() => {
+    if (urlRound && !isNaN(Number(urlRound))) {
+      setSelectedRound(BigInt(urlRound as string));
+    } else if (currentRound) {
+      setSelectedRound(currentRound);
+    }
+  }, [urlRound, currentRound]);
 
   const { actionVoters, isPending, error } = useActionVoters(
     token?.address || '0x0000000000000000000000000000000000000000',
@@ -31,7 +46,21 @@ export default function VotingDetails({ actionId, currentRound }: VotingDetailsP
   );
 
   const handleChangedRound = (round: number) => {
-    setSelectedRound(BigInt(round));
+    const newRound = BigInt(round);
+    setSelectedRound(newRound);
+
+    // 更新URL参数并添加到历史记录
+    const currentQuery = { ...router.query };
+    currentQuery.round = newRound.toString();
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: currentQuery,
+      },
+      undefined,
+      { shallow: true },
+    );
   };
 
   if (!token) {
@@ -134,7 +163,19 @@ export default function VotingDetails({ actionId, currentRound }: VotingDetailsP
                 <tr key={voter.account} className="border-b border-gray-100">
                   <td className="px-1 text-greyscale-400">{index + 1}</td>
                   <td className="px-1">
-                    <AddressWithCopyButton address={voter.account} showCopyButton={true} />
+                    <Link href={`/vote/history?account=${voter.account}`}>
+                      <div className="inline-flex items-center bg-gray-50 hover:bg-gray-100 rounded-md px-2 py-1 transition-colors duration-150 active:bg-gray-200">
+                        <AddressWithCopyButton address={voter.account} showCopyButton={true} />
+                        <svg
+                          className="h-3 w-3 text-gray-400 ml-2 opacity-60 flex-shrink-0"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </Link>
                   </td>
                   <td className="px-1 text-right font-mono text-secondary">{formatTokenAmount(voter.voteCount)}</td>
                   <td className="px-1 text-right text-greyscale-500">{calculatePercentage(voter.voteCount)}%</td>

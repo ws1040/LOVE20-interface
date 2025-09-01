@@ -36,9 +36,9 @@ export default function ActionButtons({ isJoined, actionId, userJoinedAmount, is
           <Link href={joinActionHref}>加入行动 &gt;&gt;</Link>
         </Button>
       ) : (
-        <Button className="w-1/2" asChild>
-          <Link href={myParticipationHref}>查看我的参与 &gt;&gt;</Link>
-        </Button>
+        <Link className="text-secondary hover:text-secondary/80 text-sm cursor-pointer" href={myParticipationHref}>
+          我的参与 &gt;&gt;
+        </Link>
       )}
     </div>
   );

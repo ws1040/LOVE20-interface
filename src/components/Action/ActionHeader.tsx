@@ -49,12 +49,12 @@ export default function ActionHeader({
 
   return (
     <div
-      className={`bg-gray-100 rounded-lg p-4 text-sm my-4 ${
+      className={`bg-gray-100 rounded-lg px-4 pt-2 pb-2 text-sm my-4 ${
         linkToActionInfo ? 'cursor-pointer hover:bg-gray-200 transition-colors' : ''
       }`}
       onClick={handleClick}
     >
-      <div className="mb-3">
+      <div className="mb-2">
         <h1 className="text-lg mb-1">
           <div className="flex items-baseline">
             <span className="text-gray-400 text-sm">No.</span>
@@ -88,7 +88,7 @@ export default function ActionHeader({
             className="text-secondary hover:text-secondary/80 text-sm cursor-pointer"
             href={`/action/info?symbol=${token?.symbol}&id=${actionInfo.head.id}`}
           >
-            查看详情 &gt;&gt;
+            行动详情 &gt;&gt;
           </Link>
         </div>
       )}

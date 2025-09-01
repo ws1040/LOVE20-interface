@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
 
 // my contexts
@@ -23,7 +23,11 @@ import { Button } from '@/components/ui/button';
 
 // utils
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
-import { setActionRewardNeedMinted, loadActionRewardNotice, buildActionRewardNoticeKey } from '@/src/lib/actionRewardNotice';
+import {
+  setActionRewardNeedMinted,
+  loadActionRewardNotice,
+  buildActionRewardNoticeKey,
+} from '@/src/lib/actionRewardNotice';
 
 // types
 import { ActionInfo, ActionReward } from '@/src/types/love20types';
@@ -39,7 +43,6 @@ const ActRewardsPage: React.FC = () => {
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
-  const chainId = useChainId();
 
   // 获取最近 N 轮的行动激励
   const {
@@ -52,7 +55,7 @@ const ActRewardsPage: React.FC = () => {
   const actionIds = useMemo(() => {
     if (!rewards) return [];
     const uniqueIds = new Set<bigint>();
-    rewards.forEach(reward => uniqueIds.add(reward.actionId));
+    rewards.forEach((reward) => uniqueIds.add(reward.actionId));
     return Array.from(uniqueIds);
   }, [rewards]);
 
@@ -125,10 +128,10 @@ const ActRewardsPage: React.FC = () => {
   // 检查是否有未铸造的激励，如果没有则清除 localStorage 缓存
   useEffect(() => {
     if (!token?.address || !account || isLoadingRewards || !rewards) return;
-    
+
     // 检查是否存在未铸造的激励
-    const hasUnmintedRewards = rewards.some(r => r.reward > 0n && !r.isMinted);
-    
+    const hasUnmintedRewards = rewards.some((r) => r.reward > 0n && !r.isMinted);
+
     // 如果没有未铸造的激励，且本地缓存显示需要铸造，则清除缓存
     if (!hasUnmintedRewards) {
       const cached = loadActionRewardNotice(account, token.address);
@@ -179,7 +182,7 @@ const ActRewardsPage: React.FC = () => {
           <div className="flex flex-col space-y-6 p-4">
             <LeftTitle title="铸造行动激励" />
 
-            {(isLoadingRewards || isLoadingActions) ? (
+            {isLoadingRewards || isLoadingActions ? (
               <LoadingIcon />
             ) : (
               displayedGroups.map((group) => (

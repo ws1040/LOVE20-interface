@@ -60,6 +60,7 @@ const nextConfig = {
       '/vote': { page: '/vote' },
       '/vote/actions': { page: '/vote/actions' },
       '/vote/actions4submit': { page: '/vote/actions4submit' },
+      '/vote/history': { page: '/vote/history' },
       '/vote/vote': { page: '/vote/vote' },
     };
   },

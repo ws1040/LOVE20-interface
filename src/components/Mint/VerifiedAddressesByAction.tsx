@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
 
 // my hooks
 import { useHandleContractError } from '@/src/lib/errorUtils';
@@ -18,7 +18,6 @@ import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton
 import ChangeRound from '@/src/components/Common/ChangeRound';
 import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // my funcs
 import { formatRoundForDisplay, formatTokenAmountInteger } from '@/src/lib/format';
@@ -29,16 +28,23 @@ const VerifiedAddressesByAction: React.FC<{
   actionId: bigint;
   actionInfo: ActionInfo;
 }> = ({ currentJoinRound, actionId, actionInfo }) => {
+  const router = useRouter();
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
   const [selectedRound, setSelectedRound] = useState(0n);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
+  // 从URL获取round参数
+  const { round: urlRound } = router.query;
+
+  // 初始化轮次状态
   useEffect(() => {
-    if (token && currentJoinRound - BigInt(token.initialStakeRound) >= 2n) {
+    if (urlRound && !isNaN(Number(urlRound))) {
+      setSelectedRound(BigInt(urlRound as string));
+    } else if (token && currentJoinRound - BigInt(token.initialStakeRound) >= 2n) {
       setSelectedRound(currentJoinRound - 2n);
     }
-  }, [currentJoinRound, token]);
+  }, [urlRound, currentJoinRound, token]);
 
   // 读取验证地址的激励
   const {
@@ -70,7 +76,21 @@ const VerifiedAddressesByAction: React.FC<{
   }, [verifiedAddresses]);
 
   const handleChangedRound = (round: number) => {
-    setSelectedRound(BigInt(round));
+    const newRound = BigInt(round);
+    setSelectedRound(newRound);
+
+    // 更新URL参数并添加到历史记录
+    const currentQuery = { ...router.query };
+    currentQuery.round = newRound.toString();
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: currentQuery,
+      },
+      undefined,
+      { shallow: true },
+    );
   };
 
   // 错误处理
@@ -136,12 +156,14 @@ const VerifiedAddressesByAction: React.FC<{
           )}
         </div>
         {selectedRound > 0 && addresses.length > 0 && (
-          <Link
-            href={`/action/verify_detail?symbol=${token?.symbol}&id=${actionId}&round=${selectedRound}`}
+          <button
+            onClick={() =>
+              router.push(`/action/verify_detail?symbol=${token?.symbol}&id=${actionId}&round=${selectedRound}`)
+            }
             className="text-sm text-secondary hover:text-secondary-600 transition-colors"
           >
             查看明细 &gt;&gt;
-          </Link>
+          </button>
         )}
       </div>
       {isPendingVerifiedAddresses || isPendingVerificationInfosByAction ? (
@@ -149,7 +171,7 @@ const VerifiedAddressesByAction: React.FC<{
           <LoadingIcon />
         </div>
       ) : addresses.length === 0 ? (
-        selectedRound > 0n && <div className="text-center text-sm text-greyscale-400 p-4">没有可铸造激励的地址</div>
+        selectedRound > 0n && <div className="text-center text-sm text-greyscale-400 p-4">没有验证地址</div>
       ) : (
         <table className="table w-full">
           <thead>
