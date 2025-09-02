@@ -303,7 +303,7 @@ const VerifyDetailPage = () => {
                       minWidth: '100px',
                     }}
                   >
-                    <div className="text-center text-sm text-blue-600">汇总 ({verifiers.length} 验证者)</div>
+                    <div className="text-center text-sm text-blue-600">汇总 ({verifiers.length} 个验证者)</div>
                   </td>
                   {verifiees.map((verifiee, verifieeIndex) => {
                     // 计算每列（每个被验证者）获得的总票数
