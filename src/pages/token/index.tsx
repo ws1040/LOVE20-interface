@@ -328,13 +328,13 @@ const TokenPage = () => {
                         <CardTitle className="flex items-center justify-between text-lg">
                           <div className="flex items-center gap-2">
                             <Rocket className="h-5 w-5 text-primary" />
-                            发射情况
+                            公平发射
                           </div>
                           <Link
                             href="/launch"
                             className="text-sm text-secondary hover:text-secondary/80 transition-colors"
                           >
-                            查看公平发射 &gt;&gt;
+                            查看详情 &gt;&gt;
                           </Link>
                         </CardTitle>
                       </CardHeader>
