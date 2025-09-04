@@ -6,7 +6,7 @@ const nextConfig = {
   ...(process.env.NODE_ENV !== 'development' && { output: 'export' }),
   basePath: process.env.BASE_PATH || '',
   assetPrefix: process.env.ASSET_PREFIX || '',
-  allowedDevOrigins: ['127.0.0.1:3000', 'localhost:3000', '127.0.0.1', 'localhost', '192.168.3.2:3000', '192.168.3.2'],
+  allowedDevOrigins: ['127.0.0.1:3000', 'localhost:3000', '127.0.0.1', 'localhost'],
   productionBrowserSourceMaps: false, // 禁用生产环境源码映射以避免404错误
 
   // Android 10 兼容性配置
@@ -28,7 +28,7 @@ const nextConfig = {
     }),
   },
 
-  // 针对旧版本浏览器的 Webpack 配置  
+  // 针对旧版本浏览器的 Webpack 配置
   webpack: (config, { dev, isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {

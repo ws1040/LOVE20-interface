@@ -28,7 +28,7 @@ const VerifyDetailPage = () => {
   const roundNum = round ? BigInt(round as string) : undefined;
   const { address: account } = useAccount();
   const { token } = useContext(TokenContext) || {};
-  const [selectedRound, setSelectedRound] = useState<bigint>(0n);
+  const [selectedRound, setSelectedRound] = useState<bigint>(BigInt(0));
 
   // 零地址常量，用于识别弃权票
   const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
@@ -46,9 +46,9 @@ const VerifyDetailPage = () => {
     if (roundNum) {
       // 如果URL中有round参数，使用它
       setSelectedRound(roundNum);
-    } else if (token && currentRound && currentRound - BigInt(token.initialStakeRound) >= 2n) {
+    } else if (token && currentRound && currentRound - BigInt(token.initialStakeRound) >= BigInt(2)) {
       // 否则默认使用当前轮次-2（最新可验证轮次）
-      setSelectedRound(currentRound - 2n);
+      setSelectedRound(currentRound - BigInt(2));
     }
   }, [roundNum, currentRound, token]);
 
@@ -57,7 +57,7 @@ const VerifyDetailPage = () => {
     verificationMatrix,
     isPending: isMatrixPending,
     error: matrixError,
-  } = useActionVerificationMatrix(token?.address || '0x', selectedRound || 0n, actionId || 0n);
+  } = useActionVerificationMatrix(token?.address || '0x', selectedRound || BigInt(0), actionId || BigInt(0));
 
   // 处理轮次切换
   const handleChangedRound = (round: number) => {
@@ -168,7 +168,9 @@ const VerifyDetailPage = () => {
                     <LeftTitle title={`第 ${selectedRound.toString()} 轮验证明细`} />
                     <span className="text-sm text-greyscale-500 ml-2">(</span>
                     <ChangeRound
-                      currentRound={token && currentRound ? formatRoundForDisplay(currentRound - 2n, token) : 0n}
+                      currentRound={
+                        token && currentRound ? formatRoundForDisplay(currentRound - BigInt(2), token) : BigInt(0)
+                      }
                       handleChangedRound={handleChangedRound}
                     />
                     <span className="text-sm text-greyscale-500">)</span>

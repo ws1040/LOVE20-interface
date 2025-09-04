@@ -132,7 +132,9 @@ export default function ActionInfoPage() {
       case 'vote':
         return <VotingDetails actionId={actionId} currentRound={currentRound} />;
       case 'verify':
-        return <VerificationTabs actionId={actionId} currentRound={currentRound || 0n} actionInfo={actionInfo} />;
+        return (
+          <VerificationTabs actionId={actionId} currentRound={currentRound || BigInt(0)} actionInfo={actionInfo} />
+        );
       default:
         return null;
     }

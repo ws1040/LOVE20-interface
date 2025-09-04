@@ -170,8 +170,8 @@ export default function NewAction() {
     const verificationInfoGuides = values.verificationPairs.map((p) => p.value);
 
     const actionBody = {
-      minStake: values.minStake ? parseUnits(values.minStake) : 0n,
-      maxRandomAccounts: values.rewardAddressCount ? BigInt(values.rewardAddressCount) : 0n,
+      minStake: values.minStake ? parseUnits(values.minStake) : BigInt(0),
+      maxRandomAccounts: values.rewardAddressCount ? BigInt(values.rewardAddressCount) : BigInt(0),
       whiteListAddress:
         values.whiteListAddress && values.whiteListAddress.trim() !== ''
           ? (values.whiteListAddress.trim() as `0x${string}`)
