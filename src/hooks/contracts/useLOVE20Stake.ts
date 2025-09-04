@@ -30,7 +30,7 @@ export const useAccountStakeStatus = (token: `0x${string}`, account: `0x${string
   return {
     slAmount: data?.slAmount ? safeToBigInt(data.slAmount) : undefined,
     stAmount: data?.stAmount ? safeToBigInt(data.stAmount) : undefined,
-    promisedWaitingPhases: data?.promisedWaitingPhases ? safeToBigInt(data.promisedWaitingPhases) : 0n,
+    promisedWaitingPhases: data?.promisedWaitingPhases ? safeToBigInt(data.promisedWaitingPhases) : BigInt(0),
     requestedUnstakeRound: data?.requestedUnstakeRound ? safeToBigInt(data.requestedUnstakeRound) : undefined,
     govVotes: data?.govVotes ? safeToBigInt(data.govVotes) : undefined,
     isPending,

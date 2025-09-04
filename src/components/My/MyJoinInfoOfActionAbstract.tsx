@@ -51,7 +51,7 @@
 //     }
 //   }, [errorStakedAmountByAccountByActionId]);
 
-//   return joinedAmountByActionIdByAccount && joinedAmountByActionIdByAccount > 0n ? (
+//   return joinedAmountByActionIdByAccount && joinedAmountByActionIdByAccount > BigInt(0) ? (
 //     <div className="px-6 py-4">
 //       <LeftTitle title="我的参与" />
 //       <div className="stats w-full divide-x-0">

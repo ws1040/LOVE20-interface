@@ -52,7 +52,7 @@ const GovPage = () => {
   }, [errorValidGovVotes, errorCurrentRound]);
 
   // 判断是否需要显示治理组件
-  const shouldShowGovComponents = validGovVotes > 0n;
+  const shouldShowGovComponents = validGovVotes > BigInt(0);
 
   if (isConnected && (isPendingCurrentRound || isPendingValidGovVotes)) {
     return (
@@ -108,11 +108,11 @@ const GovPage = () => {
               // 有治理票时显示三个治理组件
               <>
                 <MyVotingPanel
-                  currentRound={currentVoteRound ? currentVoteRound : 0n}
+                  currentRound={currentVoteRound ? currentVoteRound : BigInt(0)}
                   validGovVotes={validGovVotes}
                   isPendingValidGovVotes={isPendingValidGovVotes}
                 />
-                <MyVerifingPanel currentRound={currentVoteRound > 2 ? currentVoteRound - 2n : 0n} />
+                <MyVerifingPanel currentRound={currentVoteRound > 2 ? currentVoteRound - BigInt(2) : BigInt(0)} />
                 <Todeploy token={currentToken} />
               </>
             ) : (

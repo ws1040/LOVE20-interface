@@ -33,7 +33,7 @@ const ActionListToVerify: React.FC<VerifingActionListProps> = ({ currentRound })
   // 使用 useVerifyingActions 获取待验证行动列表
   const { myVerifyingActions, isPending, error } = useVerifingActionsByAccount(
     (token?.address as `0x${string}`) || '',
-    currentRound || 0n,
+    currentRound || BigInt(0),
     address as `0x${string}`,
   );
 
@@ -95,7 +95,7 @@ const ActionListToVerify: React.FC<VerifingActionListProps> = ({ currentRound })
                       我的占比:{' '}
                       <span className="text-secondary">
                         {formatPercentage(
-                          Number((verifyingAction.myVotesNum * 10000n) / verifyingAction.totalVotesNum) / 100,
+                          Number((verifyingAction.myVotesNum * BigInt(10000)) / verifyingAction.totalVotesNum) / 100,
                         )}
                       </span>
                     </span>

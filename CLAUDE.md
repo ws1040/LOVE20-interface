@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a Next.js-based decentralized web frontend for the LOVE20 Protocol, a blockchain governance and token system. The project uses:
 
-- **Framework**: Next.js 15.3.3 with React 18.3.1
-- **Web3**: wagmi 2.16.0 + viem 2.31.7 for Ethereum interactions
+- **Framework**: Next.js 14.2.9 with React 18.3.1
+- **Web3**: wagmi 2.12.9 + viem 2.9.0 for Ethereum interactions
 - **Styling**: TailwindCSS with DaisyUI and Radix UI components
 - **State**: React Query (@tanstack/react-query) for data fetching
 - **Forms**: React Hook Form with Zod validation
@@ -111,11 +111,13 @@ The application supports multiple blockchain networks configured via environment
 
 ## 项目统一规则
 
-### Token信息获取规则
-- 所有token相关信息（name, symbol, decimals等）统一使用 `const { token } = useContext(TokenContext)` 获取
-- 禁止使用RPC调用获取token基础信息，TokenContext已提供完整的token数据
+### Token 信息获取规则
 
-### 页面路由和URL结构规则  
-- 统一使用 `symbol=${token.symbol}` 作为token标识参数
-- 避免在URL中使用tokenAddress，提高URL可读性
+- 所有 token 相关信息（name, symbol, decimals 等）统一使用 `const { token } = useContext(TokenContext)` 获取
+- 禁止使用 RPC 调用获取 token 基础信息，TokenContext 已提供完整的 token 数据
+
+### 页面路由和 URL 结构规则
+
+- 统一使用 `symbol=${token.symbol}` 作为 token 标识参数
+- 避免在 URL 中使用 tokenAddress，提高 URL 可读性
 - 行动相关页面使用 `id=${actionId}` 而不是 `actionId=${actionId}`

@@ -39,7 +39,7 @@ const getDepositFormSchema = (balance: bigint) =>
         (val) => {
           try {
             const amount = parseUnits(val);
-            return amount > 0n && amount <= balance;
+            return amount > BigInt(0) && amount <= balance;
           } catch (e) {
             return false;
           }
@@ -87,7 +87,7 @@ const Deposit: React.FC = () => {
 
   // 2. 创建 hook form 实例，并传入当前余额
   const form = useForm<DepositFormValues>({
-    resolver: zodResolver(getDepositFormSchema(balance?.value || 0n)),
+    resolver: zodResolver(getDepositFormSchema(balance?.value || BigInt(0))),
     defaultValues: {
       depositAmount: '',
     },
@@ -136,7 +136,7 @@ const Deposit: React.FC = () => {
   const setMaxAmount = () => {
     // 注意这里需要先将 balance?.value 转字符串
     // 再用 formatUnits 转成人类可读
-    form.setValue('depositAmount', formatUnits(balance?.value || 0n));
+    form.setValue('depositAmount', formatUnits(balance?.value || BigInt(0)));
   };
 
   // 错误处理
@@ -188,7 +188,7 @@ const Deposit: React.FC = () => {
                   <FormMessage />
                   <FormDescription className="flex items-center justify-between">
                     <span>
-                      共 {isLoadingBalance ? <LoadingIcon /> : formatTokenAmount(balance?.value || 0n)}{' '}
+                      共 {isLoadingBalance ? <LoadingIcon /> : formatTokenAmount(balance?.value || BigInt(0))}{' '}
                       {balance?.symbol}
                     </span>
                     <Button

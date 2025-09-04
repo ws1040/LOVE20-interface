@@ -26,14 +26,14 @@ import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
-const REWARDS_PER_PAGE = 20n;
+const REWARDS_PER_PAGE = BigInt(20);
 
 const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
   const { currentRound, error: errorCurrentRound, isPending: isLoadingCurrentRound } = useCurrentRound();
-  const [startRound, setStartRound] = useState<bigint>(0n);
-  const [endRound, setEndRound] = useState<bigint>(0n);
+  const [startRound, setStartRound] = useState<bigint>(BigInt(0));
+  const [endRound, setEndRound] = useState<bigint>(BigInt(0));
   const [hasMoreRewards, setHasMoreRewards] = useState(true);
 
   // 引入参考元素，用于无限滚动加载
@@ -42,9 +42,9 @@ const GovRewardsPage: React.FC = () => {
   useEffect(() => {
     if (currentRound !== undefined && token) {
       if (currentRound <= BigInt(token.initialStakeRound)) {
-        setEndRound(0n);
+        setEndRound(BigInt(0));
       } else {
-        setEndRound(BigInt(currentRound >= 1n ? currentRound - 1n : 0n));
+        setEndRound(BigInt(currentRound >= BigInt(1) ? currentRound - BigInt(1) : BigInt(0)));
       }
     }
   }, [currentRound, token]);
@@ -164,7 +164,7 @@ const GovRewardsPage: React.FC = () => {
           <div className="flex flex-col space-y-2 p-4">
             <LeftTitle title="铸造治理激励" />
 
-            {endRound === 0n && currentRound !== undefined ? (
+            {endRound === BigInt(0) && currentRound !== undefined ? (
               <div className="text-center text-gray-500 py-4">当前还不能铸造激励，请耐心等待</div>
             ) : (
               <>
@@ -213,15 +213,15 @@ const GovRewardsPage: React.FC = () => {
                       rewardList.map((item) => (
                         <tr key={item.round.toString()} className="border-b border-gray-200">
                           <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
-                          <td className="text-center px-1">{formatTokenAmount(item.reward || 0n)}</td>
+                          <td className="text-center px-1">{formatTokenAmount(item.reward || BigInt(0))}</td>
                           <td className="text-center px-2 bg-greyscale-100">
-                            {formatTokenAmount(item.verifyReward || 0n)}
+                            {formatTokenAmount(item.verifyReward || BigInt(0))}
                           </td>
                           <td className="text-center px-2 bg-greyscale-100">
-                            {formatTokenAmount(item.boostReward || 0n)}
+                            {formatTokenAmount(item.boostReward || BigInt(0))}
                           </td>
                           <td className="text-center px-2">
-                            {item.reward > 0n && !item.isMinted ? (
+                            {item.reward > BigInt(0) && !item.isMinted ? (
                               <Button
                                 variant="outline"
                                 size="sm"

@@ -50,7 +50,7 @@ const Todeploy: React.FC<{ token: Token }> = ({ token }) => {
   }
 
   // 获取等待铸币次数
-  const MIN_GOV_REWARD_MINTS = Number(process.env.NEXT_PUBLIC_MIN_GOV_REWARD_MINTS_TO_LAUNCH) || 180n;
+  const MIN_GOV_REWARD_MINTS = Number(process.env.NEXT_PUBLIC_MIN_GOV_REWARD_MINTS_TO_LAUNCH) || BigInt(180);
   const remainingMintTimes =
     Number(MIN_GOV_REWARD_MINTS) - (Number(numOfMintGovRewardByAccount ?? 0) % Number(MIN_GOV_REWARD_MINTS));
 

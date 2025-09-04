@@ -60,7 +60,7 @@ const MyLiquidityStakePanel: React.FC<MyLiquidityStakePanelProps> = ({ token: pr
         <div className="stat place-items-center pt-0">
           <div className="stat-title text-sm">我的治理票数</div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || 0n)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0))}
           </div>
         </div>
         <div className="stat place-items-center pt-0">
@@ -74,7 +74,7 @@ const MyLiquidityStakePanel: React.FC<MyLiquidityStakePanelProps> = ({ token: pr
             />
           </div>
           <div className="stat-value text-xl">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || 0n)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || BigInt(0))}
           </div>
         </div>
       </div>

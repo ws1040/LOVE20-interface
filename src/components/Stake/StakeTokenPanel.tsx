@@ -180,14 +180,14 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
   // 监听用户输入的质押数量以及 allowance 值，动态判断是否已授权
   const stakeTokenAmountValue = form.watch('stakeTokenAmount');
   useEffect(() => {
-    let parsedStakeToken = 0n;
+    let parsedStakeToken = BigInt(0);
     try {
       parsedStakeToken = parseUnits(stakeTokenAmountValue || '0');
     } catch {
-      parsedStakeToken = 0n;
+      parsedStakeToken = BigInt(0);
     }
 
-    if (parsedStakeToken > 0n && allowanceToken && allowanceToken > 0n && allowanceToken >= parsedStakeToken) {
+    if (parsedStakeToken > BigInt(0) && allowanceToken && allowanceToken > BigInt(0) && allowanceToken >= parsedStakeToken) {
       setIsTokenApproved(true);
     } else {
       setIsTokenApproved(false);
@@ -254,9 +254,9 @@ const StakeTokenPanel: React.FC<StakeTokenPanelProps> = ({ tokenBalance }) => {
                     size="sm"
                     type="button"
                     onClick={() => {
-                      form.setValue('stakeTokenAmount', formatUnits(tokenBalance || 0n));
+                      form.setValue('stakeTokenAmount', formatUnits(tokenBalance || BigInt(0)));
                     }}
-                    disabled={tokenBalance <= 0n}
+                    disabled={tokenBalance <= BigInt(0)}
                     className="text-secondary mr-2"
                   >
                     全部

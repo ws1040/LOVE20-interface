@@ -83,7 +83,7 @@ const TokenIntroPage = () => {
       ACTION_REWARD_MIN_VOTE_PERCENT: formatPercentage(
         Number(process.env.NEXT_PUBLIC_ACTION_REWARD_MIN_VOTE_PER_THOUSAND ?? 0) / 10,
       ),
-      LAUNCH_GOAL: formatTokenAmount(launchInfo?.parentTokenFundraisingGoal ?? 0n),
+      LAUNCH_GOAL: formatTokenAmount(launchInfo?.parentTokenFundraisingGoal ?? BigInt(0)),
       PRICE: price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     } as const;
     return applyPlaceholders(rawMd, vars);

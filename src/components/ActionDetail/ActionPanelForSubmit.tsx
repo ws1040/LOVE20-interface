@@ -116,7 +116,11 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
               )}
             </div>
           ) : (
-            <Button onClick={handleSubmit} className="w-1/2" disabled={isPending || isConfirming || !hasEnoughVotes}>
+            <Button
+              onClick={handleSubmit}
+              className="submit-action-button w-1/2"
+              disabled={isPending || isConfirming || !hasEnoughVotes}
+            >
               {isPending && '提交中...'}
               {isConfirming && '确认中...'}
               {!isPending && !isConfirming && '推举本行动'}

@@ -42,7 +42,7 @@ const LeftTime: React.FC<LeftTimeProps> = ({ initialTimeLeft, onTick, forceShowS
   const seconds = timeLeft % 60;
 
   return (
-    <span className="inline-flex gap-1 text-greyscale-400">
+    <span className="inline-flex space-x-1 text-greyscale-400">
       {days > 0 && (
         <span>
           <span className={`countdown font-mono ${fontClass}`}>

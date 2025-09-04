@@ -119,21 +119,21 @@ const TokenPage = () => {
   // 代币统计（变量命名与 TokenStats 保持一致）
   const maxSupply = BigInt(process.env.NEXT_PUBLIC_MAX_SUPPLY ?? 0);
   const totalSupply = launchEnded
-    ? tokenStatistics?.totalSupply ?? 0n
+    ? tokenStatistics?.totalSupply ?? BigInt(0)
     : BigInt(process.env.NEXT_PUBLIC_LAUNCH_AMOUNT ?? 0);
-  const reservedAvailable = tokenStatistics?.reservedAvailable ?? 0n;
-  const rewardAvailable = tokenStatistics?.rewardAvailable ?? 0n;
-  const stakedTokenAmountForSt = tokenStatistics?.stakedTokenAmountForSt ?? 0n;
-  const joinedTokenAmount = tokenStatistics?.joinedTokenAmount ?? 0n;
-  const tokenAmountForSl = tokenStatistics?.tokenAmountForSl ?? 0n;
-  const parentPool = tokenStatistics?.parentPool ?? 0n;
-  const finishedRounds = tokenStatistics?.finishedRounds ?? 0n;
-  const actionsCount = tokenStatistics?.actionsCount ?? 0n;
-  const joiningActionsCount = tokenStatistics?.joiningActionsCount ?? 0n;
-  const childTokensCount = tokenStatistics?.childTokensCount ?? 0n;
-  const launchingChildTokensCount = tokenStatistics?.launchingChildTokensCount ?? 0n;
-  const launchedChildTokensCount = tokenStatistics?.launchedChildTokensCount ?? 0n;
-  const unminted = maxSupply > totalSupply ? maxSupply - totalSupply : 0n;
+  const reservedAvailable = tokenStatistics?.reservedAvailable ?? BigInt(0);
+  const rewardAvailable = tokenStatistics?.rewardAvailable ?? BigInt(0);
+  const stakedTokenAmountForSt = tokenStatistics?.stakedTokenAmountForSt ?? BigInt(0);
+  const joinedTokenAmount = tokenStatistics?.joinedTokenAmount ?? BigInt(0);
+  const tokenAmountForSl = tokenStatistics?.tokenAmountForSl ?? BigInt(0);
+  const parentPool = tokenStatistics?.parentPool ?? BigInt(0);
+  const finishedRounds = tokenStatistics?.finishedRounds ?? BigInt(0);
+  const actionsCount = tokenStatistics?.actionsCount ?? BigInt(0);
+  const joiningActionsCount = tokenStatistics?.joiningActionsCount ?? BigInt(0);
+  const childTokensCount = tokenStatistics?.childTokensCount ?? BigInt(0);
+  const launchingChildTokensCount = tokenStatistics?.launchingChildTokensCount ?? BigInt(0);
+  const launchedChildTokensCount = tokenStatistics?.launchedChildTokensCount ?? BigInt(0);
+  const unminted = maxSupply > totalSupply ? maxSupply - totalSupply : BigInt(0);
   const otherBalance = totalSupply - joinedTokenAmount - tokenAmountForSl - stakedTokenAmountForSt;
 
   // 发射区块

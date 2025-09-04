@@ -52,7 +52,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
     submitInfo,
     isPending: isPendingSubmitInfo,
     error: errorSubmitInfo,
-  } = useSubmitInfo(token?.address as `0x${string}`, showSubmitter ? round : 0n, actionId);
+  } = useSubmitInfo(token?.address as `0x${string}`, showSubmitter ? round : BigInt(0), actionId);
 
   // 找到当前动作的提交者
   const submitter = submitInfo?.submitter || 'N/A';

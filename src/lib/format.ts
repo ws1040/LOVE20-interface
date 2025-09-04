@@ -22,7 +22,7 @@ export const formatTokenAmount = (balance: bigint, maximumFractionDigits_ = 4): 
   const numberFormatted = Number(formatted);
 
   // 如果过小，显示0
-  if (balance < 10n) {
+  if (balance < BigInt(10)) {
     return '0';
   }
 
@@ -86,7 +86,7 @@ export const parseUnits = (value: string): bigint => {
     return viemParseUnits(normalizedValue, decimals);
   } catch (error) {
     console.error('parseUnits error:', error);
-    return 0n;
+    return BigInt(0);
   }
 };
 
@@ -124,11 +124,11 @@ export const formatSeconds = (seconds: number): string => {
 // 格式化轮次
 export const formatRoundForDisplay = (round: bigint, token: Token): bigint => {
   if (!round || !token) {
-    return 0n;
+    return BigInt(0);
   }
   return round;
   // 不显示子币自己的轮次了
-  // return round - BigInt(token.initialStakeRound) + 1n;
+  // return round - BigInt(token.initialStakeRound) + BigInt(1);
 };
 
 // 将整数转换为千分位, 保留n小数, 并去掉小数位末尾的0

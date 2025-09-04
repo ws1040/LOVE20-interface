@@ -56,13 +56,13 @@ const ActDataPanel: React.FC<ActDataPanelProps> = ({ currentRound }) => {
           <div className="stat place-items-center pb-2">
             <div className="stat-title text-sm pb-1">参与行动代币总数</div>
             <div className="stat-value text-xl text-secondary">
-              {isPendingJoinedAmount ? <LoadingIcon /> : formatTokenAmount(joinedAmount ?? 0n)}
+              {isPendingJoinedAmount ? <LoadingIcon /> : formatTokenAmount(joinedAmount ?? BigInt(0))}
             </div>
           </div>
           <div className="stat place-items-center pb-2">
             <div className="stat-title text-sm pb-1">预计新增铸币</div>
             <div className="stat-value text-xl text-secondary">
-              {isPendingEstimatedActionReward ? <LoadingIcon /> : formatTokenAmount(expectedReward ?? 0n)}
+              {isPendingEstimatedActionReward ? <LoadingIcon /> : formatTokenAmount(expectedReward ?? BigInt(0))}
             </div>
           </div>
         </div>

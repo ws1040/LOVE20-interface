@@ -23,13 +23,13 @@ export const calculateAPY = (
   const blocksPerYear = (365 * 86400 * 100) / Number(process.env.NEXT_PUBLIC_BLOCK_TIME || 0);
   // 一个阶段的区块数
   const phaseBlocks = safeToBigInt(process.env.NEXT_PUBLIC_PHASE_BLOCKS || '0');
-  if (blocksPerYear === 0 || phaseBlocks === 0n) {
+  if (blocksPerYear === 0 || phaseBlocks === BigInt(0)) {
     console.error('配置错误: NEXT_PUBLIC_BLOCK_TIME 或 NEXT_PUBLIC_PHASE_BLOCKS 未设置');
     return '0%';
   }
 
   // 所有质押资产总和
-  const totalStaked = (tokenAmountForSl * 2n || BigInt(0)) + (stAmount || BigInt(0));
+  const totalStaked = (tokenAmountForSl * BigInt(2) || BigInt(0)) + (stAmount || BigInt(0));
   // 避免除以零
   if (totalStaked === BigInt(0)) {
     return '0%';
@@ -50,14 +50,14 @@ export const calculateAPY = (
  */
 export const calculateActionAPY = (expectedReward?: bigint, joinedAmount?: bigint): string => {
   // 如果没有数据，返回0%
-  if (!expectedReward || !joinedAmount || joinedAmount === 0n) return '∞';
+  if (!expectedReward || !joinedAmount || joinedAmount === BigInt(0)) return '∞';
 
   // 年区块数 = 365天 * 86400秒/天 / 每个区块的秒数
   const blocksPerYear = (365 * 86400 * 100) / Number(process.env.NEXT_PUBLIC_BLOCK_TIME || 0);
   // 一个阶段的区块数
   const phaseBlocks = safeToBigInt(process.env.NEXT_PUBLIC_PHASE_BLOCKS || '0');
 
-  if (blocksPerYear === 0 || phaseBlocks === 0n) {
+  if (blocksPerYear === 0 || phaseBlocks === BigInt(0)) {
     console.error('配置错误: BLOCK_TIME 或 PHASE_BLOCKS 未设置或为0');
     return '0%';
   }
@@ -122,23 +122,23 @@ export const calculateExpectedActionReward = (rewardAvailable: bigint | undefine
 
   // 计算剩余激励比例
   const rewardLeftRatio =
-    1000n -
+    BigInt(1000) -
     safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '5') -
     safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '5');
 
   let expectedReward = BigInt(0);
 
-  if (displayRound <= 1n) {
+  if (displayRound <= BigInt(1)) {
     // 第1轮：rewardAvailable * 0.01 / 2 (or 5 / 1000)
     expectedReward =
-      (rewardAvailable * safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '0')) / 1000n;
+      (rewardAvailable * safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '0')) / BigInt(1000);
   } else {
     // >=第2轮：rewardAvailable * 0.99 * 0.01 / 2 (or 99 * 5 / 1000000)
     expectedReward =
       (rewardAvailable *
         rewardLeftRatio *
         safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '0')) /
-      1000000n;
+      BigInt(1000000);
   }
 
   return expectedReward;
@@ -157,21 +157,21 @@ export const calculateExpectedGovReward = (rewardAvailable: bigint | undefined, 
 
   // 计算剩余激励比例
   const rewardLeftRatio =
-    1000n -
+    BigInt(1000) -
     safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '5') -
     safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '5');
 
   let expectedReward = BigInt(0);
 
-  if (displayRound === 1n) {
+  if (displayRound === BigInt(1)) {
     // 第1轮：rewardAvailable * 0.01 / 2 (or 5 / 1000)
     expectedReward =
-      (rewardAvailable * safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) / 1000n;
-  } else if (displayRound === 2n) {
+      (rewardAvailable * safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) / BigInt(1000);
+  } else if (displayRound === BigInt(2)) {
     // 第2轮：rewardAvailable * 0.99 * 0.01 / 2 (or 99 * 5 / 1000000)
     expectedReward =
       (rewardAvailable * rewardLeftRatio * safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) /
-      1000000n;
+      BigInt(1000000);
   } else {
     // >=第3轮：rewardAvailable * 0.99 * 0.99 * 0.01 / 2 (or 99 * 99 * 5 / 1000000000)
     expectedReward =
@@ -179,7 +179,7 @@ export const calculateExpectedGovReward = (rewardAvailable: bigint | undefined, 
         rewardLeftRatio *
         rewardLeftRatio *
         safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) /
-      1000000000n;
+      BigInt(1000000000);
   }
 
   return expectedReward;

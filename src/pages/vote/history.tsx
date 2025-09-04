@@ -23,7 +23,7 @@ import { formatPercentage, formatRoundForDisplay, formatTokenAmount } from '@/sr
 // types
 import { AccountVotingAction, ActionInfo } from '@/src/types/love20types';
 
-const ROUNDS_PER_PAGE = 20n;
+const ROUNDS_PER_PAGE = BigInt(20);
 
 type RoundVotingData = {
   round: bigint;
@@ -39,8 +39,8 @@ const VoteHistoryPage: React.FC = () => {
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
-  const [startRound, setStartRound] = useState<bigint>(0n);
-  const [endRound, setEndRound] = useState<bigint>(0n);
+  const [startRound, setStartRound] = useState<bigint>(BigInt(0));
+  const [endRound, setEndRound] = useState<bigint>(BigInt(0));
   const [hasMoreRounds, setHasMoreRounds] = useState(true);
   const [allRoundsData, setAllRoundsData] = useState<RoundVotingData[]>([]);
   const [scrollFailureCount, setScrollFailureCount] = useState(0);
@@ -65,9 +65,10 @@ const VoteHistoryPage: React.FC = () => {
 
   // 初始化轮次范围
   useEffect(() => {
-    if (currentRound !== undefined && currentRound > 0n) {
+    if (currentRound !== undefined && currentRound > BigInt(0)) {
       const initialEndRound = currentRound;
-      const initialStartRound = currentRound - ROUNDS_PER_PAGE + 1n > 0n ? currentRound - ROUNDS_PER_PAGE + 1n : 1n;
+      const initialStartRound =
+        currentRound - ROUNDS_PER_PAGE + BigInt(1) > BigInt(0) ? currentRound - ROUNDS_PER_PAGE + BigInt(1) : BigInt(1);
       setEndRound(initialEndRound);
       setStartRound(initialStartRound);
     }
@@ -82,7 +83,12 @@ const VoteHistoryPage: React.FC = () => {
 
   // 处理投票历史数据并生成完整的轮次列表
   useEffect(() => {
-    if (!votingHistory?.accountActions || !votingHistory?.actionInfos || startRound === 0n || endRound === 0n) {
+    if (
+      !votingHistory?.accountActions ||
+      !votingHistory?.actionInfos ||
+      startRound === BigInt(0) ||
+      endRound === BigInt(0)
+    ) {
       return;
     }
 
@@ -110,8 +116,8 @@ const VoteHistoryPage: React.FC = () => {
 
       if (actionInfo) {
         const votePercentage =
-          votingAction.totalVoteCount > 0n
-            ? Number((votingAction.myVoteCount * 10000n) / votingAction.totalVoteCount) / 100
+          votingAction.totalVoteCount > BigInt(0)
+            ? Number((votingAction.myVoteCount * BigInt(10000)) / votingAction.totalVoteCount) / 100
             : 0;
 
         if (!roundMap.has(roundKey)) {
@@ -156,7 +162,7 @@ const VoteHistoryPage: React.FC = () => {
   // 根据当前起始轮次判断是否还有更多可以加载
   useEffect(() => {
     // 关键修复：只要 startRound > 1，就说明还有更早的轮次可以加载
-    const hasMore = startRound > 1n;
+    const hasMore = startRound > BigInt(1);
     setHasMoreRounds(hasMore);
   }, [startRound]);
 
@@ -175,9 +181,9 @@ const VoteHistoryPage: React.FC = () => {
     setIsLoadingMore(true);
 
     // 检查是否还能加载更多
-    const currentCanLoad = startRound > 1n;
+    const currentCanLoad = startRound > BigInt(1);
     if (currentCanLoad) {
-      const newStart = startRound - ROUNDS_PER_PAGE >= 1n ? startRound - ROUNDS_PER_PAGE : 1n;
+      const newStart = startRound - ROUNDS_PER_PAGE >= BigInt(1) ? startRound - ROUNDS_PER_PAGE : BigInt(1);
       setStartRound(newStart);
     } else {
       console.log('已经到达最早轮次，不再加载');
@@ -315,11 +321,13 @@ const VoteHistoryPage: React.FC = () => {
                 {allRoundsData.map((roundData) => (
                   <div
                     key={roundData.round.toString()}
-                    className="border border-gray-100 rounded-lg py-2 px-4 shadow-sm"
+                    className={`border border-gray-100 rounded-lg py-2 px-4 shadow-sm ${
+                      !roundData.hasVoting ? 'bg-gray-50' : 'bg-white'
+                    }`}
                   >
                     <div className="flex items-center mb-2">
                       <span className="text-greyscale-500 mr-2">轮次:</span>
-                      <span className="text-secondary text-xl font-bold">
+                      <span className={`text-xl font-bold ${roundData.hasVoting ? 'text-secondary' : 'text-gray-400'}`}>
                         {formatRoundForDisplay(roundData.round, token).toString()}
                       </span>
                     </div>

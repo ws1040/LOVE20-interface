@@ -112,7 +112,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
 
   const handleWithdraw = async () => {
     // 如果代币为0, toast
-    if (joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= 2n) {
+    if (joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= BigInt(2)) {
       toast.error('你还没有参与，无需取回');
       return;
     }
@@ -202,7 +202,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
           ) : (
             <>
               <div className="flex justify-center space-x-2 mt-2 w-full">
-                {joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= 2n ? (
+                {joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= BigInt(2) ? (
                   <Button variant="outline" className="w-1/3 text-secondary border-secondary" disabled>
                     取回
                   </Button>
@@ -234,7 +234,7 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
                 <div className="text-sm text-greyscale-600">
                   {isPendingVerificationInfo && '加载中...'}
                   {joinedAmountByActionIdByAccount != undefined &&
-                    joinedAmountByActionIdByAccount > 2n &&
+                    joinedAmountByActionIdByAccount > BigInt(2) &&
                     verificationKeys &&
                     verificationKeys.length > 0 && (
                       <div>

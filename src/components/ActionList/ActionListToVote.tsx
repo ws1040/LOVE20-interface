@@ -55,7 +55,7 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
   };
 
   // 计算投票总数： 累计
-  const totalVotes = votingActions.reduce((acc, votingAction) => acc + votingAction.votesNum, 0n);
+  const totalVotes = votingActions.reduce((acc, votingAction) => acc + votingAction.votesNum, BigInt(0));
 
   // 投票
   const handleSubmit = () => {
@@ -153,7 +153,7 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
                           <span>
                             <span className="text-greyscale-400 mr-1">占比</span>
                             <span className="text-secondary">
-                              {totalVotes === 0n
+                              {totalVotes === BigInt(0)
                                 ? '-'
                                 : formatPercentage((Number(votingAction.votesNum) * 100) / Number(totalVotes))}
                             </span>

@@ -32,7 +32,7 @@ import {
 // types
 import { ActionInfo, ActionReward } from '@/src/types/love20types';
 
-const LAST_ROUNDS = 30n;
+const LAST_ROUNDS = BigInt(30);
 
 type ActionRewardsGroup = {
   action: ActionInfo;
@@ -73,7 +73,7 @@ const ActRewardsPage: React.FC = () => {
     // 创建激励映射
     const rewardsByAction = new Map<string, ActionReward[]>();
     for (const r of rewards) {
-      if (r.reward <= 0n) continue;
+      if (r.reward <= BigInt(0)) continue;
       const key = r.actionId.toString();
       if (!rewardsByAction.has(key)) rewardsByAction.set(key, []);
       rewardsByAction.get(key)!.push(r);
@@ -130,7 +130,7 @@ const ActRewardsPage: React.FC = () => {
     if (!token?.address || !account || isLoadingRewards || !rewards) return;
 
     // 检查是否存在未铸造的激励
-    const hasUnmintedRewards = rewards.some((r) => r.reward > 0n && !r.isMinted);
+    const hasUnmintedRewards = rewards.some((r) => r.reward > BigInt(0) && !r.isMinted);
 
     // 如果没有未铸造的激励，且本地缓存显示需要铸造，则清除缓存
     if (!hasUnmintedRewards) {
@@ -214,9 +214,9 @@ const ActRewardsPage: React.FC = () => {
                               }
                             >
                               <td>{formatRoundForDisplay(item.round, token).toString()}</td>
-                              <td className="text-center">{formatTokenAmount(item.reward || 0n)}</td>
+                              <td className="text-center">{formatTokenAmount(item.reward || BigInt(0))}</td>
                               <td className="text-center">
-                                {item.reward > 0n && !item.isMinted ? (
+                                {item.reward > BigInt(0) && !item.isMinted ? (
                                   <Button
                                     variant="outline"
                                     size="sm"

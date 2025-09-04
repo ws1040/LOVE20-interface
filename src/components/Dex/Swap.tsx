@@ -200,7 +200,7 @@ const getSwapFormSchema = (balance: bigint) =>
           if (val === '0') return true;
           try {
             const amount = parseUnits(val);
-            return amount > 0n && amount <= balance;
+            return amount > BigInt(0) && amount <= balance;
           } catch (e) {
             return false;
           }
@@ -404,7 +404,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   // 3. 表单设置
   // --------------------------------------------------
   const form = useForm<SwapFormValues>({
-    resolver: zodResolver(getSwapFormSchema(fromBalance || 0n)),
+    resolver: zodResolver(getSwapFormSchema(fromBalance || BigInt(0))),
     defaultValues: {
       fromTokenAmount: '',
       fromTokenAddress: fromToken.address,
@@ -421,8 +421,8 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   }, [fromToken.address, toToken.address, form]);
 
   // 输入数量和输出数量
-  const [fromAmount, setFromAmount] = useState<bigint>(0n);
-  const [toAmount, setToAmount] = useState<bigint>(0n);
+  const [fromAmount, setFromAmount] = useState<bigint>(BigInt(0));
+  const [toAmount, setToAmount] = useState<bigint>(BigInt(0));
 
   // 基于测试前缀的原生代币使用上限（仅在存在 NEXT_PUBLIC_TOKEN_PREFIX 时生效）
   const maxNativeInputLimit = useMemo(() => {
@@ -449,7 +449,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
       }
       setFromAmount(finalAmount);
     } catch {
-      setFromAmount(0n);
+      setFromAmount(BigInt(0));
     }
   }, [watchFromAmount, maxNativeInputLimit, form, fromToken.symbol]);
 
@@ -458,7 +458,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   // --------------------------------------------------
   // 设置最大数量
   const setMaxAmount = () => {
-    const rawMax = fromBalance || 0n;
+    const rawMax = fromBalance || BigInt(0);
     const capped = maxNativeInputLimit ? (rawMax > maxNativeInputLimit ? maxNativeInputLimit : rawMax) : rawMax;
     const maxStr = formatUnits(capped);
     form.setValue('fromTokenAmount', maxStr);
@@ -536,7 +536,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
     fromAmount,
     swapPath,
     // 只有当路径有效且金额大于0时才启用查询
-    canSwap && swapMethod !== 'WETH9' && fromAmount > 0n && swapPath.length >= 2,
+    canSwap && swapMethod !== 'WETH9' && fromAmount > BigInt(0) && swapPath.length >= 2,
   );
 
   // 添加详细的错误日志
@@ -574,7 +574,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
     } else if (amountsOut && amountsOut.length > 1) {
       setToAmount(BigInt(amountsOut[1]));
     } else {
-      setToAmount(0n);
+      setToAmount(BigInt(0));
     }
   }, [swapMethod, fromAmount, amountsOut]);
 
@@ -595,7 +595,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
 
   // 转换率计算
   const conversionRate = useMemo(() => {
-    if (fromAmount > 0n && toAmount > 0n) {
+    if (fromAmount > BigInt(0) && toAmount > BigInt(0)) {
       try {
         const fromStr = formatUnits(fromAmount);
         const toStr = formatUnits(toAmount);
@@ -772,13 +772,13 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
       }
 
       // 预检查3：验证金额合理性
-      if (toAmount <= 0n) {
+      if (toAmount <= BigInt(0)) {
         toast.error('无法获取兑换价格，流动池可能不足');
         return;
       }
 
       const deadline = BigInt(Math.floor(Date.now() / 1000) + 20 * 60);
-      const minAmountOut = (toAmount * 995n) / 1000n; // 0.5% 滑点
+      const minAmountOut = (toAmount * BigInt(995)) / BigInt(1000); // 0.5% 滑点
 
       console.log('🚀 执行交换，参数详情:', {
         swapMethod,
@@ -996,7 +996,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                           />
                         </div>
                         <div className="flex items-center justify-between">
-                          <div className="flex gap-1">
+                          <div className="flex space-x-1">
                             {[25, 50, 75].map((percentage) => (
                               <Button
                                 key={percentage}
@@ -1004,7 +1004,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                                 size="sm"
                                 type="button"
                                 onClick={() => {
-                                  const base = ((fromBalance ?? 0n) * BigInt(percentage)) / 100n;
+                                  const base = ((fromBalance ?? BigInt(0)) * BigInt(percentage)) / BigInt(100);
                                   const capped = maxNativeInputLimit
                                     ? base > maxNativeInputLimit
                                       ? maxNativeInputLimit
@@ -1012,7 +1012,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                                     : base;
                                   form.setValue('fromTokenAmount', formatUnits(capped));
                                 }}
-                                disabled={isDisabled || (fromBalance || 0n) <= 0n}
+                                disabled={isDisabled || (fromBalance || BigInt(0)) <= BigInt(0)}
                                 className="text-xs h-7 px-2 rounded-lg"
                               >
                                 {percentage}%
@@ -1023,14 +1023,14 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                               size="sm"
                               type="button"
                               onClick={setMaxAmount}
-                              disabled={isDisabled || (fromBalance || 0n) <= 0n}
+                              disabled={isDisabled || (fromBalance || BigInt(0)) <= BigInt(0)}
                               className="text-xs h-7 px-2 rounded-lg"
                             >
                               最高
                             </Button>
                           </div>
                           <span className="text-sm text-gray-600">
-                            {formatTokenAmount(fromBalance || 0n)} {fromToken.symbol}
+                            {formatTokenAmount(fromBalance || BigInt(0))} {fromToken.symbol}
                           </span>
                         </div>
                         {maxNativeInputLimit && (
@@ -1128,14 +1128,14 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
                   </div>
                   <div className="flex items-center justify-end">
                     <span className="text-sm text-gray-600">
-                      {formatTokenAmount(toBalance || 0n)} {toToken.symbol}
+                      {formatTokenAmount(toBalance || BigInt(0))} {toToken.symbol}
                     </span>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row space-x-2">
               {needsApproval && (
                 <Button className="w-1/2" onClick={handleApprove} disabled={isApproving || isApproved}>
                   {isPendingApprove
@@ -1169,7 +1169,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
         </Form>
 
         {/* 交换信息提示 */}
-        {fromAmount > 0n && (
+        {fromAmount > BigInt(0) && (
           <div className="mt-4 p-4 bg-gray-50 rounded-md">
             {swapMethod === 'WETH9' && (
               <div className="text-sm text-green-600 mb-2">💡 这是 1:1 包装转换，无手续费，无滑点</div>

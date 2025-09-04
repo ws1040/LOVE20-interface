@@ -49,7 +49,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
 
   // 检查输入条件
   const checkInput = () => {
-    if (!slAmount || slAmount <= 0n) {
+    if (!slAmount || slAmount <= BigInt(0)) {
       toast.error('流动性质押数量为0，不用取消质押');
       return false;
     }
@@ -110,7 +110,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
   const handleApproveSL = async () => {
     if (!checkInput()) return;
     try {
-      if (slAmount && slAmount > 0n && !isSlTokenApproved) {
+      if (slAmount && slAmount > BigInt(0) && !isSlTokenApproved) {
         await approveSL(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, slAmount);
       }
     } catch (error) {
@@ -121,7 +121,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
   const handleApproveST = async () => {
     if (!checkInput()) return;
     try {
-      if (stAmount && stAmount > 0n && !isStTokenApproved) {
+      if (stAmount && stAmount > BigInt(0) && !isStTokenApproved) {
         await approveST(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_STAKE as `0x${string}`, stAmount);
       }
     } catch (error) {
@@ -133,7 +133,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
   useEffect(() => {
     if (isConfirmedApproveSL) {
       setIsSlTokenApproved(true);
-    } else if (slAmount && slAmount > 0n && allowanceSL && allowanceSL >= slAmount) {
+    } else if (slAmount && slAmount > BigInt(0) && allowanceSL && allowanceSL >= slAmount) {
       setIsSlTokenApproved(true);
     } else {
       setIsSlTokenApproved(false);
@@ -145,7 +145,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
   useEffect(() => {
     if (isConfirmedApproveST) {
       setIsStTokenApproved(true);
-    } else if (!stAmount || stAmount <= 0n) {
+    } else if (!stAmount || stAmount <= BigInt(0)) {
       setIsStTokenApproved(true);
     } else if (allowanceST && allowanceST >= stAmount) {
       setIsStTokenApproved(true);
@@ -267,22 +267,22 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
         <div className="stat place-items-center pt-0 pb-1 pl-1">
           <div className="stat-title text-sm">我的治理票数</div>
           <div className="stat-value text-xl text-secondary">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || 0n)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(govVotes || BigInt(0))}
           </div>
           <div className="stat-desc text-xs mb-2 mt-1">
-            {requestedUnstakeRound && requestedUnstakeRound > 0n && '注意：解锁期内治理票数为0'}
+            {requestedUnstakeRound && requestedUnstakeRound > BigInt(0) && '注意：解锁期内治理票数为0'}
           </div>
         </div>
         <div className="stat place-items-center pt-0 pb-1 pl-1">
           <div className="stat-title text-sm">我承诺的解锁期</div>
           <div className="stat-value text-lg">
             <span className="text-secondary">
-              {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingPhases || 0n} `}
+              {isPendingAccountStakeStatus ? <LoadingIcon /> : `${promisedWaitingPhases || BigInt(0)} `}
             </span>
             <span className="text-sm text-gray-600"> 阶段</span>
           </div>
           <div className="stat-desc text-xs mb-2 mt-1">{`${formatPhaseText(
-            Number(promisedWaitingPhases || 0n),
+            Number(promisedWaitingPhases || BigInt(0)),
             true,
           )}`}</div>
         </div>
@@ -299,7 +299,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             />
           </div>
           <div className="stat-value text-xl text-gray-600">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || 0n)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(slAmount || BigInt(0))}
           </div>
           <div className="stat-desc text-xs">
             <Button variant="link" className="text-secondary font-normal border-secondary" asChild>
@@ -318,7 +318,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
             />
           </div>
           <div className="stat-value text-xl text-gray-600">
-            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || 0n)}
+            {isPendingAccountStakeStatus ? <LoadingIcon /> : formatTokenAmount(stAmount || BigInt(0))}
           </div>
           <div className="stat-desc text-xs">
             <Button variant="link" className="text-secondary font-normal border-secondary" asChild>
@@ -327,7 +327,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
           </div>
         </div>
       </div>
-      {validGovVotes <= 0n && govVotes && govVotes > 0n && (
+      {validGovVotes <= BigInt(0) && govVotes && govVotes > BigInt(0) && (
         <div className="text-sm mb-4 text-greyscale-500 text-center">
           <div className="text-red-500">当前 sl 或 st 代币余额不足，导致有效治理票为0，请及时补足</div>
         </div>
@@ -380,7 +380,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
                 <br />
                 （现在取消质押后，投票轮第
                 <span className="text-secondary mx-1">{`${
-                  formatRoundForDisplay(currentRound, token) + (promisedWaitingPhases || 0n) + 1n
+                  formatRoundForDisplay(currentRound, token) + (promisedWaitingPhases || BigInt(0)) + BigInt(1)
                 } `}</span>
                 轮才能取回代币）
               </div>
@@ -396,7 +396,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
                 >
                   {!canWithdraw
                     ? '已取消,第' +
-                      (formatRoundForDisplay(requestedUnstakeRound, token) + (promisedWaitingPhases || 0n) + 1n) +
+                      (formatRoundForDisplay(requestedUnstakeRound, token) + (promisedWaitingPhases || BigInt(0)) + BigInt(1)) +
                       '轮才可取回'
                     : isPendingWithdraw
                     ? '提交中'
@@ -428,7 +428,7 @@ const MyGovernanceAssetsPanel: React.FC<MyGovernanceAssetsPanelProps> = ({ token
               <Link href={`/gov/unstake/?symbol=${token.symbol}`}>
                 {!canWithdraw
                   ? '已取消, 第' +
-                    (formatRoundForDisplay(requestedUnstakeRound, token) + (promisedWaitingPhases || 0n) + 1n) +
+                    (formatRoundForDisplay(requestedUnstakeRound, token) + (promisedWaitingPhases || BigInt(0)) + BigInt(1)) +
                     '轮可取回'
                   : '取回质押代币'}
               </Link>

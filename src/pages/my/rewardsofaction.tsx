@@ -26,7 +26,7 @@ import { Button } from '@/components/ui/button';
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
 import { setActionRewardNeedMinted } from '@/src/lib/actionRewardNotice';
 
-const REWARDS_PER_PAGE = 20n;
+const REWARDS_PER_PAGE = BigInt(20);
 
 const ActRewardsPage: React.FC = () => {
   const router = useRouter();
@@ -41,8 +41,8 @@ const ActRewardsPage: React.FC = () => {
   const { currentRound, isPending: isLoadingCurrentRound, error: errorCurrentRound } = useCurrentRound();
 
   // 分页状态
-  const [startRound, setStartRound] = useState<bigint>(0n);
-  const [endRound, setEndRound] = useState<bigint>(0n);
+  const [startRound, setStartRound] = useState<bigint>(BigInt(0));
+  const [endRound, setEndRound] = useState<bigint>(BigInt(0));
   const [hasMoreRewards, setHasMoreRewards] = useState(true);
 
   // 引入参考元素，用于无限滚动加载
@@ -63,7 +63,7 @@ const ActRewardsPage: React.FC = () => {
   } = useActionRewardsByAccountByActionIdByRounds(
     token?.address as `0x${string}`,
     account as `0x${string}`,
-    actionId || 0n,
+    actionId || BigInt(0),
     startRound,
     endRound,
   );
@@ -78,8 +78,8 @@ const ActRewardsPage: React.FC = () => {
   // 初始化分页范围
   useEffect(() => {
     if (actionInfo && token && currentRound !== undefined) {
-      const actionEndRound = currentRound > 2 ? currentRound - 2n : 0n;
-      const actionStartRound = actionEndRound > 20n ? actionEndRound - 20n : 0n;
+      const actionEndRound = currentRound > 2 ? currentRound - BigInt(2) : BigInt(0);
+      const actionStartRound = actionEndRound > BigInt(20) ? actionEndRound - BigInt(20) : BigInt(0);
       setStartRound(actionStartRound);
       setEndRound(actionEndRound);
     }
@@ -88,7 +88,7 @@ const ActRewardsPage: React.FC = () => {
   // 根据当前起始轮次判断是否还有更多可以加载（按轮次边界判断）
   useEffect(() => {
     if (!token) return;
-    const minRound = 0n;
+    const minRound = BigInt(0);
     setHasMoreRewards(startRound > minRound);
   }, [startRound, token]);
 
@@ -127,7 +127,7 @@ const ActRewardsPage: React.FC = () => {
   // 无限滚动加载更多激励：当滚动到底部时更新 startRound
   const loadMoreRewards = useCallback(() => {
     if (!token) return;
-    const minRound = 0n;
+    const minRound = BigInt(0);
 
     setStartRound((prev) => {
       if (prev > minRound) {
@@ -230,9 +230,9 @@ const ActRewardsPage: React.FC = () => {
                       className={index === rewardList.length - 1 ? 'border-none' : 'border-b border-gray-100'}
                     >
                       <td>{formatRoundForDisplay(item.round, token).toString()}</td>
-                      <td className="text-center">{formatTokenAmount(item.reward || 0n)}</td>
+                      <td className="text-center">{formatTokenAmount(item.reward || BigInt(0))}</td>
                       <td className="text-center">
-                        {item.reward > 0n && !item.isMinted ? (
+                        {item.reward > BigInt(0) && !item.isMinted ? (
                           <Button
                             variant="outline"
                             size="sm"

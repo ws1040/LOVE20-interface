@@ -59,7 +59,7 @@ export const sendTransactionForTuke = async (
       return arg;
     });
     const overrides: any = {};
-    if (value && value > 0n) {
+    if (value && value > BigInt(0)) {
       overrides.value = ethers.BigNumber.from(value.toString());
     }
 

@@ -381,30 +381,30 @@ export function WalletButton({ className }: WalletButtonProps = {}) {
             className,
           )}
         >
-          <div className="flex items-center gap-3">
-            <Avatar className="w-8 h-8">
+          <div className="flex items-center">
+            <Avatar className="w-8 h-8 mr-3">
               <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs font-bold">
                 {address ? address.slice(2, 4).toUpperCase() : 'W'}
               </AvatarFallback>
             </Avatar>
 
-            <div className="flex flex-col items-start min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-sm font-medium text-gray-900">
+            <div className="flex flex-col items-start min-w-0 mr-2">
+              <div className="flex items-center">
+                <span className="font-mono text-sm font-medium text-gray-900 mr-2">
                   {address ? shortenAddress(address) : ''}
                 </span>
                 {walletChainId && targetChainId && walletChainId !== targetChainId && (
                   <span className="text-xs text-red-500 font-medium">网络不匹配</span>
                 )}
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600">
+              <div className="flex items-center text-xs text-gray-600">
                 <span className="font-semibold">
                   {balance ? formatBalance(balance.value) : '0'} {balance?.symbol || 'ETH'}
                 </span>
               </div>
             </div>
 
-            <ChevronDown className="w-4 h-4 text-gray-500 ml-2" />
+            <ChevronDown className="w-4 h-4 text-gray-500" />
           </div>
         </Button>
       </DropdownMenuTrigger>

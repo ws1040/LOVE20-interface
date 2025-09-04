@@ -23,7 +23,7 @@ const RoundLite: React.FC<RoundProps> = ({ currentRound, roundType, showCountdow
   // 计算加载状态。注意：此处仅用于渲染判断，不影响 Hook 的调用顺序
   const isLoading = !blockNumber || !token || token.voteOriginBlocks === undefined;
 
-  const [currentTokenRound, setCurrentTokenRound] = useState(0n);
+  const [currentTokenRound, setCurrentTokenRound] = useState(BigInt(0));
 
   // 计算剩余时间相关变量
   const ROUND_BLOCKS = Number(process.env.NEXT_PUBLIC_PHASE_BLOCKS) || 0;
@@ -49,7 +49,7 @@ const RoundLite: React.FC<RoundProps> = ({ currentRound, roundType, showCountdow
 
   // 计算当前轮次
   useEffect(() => {
-    if (currentRound > 0n) {
+    if (currentRound > BigInt(0)) {
       setCurrentTokenRound(currentRound);
     }
   }, [currentRound]);
@@ -60,13 +60,13 @@ const RoundLite: React.FC<RoundProps> = ({ currentRound, roundType, showCountdow
   // 如果 currentRound 为空，则设置默认值，否则转换为字符串
   const displayRound = currentTokenRound != null ? currentTokenRound.toString() : '0';
 
-  if (currentTokenRound <= 0n) {
+  if (currentTokenRound <= BigInt(0)) {
     return <></>;
   }
 
   // 当尚未加载相关数据时，返回加载中状态
-  if (isLoading || currentTokenRound == null || currentTokenRound < 0n) {
-    if (currentTokenRound == null || currentTokenRound < 0n) {
+  if (isLoading || currentTokenRound == null || currentTokenRound < BigInt(0)) {
+    if (currentTokenRound == null || currentTokenRound < BigInt(0)) {
       console.log('currentTokenRound', currentTokenRound);
       console.log('currentRound', currentRound);
     }

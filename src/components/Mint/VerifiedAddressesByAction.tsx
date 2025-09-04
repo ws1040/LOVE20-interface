@@ -31,7 +31,7 @@ const VerifiedAddressesByAction: React.FC<{
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
-  const [selectedRound, setSelectedRound] = useState(0n);
+  const [selectedRound, setSelectedRound] = useState(BigInt(0));
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   // 从URL获取round参数
@@ -41,8 +41,8 @@ const VerifiedAddressesByAction: React.FC<{
   useEffect(() => {
     if (urlRound && !isNaN(Number(urlRound))) {
       setSelectedRound(BigInt(urlRound as string));
-    } else if (token && currentJoinRound - BigInt(token.initialStakeRound) >= 2n) {
-      setSelectedRound(currentJoinRound - 2n);
+    } else if (token && currentJoinRound - BigInt(token.initialStakeRound) >= BigInt(2)) {
+      setSelectedRound(currentJoinRound - BigInt(2));
     }
   }, [urlRound, currentJoinRound, token]);
 
@@ -53,7 +53,7 @@ const VerifiedAddressesByAction: React.FC<{
     error: errorVerifiedAddresses,
   } = useVerifiedAddressesByAction(
     token?.address as `0x${string}`,
-    token && selectedRound ? selectedRound : 0n,
+    token && selectedRound ? selectedRound : BigInt(0),
     actionId,
   );
 
@@ -64,7 +64,7 @@ const VerifiedAddressesByAction: React.FC<{
     error: errorVerificationInfosByAction,
   } = useVerificationInfosByAction(
     token?.address as `0x${string}`,
-    token && selectedRound ? selectedRound : 0n,
+    token && selectedRound ? selectedRound : BigInt(0),
     actionId,
   );
 
@@ -136,7 +136,7 @@ const VerifiedAddressesByAction: React.FC<{
 
   return (
     <div className="relative ">
-      {selectedRound === 0n && (
+      {selectedRound === BigInt(0) && (
         <div className="flex items-center justify-center">
           <div className="text-center text-sm text-greyscale-500">暂无验证结果</div>
         </div>
@@ -148,7 +148,7 @@ const VerifiedAddressesByAction: React.FC<{
               <LeftTitle title={`第 ${selectedRound.toString()} 轮验证结果`} />
               <span className="text-sm text-greyscale-500 ml-2">(</span>
               <ChangeRound
-                currentRound={token && currentJoinRound ? formatRoundForDisplay(currentJoinRound - 2n, token) : 0n}
+                currentRound={token && currentJoinRound ? formatRoundForDisplay(currentJoinRound - BigInt(2), token) : BigInt(0)}
                 handleChangedRound={handleChangedRound}
               />
               <span className="text-sm text-greyscale-500">)</span>
@@ -171,7 +171,7 @@ const VerifiedAddressesByAction: React.FC<{
           <LoadingIcon />
         </div>
       ) : addresses.length === 0 ? (
-        selectedRound > 0n && <div className="text-center text-sm text-greyscale-400 p-4">没有验证地址</div>
+        selectedRound > BigInt(0) && <div className="text-center text-sm text-greyscale-400 p-4">没有验证地址</div>
       ) : (
         <table className="table w-full">
           <thead>
@@ -208,7 +208,7 @@ const VerifiedAddressesByAction: React.FC<{
                       />
                     </td>
                     <td className="px-1 text-right">{formatTokenAmountInteger(item.score)}</td>
-                    <td className="px-1 text-right">{formatTokenAmountInteger(item.reward || 0n)}</td>
+                    <td className="px-1 text-right">{formatTokenAmountInteger(item.reward || BigInt(0))}</td>
                   </tr>
 
                   {verificationInfo && actionInfo && isExpanded && (

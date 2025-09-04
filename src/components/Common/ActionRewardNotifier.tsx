@@ -17,7 +17,7 @@ import { useHasUnmintedActionRewardOfLastRounds } from '@/src/hooks/contracts/us
 import AlertBox from '@/src/components/Common/AlertBox';
 
 // 最近检查的轮数范围
-const LAST_ROUNDS = 15n;
+const LAST_ROUNDS = BigInt(15);
 
 type RewardNoticeState = {
   round: number;
@@ -72,7 +72,7 @@ const ActionRewardNotifier: React.FC = () => {
   const shouldTriggerCheck = useMemo(() => {
     if (isOnActionRewardsPage) return false;
     if (!token?.address || !account || currentRound === undefined || currentRound === null) return false;
-    if (currentRound <= 0n) return false;
+    if (currentRound <= BigInt(0)) return false;
     const cached = loadActionRewardNotice(account as `0x${string}`, token.address);
     if (!cached) return true;
     // 如果本地记录的轮次落后，则需要触发本轮检查
@@ -80,7 +80,7 @@ const ActionRewardNotifier: React.FC = () => {
   }, [isOnActionRewardsPage, token?.address, account, currentRound]);
 
   // 读取：最近 LAST_ROUNDS 轮是否存在未铸造
-  const gateRounds = shouldTriggerCheck ? LAST_ROUNDS : 0n; // 通过 latestRounds 是否为 0n 控制内部启用
+  const gateRounds = shouldTriggerCheck ? LAST_ROUNDS : BigInt(0); // 通过 latestRounds 是否为 BigInt(0) 控制内部启用
   const { hasUnmintedActionRewardOfLastRounds } = useHasUnmintedActionRewardOfLastRounds(
     (token?.address || '0x') as `0x${string}`,
     (account || '0x') as `0x${string}`,
@@ -103,10 +103,10 @@ const ActionRewardNotifier: React.FC = () => {
   useEffect(() => {
     if (!token?.address || !account) return;
     if (!shouldTriggerCheck) return;
-    if (currentRound === undefined || currentRound === null || currentRound <= 0n) return;
+    if (currentRound === undefined || currentRound === null || currentRound <= BigInt(0)) return;
 
     // 只有当 hook 被启用时才会返回布尔值
-    if (gateRounds === 0n) return;
+    if (gateRounds === BigInt(0)) return;
 
     if (typeof hasUnmintedActionRewardOfLastRounds === 'boolean') {
       const nextState: RewardNoticeState = {

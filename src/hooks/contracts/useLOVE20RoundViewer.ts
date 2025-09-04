@@ -161,7 +161,7 @@ export const useVotingActions = (tokenAddress: `0x${string}`, round: bigint, acc
     },
   });
 
-  if (round === 0n || !enableRead) {
+  if (round === BigInt(0) || !enableRead) {
     return { votingActions: [], isPending: false, error: undefined };
   }
 
@@ -188,7 +188,7 @@ export const useJoinableActions = (tokenAddress: `0x${string}`, round: bigint, a
     },
   });
 
-  if (round === 0n || !enableRead) {
+  if (round === BigInt(0) || !enableRead) {
     return { joinableActions: [], isPending: false, error: undefined };
   }
 
@@ -232,7 +232,7 @@ export const useVerifyingActions = (tokenAddress: `0x${string}`, round: bigint, 
     },
   });
 
-  if (round === 0n || !enableRead) {
+  if (round === BigInt(0) || !enableRead) {
     return { verifyingActions: [], isPending: false, error: undefined };
   }
 
@@ -259,7 +259,7 @@ export const useVerifingActionsByAccount = (tokenAddress: `0x${string}`, round: 
     },
   });
 
-  if (round === 0n || !enableRead) {
+  if (round === BigInt(0) || !enableRead) {
     return { myVerifyingActions: [], isPending: false, error: undefined };
   }
 

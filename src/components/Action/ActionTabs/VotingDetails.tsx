@@ -25,7 +25,7 @@ interface VotingDetailsProps {
 export default function VotingDetails({ actionId, currentRound }: VotingDetailsProps) {
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
-  const [selectedRound, setSelectedRound] = useState<bigint>(currentRound || 1n);
+  const [selectedRound, setSelectedRound] = useState<bigint>(currentRound || BigInt(1));
 
   // 从URL获取round参数
   const { round: urlRound } = router.query;
@@ -68,7 +68,7 @@ export default function VotingDetails({ actionId, currentRound }: VotingDetailsP
   }
 
   // 计算投票总数
-  const totalVotes = actionVoters?.reduce((sum, voter) => sum + voter.voteCount, 0n) || 0n;
+  const totalVotes = actionVoters?.reduce((sum, voter) => sum + voter.voteCount, BigInt(0)) || BigInt(0);
 
   // 按投票数量降序排列
   const sortedVoters = actionVoters
@@ -81,13 +81,13 @@ export default function VotingDetails({ actionId, currentRound }: VotingDetailsP
 
   // 计算投票占比
   const calculatePercentage = (voteCount: bigint) => {
-    if (totalVotes === 0n) return '0.00';
+    if (totalVotes === BigInt(0)) return '0.00';
     return ((Number(voteCount) / Number(totalVotes)) * 100).toFixed(2);
   };
 
   return (
     <div className="relative pb-4">
-      {selectedRound === 0n && (
+      {selectedRound === BigInt(0) && (
         <div className="flex items-center justify-center">
           <div className="text-center text-sm text-greyscale-500">暂无投票数据</div>
         </div>
@@ -98,7 +98,7 @@ export default function VotingDetails({ actionId, currentRound }: VotingDetailsP
             <LeftTitle title={`第 ${selectedRound.toString()} 轮投票详情`} />
             <span className="text-sm text-greyscale-500 ml-2">(</span>
             <ChangeRound
-              currentRound={currentRound ? formatRoundForDisplay(currentRound, token) : 0n}
+              currentRound={currentRound ? formatRoundForDisplay(currentRound, token) : BigInt(0)}
               handleChangedRound={handleChangedRound}
             />
             <span className="text-sm text-greyscale-500">)</span>

@@ -58,7 +58,7 @@ export const onClientReady = (callback: () => void): void => {
  */
 export const safeToBigInt = (value: any): bigint => {
   if (value === null || value === undefined) {
-    return 0n;
+    return BigInt(0);
   }
 
   // 如果已经是BigInt，直接返回
@@ -70,7 +70,7 @@ export const safeToBigInt = (value: any): bigint => {
   if (typeof value === 'number') {
     // 检查是否为有限数字
     if (!isFinite(value) || value < 0) {
-      return 0n;
+      return BigInt(0);
     }
     // 处理科学记数法 - 转换为字符串再处理，避免精度问题
     if (value.toString().includes('e') || value.toString().includes('E')) {
@@ -88,12 +88,12 @@ export const safeToBigInt = (value: any): bigint => {
   // 如果是字符串
   if (typeof value === 'string') {
     const trimmed = value.trim();
-    if (trimmed === '') return 0n;
+    if (trimmed === '') return BigInt(0);
 
     // 处理科学记数法字符串
     if (trimmed.includes('e') || trimmed.includes('E')) {
       const num = parseFloat(trimmed);
-      if (isNaN(num) || !isFinite(num) || num < 0) return 0n;
+      if (isNaN(num) || !isFinite(num) || num < 0) return BigInt(0);
 
       // 使用 toLocaleString 获取完整的数字字符串
       const fullNumber = num.toLocaleString('fullwide', { useGrouping: false });
@@ -108,10 +108,10 @@ export const safeToBigInt = (value: any): bigint => {
     try {
       return BigInt(trimmed);
     } catch {
-      return 0n;
+      return BigInt(0);
     }
   }
 
   // 其他情况返回0
-  return 0n;
+  return BigInt(0);
 };

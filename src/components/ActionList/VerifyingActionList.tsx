@@ -101,8 +101,8 @@ const VerifyingActionList: React.FC<VerifingActionListProps> = ({ currentRound }
                       <span>
                         <span className="text-greyscale-400 mr-1">进度</span>
                         <span className="text-secondary">
-                          {verifyingAction.votesNum > 0n
-                            ? `${Number((verifyingAction.verificationScore * 100n) / verifyingAction.votesNum)}%`
+                          {verifyingAction.votesNum > BigInt(0)
+                            ? `${Number((verifyingAction.verificationScore * BigInt(100)) / verifyingAction.votesNum)}%`
                             : '0%'}
                         </span>
                       </span>

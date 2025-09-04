@@ -168,6 +168,150 @@ a {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/* Android 10 兼容性修复 */
+@media (max-width: 768px) {
+  /* 修复 Android 10 不支持 flex gap 的问题 */
+  /* 为不支持 gap 的浏览器提供 fallback */
+  @supports not (gap: 1rem) {
+    /* 替换 gap-1 */
+    .gap-1 > * + * {
+      margin-left: 0.25rem !important;
+    }
+
+    /* 替换 gap-2 */
+    .gap-2 > * + * {
+      margin-left: 0.5rem !important;
+    }
+
+    /* 替换 gap-3 */
+    .gap-3 > * + * {
+      margin-left: 0.75rem !important;
+    }
+
+    /* 替换 gap-4 */
+    .gap-4 > * + * {
+      margin-left: 1rem !important;
+    }
+
+    /* 替换 gap-6 */
+    .gap-6 > * + * {
+      margin-left: 1.5rem !important;
+    }
+
+    /* 替换 gap-8 */
+    .gap-8 > * + * {
+      margin-left: 2rem !important;
+    }
+
+    /* 垂直方向的 gap 修复 */
+    .gap-y-1 > * + * {
+      margin-top: 0.25rem !important;
+    }
+
+    .gap-y-2 > * + * {
+      margin-top: 0.5rem !important;
+    }
+
+    .gap-y-4 > * + * {
+      margin-top: 1rem !important;
+    }
+  }
+
+  /* 彻底禁用 Android 10 WebView 的默认按钮样式 - 仅针对没有边框的按钮，但排除UI组件库的按钮 */
+  button:not([class*='border']):not(.border):not([class*='outline']):not([class*='bg-']):not([class*='inline-flex']) {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    outline: none !important;
+    border: none !important;
+    background: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+
+  /* 所有按钮都应该禁用点击高亮 */
+  button {
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  /* 特殊保护：推举按钮在LoadingOverlay遮罩下保持可见 */
+  .submit-action-button {
+    background: #1e3a8a !important;
+    background-color: #1e3a8a !important;
+  }
+
+  /* 修复 Android 10 触摸设备上的 hover 状态误触发 - 排除UI组件库按钮 */
+  @media (hover: none) and (pointer: coarse) {
+    button:not([class*='bg-']):not([class*='inline-flex']):hover,
+    .hover\:bg-gray-200:hover,
+    .hover\:bg-gray-100:hover,
+    button[class*='border-b-2'][class*='flex-1']:hover,
+    button[class*='flex-1'][class*='rounded-md'][class*='text-gray-500']:hover,
+    button[class*='text-secondary'][class*='no-underline']:hover,
+    button[class*='hover:bg-gray-100'][class*='touch-manipulation']:hover {
+      background-color: transparent !important;
+      background: none !important;
+    }
+  }
+
+  /* 修复 Android 10 WebView Tab导航按钮的默认灰色背景 - 精准针对action/info.tsx的Tab导航 */
+  button[class*='border-b-2'][class*='flex-1'] {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /* 修复 Android 10 WebView 子Tab导航按钮的默认灰色背景 - 精准针对VerificationTabs */
+  button[class*='flex-1'][class*='rounded-md'][class*='text-gray-500'] {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /* 修复 Android 10 WebView 切换轮次按钮的默认灰色背景 - 精准针对ChangeRound */
+  button[class*='text-secondary'][class*='no-underline'],
+  button[class*='hover:bg-gray-100'][class*='touch-manipulation'] {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /* 为触摸设备提供替代的点击反馈 - 仅对特定元素生效 */
+  button.active\:bg-gray-200:active {
+    background-color: rgb(229, 231, 235) !important;
+    transition: background-color 0.1s ease;
+  }
+
+  /* 确保 fixed 定位在旧 WebView 中正确工作 */
+  .fixed {
+    position: fixed !important;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
+  /* 修复Dialog居中 - 恢复被覆盖的translate */
+  .fixed.left-\[50\%\].top-\[50\%\] {
+    -webkit-transform: translate(-50%, -50%) !important;
+    transform: translate(-50%, -50%) !important;
+  }
+}
+
 /* 移动端输入法优化 - 解决MetaMask等移动端浏览器输入法问题 */
 @media (max-width: 768px) {
   /* 为底部导航预留空间 */

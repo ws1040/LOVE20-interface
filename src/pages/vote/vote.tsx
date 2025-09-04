@@ -108,7 +108,7 @@ const VotingSubmitPage = () => {
   // 检查输入
   const checkInput = () => {
     // 检查剩余票数
-    if (validGovVotes - votesNumByAccount < 2n) {
+    if (validGovVotes - votesNumByAccount < BigInt(2)) {
       toast.error('剩余票数不足，不能投票');
       return false;
     }
@@ -131,7 +131,7 @@ const VotingSubmitPage = () => {
     const actionIds = idList.map((id) => BigInt(id));
     const votes = idList.map((id) => {
       const percentage = percentages[id] || 0;
-      return (BigInt(percentage) * (validGovVotes - votesNumByAccount)) / 100n;
+      return (BigInt(percentage) * (validGovVotes - votesNumByAccount)) / BigInt(100);
     });
 
     // 提交投票

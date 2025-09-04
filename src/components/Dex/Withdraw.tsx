@@ -40,7 +40,7 @@ const getWithdrawFormSchema = (balance: bigint) =>
         (val) => {
           try {
             const amount = parseUnits(val);
-            return amount > 0n && amount <= balance;
+            return amount > BigInt(0) && amount <= balance;
           } catch (e) {
             return false;
           }
@@ -89,7 +89,7 @@ const Withdraw: React.FC = () => {
 
   // 2. 创建 hook form 实例，并传入当前余额
   const form = useForm<WithdrawFormValues>({
-    resolver: zodResolver(getWithdrawFormSchema(balanceOfERC20Token || 0n)),
+    resolver: zodResolver(getWithdrawFormSchema(balanceOfERC20Token || BigInt(0))),
     defaultValues: {
       withdrawAmount: '',
     },
@@ -132,7 +132,7 @@ const Withdraw: React.FC = () => {
   const setMaxAmount = () => {
     // 注意这里需要先将 balance?.value 转字符串
     // 再用 formatUnits 转成人类可读
-    form.setValue('withdrawAmount', formatUnits(balanceOfERC20Token || 0n));
+    form.setValue('withdrawAmount', formatUnits(balanceOfERC20Token || BigInt(0)));
   };
 
   // 错误处理
@@ -180,7 +180,7 @@ const Withdraw: React.FC = () => {
                   <FormMessage />
                   <FormDescription className="flex items-center justify-between">
                     <span>
-                      共 {isLoadingBalance ? <LoadingIcon /> : formatTokenAmount(balanceOfERC20Token || 0n)}{' '}
+                      共 {isLoadingBalance ? <LoadingIcon /> : formatTokenAmount(balanceOfERC20Token || BigInt(0))}{' '}
                       {process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL}
                     </span>
                     <Button

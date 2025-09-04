@@ -37,7 +37,7 @@ const VerifyPage = () => {
   }, [errorCurrentRound]);
 
   // 状态：剩余票数
-  const [remainingVotes, setRemainingVotes] = useState<bigint>(BigInt(-1n));
+  const [remainingVotes, setRemainingVotes] = useState<bigint>(BigInt(-1));
   function onRemainingVotesChange(votes: bigint) {
     setRemainingVotes(votes);
   }
@@ -65,7 +65,7 @@ const VerifyPage = () => {
         />
 
         <div className="flex flex-col items-center p-4">
-          {remainingVotes > 1n && (
+          {remainingVotes > BigInt(1) && (
             <AddressesForVerifying
               currentRound={currentRound}
               actionId={actionId}
@@ -73,10 +73,10 @@ const VerifyPage = () => {
               remainingVotes={remainingVotes}
             />
           )}
-          {remainingVotes >= 0n && remainingVotes <= 1n && (
+          {remainingVotes >= BigInt(0) && remainingVotes <= BigInt(1) && (
             <AddressesStatus currentRound={currentRound} actionId={actionId} actionInfo={actionInfo} />
           )}
-          {remainingVotes < 0n && <LoadingIcon />}
+          {remainingVotes < BigInt(0) && <LoadingIcon />}
         </div>
 
         <ActionDetail

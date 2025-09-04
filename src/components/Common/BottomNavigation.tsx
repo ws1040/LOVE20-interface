@@ -1,13 +1,40 @@
 'use client';
-import { useContext, useMemo } from 'react';
+import { useContext, useMemo, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { TokenContext } from '@/src/contexts/TokenContext';
 import { cn } from '@/lib/utils';
 import { CircleDollarSign, Users, Vote, User, Repeat } from 'lucide-react';
+import { isTukeWallet } from '@/src/lib/tukeWalletUtils';
 
 export function BottomNavigation() {
   const { token } = useContext(TokenContext) || {};
   const router = useRouter();
+
+  // 检测是否为iOS设备且在TUKE钱包中
+  const [needsExtraPadding, setNeedsExtraPadding] = useState(false);
+
+  useEffect(() => {
+    const checkEnvironment = () => {
+      if (typeof window === 'undefined') return;
+
+      // 检测iOS设备
+      const isIOS =
+        /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      // 检测TUKE钱包
+      const isTuke = isTukeWallet();
+
+      // 如果是iOS设备且在TUKE钱包中，需要额外的底部padding
+      setNeedsExtraPadding(isIOS && isTuke);
+
+      if (isIOS && isTuke) {
+        console.log('🍎 检测到iOS设备中的TUKE钱包，启用额外底部安全区域');
+      }
+    };
+
+    checkEnvironment();
+  }, []);
 
   const navItems = useMemo(() => {
     if (!token) return [];
@@ -54,8 +81,13 @@ export function BottomNavigation() {
   if (!token) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-700 shadow-lg z-50 md:hidden">
-      <div className="flex justify-around items-center py-2 px-4 pb-safe">
+    <nav
+      className={cn(
+        'fixed bottom-0 left-0 right-0 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-700 shadow-lg z-50 md:hidden',
+        needsExtraPadding && 'pb-2', // iOS + TUKE钱包额外底部间距，再微调缩短一点
+      )}
+    >
+      <div className={cn('flex justify-around items-center py-2 px-4', needsExtraPadding ? 'pb-1' : 'pb-safe')}>
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -67,6 +99,15 @@ export function BottomNavigation() {
                 'min-w-0 flex-1',
                 item.isMain && 'transform -translate-y-1',
               )}
+              style={{
+                WebkitTapHighlightColor: 'transparent',
+                WebkitAppearance: 'none',
+                appearance: 'none',
+                background: 'transparent',
+                backgroundColor: 'transparent',
+                border: 'none',
+                outline: 'none',
+              }}
             >
               {/* 主操作按钮的特殊背景 */}
               {item.isMain && (

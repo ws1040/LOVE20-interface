@@ -126,7 +126,7 @@ export const useActionPageData = ({
       ? safeToBigInt(userJoinedAmountResult.result) 
       : undefined;
     
-    const isJoined = userJoinedAmount ? userJoinedAmount > 0n : false;
+    const isJoined = userJoinedAmount ? userJoinedAmount > BigInt(0) : false;
 
     return {
       actionInfo,

@@ -56,7 +56,7 @@ const VerificationTabs: React.FC<VerificationTabsProps> = ({ actionId, currentRo
         return (
           <VerifyStatus
             actionId={actionId}
-            currentRound={currentRound && currentRound > 0n ? currentRound - 1n : 0n}
+            currentRound={currentRound && currentRound > BigInt(0) ? currentRound - BigInt(1) : BigInt(0)}
             actionInfo={actionInfo}
           />
         );

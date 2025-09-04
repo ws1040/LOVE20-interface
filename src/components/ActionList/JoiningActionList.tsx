@@ -36,7 +36,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   // 获取行动参与相关数据
   const { joinableActions, isPending, error } = useJoinableActions(
     (token?.address as `0x${string}`) || '',
-    currentRound ? currentRound : 0n,
+    currentRound ? currentRound : BigInt(0),
     account as `0x${string}`,
   );
   const {
@@ -46,10 +46,10 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   } = useRewardAvailable((token?.address as `0x${string}`) || '');
 
   // 计算所有 joinableActions 的总票数，用于计算投票占比
-  const totalVotes = joinableActions?.reduce((acc, action) => acc + action.votesNum, 0n) || 0n;
+  const totalVotes = joinableActions?.reduce((acc, action) => acc + action.votesNum, BigInt(0)) || BigInt(0);
 
   // 计算预计新增铸币
-  const displayRound = token ? currentRound - BigInt(token.initialStakeRound) + 1n : 0n;
+  const displayRound = token ? currentRound - BigInt(token.initialStakeRound) + BigInt(1) : BigInt(0);
   const expectedReward = calculateExpectedActionReward(rewardAvailable, displayRound);
 
   // 错误处理
@@ -88,7 +88,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
             .map((actionDetail: JoinableAction, index: number) => {
               // 计算投票占比
               const voteRatio =
-                Number(totalVotes) > 0 ? Number(joinableActions[index].votesNum || 0n) / Number(totalVotes) : 0;
+                Number(totalVotes) > 0 ? Number(joinableActions[index].votesNum || BigInt(0)) / Number(totalVotes) : 0;
 
               // 根据是否已加入，设置不同的链接
               const href = `/action/info?id=${actionDetail.action.head.id}&symbol=${token?.symbol}`;
@@ -138,7 +138,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                                 <LoadingIcon />
                               ) : (
                                 calculateActionAPY(
-                                  BigInt(Math.floor(Number(expectedReward || 0n) * voteRatio)),
+                                  BigInt(Math.floor(Number(expectedReward || BigInt(0)) * voteRatio)),
                                   joinableActions[index].joinedAmount,
                                 )
                               )}

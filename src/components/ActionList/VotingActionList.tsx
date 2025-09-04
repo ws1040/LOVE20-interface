@@ -40,7 +40,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
   );
 
   // 计算投票总数： 累计
-  const totalVotes = votingActions.reduce((acc, votingAction) => acc + votingAction.votesNum, 0n);
+  const totalVotes = votingActions.reduce((acc, votingAction) => acc + votingAction.votesNum, BigInt(0));
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -73,7 +73,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
               <Link href={`/vote/actions4submit?symbol=${token?.symbol}`}>推举其他行动</Link>
             </Button>
             <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
-              <Link href={`/gov?symbol=${token?.symbol}`}>返回治理首页</Link>
+              <Link href={`/gov?symbol=${token?.symbol}`}>返回治理</Link>
             </Button>
           </div>
         )}
@@ -116,7 +116,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
                         <span>
                           <span className="text-greyscale-400 mr-1">占比</span>
                           <span className="text-secondary">
-                            {totalVotes === 0n
+                            {totalVotes === BigInt(0)
                               ? '-'
                               : formatPercentage((Number(votingAction.votesNum) * 100) / Number(totalVotes))}
                           </span>
