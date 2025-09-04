@@ -171,7 +171,7 @@ const ActRewardsPage: React.FC = () => {
   }, [errorActionInfo, errorCurrentRound, errorLoadingRewards, writeError, handleContractError]);
 
   // 如果没有 actionId，显示错误
-  if (!actionId) {
+  if (actionId === undefined) {
     return (
       <>
         <Header title="行动激励" showBackButton={true} />

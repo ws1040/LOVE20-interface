@@ -184,7 +184,7 @@ const ActRewardsPage: React.FC = () => {
 
             {isLoadingRewards || isLoadingActions ? (
               <LoadingIcon />
-            ) : (
+            ) : displayedGroups.length > 0 ? (
               displayedGroups.map((group) => (
                 <div key={group.action.head.id} className="border border-gray-100 rounded-lg p-4 shadow-sm">
                   <div className="flex items-center mb-3">
@@ -253,6 +253,8 @@ const ActRewardsPage: React.FC = () => {
                   </div>
                 </div>
               ))
+            ) : (
+              <div className="text-center text-greyscale-500 py-8">最近 {LAST_ROUNDS.toString()} 轮没有获得激励</div>
             )}
           </div>
         )}

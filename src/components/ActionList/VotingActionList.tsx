@@ -1,4 +1,8 @@
 'use client';
+/**
+ * 列表：显示正在投票中的行动
+ */
+
 import { useRouter } from 'next/router';
 import { ChevronRight, UserPen } from 'lucide-react';
 import { useAccount } from 'wagmi';
@@ -130,7 +134,12 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
             })}
           </>
         ) : (
-          <div className="text-sm text-greyscale-500 text-center mt-8">还没推举行动，请先推举</div>
+          <div className="text-center mt-8">
+            <div className="text-base text-greyscale-500 mb-4">还没有推举行动，请先推举！</div>
+            <Button asChild>
+              <Link href={`/vote/actions4submit?symbol=${token?.symbol}`}>去推举行动</Link>
+            </Button>
+          </div>
         )}
       </div>
     </div>

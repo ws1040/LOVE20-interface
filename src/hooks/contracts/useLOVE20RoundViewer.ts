@@ -125,6 +125,11 @@ export const useActionInfosByIds = (tokenAddress: `0x${string}`, actionIds: bigi
     },
   });
 
+  // 当 actionIds 为空数组时，直接返回空结果，避免 loading 状态一直为 true
+  if (actionIds.length === 0) {
+    return { actionInfos: [], isPending: false, error: undefined };
+  }
+
   return { actionInfos: data as any[] | undefined, isPending, error };
 };
 
@@ -329,8 +334,6 @@ export const useVerificationInfosByAccount = (
   };
 };
 
-
-
 /**
  * Hook for govData
  */
@@ -348,17 +351,10 @@ export const useGovData = (tokenAddress: `0x${string}`) => {
   return { govData: data as GovData, isPending, error };
 };
 
-
-
-
 /**
  * Hook for actionVoters - 一个行动的投票详情
  */
-export const useActionVoters = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  actionId: bigint
-) => {
+export const useActionVoters = (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20RoundViewerAbi,
@@ -379,7 +375,7 @@ export const useAccountVotingHistory = (
   tokenAddress: `0x${string}`,
   account: `0x${string}`,
   startRound: bigint,
-  endRound: bigint
+  endRound: bigint,
 ) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -393,9 +389,9 @@ export const useAccountVotingHistory = (
 
   const votingHistory = useMemo(() => {
     if (!data) return undefined;
-    
+
     const [accountActions, actionInfos] = data as readonly [readonly AccountVotingAction[], readonly ActionInfo[]];
-    
+
     return {
       accountActions: [...(accountActions || [])],
       actionInfos: [...(actionInfos || [])],
@@ -414,11 +410,7 @@ export const useAccountVotingHistory = (
 /**
  * Hook for actionVerificationMatrix - 验证矩阵
  */
-export const useActionVerificationMatrix = (
-  tokenAddress: `0x${string}`,
-  round: bigint,
-  actionId: bigint
-) => {
+export const useActionVerificationMatrix = (tokenAddress: `0x${string}`, round: bigint, actionId: bigint) => {
   const { data, isPending, error } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LOVE20RoundViewerAbi,
