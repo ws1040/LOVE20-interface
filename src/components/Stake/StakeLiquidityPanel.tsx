@@ -27,7 +27,7 @@ import { useError } from '@/src/contexts/ErrorContext';
 
 // my hooks
 import { useApprove } from '@/src/hooks/contracts/useLOVE20Token';
-import { useTokenPairInfoWithAccount } from '@/src/hooks/contracts/useLOVE20TokenViewer';
+import { useStakeLpPageData } from '@/src/hooks/composite/useStakeLpPageData';
 import { useAccountStakeStatus, useInitialStakeRound } from '@/src/hooks/contracts/useLOVE20Stake';
 import { useStakeLiquidity } from '@/src/hooks/contracts/useLOVE20Hub';
 import { useHandleContractError } from '@/src/lib/errorUtils';
@@ -111,21 +111,26 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   const { setError } = useError();
   const { first: isFirstTimeStake } = useRouter().query;
 
-  // 获取 pairInfo
+  // 获取质押LP页面数据（包含 pairInfo 和授权信息）
   const {
     pairInfo,
-    isPending: isPendingPair,
-    error: errorPair,
-  } = useTokenPairInfoWithAccount(account as `0x${string}`, token?.address as `0x${string}`);
+    allowanceToken,
+    allowanceParentToken,
+    isPending: isPendingStakeLpData,
+    error: errorStakeLpData,
+  } = useStakeLpPageData({
+    account: account as `0x${string}`,
+    tokenAddress: token?.address as `0x${string}`,
+    parentTokenAddress: token?.parentTokenAddress as `0x${string}`,
+  });
 
-  // 从 pairInfo 中读取余额及授权额度
+  // 从 pairInfo 中读取余额
   const tokenBalance = pairInfo?.balanceOfToken ?? BigInt(0);
   const parentTokenBalance = pairInfo?.balanceOfParentToken ?? BigInt(0);
-  const allowanceToken = pairInfo?.allowanceOfToken ?? BigInt(0);
-  const allowanceParentToken = pairInfo?.allowanceOfParentToken ?? BigInt(0);
 
   // 判断 pairReserve 是否有效
-  const pairExists = pairInfo && BigInt(pairInfo.pairReserveToken) > BigInt(0) && BigInt(pairInfo.pairReserveParentToken) > BigInt(0);
+  const pairExists =
+    pairInfo && BigInt(pairInfo.pairReserveToken) > BigInt(0) && BigInt(pairInfo.pairReserveParentToken) > BigInt(0);
 
   // 是否是首次质押
   const [updatedInitialStakeRound, setUpdatedInitialStakeRound] = useState(false);
@@ -266,9 +271,9 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
     }
   }, [pairExists, isTokenChangedByUser, parsedStakeToken, pairInfo, form]);
 
-  // 根据 pairInfo 中的授权额度判断授权状态
+  // 根据授权额度判断授权状态
   useEffect(() => {
-    if (parsedParentToken > BigInt(0) && allowanceParentToken >= parsedParentToken) {
+    if (parsedParentToken > BigInt(0) && allowanceParentToken && allowanceParentToken >= parsedParentToken) {
       setIsParentTokenApproved(true);
     } else {
       setIsParentTokenApproved(false);
@@ -276,7 +281,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   }, [parsedParentToken, allowanceParentToken]);
 
   useEffect(() => {
-    if (parsedStakeToken > BigInt(0) && allowanceToken >= parsedStakeToken) {
+    if (parsedStakeToken > BigInt(0) && allowanceToken && allowanceToken >= parsedStakeToken) {
       setIsTokenApproved(true);
     } else {
       setIsTokenApproved(false);
@@ -368,8 +373,8 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   // --------------------------------------------------
   const { handleContractError } = useHandleContractError();
   useEffect(() => {
-    if (errorPair) {
-      handleContractError(errorPair, 'token');
+    if (errorStakeLpData) {
+      handleContractError(errorStakeLpData, 'token');
     }
     if (errApproveToken) {
       handleContractError(errApproveToken, 'stake');
@@ -387,7 +392,7 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
       handleContractError(errAccountStakeStatus, 'stake');
     }
   }, [
-    errorPair,
+    errorStakeLpData,
     errApproveToken,
     errApproveParentToken,
     errStakeLiquidity,
@@ -412,19 +417,19 @@ const StakeLiquidityPanel: React.FC<StakeLiquidityPanelProps> = ({}) => {
   }, [token, isFirstTimeStake, isPendingInitialStakeRound, initialStakeRound]);
 
   useEffect(() => {
-    if (!isPendingPair && !tokenBalance && !hadStartedApprove && token && token.symbol) {
+    if (!isPendingStakeLpData && !tokenBalance && !hadStartedApprove && token && token.symbol) {
       setError({
         name: '余额不足',
         message: `您当前${token.symbol}数量为0，请先获取${token.symbol}`,
       });
     }
-    if (!isPendingPair && !parentTokenBalance && !hadStartedApprove && token && token.parentTokenSymbol) {
+    if (!isPendingStakeLpData && !parentTokenBalance && !hadStartedApprove && token && token.parentTokenSymbol) {
       setError({
         name: '余额不足',
         message: `您当前${token.parentTokenSymbol}数量为0，请先获取${token.parentTokenSymbol}`,
       });
     }
-  }, [tokenBalance, parentTokenBalance, token, isPendingPair]);
+  }, [tokenBalance, parentTokenBalance, token, isPendingStakeLpData]);
 
   const approveTokenButtonRef = useRef<HTMLButtonElement>(null);
   const prevIsPendingApproveToken = useRef<boolean>(isPendingApproveToken);

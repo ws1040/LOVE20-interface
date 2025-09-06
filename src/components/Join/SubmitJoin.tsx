@@ -208,7 +208,12 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   const additionalStakeAmount = form.watch('additionalStakeAmount');
   const parsedStakeAmount = parseUnits(additionalStakeAmount || '0') ?? BigInt(0);
   useEffect(() => {
-    if (parsedStakeAmount > BigInt(0) && allowanceToken && allowanceToken > BigInt(0) && allowanceToken >= parsedStakeAmount) {
+    if (
+      parsedStakeAmount > BigInt(0) &&
+      allowanceToken &&
+      allowanceToken > BigInt(0) &&
+      allowanceToken >= parsedStakeAmount
+    ) {
       setIsTokenApproved(true);
     } else {
       setIsTokenApproved(false);
@@ -278,7 +283,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
       form.reset();
       // 2秒后返回
       setTimeout(() => {
-        router.push(`/action/info?id=${actionInfo.head.id}&symbol=${token?.symbol}`);
+        router.push(`/my/myaction?id=${actionInfo.head.id}&symbol=${token?.symbol}`);
       }, 2000);
     }
   }, [isConfirmedJoin]);

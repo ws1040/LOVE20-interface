@@ -132,8 +132,6 @@ export interface PairInfo {
   pairAddress: `0x${string}`;
   balanceOfToken: bigint;
   balanceOfParentToken: bigint;
-  allowanceOfToken: bigint;
-  allowanceOfParentToken: bigint;
   pairReserveToken: bigint;
   pairReserveParentToken: bigint;
 }
