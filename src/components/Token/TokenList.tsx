@@ -33,14 +33,14 @@ interface TokenWithLaunchInfo extends Token {
 export default function TokenList({ parentTokenAddress }: TokenListProps) {
   const { token: currentToken } = useContext(TokenContext) || {};
 
-  const [start, setStart] = useState<bigint>(0n);
+  const [start, setStart] = useState<bigint>(BigInt(0));
   const [end, setEnd] = useState<bigint>(BigInt(PAGE_SIZE));
   const [allTokens, setAllTokens] = useState<TokenWithLaunchInfo[]>([]);
 
   // 初始化时重置 allTokens
   useEffect(() => {
     setAllTokens([]);
-    setStart(0n);
+    setStart(BigInt(0));
     setEnd(BigInt(PAGE_SIZE));
   }, [parentTokenAddress]); // 当 parentTokenAddress 改变时也重置
 
@@ -162,7 +162,7 @@ export default function TokenList({ parentTokenAddress }: TokenListProps) {
                   )}
                 </p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center space-x-2">
                 <span>
                   <span className="text-greyscale-500 text-sm">父币 </span>
                   <span className="text-sm font-mono">{token.parentTokenSymbol}</span>

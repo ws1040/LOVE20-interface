@@ -5,9 +5,11 @@ import { formatSeconds } from '@/src/lib/format';
 interface LeftTimeProps {
   initialTimeLeft: number;
   onTick?: (timeLeft: number) => void;
+  forceShowSeconds?: boolean; // 强制显示秒数，即使天数大于0
+  fontClass?: string; // 控制文字字体的CSS类名
 }
 
-const LeftTime: React.FC<LeftTimeProps> = ({ initialTimeLeft, onTick }) => {
+const LeftTime: React.FC<LeftTimeProps> = ({ initialTimeLeft, onTick, forceShowSeconds = false, fontClass = '' }) => {
   // 计算目标时间（milliseconds）
   const [targetTime, setTargetTime] = useState<number>(Date.now() + initialTimeLeft * 1000);
   // 当前剩余秒数
@@ -40,38 +42,38 @@ const LeftTime: React.FC<LeftTimeProps> = ({ initialTimeLeft, onTick }) => {
   const seconds = timeLeft % 60;
 
   return (
-    <div className="inline-flex gap-1 text-greyscale-400">
+    <span className="inline-flex space-x-1 text-greyscale-400">
       {days > 0 && (
-        <div>
-          <span className="countdown font-mono">
+        <span>
+          <span className={`countdown font-mono ${fontClass}`}>
             <span style={{ '--value': days } as React.CSSProperties}></span>
           </span>
-          天
-        </div>
+          <span className={fontClass}>天</span>
+        </span>
       )}
       {(hours > 0 || days > 0) && (
-        <div>
-          <span className="countdown font-mono">
+        <span>
+          <span className={`countdown font-mono ${fontClass}`}>
             <span style={{ '--value': hours } as React.CSSProperties}></span>
           </span>
-          时
-        </div>
+          <span className={fontClass}>时</span>
+        </span>
       )}
-      <div>
-        <span className="countdown font-mono">
+      <span>
+        <span className={`countdown font-mono ${fontClass}`}>
           <span style={{ '--value': minutes } as React.CSSProperties}></span>
         </span>
-        分
-      </div>
-      {days <= 0 && (
-        <div>
-          <span className="countdown font-mono">
+        <span className={fontClass}>分</span>
+      </span>
+      {(days <= 0 || forceShowSeconds) && (
+        <span>
+          <span className={`countdown font-mono ${fontClass}`}>
             <span style={{ '--value': seconds } as React.CSSProperties}></span>
           </span>
-          秒
-        </div>
+          <span className={fontClass}>秒</span>
+        </span>
       )}
-    </div>
+    </span>
   );
 };
 

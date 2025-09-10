@@ -15,6 +15,8 @@ import { Wallet, Copy, LogOut, ChevronDown, Check, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { config } from '@/src/wagmi';
+import { isTukeWallet } from '@/src/lib/tukeWalletUtils';
 
 interface WalletButtonProps {
   className?: string;
@@ -30,9 +32,120 @@ export function WalletButton({ className }: WalletButtonProps = {}) {
   const { connect, connectors, error: connectError, isPending } = useConnect();
   const { disconnect } = useDisconnect();
   const [copied, setCopied] = useState(false);
+  const [walletChainId, setWalletChainId] = useState<number | null>(null);
+  const [isNetworkMismatch, setIsNetworkMismatch] = useState(false);
+  const [isSwitchingNetwork, setIsSwitchingNetwork] = useState(false);
 
   // 获取注入式连接器
   const injectedConnector = connectors.find((c) => c.id === 'injected');
+  const chainName = process.env.NEXT_PUBLIC_CHAIN_NAME ?? process.env.NEXT_PUBLIC_CHAIN;
+  const targetChainId = config.chains[0]?.id;
+
+  // 检测钱包当前网络
+  const detectWalletNetwork = async () => {
+    if (typeof window === 'undefined' || !window.ethereum) return null;
+
+    try {
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      const numericChainId = parseInt(chainId, 16);
+      setWalletChainId(numericChainId);
+
+      // 检查网络是否匹配
+      const isMismatch = targetChainId ? numericChainId !== targetChainId : false;
+      setIsNetworkMismatch(isMismatch);
+
+      return numericChainId;
+    } catch (error) {
+      console.error('检测钱包网络失败:', error);
+      return null;
+    }
+  };
+
+  // 网络切换函数
+  const switchToValidNetwork = async (targetChainId: number) => {
+    if (!targetChainId) {
+      toast.error('未配置目标网络');
+      return false;
+    }
+
+    try {
+      setIsSwitchingNetwork(true);
+
+      if (!window.ethereum) {
+        toast.error('未找到钱包');
+        return false;
+      }
+
+      const targetChain = config.chains[0];
+      if (!targetChain) {
+        toast.error('未配置目标网络');
+        return false;
+      }
+
+      const validChainId = '0x' + targetChainId.toString(16);
+      console.log('切换到网络:', targetChainId, validChainId);
+
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: validChainId }],
+      });
+
+      toast.success(`已连接到 ${chainName}`);
+
+      // 重新检测网络
+      await detectWalletNetwork();
+      return true;
+    } catch (error: any) {
+      console.log('网络切换错误:', error);
+
+      // 链未添加到钱包，尝试添加
+      if (error.code === 4902 || error.code === -32603) {
+        try {
+          const targetChain = config.chains[0];
+          const addParams = {
+            chainId: '0x' + targetChainId.toString(16),
+            chainName: chainName,
+            nativeCurrency: targetChain.nativeCurrency,
+            rpcUrls: targetChain.rpcUrls.default.http,
+            blockExplorerUrls: targetChain.blockExplorers ? [targetChain.blockExplorers.default.url] : undefined,
+          };
+
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [addParams],
+          });
+
+          toast.success(`已添加并连接到 ${chainName}`);
+
+          // 重新检测网络
+          await detectWalletNetwork();
+          return true;
+        } catch (addError: any) {
+          console.error('添加网络失败:', addError);
+          toast.error(`添加网络失败: ${addError.message || '未知错误'}`);
+          return false;
+        }
+      } else if (error.code === 4001) {
+        toast.error('用户取消了网络切换');
+        return false;
+      } else {
+        toast.error(`网络切换失败: ${error.message || '未知错误'}`);
+        return false;
+      }
+    } finally {
+      setIsSwitchingNetwork(false);
+    }
+  };
+
+  // 处理网络切换
+  const handleSwitchNetwork = async () => {
+    if (!targetChainId) {
+      toast.error('未配置目标网络');
+      return;
+    }
+
+    await switchToValidNetwork(targetChainId);
+  };
 
   const shortenAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -94,7 +207,6 @@ export function WalletButton({ className }: WalletButtonProps = {}) {
   const handleDisconnect = () => {
     try {
       disconnect();
-      toast.success('已断开钱包连接');
     } catch (error) {
       console.error('断开连接失败:', error);
       toast.error('断开连接失败');
@@ -124,15 +236,75 @@ export function WalletButton({ className }: WalletButtonProps = {}) {
     }
   }, [connectError]);
 
-  // 监听连接成功事件（仅在真正连接时触发，不在页面刷新时触发）
+  // 监听连接成功事件并切换网络
   const prevConnectedRef = useRef(isConnected);
   useEffect(() => {
-    // 只在从未连接变为已连接时显示提示
-    if (!prevConnectedRef.current && isConnected && address) {
-      toast.success(`已连接: ${shortenAddress(address)}`);
+    const handleNetworkCheck = async () => {
+      // 只在从未连接变为已连接时处理
+      if (!prevConnectedRef.current && isConnected && address) {
+        if (chainId) {
+          const chainName = process.env.NEXT_PUBLIC_CHAIN_NAME || config.chains[0]?.name || '目标网络';
+          const switched = await switchToValidNetwork(chainId);
+          if (!switched) {
+            toast.error(`网络切换失败，请手动切换到${chainName}`);
+          }
+        }
+      }
+    };
+
+    if (!isTukeWallet()) {
+      handleNetworkCheck();
     }
     prevConnectedRef.current = isConnected;
   }, [isConnected, address]);
+
+  // 监听钱包网络变化
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.ethereum) return;
+
+    const handleChainChanged = async (chainId: string) => {
+      console.log('钱包网络已切换:', chainId);
+      const numericChainId = parseInt(chainId, 16);
+      setWalletChainId(numericChainId);
+
+      // 检查网络是否匹配
+      const isMismatch = targetChainId ? numericChainId !== targetChainId : false;
+      setIsNetworkMismatch(isMismatch);
+
+      if (isMismatch) {
+        toast.error(`网络不匹配，请及时切换`);
+      }
+    };
+
+    const handleAccountsChanged = async (accounts: string[]) => {
+      console.log('钱包账户已切换:', accounts);
+      if (accounts.length === 0) {
+        // 用户断开连接
+        setWalletChainId(null);
+        setIsNetworkMismatch(false);
+      } else {
+        // 重新检测网络
+        await detectWalletNetwork();
+      }
+    };
+
+    // 添加事件监听器
+    window.ethereum.on('chainChanged', handleChainChanged);
+    window.ethereum.on('accountsChanged', handleAccountsChanged);
+
+    // 初始检测网络
+    if (isConnected) {
+      detectWalletNetwork();
+    }
+
+    return () => {
+      // 清理事件监听器
+      if (window.ethereum) {
+        window.ethereum.removeListener('chainChanged', handleChainChanged);
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+      }
+    };
+  }, [isConnected, targetChainId]);
 
   // 安全检查：确保注入式钱包可用
   useEffect(() => {
@@ -150,6 +322,29 @@ export function WalletButton({ className }: WalletButtonProps = {}) {
 
   // 加载状态
   const isLoading = isConnecting || isReconnecting || isPending;
+
+  // 如果网络不匹配，显示网络错误按钮
+  if (isConnected && isNetworkMismatch) {
+    return (
+      <Button
+        onClick={handleSwitchNetwork}
+        disabled={isSwitchingNetwork}
+        className={cn(
+          'bg-red-500 hover:bg-red-600 text-white font-medium px-6 py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200',
+          className,
+        )}
+      >
+        {isSwitchingNetwork ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            切换网络中...
+          </>
+        ) : (
+          <>网络错误，请切换</>
+        )}
+      </Button>
+    );
+  }
 
   if (!isConnected) {
     return (
@@ -186,27 +381,30 @@ export function WalletButton({ className }: WalletButtonProps = {}) {
             className,
           )}
         >
-          <div className="flex items-center gap-3">
-            <Avatar className="w-8 h-8">
+          <div className="flex items-center">
+            <Avatar className="w-8 h-8 mr-3">
               <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs font-bold">
                 {address ? address.slice(2, 4).toUpperCase() : 'W'}
               </AvatarFallback>
             </Avatar>
 
-            <div className="flex flex-col items-start min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-sm font-medium text-gray-900">
+            <div className="flex flex-col items-start min-w-0 mr-2">
+              <div className="flex items-center">
+                <span className="font-mono text-sm font-medium text-gray-900 mr-2">
                   {address ? shortenAddress(address) : ''}
                 </span>
+                {walletChainId && targetChainId && walletChainId !== targetChainId && (
+                  <span className="text-xs text-red-500 font-medium">网络不匹配</span>
+                )}
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600">
+              <div className="flex items-center text-xs text-gray-600">
                 <span className="font-semibold">
                   {balance ? formatBalance(balance.value) : '0'} {balance?.symbol || 'ETH'}
                 </span>
               </div>
             </div>
 
-            <ChevronDown className="w-4 h-4 text-gray-500 ml-2" />
+            <ChevronDown className="w-4 h-4 text-gray-500" />
           </div>
         </Button>
       </DropdownMenuTrigger>

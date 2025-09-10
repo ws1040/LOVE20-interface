@@ -59,7 +59,7 @@ export default function StTokenTab() {
         <div className="mt-1 flex items-center">
           <span className="text-sm text-greyscale-500 mr-1">我持有:</span>
           <span className="text-sm text-secondary">
-            {isBalancePending ? <LoadingIcon /> : formatTokenAmount(balance || 0n)}
+            {isBalancePending ? <LoadingIcon /> : formatTokenAmount(balance || BigInt(0))}
           </span>
         </div>
       </div>

@@ -34,7 +34,7 @@ export const useActionInfo = (tokenAddress: `0x${string}`, actionId: bigint | un
     address: CONTRACT_ADDRESS,
     abi: LOVE20SubmitAbi,
     functionName: 'actionInfo',
-    args: [tokenAddress, actionId || 0n],
+    args: [tokenAddress, actionId || BigInt(0)],
     query: {
       enabled: !!tokenAddress && actionId !== undefined,
     },

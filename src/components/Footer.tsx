@@ -21,7 +21,7 @@ const Footer: React.FC<FooterProps> = () => {
           <a
             href="https://love20tkm.github.io/docs/"
             onClick={handleExternalLink}
-            className="flex items-center gap-2 text-primary hover:underline font-medium"
+            className="flex items-center space-x-2 text-primary hover:underline font-medium"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

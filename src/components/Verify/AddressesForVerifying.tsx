@@ -1,11 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
-import { useAccount, useChainId } from 'wagmi';
+import { useChainId } from 'wagmi';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect, useContext } from 'react';
 
 // my types & funcs
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { ActionInfo } from '@/src/types/love20types';
 
 // my contexts
@@ -105,10 +104,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
   // 提交验证
   const { verify, isPending, isConfirming, isConfirmed, writeError: submitError } = useVerify();
   const checkInput = () => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return false;
-    }
-    if (remainingVotes <= 2n) {
+    if (remainingVotes <= BigInt(2)) {
       toast.error('剩余票数不足，无法验证');
       return false;
     }
@@ -137,7 +133,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
 
     // 计算每个地址的票数（整数部分）
     const scoresArrayForSubmit: bigint[] = [];
-    let allocatedVotes = 0n;
+    let allocatedVotes = BigInt(0);
 
     // 计算每个地址的票数（整数部分）
     verificationInfos.forEach((info, index) => {
@@ -158,7 +154,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
     });
 
     // 计算弃权票数并提交
-    const scoresArrayTotal = scoresArrayForSubmit.reduce((sum, votes) => sum + votes, 0n);
+    const scoresArrayTotal = scoresArrayForSubmit.reduce((sum, votes) => sum + votes, BigInt(0));
 
     console.log('remainingVotes', remainingVotes);
     console.log('scoresArrayTotal', scoresArrayTotal);
@@ -166,7 +162,7 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
 
     // if 有弃权票
     if (parseInt(abstainScore) > 0) {
-      const abstainVotes = remainingVotes > scoresArrayTotal ? remainingVotes - scoresArrayTotal : 0n;
+      const abstainVotes = remainingVotes > scoresArrayTotal ? remainingVotes - scoresArrayTotal : BigInt(0);
       console.log('abstainVotes', abstainVotes);
       verify(token?.address as `0x${string}`, actionId, abstainVotes, scoresArrayForSubmit);
     } else {
@@ -174,14 +170,14 @@ const AddressesForVerifying: React.FC<VerifyAddressesProps> = ({
 
       // 误差处理：如果误差丢掉了一些票，则简单将这些票分配给第一个得分不为0的地址
       if (scoresArrayTotal < remainingVotes) {
-        const firstNonZeroIndex = scoresArrayForSubmit.findIndex((votes) => votes > 0n);
+        const firstNonZeroIndex = scoresArrayForSubmit.findIndex((votes) => votes > BigInt(0));
         if (firstNonZeroIndex !== -1) {
           scoresArrayForSubmit[firstNonZeroIndex] += remainingVotes - scoresArrayTotal;
         }
       }
 
-      console.log('abstainVotes', 0n);
-      verify(token?.address as `0x${string}`, actionId, 0n, scoresArrayForSubmit);
+      console.log('abstainVotes', BigInt(0));
+      verify(token?.address as `0x${string}`, actionId, BigInt(0), scoresArrayForSubmit);
     }
   };
 

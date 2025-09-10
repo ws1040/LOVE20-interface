@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { LaunchInfo } from '@/src/types/love20types';
 import { useBalanceOf, useBurnForParentToken, useTotalSupply } from '@/src/hooks/contracts/useLOVE20Token';
@@ -90,14 +89,14 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
   const burnAmount = form.watch('burnAmount');
   const parsedBurnAmount = useMemo(() => {
     try {
-      return burnAmount ? parseUnits(burnAmount) : 0n;
+      return burnAmount ? parseUnits(burnAmount) : BigInt(0);
     } catch (e) {
-      return 0n;
+      return BigInt(0);
     }
   }, [burnAmount]);
 
   // 计算预计可换回的父币数量
-  const [expectedParentTokenBalance, setExpectedParentTokenBalance] = useState(0n);
+  const [expectedParentTokenBalance, setExpectedParentTokenBalance] = useState(BigInt(0));
   useEffect(() => {
     const burnAmt = form.getValues('burnAmount');
     if (totalSupplyOfToken && balanceOfParentToken && burnAmt) {
@@ -117,7 +116,6 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
   } = useBurnForParentToken(token?.address as `0x${string}`);
 
   const onBurn = async (data: z.infer<typeof FormSchema>) => {
-    if (!checkWalletConnectionByChainId(chainId)) return;
     try {
       await burnForParentToken(parseUnits(data.burnAmount));
     } catch (error) {
@@ -136,7 +134,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
 
   // "最高"按钮逻辑
   const setMaxAmount = () => {
-    form.setValue('burnAmount', formatUnits(balanceOfToken || 0n));
+    form.setValue('burnAmount', formatUnits(balanceOfToken || BigInt(0)));
   };
 
   // 错误处理
@@ -168,7 +166,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
           <div className="stat place-items-center">
             <div className="stat-title text-sm mr-6">父币托底池总量</div>
             <div className="stat-value text-secondary mt-2">
-              {formatTokenAmount(balanceOfParentToken || 0n)}
+              {formatTokenAmount(balanceOfParentToken || BigInt(0))}
               <span className="text-greyscale-500 font-normal text-sm ml-2">{token.parentTokenSymbol}</span>
             </div>
             <div className="stat-desc text-sm mt-2">
@@ -182,13 +180,13 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
             <form onSubmit={(e) => e.preventDefault()}>
               <div className="flex items-center text-sm my-0">
                 <span className="text-greyscale-400">
-                  我的 {token.symbol}: <span className="text-secondary">{formatTokenAmount(balanceOfToken || 0n)}</span>
+                  我的 {token.symbol}: <span className="text-secondary">{formatTokenAmount(balanceOfToken || BigInt(0))}</span>
                 </span>
                 <Button
                   variant="link"
                   size="sm"
                   onClick={setMaxAmount}
-                  disabled={(balanceOfToken || 0n) <= 0n || isPendingBurn || isConfirmingBurn}
+                  disabled={(balanceOfToken || BigInt(0)) <= BigInt(0) || isPendingBurn || isConfirmingBurn}
                   className="text-secondary"
                 >
                   最高
@@ -204,7 +202,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
                       <Input
                         type="number"
                         placeholder={`请输入要销毁的 ${token.symbol} 数量`}
-                        disabled={(balanceOfToken || 0n) <= 0n || isPendingBurn || isConfirmingBurn}
+                        disabled={(balanceOfToken || BigInt(0)) <= BigInt(0) || isPendingBurn || isConfirmingBurn}
                         className="!ring-secondary-foreground"
                         {...field}
                       />
@@ -239,7 +237,7 @@ const Burn: React.FC<{ token: Token | null | undefined; launchInfo: LaunchInfo }
               <div className="flex items-center justify-center text-sm my-2">
                 <span className="text-greyscale-400">
                   我的 {token.parentTokenSymbol}:{' '}
-                  <span className="text-secondary">{formatTokenAmount(balanceOfParentTokenOfMy || 0n)}</span>{' '}
+                  <span className="text-secondary">{formatTokenAmount(balanceOfParentTokenOfMy || BigInt(0))}</span>{' '}
                   {token.parentTokenSymbol}
                 </span>
                 <Button

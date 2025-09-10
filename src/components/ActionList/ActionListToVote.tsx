@@ -1,4 +1,8 @@
 'use client';
+/**
+ * 表单: 选择要投票行动的列表
+ */
+
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import { UserPen } from 'lucide-react';
@@ -55,7 +59,7 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
   };
 
   // 计算投票总数： 累计
-  const totalVotes = votingActions.reduce((acc, votingAction) => acc + votingAction.votesNum, 0n);
+  const totalVotes = votingActions.reduce((acc, votingAction) => acc + votingAction.votesNum, BigInt(0));
 
   // 投票
   const handleSubmit = () => {
@@ -153,7 +157,7 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
                           <span>
                             <span className="text-greyscale-400 mr-1">占比</span>
                             <span className="text-secondary">
-                              {totalVotes === 0n
+                              {totalVotes === BigInt(0)
                                 ? '-'
                                 : formatPercentage((Number(votingAction.votesNum) * 100) / Number(totalVotes))}
                             </span>
@@ -172,7 +176,12 @@ const ActionListToVote: React.FC<VotingActionListProps> = ({ currentRound }) => 
             <div className="mt-2 text-sm text-greyscale-500 text-center">提示: 每轮最大可投票数，等于您的治理票数</div>
           </>
         ) : (
-          <div className="text-sm text-greyscale-500 text-center mt-8">还没推举行动，请先推举</div>
+          <div className="text-center mt-8">
+            <div className="text-base text-greyscale-500 mb-4">还没有推举行动，请先推举！</div>
+            <Button asChild>
+              <Link href={`/vote/actions4submit?symbol=${token?.symbol}`}>去推举行动</Link>
+            </Button>
+          </div>
         )}
       </div>
     </div>

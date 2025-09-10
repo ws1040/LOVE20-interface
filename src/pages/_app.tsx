@@ -1,35 +1,41 @@
-import type { AppProps } from 'next/app';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
-import { SidebarInset } from '@/components/ui/sidebar';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import dynamic from 'next/dynamic';
+import type { AppProps } from 'next/app';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
-import { TokenProvider } from '@/src/contexts/TokenContext';
-import { AppSidebar } from '@/src/components/Common/AppSidebar';
 import { config } from '@/src/wagmi';
 import { ErrorProvider } from '@/src/contexts/ErrorContext';
-import Footer from '@/src/components/Footer';
-import ErrorBoundary from '@/src/components/ErrorBoundary';
-import dynamic from 'next/dynamic';
-import { useState, useEffect } from 'react';
+import { TokenProvider } from '@/src/contexts/TokenContext';
+import { AppSidebar } from '@/src/components/Common/AppSidebar';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
-
-import Link from 'next/link';
-import Head from 'next/head';
+import ActionRewardNotifier from '@/src/components/Common/ActionRewardNotifier';
+import Footer from '@/src/components/Footer';
+import { BottomNavigation } from '@/src/components/Common/BottomNavigation';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import '../styles/globals.css';
 
-// 开发环境下动态导入 vConsole
 const initVConsole = () => {
-  // if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
   if (typeof window !== 'undefined') {
-    import('vconsole').then((VConsole) => {
-      const vConsole = new VConsole.default();
-    });
+    // check saved debug value
+    const urlParams = new URLSearchParams(window.location.search);
+    const debugParam = urlParams.get('debug');
+    if (debugParam == 'true' || debugParam == 'false') {
+      localStorage.setItem('debug', debugParam);
+    }
+
+    // check debug value
+    const debugValue = localStorage.getItem('debug');
+    if (debugValue === 'true') {
+      import('vconsole').then((VConsole) => {
+        const vConsole = new VConsole.default();
+      });
+    }
   }
 };
 
@@ -74,101 +80,70 @@ function MyApp({ Component, pageProps }: AppProps) {
   // 在服务端或客户端未完成挂载时显示loading
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <div className="flex justify-center items-center h-screen">
-          <div className="text-lg">加载中...</div>
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100vw',
+          height: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'hsl(var(--background))',
+          zIndex: 9999,
+          margin: 0,
+          padding: 0,
+        }}
+      >
+        <div
+          style={{
+            fontSize: '1.125rem',
+            color: 'hsl(var(--foreground))',
+            textAlign: 'center',
+            padding: '0 1rem',
+          }}
+        >
+          加载中...
         </div>
       </div>
     );
   }
 
   return (
-    <>
-      <Head>
-        <title>LOVE20</title>
-        <meta name="description" content="LOVE20 测试页面" />
-      </Head>
-
-      {/* 覆盖默认布局，使用全屏显示 */}
-      <div className="fixed inset-0 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6 z-50">
-        <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">LOVE20</h1>
-            <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
-          </div>
-
-          <div className="space-y-6 text-gray-600">
-            <p className="text-lg font-medium">LOVE20 目前正在测试中</p>
-
-            <div className="space-y-4">
-              <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
-                <p className="text-sm text-gray-500 mb-2">测试环境：</p>
-                <Link
-                  href="https://love20tkm.github.io/interface-test"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
-                >
-                  https://love20tkm.github.io/interface-test
-                </Link>
-              </div>
-
-              <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
-                <p className="text-sm text-gray-500 mb-2">白皮书：</p>
-                <Link
-                  href="https://love20tkm.github.io/docs/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
-                >
-                  https://love20tkm.github.io/docs/
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <p className="text-sm text-gray-400">感谢您的关注与支持</p>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-
-  return (
-    <ErrorBoundary>
-      <ClientWrapper>
-        <LoadingOverlay isLoading={navLoading} text="网络加载中..." />
-        <WagmiProvider config={config}>
-          <QueryClientProvider client={client}>
-            <TokenProvider>
-              <SidebarProvider>
-                <ErrorProvider>
-                  <AppSidebar />
-                  <SidebarInset>
-                    <div className="min-h-screen bg-background flex flex-col">
-                      <Toaster
-                        position="top-center"
-                        toastOptions={{
-                          style: {
-                            background: '#000000',
-                            color: '#FFFFFF',
-                          },
-                        }}
-                      />
-                      <ErrorBoundary>
-                        <Component {...pageProps} />
-                      </ErrorBoundary>
-                      <Footer />
-                    </div>
-                  </SidebarInset>
-                </ErrorProvider>
-              </SidebarProvider>
-            </TokenProvider>
-          </QueryClientProvider>
-        </WagmiProvider>
-      </ClientWrapper>
-    </ErrorBoundary>
+    <ClientWrapper>
+      <LoadingOverlay isLoading={navLoading} text="网络加载中..." />
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={client}>
+          <TokenProvider>
+            <SidebarProvider>
+              <ErrorProvider>
+                <AppSidebar />
+                <SidebarInset className="min-w-0">
+                  <div className="min-h-screen bg-background flex flex-col pb-16 md:pb-0">
+                    <Toaster
+                      position="top-center"
+                      toastOptions={{
+                        style: {
+                          background: '#000000',
+                          color: '#FFFFFF',
+                        },
+                      }}
+                    />
+                    <ActionRewardNotifier />
+                    <Component {...pageProps} />
+                    <Footer />
+                    <BottomNavigation />
+                  </div>
+                </SidebarInset>
+              </ErrorProvider>
+            </SidebarProvider>
+          </TokenProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </ClientWrapper>
   );
 }
 

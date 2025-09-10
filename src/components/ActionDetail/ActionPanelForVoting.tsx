@@ -60,7 +60,7 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
 
   // 投票
   const isLoading = isPendingValidGovVotes || isPendingVotesNumByAccount || isPendingVotesNumByAccountByActionId;
-  const myLeftVotes = isLoading ? 0n : validGovVotes - votesNumByAccount;
+  const myLeftVotes = isLoading ? BigInt(0) : validGovVotes - votesNumByAccount;
 
   const {
     vote,
@@ -124,7 +124,7 @@ const ActionPanelForVote: React.FC<ActionPanelForVoteProps> = ({ actionId, onRou
           </div>
         </div>
 
-        {!isPendingVotesNumByAccountByActionId && myLeftVotes > 10n ? (
+        {!isPendingVotesNumByAccountByActionId && myLeftVotes > BigInt(10) ? (
           <Button className="w-1/2" onClick={handleVote} disabled={isWritingVote || isConfirmingVote}>
             {isWritingVote || isConfirmingVote ? <LoadingIcon /> : '将100%票投给此行动'}
           </Button>

@@ -46,17 +46,17 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
   // 计算剩余验证票数
   const remainingVotes = (() => {
     if (isPendingVotesNumByAccount || isPendingScoreByVerifier) {
-      return 0n;
+      return BigInt(0);
     }
 
     const votes = safeToBigInt(votesNumByAccount);
     const score = safeToBigInt(scoreByVerifier);
 
     try {
-      return votes >= score ? votes - score : 0n;
+      return votes >= score ? votes - score : BigInt(0);
     } catch (error) {
       console.error('计算剩余验证票数出错:', error);
-      return 0n;
+      return BigInt(0);
     }
   })();
 
@@ -89,7 +89,7 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
     <div className="flex-col items-center px-4 pb-2">
       <div className="flex justify-between items-center mb-2">
         <LeftTitle title="我的验证" />
-        {showBtn && currentRound >= 1n && (
+        {showBtn && currentRound >= BigInt(1) && (
           <Button variant="link" className="text-secondary border-secondary" asChild>
             <Link href={`/verify/actions/?symbol=${token?.symbol}`}>验证中的行动</Link>
           </Button>
@@ -117,13 +117,13 @@ const MyVerifingPanel: React.FC<MyVerifingPanelProps> = ({ currentRound, showBtn
         <div className="flex justify-center">
           {isPendingVotesNumByAccount || isPendingScoreByVerifier ? (
             <LoadingIcon />
-          ) : remainingVotes > 5n && safeToBigInt(votesNumByAccount) > safeToBigInt(scoreByVerifier) ? (
+          ) : remainingVotes > BigInt(5) && safeToBigInt(votesNumByAccount) > safeToBigInt(scoreByVerifier) ? (
             <Button className="w-1/2" asChild>
               <Link href={`/verify?symbol=${token.symbol}`}>去验证</Link>
             </Button>
           ) : (
             <Button disabled className="w-1/2">
-              {safeToBigInt(scoreByVerifier) > 0n ? '已验证' : '未投票，无需验证'}
+              {safeToBigInt(scoreByVerifier) > BigInt(0) ? '已验证' : '未投票，无需验证'}
             </Button>
           )}
         </div>

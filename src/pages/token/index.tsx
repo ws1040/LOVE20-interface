@@ -1,15 +1,16 @@
 'use client';
 
 import { useContext, useEffect, useMemo } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useBlockNumber } from 'wagmi';
 import { formatUnits as viemFormatUnits } from 'viem';
+import Link from 'next/link';
 
 // ui
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { HandCoins, Info, TableOfContents, Pickaxe, Blocks, BarChart2, Users, Rocket } from 'lucide-react';
+import { HandCoins, TableOfContents, Pickaxe, Blocks, BarChart2, Users, Rocket } from 'lucide-react';
 
 // my context
 import { TokenContext } from '@/src/contexts/TokenContext';
@@ -20,8 +21,9 @@ import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import AddressWithCopyButton from '@/src/components/Common/AddressWithCopyButton';
 
 // my hooks
-import { useTokenStatistics } from '@/src/hooks/contracts/useLOVE20RoundViewer';
+import { useTokenStatistics } from '@/src/hooks/contracts/useLOVE20TokenViewer';
 import { useLaunchInfo } from '@/src/hooks/contracts/useLOVE20Launch';
+import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Vote';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { formatPercentage } from '@/src/lib/format';
 
@@ -53,7 +55,7 @@ function AddressItem({ name, address }: { name: string; address?: string }) {
   return (
     <div className="rounded-lg">
       <div className="flex items-center justify-between gap-2">
-        <div className="text-sm">{name}</div>
+        <div className="text-base">{name}</div>
         <AddressWithCopyButton address={address as `0x${string}`} />
       </div>
     </div>
@@ -84,13 +86,19 @@ function formatAmount(value?: bigint, decimals?: number, symbol?: string) {
 
 const TokenPage = () => {
   const { isConnected } = useAccount();
+  const { data: currentBlockNumber } = useBlockNumber();
   const { token: currentToken } = useContext(TokenContext) || {};
+  const { currentRound, isPending: isPendingCurrentRound } = useCurrentRound();
 
+  const launchEnded = !!currentToken && currentToken.hasEnded;
   const {
     tokenStatistics,
     error: errorTokenStatistics,
     isPending: isPendingTokenStatistics,
-  } = useTokenStatistics((currentToken?.address as `0x${string}`) || '0x0000000000000000000000000000000000000000');
+  } = useTokenStatistics(
+    (currentToken?.address as `0x${string}`) || '0x0000000000000000000000000000000000000000',
+    launchEnded,
+  );
 
   const {
     launchInfo,
@@ -109,19 +117,23 @@ const TokenPage = () => {
   const parentSymbol = currentToken?.parentTokenSymbol ?? '';
 
   // 代币统计（变量命名与 TokenStats 保持一致）
-  const maxSupply = tokenStatistics?.maxSupply ?? 0n;
-  const totalSupply = tokenStatistics?.totalSupply ?? 0n;
-  const reservedAvailable = tokenStatistics?.reservedAvailable ?? 0n;
-  const rewardAvailable = tokenStatistics?.rewardAvailable ?? 0n;
-  const stakedTokenAmountForSt = tokenStatistics?.stakedTokenAmountForSt ?? 0n;
-  const joinedTokenAmount = tokenStatistics?.joinedTokenAmount ?? 0n;
-  const tokenAmountForSl = tokenStatistics?.tokenAmountForSl ?? 0n;
-  const parentPool = tokenStatistics?.parentPool ?? 0n;
-  const finishedRounds = tokenStatistics?.finishedRounds ?? 0n;
-  const actionsCount = tokenStatistics?.actionsCount ?? 0n;
-  const joiningActionsCount = tokenStatistics?.joiningActionsCount ?? 0n;
-
-  const unminted = maxSupply > totalSupply ? maxSupply - totalSupply : 0n;
+  const maxSupply = BigInt(process.env.NEXT_PUBLIC_MAX_SUPPLY ?? 0);
+  const totalSupply = launchEnded
+    ? tokenStatistics?.totalSupply ?? BigInt(0)
+    : BigInt(process.env.NEXT_PUBLIC_LAUNCH_AMOUNT ?? 0);
+  const reservedAvailable = tokenStatistics?.reservedAvailable ?? BigInt(0);
+  const rewardAvailable = tokenStatistics?.rewardAvailable ?? BigInt(0);
+  const stakedTokenAmountForSt = tokenStatistics?.stakedTokenAmountForSt ?? BigInt(0);
+  const joinedTokenAmount = tokenStatistics?.joinedTokenAmount ?? BigInt(0);
+  const tokenAmountForSl = tokenStatistics?.tokenAmountForSl ?? BigInt(0);
+  const parentPool = tokenStatistics?.parentPool ?? BigInt(0);
+  const finishedRounds = tokenStatistics?.finishedRounds ?? BigInt(0);
+  const actionsCount = tokenStatistics?.actionsCount ?? BigInt(0);
+  const joiningActionsCount = tokenStatistics?.joiningActionsCount ?? BigInt(0);
+  const childTokensCount = tokenStatistics?.childTokensCount ?? BigInt(0);
+  const launchingChildTokensCount = tokenStatistics?.launchingChildTokensCount ?? BigInt(0);
+  const launchedChildTokensCount = tokenStatistics?.launchedChildTokensCount ?? BigInt(0);
+  const unminted = maxSupply > totalSupply ? maxSupply - totalSupply : BigInt(0);
   const otherBalance = totalSupply - joinedTokenAmount - tokenAmountForSl - stakedTokenAmountForSt;
 
   // 发射区块
@@ -138,6 +150,12 @@ const TokenPage = () => {
     Verify: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_VERIFY,
     Mint: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MINT,
     Random: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_RANDOM,
+    UniswapV2Factory: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_FACTORY,
+    UniswapV2Router02: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_UNISWAP_V2_ROUTER,
+    TokenViewer: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_TOKENVIEWER,
+    RoundViewer: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_ROUNDVIEWER,
+    MintViewer: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_MINTVIEWER,
+    Hub: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_PERIPHERAL_HUB,
   } as const;
 
   // 当前代币相关地址
@@ -149,7 +167,7 @@ const TokenPage = () => {
     pair: currentToken?.uniswapV2PairAddress,
   } as const;
 
-  if (isPendingTokenStatistics || isPendingLaunchInfo) {
+  if ((launchEnded && isPendingTokenStatistics) || isPendingLaunchInfo) {
     return (
       <div className="flex justify-center items-center h-screen">
         <LoadingIcon />
@@ -169,14 +187,14 @@ const TokenPage = () => {
           <LoadingIcon />
         ) : (
           <div className="p-4 md:p-6">
-            <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <header className="flex flex-col gap-4">
               <div className="flex items-center gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+                <div className="space-y-1 flex-1">
+                  <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-semibold tracking-tight font-mono">{currentToken.symbol}</h1>
-                    <Badge variant="secondary" className="font-mono">
-                      {currentToken.name}
-                    </Badge>
+                    <Button variant="outline" size="sm" className="text-secondary border-secondary -mt-2" asChild>
+                      <Link href={`/token/intro?symbol=${currentToken.symbol}`}>代币简介 &gt;&gt;</Link>
+                    </Button>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <span className="inline-flex items-center gap-1">
@@ -185,10 +203,7 @@ const TokenPage = () => {
                       <span className="font-mono">{`${formatAmount(totalSupply, decimals)}`}</span>
                     </span>
                     <Separator orientation="vertical" className="h-4" />
-                    <span className="inline-flex items-center gap-1">
-                      <Info className="h-4 w-4" />
-                      {`Decimals: ${decimals}`}
-                    </span>
+                    <span className="inline-flex items-center gap-1">{`Decimals: ${decimals}`}</span>
                   </div>
                 </div>
               </div>
@@ -211,9 +226,23 @@ const TokenPage = () => {
                   <div className="lg:col-span-2 space-y-6">
                     <Card>
                       <CardHeader className="px-4 pt-4 pb-2">
-                        <CardTitle className="flex items-center gap-2 text-lg">
-                          <TableOfContents className="h-5 w-5 text-primary" />
-                          基本信息
+                        <CardTitle className="flex items-center justify-between text-lg">
+                          <div className="flex items-center gap-2">
+                            <TableOfContents className="h-5 w-5 text-primary" />
+                            基本信息
+                          </div>
+                          {/* 当存在父币且父币不是第一个父币时显示返回父币链接 */}
+                          {currentToken.parentTokenAddress &&
+                            currentToken.parentTokenAddress !== '0x0000000000000000000000000000000000000000' &&
+                            currentToken.parentTokenSymbol &&
+                            currentToken.parentTokenSymbol !== process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL && (
+                              <Link
+                                href={`/acting/?symbol=${currentToken.parentTokenSymbol}`}
+                                className="text-sm text-secondary hover:text-secondary/80 transition-colors"
+                              >
+                                返回父币 &gt;&gt;
+                              </Link>
+                            )}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="grid gap-4 grid-cols-2 px-4 pt-2 pb-4">
@@ -296,9 +325,17 @@ const TokenPage = () => {
                   <div className="space-y-6">
                     <Card>
                       <CardHeader className="px-4 pt-4 pb-2">
-                        <CardTitle className="flex items-center gap-2 text-lg">
-                          <Rocket className="h-5 w-5 text-primary" />
-                          发射情况
+                        <CardTitle className="flex items-center justify-between text-lg">
+                          <div className="flex items-center gap-2">
+                            <Rocket className="h-5 w-5 text-primary" />
+                            公平发射
+                          </div>
+                          <Link
+                            href="/launch"
+                            className="text-sm text-secondary hover:text-secondary/80 transition-colors"
+                          >
+                            查看详情 &gt;&gt;
+                          </Link>
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="grid grid-cols-2 gap-4 px-4 pt-2 pb-4">
@@ -318,8 +355,32 @@ const TokenPage = () => {
                       <CardContent className="grid grid-cols-2 gap-4 px-4 pt-2 pb-4">
                         <Field label="首次治理轮次" value={String(currentToken.initialStakeRound ?? 0)} />
                         <Field label="已完成轮数" value={formatBigIntWithCommas(finishedRounds)} />
+                        <Field label="最新轮次" value={isPendingCurrentRound ? '...' : String(currentRound)} />
+                        <Field label="当前区块高度" value={String(currentBlockNumber)} />
                         <Field label="累计发起行动数" value={formatBigIntWithCommas(actionsCount)} />
                         <Field label="进行中的行动数" value={formatBigIntWithCommas(joiningActionsCount)} />
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="px-4 pt-4 pb-2">
+                        <CardTitle className="flex items-center justify-between text-lg">
+                          <div className="flex items-center gap-2">
+                            <Blocks className="h-5 w-5 text-primary" />
+                            子币情况
+                          </div>
+                          <Link
+                            href={`/tokens/children/?symbol=${currentToken.symbol}`}
+                            className="text-sm text-secondary hover:text-secondary/80 transition-colors"
+                          >
+                            子币列表 &gt;&gt;
+                          </Link>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="grid grid-cols-2 gap-4 px-4 pt-2 pb-4">
+                        <Field label="子币数量" value={formatBigIntWithCommas(childTokensCount)} />
+                        <Field label="发射中的子币数量" value={formatBigIntWithCommas(launchingChildTokensCount)} />
+                        <Field label="发射完成的子币数量" value={formatBigIntWithCommas(launchedChildTokensCount)} />
                       </CardContent>
                     </Card>
                   </div>
@@ -353,7 +414,29 @@ const TokenPage = () => {
                       <AddressItem name={`${currentToken.parentTokenSymbol}(父币)`} address={currentAddresses.parent} />
                       <AddressItem name="流动性质押凭证SL代币" address={currentAddresses.sl} />
                       <AddressItem name="代币质押凭证ST代币" address={currentAddresses.st} />
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="px-4 pt-4 pb-2">
+                      <CardTitle className="text-lg">UniswapV2 合约地址：</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid gap-3 px-4 pt-2 pb-4">
+                      <AddressItem name="UniswapV2Factory" address={constantsAddresses.UniswapV2Factory} />
                       <AddressItem name="UniswapV2Pair" address={currentAddresses.pair} />
+                      <AddressItem name="UniswapV2Router02" address={constantsAddresses.UniswapV2Router02} />
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="px-4 pt-4 pb-2">
+                      <CardTitle className="text-lg">LOVE20 外围合约地址：</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid gap-3 px-4 pt-2 pb-4">
+                      <AddressItem name="TokenViewer" address={constantsAddresses.TokenViewer} />
+                      <AddressItem name="RoundViewer" address={constantsAddresses.RoundViewer} />
+                      <AddressItem name="MintViewer" address={constantsAddresses.MintViewer} />
+                      <AddressItem name="Hub" address={constantsAddresses.Hub} />
                     </CardContent>
                   </Card>
                 </div>

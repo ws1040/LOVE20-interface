@@ -1,20 +1,21 @@
 'use client';
 
 import React, { useEffect, useState, useContext, useRef, useCallback } from 'react';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
+import { Info } from 'lucide-react';
 
 // my functions & types
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatRoundForDisplay } from '@/src/lib/format';
-import { RewardInfo } from '@/src/types/love20types';
+import { GovReward } from '@/src/types/love20types';
 
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
 
 // my hooks
-import { useGovRewardsByAccountByRounds } from '@/src/hooks/contracts/useLOVE20RoundViewer';
+import { useGovRewardsByAccountByRounds } from '@/src/hooks/contracts/useLOVE20MintViewer';
 import { useCurrentRound } from '@/src/hooks/contracts/useLOVE20Verify';
 import { useMintGovReward } from '@/src/hooks/contracts/useLOVE20Mint';
 import { useHandleContractError } from '@/src/lib/errorUtils';
@@ -25,15 +26,14 @@ import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
-const REWARDS_PER_PAGE = 20n;
+const REWARDS_PER_PAGE = BigInt(20);
 
 const GovRewardsPage: React.FC = () => {
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
-  const chainId = useChainId();
   const { currentRound, error: errorCurrentRound, isPending: isLoadingCurrentRound } = useCurrentRound();
-  const [startRound, setStartRound] = useState<bigint>(0n);
-  const [endRound, setEndRound] = useState<bigint>(0n);
+  const [startRound, setStartRound] = useState<bigint>(BigInt(0));
+  const [endRound, setEndRound] = useState<bigint>(BigInt(0));
   const [hasMoreRewards, setHasMoreRewards] = useState(true);
 
   // 引入参考元素，用于无限滚动加载
@@ -42,9 +42,9 @@ const GovRewardsPage: React.FC = () => {
   useEffect(() => {
     if (currentRound !== undefined && token) {
       if (currentRound <= BigInt(token.initialStakeRound)) {
-        setEndRound(0n);
+        setEndRound(BigInt(0));
       } else {
-        setEndRound(BigInt(currentRound >= 1n ? currentRound - 1n : 0n));
+        setEndRound(BigInt(currentRound >= BigInt(1) ? currentRound - BigInt(1) : BigInt(0)));
       }
     }
   }, [currentRound, token]);
@@ -60,14 +60,14 @@ const GovRewardsPage: React.FC = () => {
     }
   }, [endRound, token]);
 
-  // 获取治理奖励数据
+  // 获取治理激励数据
   const {
     rewards,
     isPending: isLoadingRewards,
     error: errorLoadingRewards,
   } = useGovRewardsByAccountByRounds(token?.address as `0x${string}`, account as `0x${string}`, startRound, endRound);
 
-  const [rewardList, setRewardList] = useState<RewardInfo[]>([]);
+  const [rewardList, setRewardList] = useState<GovReward[]>([]);
   useEffect(() => {
     if (rewards) {
       const sortedRewards = [...rewards].sort((a, b) => (a.round > b.round ? -1 : 1)); // 按 round 倒序排列
@@ -82,7 +82,7 @@ const GovRewardsPage: React.FC = () => {
     setHasMoreRewards(startRound > initialStake);
   }, [startRound, token]);
 
-  // 铸造治理奖励
+  // 铸造治理激励
   const { mintGovReward, isPending, isConfirming, isConfirmed, writeError: errorMintGovReward } = useMintGovReward();
   const [mintingRound, setMintingRound] = useState<bigint | null>(null);
   useEffect(() => {
@@ -93,9 +93,6 @@ const GovRewardsPage: React.FC = () => {
   }, [isConfirmed, mintingRound]);
 
   const handleClaim = async (round: bigint) => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
     if (token?.address && account) {
       setMintingRound(round);
       await mintGovReward(token.address, round);
@@ -116,7 +113,7 @@ const GovRewardsPage: React.FC = () => {
     }
   }, [errorLoadingRewards, errorCurrentRound, errorMintGovReward, handleContractError]);
 
-  // 无限滚动加载更多奖励：当滚动到底部时更新 startRound
+  // 无限滚动加载更多激励：当滚动到底部时更新 startRound
   const loadMoreRewards = useCallback(() => {
     if (!token) return;
     const initialStake = BigInt(token.initialStakeRound);
@@ -164,19 +161,45 @@ const GovRewardsPage: React.FC = () => {
         {!token ? (
           <LoadingIcon />
         ) : (
-          <div className="flex flex-col space-y-6 p-4">
-            <LeftTitle title="铸造治理奖励" />
+          <div className="flex flex-col space-y-2 p-4">
+            <LeftTitle title="铸造治理激励" />
 
-            {endRound === 0n && currentRound !== undefined ? (
-              <div className="text-center text-gray-500 py-4">当前还不能铸造奖励，请耐心等待</div>
+            {endRound === BigInt(0) && currentRound !== undefined ? (
+              <div className="text-center text-gray-500 py-4">当前还不能铸造激励，请耐心等待</div>
             ) : (
               <>
                 <table className="table w-full table-auto">
                   <thead>
-                    <tr className="border-b border-gray-100">
+                    <tr className="border-b border-gray-200">
                       <th>轮次</th>
-                      <th className="text-center">可铸造激励</th>
-                      <th className="text-center">结果</th>
+                      <th className="text-center px-1">总激励</th>
+                      <th className="text-center px-2">
+                        <div className="inline-flex items-center justify-center">
+                          <span>验证激励</span>
+                          <Link
+                            href={`/gov/stakelp/?symbol=${token?.symbol || ''}`}
+                            className="ml-1 text-greyscale-500 hover:text-secondary"
+                            aria-label="验证激励说明"
+                            title="验证激励说明"
+                          >
+                            <Info size={16} />
+                          </Link>
+                        </div>
+                      </th>
+                      <th className="text-center px-2">
+                        <div className="inline-flex items-center justify-center">
+                          <span>加速激励</span>
+                          <Link
+                            href={`/gov/staketoken/?symbol=${token?.symbol || ''}`}
+                            className="ml-1 text-greyscale-500 hover:text-secondary"
+                            aria-label="加速激励说明"
+                            title="加速激励说明"
+                          >
+                            <Info size={16} />
+                          </Link>
+                        </div>
+                      </th>
+                      <th className="text-center px-2">结果</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -188,11 +211,17 @@ const GovRewardsPage: React.FC = () => {
                       </tr>
                     ) : (
                       rewardList.map((item) => (
-                        <tr key={item.round.toString()} className="border-b border-gray-100">
+                        <tr key={item.round.toString()} className="border-b border-gray-200">
                           <td>{token ? formatRoundForDisplay(item.round, token).toString() : '-'}</td>
-                          <td className="text-center">{formatTokenAmount(item.reward || 0n)}</td>
-                          <td className="text-center">
-                            {item.reward > 0n && !item.isMinted ? (
+                          <td className="text-center px-1">{formatTokenAmount(item.reward || BigInt(0))}</td>
+                          <td className="text-center px-2 bg-greyscale-100">
+                            {formatTokenAmount(item.verifyReward || BigInt(0))}
+                          </td>
+                          <td className="text-center px-2 bg-greyscale-100">
+                            {formatTokenAmount(item.boostReward || BigInt(0))}
+                          </td>
+                          <td className="text-center px-2">
+                            {item.reward > BigInt(0) && !item.isMinted ? (
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -219,7 +248,7 @@ const GovRewardsPage: React.FC = () => {
                   ) : hasMoreRewards ? (
                     <span className="text-sm text-gray-500">加载更多...</span>
                   ) : (
-                    <span className="text-sm text-gray-500">没有更多奖励</span>
+                    <span className="text-sm text-gray-500">没有更多激励</span>
                   )}
                 </div>
               </>

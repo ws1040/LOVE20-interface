@@ -28,10 +28,9 @@ interface VerifyAddressesProps {
   currentRound: bigint;
   actionId: bigint;
   actionInfo: ActionInfo | undefined;
-  remainingVotes: bigint;
 }
 
-const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionId, actionInfo, remainingVotes }) => {
+const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionId, actionInfo }) => {
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
@@ -48,7 +47,7 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
     '0x0000000000000000000000000000000000000000',
   );
 
-  // 读取验证地址的奖励
+  // 读取验证地址的激励
   const {
     verifiedAddresses,
     isPending: isPendingVerifiedAddresses,
@@ -97,9 +96,9 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
   };
 
   // 累计当前已验证票数
-  const verifiedVotesNum = verifiedAddresses?.reduce((acc, addr) => acc + addr.score, 0n) || 0n;
+  const verifiedVotesNum = verifiedAddresses?.reduce((acc, addr) => acc + addr.score, BigInt(0)) || BigInt(0);
   const verifiedVotesPercent =
-    ((Number(verifiedVotesNum) + Number(abstainVotes || 0n)) / Number(totalVotesNum || 0n)) * 100;
+    ((Number(verifiedVotesNum) + Number(abstainVotes || BigInt(0))) / Number(totalVotesNum || BigInt(0))) * 100;
 
   return (
     <div className="relative px-4 pb-4 w-full">
@@ -133,7 +132,7 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                 const verifiedAddress = verifiedAddresses?.find((addr) => addr.account === info.account);
                 return {
                   ...info,
-                  score: verifiedAddress?.score || 0n,
+                  score: verifiedAddress?.score || BigInt(0),
                 };
               })
               .sort((a, b) => {
@@ -163,10 +162,10 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
                           word={info.account === account ? '(我)' : ''}
                         />
                       </td>
-                      <td className="px-1 text-right">{formatTokenAmountInteger(verifiedAddress?.score || 0n)}</td>
+                      <td className="px-1 text-right">{formatTokenAmountInteger(verifiedAddress?.score || BigInt(0))}</td>
                       <td className="px-1 text-right">
                         {formatPercentage(
-                          (Number(verifiedAddress?.score || 0n) / Number(verifiedVotesNum || 0n)) * 100,
+                          (Number(verifiedAddress?.score || BigInt(0)) / Number(verifiedVotesNum || BigInt(0))) * 100,
                         )}
                       </td>
                     </tr>
@@ -192,15 +191,15 @@ const AddressesStatus: React.FC<VerifyAddressesProps> = ({ currentRound, actionI
             <tr>
               <td className="px-1"></td>
               <td className="px-1 text-greyscale-500">弃权票</td>
-              <td className="px-1 text-right">{formatTokenAmountInteger(abstainVotes || 0n)}</td>
+              <td className="px-1 text-right">{formatTokenAmountInteger(abstainVotes || BigInt(0))}</td>
               <td className="px-1 text-right">
-                {formatPercentage((Number(abstainVotes || 0n) / Number(verifiedVotesNum || 0n)) * 100)}
+                {formatPercentage((Number(abstainVotes || BigInt(0)) / Number(verifiedVotesNum || BigInt(0))) * 100)}
               </td>
             </tr>
             <tr>
               <td className="px-1"></td>
               <td className="px-1 text-greyscale-500">汇总 </td>
-              <td className="px-1 text-right">{formatTokenAmountInteger(verifiedVotesNum || 0n)}</td>
+              <td className="px-1 text-right">{formatTokenAmountInteger(verifiedVotesNum || BigInt(0))}</td>
               <td className="px-1 text-right">100%</td>
             </tr>
           </tbody>

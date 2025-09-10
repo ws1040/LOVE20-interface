@@ -27,7 +27,7 @@
 //     } else {
 //       //【已废弃】初始第1次质押按配置的比例计算
 //       // 计算父币和子币的质押比例
-//       let parentToChildRate = 0n;
+//       let parentToChildRate = BigInt(0);
 
 //       if (token?.address === process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_TOKEN) {
 //         parentToChildRate =
@@ -77,7 +77,7 @@
 //     } else {
 //       //【已废弃】初始第1次质押按配置的比例计算
 //       // 计算父币和子币的质押比例
-//       let parentToChildRate = 0n;
+//       let parentToChildRate = BigInt(0);
 
 //       if (token?.address === process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_FIRST_TOKEN) {
 //         parentToChildRate =

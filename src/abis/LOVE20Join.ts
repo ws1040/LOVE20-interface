@@ -897,13 +897,13 @@ export const LOVE20JoinAbi = [
       {
         "name": "actionId",
         "type": "uint256",
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256"
       },
       {
         "name": "verificationKey",
         "type": "string",
-        "indexed": true,
+        "indexed": false,
         "internalType": "string"
       },
       {

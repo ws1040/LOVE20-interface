@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 // my hooks
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { LaunchInfo } from '@/src/types/love20types';
@@ -35,7 +34,7 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 import { Loader2 } from 'lucide-react';
 
 // 定义带有动态验证的 FormSchema（可选接入“测试环境上限”）
-const getFormSchema = (balance: bigint, maxAllowed?: bigint, maxAllowedLabel?: string) =>
+const getFormSchema = (balance: bigint, maxAllowed?: bigint, maxAllowedLabel?: string, maxAllowedETH?: number) =>
   z.object({
     contributeAmount: z
       .string()
@@ -45,7 +44,7 @@ const getFormSchema = (balance: bigint, maxAllowed?: bigint, maxAllowedLabel?: s
       })
       .refine(
         (val) => {
-          const amount = parseUnits(val) ?? 0n;
+          const amount = parseUnits(val) ?? BigInt(0);
           return amount <= balance;
         },
         {
@@ -55,11 +54,11 @@ const getFormSchema = (balance: bigint, maxAllowed?: bigint, maxAllowedLabel?: s
       .refine(
         (val) => {
           if (!maxAllowed) return true;
-          const amount = parseUnits(val) ?? 0n;
+          const amount = parseUnits(val) ?? BigInt(0);
           return amount <= maxAllowed;
         },
         {
-          message: `测试环境限制：首个父币最多可申购 ${maxAllowedLabel ?? '0.001'}`,
+          message: `测试环境限制：首个父币最多可申购 ${maxAllowedLabel ?? maxAllowedETH?.toString()}`,
         },
       ),
   });
@@ -92,7 +91,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   } = useBalanceOf(token?.parentTokenAddress as `0x${string}`, account as `0x${string}`, !isNativeContribute);
 
   // 获取余额值
-  const balance = isNativeContribute ? ethBalance?.value || 0n : balanceOfParentToken || 0n;
+  const balance = isNativeContribute ? ethBalance?.value || BigInt(0) : balanceOfParentToken || BigInt(0);
   const isPendingBalance = isNativeContribute ? isPendingETHBalance : isPendingBalanceOfParentToken;
 
   // 获取已申购数量
@@ -107,15 +106,19 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   // 是否为“首个父币”（原生代币参与申购场景）
   const isLimitActive = hasTestPrefix && isNativeContribute;
   // 测试环境上限（0.001 父币）
-  const maxAllowedForFirstParent = parseUnits('0.001');
-
-  console.log('hasTestPrefix', hasTestPrefix);
-  console.log('isLimitActive', isLimitActive);
-  console.log('maxAllowedForFirstParent', maxAllowedForFirstParent);
+  const maxAllowedForFirstParentETH = 0.001;
+  const maxAllowedForFirstParent = parseUnits(maxAllowedForFirstParentETH.toString());
 
   // 2. 初始化 React Hook Form，传入动态的 FormSchema
   const form = useForm<z.infer<ReturnType<typeof getFormSchema>>>({
-    resolver: zodResolver(getFormSchema(balance, isLimitActive ? maxAllowedForFirstParent : undefined, '0.001')),
+    resolver: zodResolver(
+      getFormSchema(
+        balance,
+        isLimitActive ? maxAllowedForFirstParent : undefined,
+        maxAllowedForFirstParentETH.toString(),
+        maxAllowedForFirstParentETH,
+      ),
+    ),
     defaultValues: {
       contributeAmount: '',
     },
@@ -173,11 +176,11 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
       return;
     }
 
-    const parsedContributeToken = parseUnits(contributeAmount) ?? 0n;
+    const parsedContributeToken = parseUnits(contributeAmount) ?? BigInt(0);
     if (
-      parsedContributeToken > 0n &&
+      parsedContributeToken > BigInt(0) &&
       allowanceParentTokenApproved &&
-      allowanceParentTokenApproved > 0n &&
+      allowanceParentTokenApproved > BigInt(0) &&
       allowanceParentTokenApproved >= parsedContributeToken
     ) {
       setIsTokenApproved(true);
@@ -187,12 +190,9 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   }, [contributeAmount, allowanceParentTokenApproved, isNativeContribute]);
 
   const onApprove = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
     try {
       // parseUnits 用于将 string 转换为 BigInt
-      const amountBigInt = parseUnits(data.contributeAmount) ?? 0n;
+      const amountBigInt = parseUnits(data.contributeAmount) ?? BigInt(0);
       await approveParentToken(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_LAUNCH as `0x${string}`, amountBigInt);
     } catch (error) {
       console.error(error);
@@ -222,18 +222,15 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   const isConfirmedContribute = isNativeContribute ? isConfirmedContributeETH : isConfirmedContributeToken;
 
   const onContribute = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
     if (!isNativeContribute && !isTokenApproved) {
       toast.error('请先授权');
       return;
     }
     try {
-      const amountBigInt = parseUnits(data.contributeAmount) ?? 0n;
+      const amountBigInt = parseUnits(data.contributeAmount) ?? BigInt(0);
       // 测试环境限制：首个父币最多 0.001
       if (isLimitActive && amountBigInt > maxAllowedForFirstParent) {
-        toast('测试环境限制：首个父币最多可申购 0.001');
+        toast(`测试环境限制：首个父币最多可申购 ${maxAllowedForFirstParentETH}`);
         return;
       }
       if (isNativeContribute) {
@@ -259,7 +256,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
   // 5. 如果余额为 0，则提示用户获取
   const { setError } = useError();
   useEffect(() => {
-    if (isConnected && !isPendingBalance && balance !== undefined && balance <= 0n) {
+    if (isConnected && !isPendingBalance && balance !== undefined && balance <= BigInt(0)) {
       setError({
         name: '余额不足',
         message: `请先获取 ${parentTokenSymbol}，再来申购`,
@@ -335,7 +332,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
           <div className="stat place-items-center">
             <div className="stat-title text-sm mr-6">我已申购质押</div>
             <div className="stat-value text-secondary">
-              {formatTokenAmount(contributed || 0n)}
+              {formatTokenAmount(contributed || BigInt(0))}
               <span className="text-greyscale-500 font-normal text-sm ml-2">{parentTokenSymbol}</span>
             </div>
           </div>
@@ -352,16 +349,18 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
                   <FormControl>
                     <Input
                       type="number"
-                      max={isLimitActive ? 0.001 : undefined}
+                      max={isLimitActive ? maxAllowedForFirstParentETH : undefined}
                       placeholder={`请填写${parentTokenSymbol}数量`}
-                      disabled={(!isNativeContribute && hasStartedApproving) || balance <= 0n}
+                      disabled={(!isNativeContribute && hasStartedApproving) || balance <= BigInt(0)}
                       className="!ring-secondary-foreground"
                       {...field}
                     />
                   </FormControl>
                   <FormMessage />
                   {isLimitActive && (
-                    <div className="text-xs text-greyscale-400 mt-1">测试环境限制：首个父币最多可申购 0.001</div>
+                    <div className="text-xs text-greyscale-400 mt-1">
+                      测试环境限制：首个父币最多可申购 {maxAllowedForFirstParentETH}
+                    </div>
                   )}
                 </FormItem>
               )}
@@ -375,7 +374,7 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
                 variant="link"
                 size="sm"
                 onClick={setMaxAmount}
-                disabled={(!isNativeContribute && hasStartedApproving) || balance <= 0n}
+                disabled={(!isNativeContribute && hasStartedApproving) || balance <= BigInt(0)}
                 className="text-secondary"
               >
                 全部
@@ -396,7 +395,9 @@ const Contribute: React.FC<{ token: Token | null | undefined; launchInfo: Launch
                 <Button
                   className="w-full text-white py-2 rounded-lg"
                   onClick={form.handleSubmit(onContribute)}
-                  disabled={isPendingContribute || isConfirmingContribute || isConfirmedContribute || balance <= 0n}
+                  disabled={
+                    isPendingContribute || isConfirmingContribute || isConfirmedContribute || balance <= BigInt(0)
+                  }
                 >
                   {isPendingContribute
                     ? '申购中...'

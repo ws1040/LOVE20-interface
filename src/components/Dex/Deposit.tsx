@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useAccount, useBalance, useChainId } from 'wagmi';
+import { useAccount, useBalance } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -13,7 +13,6 @@ import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 
 // my funcs
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 
 // my hooks
@@ -40,7 +39,7 @@ const getDepositFormSchema = (balance: bigint) =>
         (val) => {
           try {
             const amount = parseUnits(val);
-            return amount > 0n && amount <= balance;
+            return amount > BigInt(0) && amount <= balance;
           } catch (e) {
             return false;
           }
@@ -56,7 +55,6 @@ type DepositFormValues = z.infer<ReturnType<typeof getDepositFormSchema>>;
 const Deposit: React.FC = () => {
   const router = useRouter();
   const { address: account } = useAccount();
-  const chainId = useChainId();
   const { token } = useContext(TokenContext) || {};
 
   // 读取余额
@@ -89,7 +87,7 @@ const Deposit: React.FC = () => {
 
   // 2. 创建 hook form 实例，并传入当前余额
   const form = useForm<DepositFormValues>({
-    resolver: zodResolver(getDepositFormSchema(balance?.value || 0n)),
+    resolver: zodResolver(getDepositFormSchema(balance?.value || BigInt(0))),
     defaultValues: {
       depositAmount: '',
     },
@@ -98,12 +96,6 @@ const Deposit: React.FC = () => {
 
   // 3. 提交时调用 deposit
   async function onSubmit(data: DepositFormValues) {
-    // 也可在这里检测是否连接正确网络
-    if (!checkWalletConnectionByChainId(chainId)) {
-      toast.error('请切换到正确的网络');
-      return;
-    }
-
     try {
       await deposit(parseUnits(data.depositAmount));
     } catch (error) {
@@ -144,7 +136,7 @@ const Deposit: React.FC = () => {
   const setMaxAmount = () => {
     // 注意这里需要先将 balance?.value 转字符串
     // 再用 formatUnits 转成人类可读
-    form.setValue('depositAmount', formatUnits(balance?.value || 0n));
+    form.setValue('depositAmount', formatUnits(balance?.value || BigInt(0)));
   };
 
   // 错误处理
@@ -196,7 +188,7 @@ const Deposit: React.FC = () => {
                   <FormMessage />
                   <FormDescription className="flex items-center justify-between">
                     <span>
-                      共 {isLoadingBalance ? <LoadingIcon /> : formatTokenAmount(balance?.value || 0n)}{' '}
+                      共 {isLoadingBalance ? <LoadingIcon /> : formatTokenAmount(balance?.value || BigInt(0))}{' '}
                       {balance?.symbol}
                     </span>
                     <Button

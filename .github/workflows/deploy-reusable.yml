@@ -33,10 +33,7 @@ on:
         type: string
         required: false
         default: ''
-      env_file:
-        type: string
-        required: false
-        default: ''
+
       concurrency_group:
         type: string
         required: false
@@ -69,37 +66,15 @@ jobs:
       - name: Install dependencies
         run: ${{ inputs.install_script }}
 
-      # 加载 .env 文件（可选）
-      - name: Load env file (optional)
-        if: ${{ inputs.env_file != '' }}
+      # 设置 BASE_PATH/ASSET_PREFIX
+      - name: Set BASE_PATH & ASSET_PREFIX
         run: |
-          echo "Loading env file: ${{ inputs.env_file }}"
-          sed -n 's/^\([^#][^=]*\)=\(.*\)$/\1=\2/p' "${{ inputs.env_file }}" >> "$GITHUB_ENV"
-
-      # 删除 .env.production 文件，防止 Next.js 自动加载生产环境变量
-      - name: Remove .env.production to prevent override
-        if: ${{ inputs.env_file != '' }}
-        run: |
-          echo "Removing .env.production to prevent Next.js from auto-loading production env vars"
-          if [ -f ".env.production" ]; then
-            rm ".env.production"
-            echo "Removed .env.production"
-          else
-            echo ".env.production not found, skipping removal"
-          fi
-
-      # 设置 BASE_PATH/ASSET_PREFIX（.env 已定义的值优先生效）
-      - name: Ensure BASE_PATH & ASSET_PREFIX
-        run: |
-          : "${BASE_PATH:=${{ inputs.base_path }}}"
+          echo "BASE_PATH=${{ inputs.base_path }}" >> "$GITHUB_ENV"
           if [ -z "${{ inputs.asset_prefix }}" ]; then
-            : "${ASSET_PREFIX:=${BASE_PATH}}"
+            echo "ASSET_PREFIX=${{ inputs.base_path }}" >> "$GITHUB_ENV"
           else
-            : "${ASSET_PREFIX:=${{ inputs.asset_prefix }}}"
+            echo "ASSET_PREFIX=${{ inputs.asset_prefix }}" >> "$GITHUB_ENV"
           fi
-          echo "BASE_PATH=$BASE_PATH" >> "$GITHUB_ENV"
-          echo "ASSET_PREFIX=$ASSET_PREFIX" >> "$GITHUB_ENV"
-          echo "NEXT_PUBLIC_BASE_PATH=${BASE_PATH}" >> "$GITHUB_ENV"
 
       - name: Build
         run: ${{ inputs.build_script }}

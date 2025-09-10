@@ -18,7 +18,6 @@ jobs:
       base_path: '/interface'
       asset_prefix: '/interface'
       out_dir: 'out'
-      env_file: '.env.prod.pages'
       install_script: 'yarn install'
       build_script: 'yarn build'
       node_version: '20'

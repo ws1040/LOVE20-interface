@@ -2,9 +2,6 @@
 import { ethers } from 'ethers';
 
 export const isTukeWallet = (): boolean => {
-  // // todo: 这里是测试，正式环境需要去掉！ 目的是给 TUKE 团队测试新版本
-  // return false;
-
   if (typeof window === 'undefined') return false;
   if (!window.ethereum) return false;
 
@@ -27,7 +24,6 @@ export const isTukeWallet = (): boolean => {
     return true;
   }
 
-  console.log('未检测到TUKE钱包，使用标准模式');
   return false;
 };
 
@@ -44,7 +40,7 @@ export const sendTransactionForTuke = async (
   try {
     console.log('🚀 TUKE钱包交易开始');
     console.log('address:', address);
-    console.log('functionName:', functionName);
+    console.log('function:', functionName);
     console.log('args:', args);
 
     if (!window.ethereum) {
@@ -54,7 +50,7 @@ export const sendTransactionForTuke = async (
     const signer = provider.getSigner();
     const contract = new ethers.Contract(address, abi, signer);
 
-    // 转换参数：将BigInt转换为ethers.BigNumber
+    // 转换参数：将BigInt转换为ethers.BigNumber，兼容ethers v5 与 ES2015 语法
     const ethersArgs = args.map((arg) => {
       if (typeof arg === 'bigint') {
         const converted = ethers.BigNumber.from(arg.toString());
@@ -62,14 +58,12 @@ export const sendTransactionForTuke = async (
       }
       return arg;
     });
-    console.log('ethersArgs:', ethersArgs);
-
     const overrides: any = {};
-    if (value && value > 0n) {
+    if (value && value > BigInt(0)) {
       overrides.value = ethers.BigNumber.from(value.toString());
     }
 
-    // 🔍 步骤1: 模拟调用
+    // 步骤1: 模拟调用
     if (!options?.skipSimulation) {
       console.log('步骤1: 执行模拟调用验证交易...');
 
@@ -96,7 +90,7 @@ export const sendTransactionForTuke = async (
       console.log('⚠️ 跳过模拟调用（根据选项设置）');
     }
 
-    // 📤 步骤2: 发送真实交易
+    // 步骤2: 发送真实交易
     console.log('步骤2: 发送真实交易...');
     console.log(`调用: contract.${functionName}(...args, overrides)`);
     const tx = await contract[functionName](...ethersArgs, overrides);
@@ -131,11 +125,19 @@ export const waitForTukeTransaction = async (txHash: string) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const receipt = await provider.waitForTransaction(txHash);
 
-    console.log('TUKE交易已确认！');
+    console.log('TUKE交易收据:', receipt);
     console.log('区块号:', receipt.blockNumber);
     console.log('Gas使用量:', receipt.gasUsed.toString());
-    console.log('交易收据:', receipt);
+    console.log('交易状态:', receipt.status);
 
+    // 检查交易状态：0=失败，1=成功
+    if (receipt.status === 0) {
+      const errorMsg = '交易执行失败（被区块链回滚）';
+      console.error('❌', errorMsg);
+      throw new Error(errorMsg);
+    }
+
+    console.log('✅ TUKE交易确认成功！');
     return receipt;
   } catch (error) {
     console.error('❌ TUKE交易确认失败:', error);

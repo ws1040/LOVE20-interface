@@ -83,7 +83,7 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
           <div className="stat-value text-xl">
             {isPendingBalance ? <LoadingIcon /> : formatTokenAmount(balance || BigInt(0))}
           </div>
-          <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light">不含质押、锁定</div>
+          <div className="stat-desc mt-0 text-xs text-greyscale-400 font-light">不包含治理质押和行动参与</div>
         </div>
         <div className="stat place-items-center pb-3">
           <div className="stat-title text-sm flex items-center font-mono">

@@ -17,9 +17,6 @@ import { useVerificationInfosByAccount } from '@/src/hooks/contracts/useLOVE20Ro
 import { useIsSubmitted } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
-// my funcs
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
-
 // my contexts
 import { TokenContext } from '@/src/contexts/TokenContext';
 
@@ -36,7 +33,6 @@ import { LinkIfUrl } from '@/src/lib/stringUtils';
 
 interface ActionPanelForJoinProps {
   actionId: bigint;
-  onRoundChange: (currentRound: bigint) => void;
   actionInfo: ActionInfo | undefined;
   onStakedAmountChange?: (stakedAmount: bigint) => void;
   showJoinButton?: boolean;
@@ -44,7 +40,6 @@ interface ActionPanelForJoinProps {
 
 const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
   actionId,
-  onRoundChange,
   actionInfo,
   onStakedAmountChange,
   showJoinButton = true,
@@ -54,13 +49,8 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
   const { token } = useContext(TokenContext) || {};
   const router = useRouter();
 
-  // 获取当前轮次, 并设置状态给父组件
+  // 获取当前轮次
   const { currentRound, error: errCurrentRound } = useCurrentRound();
-  useEffect(() => {
-    if (onRoundChange && typeof onRoundChange === 'function') {
-      onRoundChange(currentRound);
-    }
-  }, [currentRound, onRoundChange]);
 
   // 获取是否已提交
   const {
@@ -121,11 +111,8 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
   } = useWithdraw();
 
   const handleWithdraw = async () => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
     // 如果代币为0, toast
-    if (joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= 2n) {
+    if (joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= BigInt(2)) {
       toast.error('你还没有参与，无需取回');
       return;
     }
@@ -214,8 +201,8 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
             )
           ) : (
             <>
-              <div className="flex justify-center space-x-4 mt-2 w-full">
-                {joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= 2n ? (
+              <div className="flex justify-center space-x-2 mt-2 w-full">
+                {joinedAmountByActionIdByAccount != undefined && joinedAmountByActionIdByAccount <= BigInt(2) ? (
                   <Button variant="outline" className="w-1/3 text-secondary border-secondary" disabled>
                     取回
                   </Button>
@@ -237,14 +224,17 @@ const ActionPanelForJoin: React.FC<ActionPanelForJoinProps> = ({
                 )}
 
                 <Button variant="outline" className="w-1/3 text-secondary border-secondary" asChild>
+                  <Link href={`/my/rewardsofaction?id=${actionId}&symbol=${token?.symbol}`}>查看激励</Link>
+                </Button>
+                <Button variant="outline" className="w-1/3 text-secondary border-secondary" asChild>
                   <Link href={`/acting/join?id=${actionId}&symbol=${token?.symbol}`}>增加参与代币</Link>
                 </Button>
               </div>
-              <div className="flex flex-col items-center mt-2 mb-4">
+              <div className="flex flex-col items-center my-4">
                 <div className="text-sm text-greyscale-600">
                   {isPendingVerificationInfo && '加载中...'}
                   {joinedAmountByActionIdByAccount != undefined &&
-                    joinedAmountByActionIdByAccount > 2n &&
+                    joinedAmountByActionIdByAccount > BigInt(2) &&
                     verificationKeys &&
                     verificationKeys.length > 0 && (
                       <div>

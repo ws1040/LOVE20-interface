@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -15,7 +15,6 @@ import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my types & functions
 import { ActionInfo } from '@/src/types/love20types';
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount } from '@/src/lib/format';
 
 // my contexts
@@ -28,9 +27,8 @@ import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 const VotingSubmitPage = () => {
   const { token } = useContext(TokenContext) || {};
-  const [percentages, setPercentages] = useState<{ [key: number]: number }>({});
+  const [percentages, setPercentages] = useState<{ [key: string]: number }>({});
   const { address: account } = useAccount();
-  const chainId = useChainId();
   const { currentRound, isPending: isPendingCurrentRound, error: errCurrentRound } = useCurrentRound();
 
   const router = useRouter();
@@ -44,24 +42,30 @@ const VotingSubmitPage = () => {
   }, [ids]);
 
   useEffect(() => {
-    if (idList.length === 1) {
-      setPercentages({ [idList[0]]: 100 });
-    } else {
-      const initialPercentages: { [key: number]: number } = {};
-      const equalPercentage = Math.floor(100 / idList.length);
-      idList.forEach((id, index) => {
-        if (index === idList.length - 1) {
-          initialPercentages[id] = 100 - equalPercentage * (idList.length - 1);
-        } else {
-          initialPercentages[id] = equalPercentage;
-        }
-      });
-      setPercentages(initialPercentages);
+    // 只在idList第一次设置时初始化percentages，避免覆盖用户的修改
+    if (idList.length > 0 && Object.keys(percentages).length === 0) {
+      if (idList.length === 1) {
+        setPercentages({ [idList[0]]: 100 });
+      } else {
+        const initialPercentages: { [key: number]: number } = {};
+        const equalPercentage = Math.floor(100 / idList.length);
+        idList.forEach((id, index) => {
+          if (index === idList.length - 1) {
+            initialPercentages[id] = 100 - equalPercentage * (idList.length - 1);
+          } else {
+            initialPercentages[id] = equalPercentage;
+          }
+        });
+        setPercentages(initialPercentages);
+      }
     }
-  }, [idList]);
+  }, [idList, percentages]);
 
-  const handlePercentageChange = (actionId: number, value: number) => {
-    if (idList.length === 1) return;
+  const handlePercentageChange = (actionId: string, value: number) => {
+    if (idList.length === 1) {
+      setPercentages({ [actionId]: value });
+      return;
+    }
 
     const updatedPercentages = { ...percentages, [actionId]: value };
     const otherIds = idList.slice(0, -1);
@@ -103,19 +107,15 @@ const VotingSubmitPage = () => {
 
   // 检查输入
   const checkInput = () => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return false;
-    }
-
     // 检查剩余票数
-    if (validGovVotes - votesNumByAccount < 2n) {
+    if (validGovVotes - votesNumByAccount < BigInt(2)) {
       toast.error('剩余票数不足，不能投票');
       return false;
     }
 
     // percentages 百分比之和必须为100
     const totalPercentage = Object.values(percentages).reduce((sum, percentage) => sum + percentage, 0);
-    if (totalPercentage !== 100) {
+    if (idList.length > 1 && totalPercentage !== 100) {
       toast.error('百分比之和必须为100');
       return false;
     }
@@ -131,7 +131,7 @@ const VotingSubmitPage = () => {
     const actionIds = idList.map((id) => BigInt(id));
     const votes = idList.map((id) => {
       const percentage = percentages[id] || 0;
-      return (BigInt(percentage) * (validGovVotes - votesNumByAccount)) / 100n;
+      return (BigInt(percentage) * (validGovVotes - votesNumByAccount)) / BigInt(100);
     });
 
     // 提交投票
@@ -232,12 +232,18 @@ const VotingSubmitPage = () => {
                       <div className="flex items-center">
                         <input
                           type="number"
-                          min={isLast ? lastValue : 1}
+                          min="1"
                           max="100"
-                          value={isLast ? lastValue : percentages[action.head.id] || ''}
-                          onChange={(e) => handlePercentageChange(action.head.id, Number(e.target.value))}
+                          value={
+                            idList.length === 1
+                              ? percentages[action.head.id.toString()] || 100
+                              : isLast
+                              ? lastValue
+                              : percentages[action.head.id.toString()] || ''
+                          }
+                          onChange={(e) => handlePercentageChange(action.head.id.toString(), Number(e.target.value))}
                           className="p-2 border rounded w-16"
-                          disabled={idList.length === 1 || isLast}
+                          disabled={idList.length > 1 && isLast}
                           placeholder=""
                         />
                         %

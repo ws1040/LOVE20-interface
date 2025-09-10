@@ -1,12 +1,10 @@
 // hooks/contracts/useLOVE20Launch.ts
-import { useState, useEffect } from 'react';
-import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
-import { simulateContract, writeContract } from '@wagmi/core';
+import { useEffect } from 'react';
+import { useReadContract } from 'wagmi';
 import { useUniversalTransaction } from '@/src/lib/universalTransaction';
-import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
+import { logError, logWeb3Error } from '@/src/lib/debugUtils';
 import { Address } from 'viem';
 
-import { config } from '@/src/wagmi';
 import { LOVE20LaunchAbi } from '@/src/abis/LOVE20Launch';
 import { safeToBigInt } from '@/src/lib/clientUtils';
 import { LaunchInfo } from '@/src/types/love20types';

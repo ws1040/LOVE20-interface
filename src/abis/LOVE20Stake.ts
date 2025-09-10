@@ -756,11 +756,6 @@ export const LOVE20StakeAbi = [
   },
   {
     "type": "error",
-    "name": "AlreadyUnstaked",
-    "inputs": []
-  },
-  {
-    "type": "error",
     "name": "InvalidToAddress",
     "inputs": []
   },

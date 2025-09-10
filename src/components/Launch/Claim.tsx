@@ -35,7 +35,7 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
     isPending: isClaimInfoPending,
     error: claimInfoError,
   } = useClaimInfo(token?.address as `0x${string}`, account as `0x${string}`);
-  console.log('receivedTokenAmount', receivedTokenAmount);
+
   // 领取代币hook
   const {
     claim,
@@ -81,13 +81,12 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
     }
   }, [claimError, claimInfoError, contributedError]);
 
+  console.log('contributed', contributed);
+
   if (!account) {
     return '';
   }
-  if (isClaimInfoPending) {
-    return <LoadingIcon />;
-  }
-  if (!token) {
+  if (isClaimInfoPending || isContributedPending || !token) {
     return <LoadingIcon />;
   }
 
@@ -102,23 +101,24 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
         <div className="stat place-items-center">
           <div className="stat-title text-sm mr-6">共获得</div>
           <div className="stat-value text-3xl text-secondary">
-            {formatTokenAmount(receivedTokenAmount ?? 0n)}
+            {formatTokenAmount(receivedTokenAmount ?? BigInt(0))}
             <span className="text-greyscale-500 font-normal text-sm ml-2">{token.symbol}</span>
           </div>
         </div>
       </div>
 
       <div className="flex justify-center space-x-4">
-        {Number(contributed) <= 0 && (
-          <>
-            <Button className="w-1/2" disabled>
-              未申购
-            </Button>
-            <Button className="w-1/2" asChild>
-              <Link href={`/launch/burn?symbol=${token?.symbol}`}>换回父币</Link>
-            </Button>
-          </>
-        )}
+        {Number(contributed) <= 0 ||
+          (!contributed && (
+            <>
+              <Button className="w-1/2" disabled>
+                未申购
+              </Button>
+              <Button className="w-1/2" asChild>
+                <Link href={`/launch/burn?symbol=${token?.symbol}`}>换回父币</Link>
+              </Button>
+            </>
+          ))}
         {Number(contributed) > 0 && !claimed && (
           <Button
             className="w-1/2"
@@ -141,8 +141,8 @@ const Claim: React.FC<{ token: Token; launchInfo: LaunchInfo }> = ({ token, laun
       </div>
       {Number(contributed) > 0 && claimed && (
         <div className="text-center text-sm my-2 text-greyscale-400">
-          我共申购了 <span className="text-secondary">{formatTokenAmount(contributed ?? 0n)} </span>
-          {parentTokenSymbol}，申购返还了 <span className="text-secondary">{formatTokenAmount(extraRefund ?? 0n)}</span>{' '}
+          我共申购了 <span className="text-secondary">{formatTokenAmount(contributed ?? BigInt(0))} </span>
+          {parentTokenSymbol}，申购返还了 <span className="text-secondary">{formatTokenAmount(extraRefund ?? BigInt(0))}</span>{' '}
           {token.parentTokenSymbol}
           {token.parentTokenSymbol == process.env.NEXT_PUBLIC_FIRST_PARENT_TOKEN_SYMBOL && (
             <Link

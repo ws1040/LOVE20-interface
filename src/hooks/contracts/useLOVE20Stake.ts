@@ -1,9 +1,7 @@
-import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
-import { simulateContract, writeContract } from '@wagmi/core';
-import { useState, useEffect } from 'react';
+import { useReadContract } from 'wagmi';
+import { useEffect } from 'react';
 import { useUniversalTransaction } from '@/src/lib/universalTransaction';
-import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
-import { config } from '@/src/wagmi';
+import { logError, logWeb3Error } from '@/src/lib/debugUtils';
 import { LOVE20StakeAbi } from '@/src/abis/LOVE20Stake';
 import { safeToBigInt } from '@/src/lib/clientUtils';
 
@@ -32,7 +30,7 @@ export const useAccountStakeStatus = (token: `0x${string}`, account: `0x${string
   return {
     slAmount: data?.slAmount ? safeToBigInt(data.slAmount) : undefined,
     stAmount: data?.stAmount ? safeToBigInt(data.stAmount) : undefined,
-    promisedWaitingPhases: data?.promisedWaitingPhases ? safeToBigInt(data.promisedWaitingPhases) : 0n,
+    promisedWaitingPhases: data?.promisedWaitingPhases ? safeToBigInt(data.promisedWaitingPhases) : BigInt(0),
     requestedUnstakeRound: data?.requestedUnstakeRound ? safeToBigInt(data.requestedUnstakeRound) : undefined,
     govVotes: data?.govVotes ? safeToBigInt(data.govVotes) : undefined,
     isPending,

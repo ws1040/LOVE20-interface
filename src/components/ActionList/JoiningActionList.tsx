@@ -9,7 +9,7 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card';
 
 // my utils
 import { calculateActionAPY, calculateExpectedActionReward } from '@/src/lib/domainUtils';
-import { formatPercentage, formatSeconds } from '@/src/lib/format';
+import { formatPercentage, formatTokenAmount } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my contexts
@@ -36,7 +36,7 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   // 获取行动参与相关数据
   const { joinableActions, isPending, error } = useJoinableActions(
     (token?.address as `0x${string}`) || '',
-    currentRound ? currentRound : 0n,
+    currentRound ? currentRound : BigInt(0),
     account as `0x${string}`,
   );
   const {
@@ -46,10 +46,10 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
   } = useRewardAvailable((token?.address as `0x${string}`) || '');
 
   // 计算所有 joinableActions 的总票数，用于计算投票占比
-  const totalVotes = joinableActions?.reduce((acc, action) => acc + action.votesNum, 0n) || 0n;
+  const totalVotes = joinableActions?.reduce((acc, action) => acc + action.votesNum, BigInt(0)) || BigInt(0);
 
   // 计算预计新增铸币
-  const displayRound = token ? currentRound - BigInt(token.initialStakeRound) + 1n : 0n;
+  const displayRound = token ? currentRound - BigInt(token.initialStakeRound) + BigInt(1) : BigInt(0);
   const expectedReward = calculateExpectedActionReward(rewardAvailable, displayRound);
 
   // 错误处理
@@ -86,17 +86,12 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
               return votesB - votesA;
             })
             .map((actionDetail: JoinableAction, index: number) => {
-              // 判断当前账户是否已经加入该行动
-              const isJoined = actionDetail.joinedAmountOfAccount > 0n;
-
               // 计算投票占比
               const voteRatio =
-                Number(totalVotes) > 0 ? Number(joinableActions[index].votesNum || 0n) / Number(totalVotes) : 0;
+                Number(totalVotes) > 0 ? Number(joinableActions[index].votesNum || BigInt(0)) / Number(totalVotes) : 0;
 
               // 根据是否已加入，设置不同的链接
-              const href = isJoined
-                ? `/action/detail?id=${actionDetail.action.head.id}&type=join&symbol=${token?.symbol}`
-                : `/acting/join?id=${actionDetail.action.head.id}&symbol=${token?.symbol}`;
+              const href = `/action/info?id=${actionDetail.action.head.id}&symbol=${token?.symbol}`;
 
               return (
                 <Card key={actionDetail.action.head.id} className="shadow-none">
@@ -109,34 +104,41 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                         </span>
                         <span className="font-bold text-greyscale-800">{`${actionDetail.action.body.title}`}</span>
                       </div>
-                      <span>
-                        <span className="text-greyscale-400 text-xs mr-1">投票占</span>
-                        <span className="text-secondary text-xs">{formatPercentage(voteRatio * 100)}</span>
-                      </span>
                     </CardHeader>
                     <CardContent className="px-3 pt-1 pb-2">
-                      <div className="flex justify-between mt-1 text-sm">
+                      <div className="flex justify-between text-sm">
                         <span className="flex items-center">
-                          <UserPen className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" />
+                          <UserPen className="text-greyscale-400 mr-1 h-3 w-3" />
+                          {/* <span className="text-greyscale-400 text-xs mr-1">创建人</span> */}
                           <span className="text-greyscale-400">
                             <AddressWithCopyButton
                               address={joinableActions[index].action.head.author as `0x${string}`}
                               showCopyButton={false}
-                              colorClassName2="text-secondary"
+                              // colorClassName2="text-secondary"
                             />
                           </span>
                         </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>
+                          <span className="text-greyscale-400 text-xs mr-1">投票占</span>
+                          <span className="text-secondary text-xs">{formatPercentage(voteRatio * 100)}</span>
+                        </span>
+                        <span>
+                          <span className="text-greyscale-400 text-xs mr-1">参与代币</span>
+                          <span className="text-secondary text-xs">{formatTokenAmount(actionDetail.joinedAmount)}</span>
+                        </span>
                         {!actionDetail.hasReward ? (
-                          <span className="flex justify-between text-error text-sm">无铸币奖励</span>
+                          <span className="flex justify-between text-error text-sm">无铸币激励</span>
                         ) : (
                           <span>
-                            <span className="text-greyscale-400 text-xs mr-1">预估年化(APY)</span>
+                            <span className="text-greyscale-400 text-xs mr-1">APY</span>
                             <span className="text-secondary text-xs">
                               {isPendingRewardAvailable ? (
                                 <LoadingIcon />
                               ) : (
                                 calculateActionAPY(
-                                  BigInt(Math.floor(Number(expectedReward || 0n) * voteRatio)),
+                                  BigInt(Math.floor(Number(expectedReward || BigInt(0)) * voteRatio)),
                                   joinableActions[index].joinedAmount,
                                 )
                               )}
@@ -150,19 +152,6 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                 </Card>
               );
             })}
-
-          <div className="text-sm mt-4 text-greyscale-500 text-center">
-            <span className="text-red-500 font-bold">提醒：</span>
-            <span>
-              每个行动阶段，最后{process.env.NEXT_PUBLIC_JOIN_END_PHASE_BLOCKS}
-              个区块（约
-              {formatSeconds(
-                (Number(process.env.NEXT_PUBLIC_JOIN_END_PHASE_BLOCKS) * Number(process.env.NEXT_PUBLIC_BLOCK_TIME)) /
-                  100,
-              )}
-              ），无法参与行动报名
-            </span>
-          </div>
         </div>
       )}
     </div>

@@ -30,7 +30,6 @@ import LeftTitle from '@/src/components/Common/LeftTitle';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
 
 // others
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, parseUnits } from '@/src/lib/format';
 
 // 获取环境变量
@@ -84,8 +83,8 @@ const FormSchema = z.object({
 
   rewardAddressCount: z
     .string()
-    .min(1, { message: '奖励地址数不能为空' })
-    .refine((val) => Number(val) > 0, { message: '奖励地址数必须大于0' }),
+    .min(1, { message: '验证地址数不能为空' })
+    .refine((val) => Number(val) > 0, { message: '验证地址数必须大于0' }),
 
   minStake: z
     .string()
@@ -154,8 +153,6 @@ export default function NewAction() {
     writeError: submitError,
   } = useSubmitNewAction();
   const onSubmit = async (values: FormValues) => {
-    if (!checkWalletConnectionByChainId(chainId)) return;
-
     // 检查是否有足够的治理票权
     if (!hasEnoughVotes) {
       const percentage = (SUBMIT_PERCENTAGE * 100).toFixed(2);
@@ -173,8 +170,8 @@ export default function NewAction() {
     const verificationInfoGuides = values.verificationPairs.map((p) => p.value);
 
     const actionBody = {
-      minStake: values.minStake ? parseUnits(values.minStake) : 0n,
-      maxRandomAccounts: values.rewardAddressCount ? BigInt(values.rewardAddressCount) : 0n,
+      minStake: values.minStake ? parseUnits(values.minStake) : BigInt(0),
+      maxRandomAccounts: values.rewardAddressCount ? BigInt(values.rewardAddressCount) : BigInt(0),
       whiteListAddress:
         values.whiteListAddress && values.whiteListAddress.trim() !== ''
           ? (values.whiteListAddress.trim() as `0x${string}`)
@@ -209,7 +206,7 @@ export default function NewAction() {
 
   return (
     <>
-      <Header title="创建新行动" />
+      <Header title="创建新行动" showBackButton={true} />
       <div className="max-w-xl p-4">
         {!hasEnoughVotes && validGovVotes !== undefined && totalGovVotes && (
           <AlertBox
@@ -271,7 +268,7 @@ export default function NewAction() {
                 多组 Key/Value (Card 样式)
             -----------------------------*/}
             <div>
-              <FormLabel>报名参加行动时，行动者要提供的信息</FormLabel>
+              <FormLabel>报名参加行动时，行动者要提供的信息：</FormLabel>
               <div className="space-y-4 mt-2">
                 {fields.map((item, index) => (
                   <Card key={item.id} className="overflow-hidden">
@@ -343,13 +340,13 @@ export default function NewAction() {
               </div>
             </div>
 
-            {/* 奖励地址数 */}
+            {/* 激励地址数 */}
             <FormField
               control={form.control}
               name="rewardAddressCount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>奖励地址数</FormLabel>
+                  <FormLabel>最大激励地址数</FormLabel>
                   <FormControl>
                     <Input
                       type="number"

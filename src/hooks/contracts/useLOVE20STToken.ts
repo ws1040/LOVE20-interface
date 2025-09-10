@@ -1,12 +1,12 @@
 // hooks/contracts/useLOVE20STToken.ts
 
-import { useState } from 'react';
-import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
-import { simulateContract, writeContract } from '@wagmi/core';
-import { config } from '@/src/wagmi';
+import { useEffect } from 'react';
+import { useReadContract } from 'wagmi';
 
 import { LOVE20STTokenAbi } from '@/src/abis/LOVE20STToken';
 import { safeToBigInt } from '@/src/lib/clientUtils';
+import { useUniversalTransaction } from '@/src/lib/universalTransaction';
+import { logWeb3Error, logError } from '@/src/lib/debugUtils';
 
 /**
  * Hook for allowance
@@ -184,42 +184,36 @@ export const useTotalSupply = (address: `0x${string}`) => {
  * Hook for approve
  */
 export function useApprove(address: `0x${string}`) {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hash, setHash] = useState<`0x${string}` | undefined>();
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20STTokenAbi,
+    address,
+    'approve',
+  );
 
   const approve = async (spender: `0x${string}`, value: bigint) => {
-    setIsPending(true);
-    setError(null);
-    try {
-      await simulateContract(config, {
-        address,
-        abi: LOVE20STTokenAbi,
-        functionName: 'approve',
-        args: [spender, value],
-      });
-      const txHash = await writeContract(config, {
-        address,
-        abi: LOVE20STTokenAbi,
-        functionName: 'approve',
-        args: [spender, value],
-      });
-      setHash(txHash);
-      return txHash;
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsPending(false);
-    }
+    console.log('提交approve交易:', { address, spender, value, isTukeMode });
+    return await execute([spender, value]);
   };
 
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('approve tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交approve交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
 
-  const combinedError = error ?? confirmError;
-
-  return { approve, isPending, isConfirming, writeError: combinedError, isConfirmed };
+  return {
+    approve,
+    isPending,
+    isConfirming,
+    writeError: error,
+    isConfirmed,
+    hash,
+    isTukeMode,
+  };
 }

@@ -11,7 +11,7 @@ import { useWithdraw } from '@/src/hooks/contracts/useLOVE20Launch';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 
 // my types & funcs
-import { formatTokenAmount } from '@/src/lib/format';
+import { formatTokenAmount, formatSeconds } from '@/src/lib/format';
 import { safeToBigInt } from '@/src/lib/clientUtils';
 import { LaunchInfo } from '@/src/types/love20types';
 
@@ -50,8 +50,8 @@ const ContributeInfo: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> 
 
   // 计算还剩余几个区块可以撤回
   const WITHDRAW_WAITING_BLOCKS = safeToBigInt(process.env.NEXT_PUBLIC_WITHDRAW_WAITING_BLOCKS || '0');
-  const lastContributedBlockNumber = lastContributedBlock ? lastContributedBlock : 0n;
-  const currentBlockNumber = blockNumber ? BigInt(blockNumber) : 0n;
+  const lastContributedBlockNumber = lastContributedBlock ? lastContributedBlock : BigInt(0);
+  const currentBlockNumber = blockNumber ? BigInt(blockNumber) : BigInt(0);
   const remainingBlocks = WITHDRAW_WAITING_BLOCKS - (currentBlockNumber - lastContributedBlockNumber);
 
   // 申购撤回
@@ -63,10 +63,6 @@ const ContributeInfo: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> 
     isConfirmed: isWithdrawConfirmed,
   } = useWithdraw();
   const handleWithdraw = async () => {
-    if (remainingBlocks > 0n) {
-      toast.error(`还需要等待 ${remainingBlocks} 个区块才能撤回`);
-      return;
-    }
     await withdraw(token?.address as `0x${string}`);
   };
 
@@ -113,18 +109,18 @@ const ContributeInfo: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> 
         <div className="stat place-items-center">
           <div className="stat-title text-sm mr-6">我的申购质押</div>
           <div className="stat-value text-secondary">
-            {formatTokenAmount(contributed || 0n)}
+            {formatTokenAmount(contributed || BigInt(0))}
             <span className="text-greyscale-500 font-normal text-sm ml-2">{parentTokenSymbol}</span>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-center gap-4">
-        {contributed && contributed > 0n && (
+      <div className="flex justify-center -mx-2">
+        {contributed && contributed > BigInt(0) && (
           <Button
             variant="outline"
             size="sm"
-            className="w-1/2 text-secondary border-secondary"
+            className="w-1/2 text-secondary border-secondary mx-2"
             onClick={handleWithdraw}
             disabled={isWithdrawPending || isWithdrawConfirming || isWithdrawConfirmed}
           >
@@ -137,19 +133,22 @@ const ContributeInfo: React.FC<{ token: Token | null; launchInfo: LaunchInfo }> 
               : '撤回申购'}
           </Button>
         )}
-        <Button variant="outline" size="sm" className="w-1/2 text-secondary border-secondary" asChild>
+        <Button variant="outline" size="sm" className="w-1/2 text-secondary border-secondary mx-2" asChild>
           <Link href={`/launch/contribute?symbol=${token?.symbol}`}>
-            {contributed && contributed > 0n ? '增加申购' : '去申购'}
+            {contributed && contributed > BigInt(0) ? '增加申购' : '去申购'}
           </Link>
         </Button>
       </div>
-      {contributed && contributed > 0n && (
+      {contributed && contributed > BigInt(0) && remainingBlocks > 0 && (
         <div className="mt-4 text-sm text-greyscale-500 text-center">
-          申购后需等 {process.env.NEXT_PUBLIC_WITHDRAW_WAITING_BLOCKS} 个区块才能撤回（当前还需等{' '}
-          {remainingBlocks > 0 ? remainingBlocks.toString() : '0'} 个区块）
+          <div>
+            申购后需等 {process.env.NEXT_PUBLIC_WITHDRAW_WAITING_BLOCKS} 个区块才能撤回（还需{' '}
+            {remainingBlocks > 0 ? remainingBlocks.toString() : '0'} 区块,大约{' '}
+            {formatSeconds((Number(remainingBlocks) * Number(process.env.NEXT_PUBLIC_BLOCK_TIME_MS)) / 1000)}）
+          </div>
         </div>
       )}
-      <div className="border-t border-gray-200 mt-4 mb-6"></div>
+      <div className="border-t border-gray-200 mt-6 mb-6"></div>
       <LoadingOverlay
         isLoading={isWithdrawPending || isWithdrawConfirming}
         text={isWithdrawPending ? '提交交易...' : '确认交易...'}
