@@ -38,8 +38,8 @@ interface TokenProviderProps {
 }
 
 // localstorage key
-const CURRENT_TOKEN_KEY = (process.env.NEXT_PUBLIC_BASE_PATH || '') + 'currentToken';
-const APP_VERSION_KEY = (process.env.NEXT_PUBLIC_BASE_PATH || '') + 'app_version';
+const CURRENT_TOKEN_KEY = (process.env.NEXT_PUBLIC_BASE_PATH || '') + '_currentToken';
+const APP_VERSION_KEY = (process.env.NEXT_PUBLIC_BASE_PATH || '') + '_appVersion';
 
 export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   const router = useRouter();
