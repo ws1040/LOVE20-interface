@@ -120,7 +120,7 @@ function _parseTimeoutError(error: string): string {
 
   for (const pattern of timeoutPatterns) {
     if (pattern.test(error)) {
-      return '网络请求超时，这在移动端比较常见。请检查网络连接后重试，或稍后再试。';
+      return '网络请求超时，请检查网络连接后重试，或稍后再试。';
     }
   }
   return '';

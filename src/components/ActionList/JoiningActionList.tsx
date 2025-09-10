@@ -2,7 +2,7 @@
 import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, UserPen } from 'lucide-react';
 
 import { JoinableAction } from '@/src/types/love20types';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
@@ -108,8 +108,8 @@ const JoiningActionList: React.FC<JoiningActionListProps> = ({ currentRound }) =
                     <CardContent className="px-3 pt-1 pb-2">
                       <div className="flex justify-between text-sm">
                         <span className="flex items-center">
-                          {/* <UserPen className="text-greyscale-400 mr-1 h-3 w-3 -translate-y-0.5" /> */}
-                          <span className="text-greyscale-400 text-xs mr-1">发起人</span>
+                          <UserPen className="text-greyscale-400 mr-1 h-3 w-3" />
+                          {/* <span className="text-greyscale-400 text-xs mr-1">创建人</span> */}
                           <span className="text-greyscale-400">
                             <AddressWithCopyButton
                               address={joinableActions[index].action.head.author as `0x${string}`}
