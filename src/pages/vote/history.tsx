@@ -206,7 +206,7 @@ const VoteHistoryPage: React.FC = () => {
     const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
 
     let intersectionObserver: IntersectionObserver | null = null;
-    let scrollTimeout: NodeJS.Timeout | null = null;
+    let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
 
     // 传统滚动事件检测函数（作为备用方案）
     const checkScrollPosition = () => {
