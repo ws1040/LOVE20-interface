@@ -37,6 +37,10 @@ interface TokenProviderProps {
   children: ReactNode;
 }
 
+// localstorage key
+const CURRENT_TOKEN_KEY = process.env.NEXT_PUBLIC_BASE_PATH || '' + 'currentToken';
+const APP_VERSION_KEY = process.env.NEXT_PUBLIC_BASE_PATH || '' + 'app_version';
+
 export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   const router = useRouter();
   const [token, setToken] = useState<Token | null>(null);
@@ -54,12 +58,12 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
     if (!isClient()) return false;
 
     try {
-      const storedVersion = localStorage.getItem('app_version');
+      const storedVersion = localStorage.getItem(APP_VERSION_KEY);
 
       if (storedVersion !== currentAppVersion) {
         console.log(`currentAppVersion: ${storedVersion || 'null'} -> ${currentAppVersion} ...`);
         localStorage.clear();
-        localStorage.setItem('app_version', currentAppVersion);
+        localStorage.setItem(APP_VERSION_KEY, currentAppVersion);
         return true;
       }
       return false;
@@ -99,7 +103,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
       // 优先从本地缓存恢复（无论是否有 symbol，只要缓存可用）
       if (!cacheCleared && isClient()) {
         try {
-          const storedToken = localStorage.getItem('currentToken');
+          const storedToken = localStorage.getItem(CURRENT_TOKEN_KEY);
           if (storedToken) {
             const parsed = JSON.parse(storedToken);
             // 情况1：无 symbol，则直接沿用最近一次的 token
@@ -190,7 +194,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
     try {
       if (token) {
-        localStorage.setItem('currentToken', JSON.stringify(token));
+        localStorage.setItem(CURRENT_TOKEN_KEY, JSON.stringify(token));
       }
     } catch (error) {
       console.error('Failed to save token to localStorage:', error);
@@ -200,13 +204,13 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   // 监听 storage 事件以同步多个标签页
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'currentToken') {
+      if (event.key === CURRENT_TOKEN_KEY) {
         if (event.newValue) {
           setToken(JSON.parse(event.newValue));
         } else {
           setToken(null);
         }
-      } else if (event.key === 'app_version') {
+      } else if (event.key === APP_VERSION_KEY) {
         if (event.newValue !== event.oldValue) {
           clearToken();
         }
@@ -222,7 +226,7 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
   const clearToken = () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('currentToken');
+      localStorage.removeItem(CURRENT_TOKEN_KEY);
       setToken(null);
       console.log('clearToken~~~~');
     }
