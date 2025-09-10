@@ -18,7 +18,6 @@ jobs:
       base_path: '/interface-test'
       asset_prefix: '/interface-test'
       out_dir: 'out'
-      env_file: '.env.test.pages'
       install_script: 'yarn install'
       build_script: 'yarn public-test'
       concurrency_group: 'gh-pages-test'
