@@ -1,11 +1,9 @@
 // hooks/useLove20Join.ts
 
-import { useState, useEffect } from 'react';
-import { useReadContract, useWaitForTransactionReceipt } from 'wagmi';
-import { simulateContract, writeContract } from '@wagmi/core';
+import { useEffect } from 'react';
+import { useReadContract } from 'wagmi';
 import { useUniversalTransaction } from '@/src/lib/universalTransaction';
-import { deepLogError, logError, logWeb3Error } from '@/src/lib/debugUtils';
-import { config } from '@/src/wagmi';
+import { logError, logWeb3Error } from '@/src/lib/debugUtils';
 
 import { LOVE20JoinAbi } from '@/src/abis/LOVE20Join';
 import { safeToBigInt } from '@/src/lib/clientUtils';
@@ -98,6 +96,23 @@ export const useStakedAmountByAccount = (tokenAddress: `0x${string}`, account: `
   });
 
   return { stakedAmount: safeToBigInt(data), isPending, error };
+};
+
+/**
+ * Hook for numOfAccounts - 参与地址数
+ */
+export const useNumOfAccounts = (tokenAddress: `0x${string}`, actionId: bigint) => {
+  const { data, isPending, error } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LOVE20JoinAbi,
+    functionName: 'numOfAccounts',
+    args: [tokenAddress, actionId],
+    query: {
+      enabled: !!tokenAddress && actionId !== undefined,
+    },
+  });
+
+  return { numOfAccounts: data ? safeToBigInt(data) : undefined, isPending, error };
 };
 
 // =====================

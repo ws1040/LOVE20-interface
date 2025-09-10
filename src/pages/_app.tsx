@@ -1,32 +1,41 @@
-import type { AppProps } from 'next/app';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
-import { SidebarInset } from '@/components/ui/sidebar';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import dynamic from 'next/dynamic';
+import type { AppProps } from 'next/app';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
-import { TokenProvider } from '@/src/contexts/TokenContext';
-import { AppSidebar } from '@/src/components/Common/AppSidebar';
 import { config } from '@/src/wagmi';
 import { ErrorProvider } from '@/src/contexts/ErrorContext';
-import Footer from '@/src/components/Footer';
-import ErrorBoundary from '@/src/components/ErrorBoundary';
-import dynamic from 'next/dynamic';
-import { useState, useEffect } from 'react';
+import { TokenProvider } from '@/src/contexts/TokenContext';
+import { AppSidebar } from '@/src/components/Common/AppSidebar';
 import LoadingOverlay from '@/src/components/Common/LoadingOverlay';
+import ActionRewardNotifier from '@/src/components/Common/ActionRewardNotifier';
+import Footer from '@/src/components/Footer';
+import { BottomNavigation } from '@/src/components/Common/BottomNavigation';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import '../styles/globals.css';
 
-// 开发环境下动态导入 vConsole
 const initVConsole = () => {
-  // if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
   if (typeof window !== 'undefined') {
-    import('vconsole').then((VConsole) => {
-      const vConsole = new VConsole.default();
-    });
+    // check saved debug value
+    const urlParams = new URLSearchParams(window.location.search);
+    const debugParam = urlParams.get('debug');
+    if (debugParam == 'true' || debugParam == 'false') {
+      localStorage.setItem('debug', debugParam);
+    }
+
+    // check debug value
+    const debugValue = localStorage.getItem('debug');
+    if (debugValue === 'true') {
+      import('vconsole').then((VConsole) => {
+        const vConsole = new VConsole.default();
+      });
+    }
   }
 };
 
@@ -71,48 +80,70 @@ function MyApp({ Component, pageProps }: AppProps) {
   // 在服务端或客户端未完成挂载时显示loading
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <div className="flex justify-center items-center h-screen">
-          <div className="text-lg">加载中...</div>
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100vw',
+          height: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'hsl(var(--background))',
+          zIndex: 9999,
+          margin: 0,
+          padding: 0,
+        }}
+      >
+        <div
+          style={{
+            fontSize: '1.125rem',
+            color: 'hsl(var(--foreground))',
+            textAlign: 'center',
+            padding: '0 1rem',
+          }}
+        >
+          加载中...
         </div>
       </div>
     );
   }
 
   return (
-    <ErrorBoundary>
-      <ClientWrapper>
-        <LoadingOverlay isLoading={navLoading} text="网络加载中..." />
-        <WagmiProvider config={config}>
-          <QueryClientProvider client={client}>
-            <TokenProvider>
-              <SidebarProvider>
-                <ErrorProvider>
-                  <AppSidebar />
-                  <SidebarInset>
-                    <div className="min-h-screen bg-background flex flex-col">
-                      <Toaster
-                        position="top-center"
-                        toastOptions={{
-                          style: {
-                            background: '#000000',
-                            color: '#FFFFFF',
-                          },
-                        }}
-                      />
-                      <ErrorBoundary>
-                        <Component {...pageProps} />
-                      </ErrorBoundary>
-                      <Footer />
-                    </div>
-                  </SidebarInset>
-                </ErrorProvider>
-              </SidebarProvider>
-            </TokenProvider>
-          </QueryClientProvider>
-        </WagmiProvider>
-      </ClientWrapper>
-    </ErrorBoundary>
+    <ClientWrapper>
+      <LoadingOverlay isLoading={navLoading} text="网络加载中..." />
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={client}>
+          <TokenProvider>
+            <SidebarProvider>
+              <ErrorProvider>
+                <AppSidebar />
+                <SidebarInset className="min-w-0">
+                  <div className="min-h-screen bg-background flex flex-col pb-16 md:pb-0">
+                    <Toaster
+                      position="top-center"
+                      toastOptions={{
+                        style: {
+                          background: '#000000',
+                          color: '#FFFFFF',
+                        },
+                      }}
+                    />
+                    <ActionRewardNotifier />
+                    <Component {...pageProps} />
+                    <Footer />
+                    <BottomNavigation />
+                  </div>
+                </SidebarInset>
+              </ErrorProvider>
+            </SidebarProvider>
+          </TokenProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </ClientWrapper>
   );
 }
 

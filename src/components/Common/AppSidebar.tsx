@@ -7,14 +7,13 @@ import { useRouter } from 'next/router';
 import {
   SmilePlus,
   Home,
-  Landmark,
   SatelliteDish,
-  BadgeDollarSign,
+  Landmark,
   Rocket,
   List,
   TicketCheck,
   User,
-  Info,
+  Bitcoin,
   UserCog,
 } from 'lucide-react';
 
@@ -79,9 +78,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       if (isMobile) {
         setOpenMobile(false);
       }
-
-      // 统一使用 router.push 进行导航，提高响应速度
-      // 移除强制页面刷新的逻辑，让 TokenContext 自动处理 token 切换
       router.push(url);
     },
     [isMobile, setOpenMobile, router],
@@ -100,16 +96,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: '#',
           items: [
             {
-              title: '代币首页',
+              title: '代币信息',
               url: `/token/?symbol=${token.symbol}`,
               isActive: isActiveUrl(`${basePath}/token/`),
-              icon: Home,
+              icon: Bitcoin,
             },
             {
               title: '代币简介',
               url: `/token/intro?symbol=${token.symbol}`,
               isActive: isActiveUrl(`${basePath}/token/intro`),
-              icon: Info,
+              icon: SatelliteDish,
             },
           ],
         },

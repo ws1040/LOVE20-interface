@@ -49,6 +49,31 @@ export const LOVE20TokenViewerAbi = [
         "name": "stakeAddress_",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "submitAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "voteAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "joinAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "verifyAddress_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "mintAddress_",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "outputs": [],
@@ -63,6 +88,19 @@ export const LOVE20TokenViewerAbi = [
         "name": "",
         "type": "bool",
         "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "joinAddress",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "stateMutability": "view"
@@ -188,6 +226,19 @@ export const LOVE20TokenViewerAbi = [
   },
   {
     "type": "function",
+    "name": "mintAddress",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "participatedTokensByPage",
     "inputs": [
       {
@@ -218,6 +269,19 @@ export const LOVE20TokenViewerAbi = [
   {
     "type": "function",
     "name": "stakeAddress",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "submitAddress",
     "inputs": [],
     "outputs": [
       {
@@ -679,12 +743,58 @@ export const LOVE20TokenViewerAbi = [
             "internalType": "uint256"
           },
           {
-            "name": "allowanceOfToken",
+            "name": "pairReserveToken",
             "type": "uint256",
             "internalType": "uint256"
           },
           {
-            "name": "allowanceOfParentToken",
+            "name": "pairReserveParentToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "tokenStatistics",
+    "inputs": [
+      {
+        "name": "tokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct TokenStats",
+        "components": [
+          {
+            "name": "maxSupply",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalSupply",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "reservedAvailable",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "rewardAvailable",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "pairReserveParentToken",
             "type": "uint256",
             "internalType": "uint256"
           },
@@ -694,7 +804,72 @@ export const LOVE20TokenViewerAbi = [
             "internalType": "uint256"
           },
           {
-            "name": "pairReserveParentToken",
+            "name": "totalLpSupply",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "stakedTokenAmountForSt",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "joinedTokenAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalSLSupply",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalSTSupply",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "parentTokenAmountForSl",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "tokenAmountForSl",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "parentPool",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "finishedRounds",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actionsCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "joiningActionsCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "childTokensCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "launchingChildTokensCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "launchedChildTokensCount",
             "type": "uint256",
             "internalType": "uint256"
           }
@@ -723,6 +898,32 @@ export const LOVE20TokenViewerAbi = [
         "name": "tokens",
         "type": "address[]",
         "internalType": "address[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "verifyAddress",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "voteAddress",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "stateMutability": "view"

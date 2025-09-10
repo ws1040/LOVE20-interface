@@ -19,7 +19,7 @@ import MyVotingPanel from '@/src/components/My/MyVotingPanel';
 import MyVerifingPanel from '@/src/components/My/MyVerifingPanel';
 import Todeploy from '@/src/components/Launch/Todeploy';
 import LoadingIcon from '@/src/components/Common/LoadingIcon';
-import MyGovernanceAssetsPanel from '@/src/components/My/MyGovernanceAssetsPanel';
+import MyGovInfoPanel from '@/src/components/My/MyGovInfoPanel';
 
 const GovPage = () => {
   // 当前token
@@ -52,7 +52,7 @@ const GovPage = () => {
   }, [errorValidGovVotes, errorCurrentRound]);
 
   // 判断是否需要显示治理组件
-  const shouldShowGovComponents = validGovVotes > 0n;
+  const shouldShowGovComponents = validGovVotes > BigInt(0);
 
   if (isConnected && (isPendingCurrentRound || isPendingValidGovVotes)) {
     return (
@@ -88,12 +88,12 @@ const GovPage = () => {
           <>
             <Tabs defaultValue="my-assets" className="w-full px-4">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="my-assets">我的治理资产</TabsTrigger>
-                <TabsTrigger value="community-assets">社区治理资产</TabsTrigger>
+                <TabsTrigger value="my-assets">我的</TabsTrigger>
+                <TabsTrigger value="community-assets">社区</TabsTrigger>
               </TabsList>
               <TabsContent value="my-assets">
                 <div className="border rounded-lg px-2 py-4 mt-2">
-                  <MyGovernanceAssetsPanel token={currentToken} enableWithdraw={false} />
+                  <MyGovInfoPanel token={currentToken} enableWithdraw={false} />
                 </div>
               </TabsContent>
               <TabsContent value="community-assets">
@@ -108,11 +108,11 @@ const GovPage = () => {
               // 有治理票时显示三个治理组件
               <>
                 <MyVotingPanel
-                  currentRound={currentVoteRound ? currentVoteRound : 0n}
+                  currentRound={currentVoteRound ? currentVoteRound : BigInt(0)}
                   validGovVotes={validGovVotes}
                   isPendingValidGovVotes={isPendingValidGovVotes}
                 />
-                <MyVerifingPanel currentRound={currentVoteRound > 2 ? currentVoteRound - 2n : 0n} />
+                <MyVerifingPanel currentRound={currentVoteRound > 2 ? currentVoteRound - BigInt(2) : BigInt(0)} />
                 <Todeploy token={currentToken} />
               </>
             ) : (

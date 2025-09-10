@@ -47,7 +47,7 @@ const StakePage = () => {
         {stakedSLTokenAmount && (
           <>
             <StTokenTab />
-            <StakeTokenPanel tokenBalance={tokenBalance || 0n} />
+            <StakeTokenPanel tokenBalance={tokenBalance || BigInt(0)} />
           </>
         )}
 

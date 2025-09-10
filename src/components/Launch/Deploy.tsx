@@ -25,7 +25,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 // my funcs
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount } from '@/src/lib/format';
 import { safeToBigInt } from '@/src/lib/clientUtils';
 
@@ -73,7 +72,7 @@ export default function TokenDeployment() {
       account as `0x${string}`,
     );
   // 获取等待铸币次数
-  const MIN_GOV_REWARD_MINTS = Number(process.env.NEXT_PUBLIC_MIN_GOV_REWARD_MINTS_TO_LAUNCH) || 180n;
+  const MIN_GOV_REWARD_MINTS = Number(process.env.NEXT_PUBLIC_MIN_GOV_REWARD_MINTS_TO_LAUNCH) || BigInt(180);
   const remainingMintTimes =
     Number(MIN_GOV_REWARD_MINTS) - (Number(numOfMintGovRewardByAccount ?? 0) % Number(MIN_GOV_REWARD_MINTS));
 
@@ -95,10 +94,6 @@ export default function TokenDeployment() {
 
   // 5. 提交逻辑
   async function onSubmit(data: TokenFormValues) {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      toast.error('请切换到正确的网络');
-      return;
-    }
     try {
       const confirmed = await handleConfirm();
       if (!confirmed) return;
@@ -174,13 +169,15 @@ export default function TokenDeployment() {
                     <FormControl>
                       <Input
                         id="symbol"
-                        placeholder="例如: TENNIS, FOOTBALL"
+                        placeholder="例如: TENNIS, GAME20"
                         disabled={isLoading || isConfirmed}
                         className="!ring-secondary-foreground"
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>只能用大写字母A~Z和数字0~9，最多 6 个字符。</FormDescription>
+                    <FormDescription>
+                      最多 6 个字符，首字母只能用大写字母A~Z，后5个字符只能用大写字母A~Z和数字0~9。
+                    </FormDescription>
                     {/* 有错误信息会渲染在这 */}
                     <FormMessage />
                   </FormItem>
@@ -219,7 +216,7 @@ export default function TokenDeployment() {
             <DialogDescription>
               剩余可发射次数：{Number(remainingLaunchCount)} 次
               <br />
-              再完成 {remainingMintTimes} 次治理奖励铸币，可增加1次
+              再完成 {remainingMintTimes} 次治理激励铸币，可增加1次
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import { useAccount, useChainId } from 'wagmi';
 
 // my hooks
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { useCurrentRound, useSubmit } from '@/src/hooks/contracts/useLOVE20Submit';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useCanSubmit } from '@/src/hooks/util/useCanSubmit';
@@ -53,9 +52,6 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
   // 提交
   const { submit, isPending, isConfirming, isConfirmed, writeError: errSubmit } = useSubmit();
   const handleSubmit = () => {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
     if (isPending || isConfirming) {
       return;
     }
@@ -120,7 +116,11 @@ const ActionPanelForSubmit: React.FC<ActionPanelForJoinProps> = ({ actionId, sub
               )}
             </div>
           ) : (
-            <Button onClick={handleSubmit} className="w-1/2" disabled={isPending || isConfirming || !hasEnoughVotes}>
+            <Button
+              onClick={handleSubmit}
+              className="submit-action-button w-1/2"
+              disabled={isPending || isConfirming || !hasEnoughVotes}
+            >
               {isPending && '提交中...'}
               {isConfirming && '确认中...'}
               {!isPending && !isConfirming && '推举本行动'}

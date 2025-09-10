@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useContext, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 
 // ui components
@@ -16,7 +16,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
 
 // my hooks
-import { checkWalletConnectionByChainId } from '@/src/lib/web3';
 import { formatTokenAmount, formatUnits, parseUnits } from '@/src/lib/format';
 import { useHandleContractError } from '@/src/lib/errorUtils';
 import { useApprove, useBalanceOf, useAllowance } from '@/src/hooks/contracts/useLOVE20Token';
@@ -51,7 +50,6 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   const router = useRouter();
   const { token } = useContext(TokenContext) || {};
   const { address: account } = useAccount();
-  const chainId = useChainId();
 
   // 获取代币余额
   const { balance: tokenBalance, error: errorTokenBalance } = useBalanceOf(
@@ -110,8 +108,8 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
       .refine(
         (val) => {
           const inputVal = parseUnits(val);
-          if (myStakedAmount && myStakedAmount > 0n) {
-            return inputVal !== null && inputVal > 0n;
+          if (myStakedAmount && myStakedAmount > BigInt(0)) {
+            return inputVal !== null && inputVal > BigInt(0);
           }
           return inputVal !== null && inputVal >= BigInt(actionInfo.body.minStake);
         },
@@ -184,13 +182,9 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   }, [isPendingAllowanceToken]);
 
   async function handleApprove(values: FormValues) {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
-
     // 确保 newStake 始终为 bigint，避免 null
-    const newStake = parseUnits(values.additionalStakeAmount) ?? 0n;
-    if (newStake === 0n && myStakedAmount && myStakedAmount > 0n) {
+    const newStake = parseUnits(values.additionalStakeAmount) ?? BigInt(0);
+    if (newStake === BigInt(0) && myStakedAmount && myStakedAmount > BigInt(0)) {
       toast.error('当前无需授权。');
       return;
     }
@@ -212,9 +206,14 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
 
   // 监听用户输入的质押数量及链上返回的授权额度判断是否已授权
   const additionalStakeAmount = form.watch('additionalStakeAmount');
-  const parsedStakeAmount = parseUnits(additionalStakeAmount || '0') ?? 0n;
+  const parsedStakeAmount = parseUnits(additionalStakeAmount || '0') ?? BigInt(0);
   useEffect(() => {
-    if (parsedStakeAmount > 0n && allowanceToken && allowanceToken > 0n && allowanceToken >= parsedStakeAmount) {
+    if (
+      parsedStakeAmount > BigInt(0) &&
+      allowanceToken &&
+      allowanceToken > BigInt(0) &&
+      allowanceToken >= parsedStakeAmount
+    ) {
       setIsTokenApproved(true);
     } else {
       setIsTokenApproved(false);
@@ -233,10 +232,6 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
   } = useJoin();
 
   async function handleJoin(values: FormValues) {
-    if (!checkWalletConnectionByChainId(chainId)) {
-      return;
-    }
-
     try {
       // 检查用户是否之前填写过验证信息
       const isFirstTimeSubmit =
@@ -270,7 +265,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
       await join(
         token?.address as `0x${string}`,
         BigInt(actionInfo.head.id),
-        parseUnits(values.additionalStakeAmount) ?? 0n,
+        parseUnits(values.additionalStakeAmount) ?? BigInt(0),
         verificationInfosToSubmit,
       );
     } catch (error) {
@@ -288,7 +283,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
       form.reset();
       // 2秒后返回
       setTimeout(() => {
-        router.push(`/action/detail?id=${actionInfo.head.id}&type=join&symbol=${token?.symbol}`);
+        router.push(`/my/myaction?id=${actionInfo.head.id}&symbol=${token?.symbol}`);
       }, 2000);
     }
   }, [isConfirmedJoin]);
@@ -324,7 +319,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
 
   return (
     <>
-      <div className="px-6 pt-0 pb-2">
+      <div className="px-6 pt-6 pb-2">
         <LeftTitle title={myStakedAmount ? '增加参与代币' : '参与行动'} />
         <Form {...form}>
           <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
@@ -341,11 +336,11 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
                     <Input
                       placeholder={
                         myStakedAmount
-                          ? `最大可追加 ${formatTokenAmount(tokenBalance || 0n)}`
+                          ? `最大可追加 ${formatTokenAmount(tokenBalance || BigInt(0))}`
                           : `最小参与代币数 ${formatTokenAmount(BigInt(actionInfo.body.minStake))}`
                       }
                       type="number"
-                      disabled={!tokenBalance || tokenBalance <= 0n}
+                      disabled={!tokenBalance || tokenBalance <= BigInt(0)}
                       className="!ring-secondary-foreground"
                       {...field}
                     />
@@ -353,7 +348,7 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
                   <FormMessage />
                   <FormDescription className="flex items-center">
                     <span>
-                      共有 <span className="text-secondary">{formatTokenAmount(tokenBalance || 0n)}</span>{' '}
+                      共有 <span className="text-secondary">{formatTokenAmount(tokenBalance || BigInt(0))}</span>{' '}
                       {token?.symbol}
                     </span>
                     <Button
@@ -361,12 +356,12 @@ const SubmitJoin: React.FC<SubmitJoinProps> = ({ actionInfo, stakedAmount: mySta
                       variant="link"
                       size="sm"
                       onClick={() => {
-                        if (tokenBalance && tokenBalance > 0n) {
+                        if (tokenBalance && tokenBalance > BigInt(0)) {
                           form.setValue('additionalStakeAmount', formatUnits(tokenBalance));
                         }
                       }}
                       className="text-secondary p-0 ml-6"
-                      disabled={!tokenBalance || tokenBalance <= 0n}
+                      disabled={!tokenBalance || tokenBalance <= BigInt(0)}
                     >
                       全部
                     </Button>

@@ -7,31 +7,29 @@ import { safeToBigInt } from './clientUtils';
 
 /**
  * 计算治理质押的预计年化收益率(APY)
- * @param rewardAvailable 可用奖励总量
+ * @param rewardForPhase 本轮治理激励总量
  * @param tokenAmountForSl 流动性质押的代币数量
  * @param stAmount 代币质押的数量
  * @returns 格式化后的APY字符串，如"12.5%"
  */
 export const calculateAPY = (
-  rewardAvailable: bigint | undefined,
+  rewardForPhase: bigint | undefined,
   tokenAmountForSl: bigint | undefined,
   stAmount: bigint | undefined,
 ): string => {
-  if (!rewardAvailable || !tokenAmountForSl) return '0%';
+  if (!rewardForPhase || !tokenAmountForSl) return '0%';
 
   // 年区块数 = 365天 * 86400秒/天 / 每个区块的秒数
-  const blocksPerYear = (365 * 86400 * 100) / Number(process.env.NEXT_PUBLIC_BLOCK_TIME || 0);
+  const blocksPerYear = (365 * 86400 * 1000) / Number(process.env.NEXT_PUBLIC_BLOCK_TIME_MS || 0);
   // 一个阶段的区块数
   const phaseBlocks = safeToBigInt(process.env.NEXT_PUBLIC_PHASE_BLOCKS || '0');
-  if (blocksPerYear === 0 || phaseBlocks === 0n) {
-    console.error('配置错误: NEXT_PUBLIC_BLOCK_TIME 或 NEXT_PUBLIC_PHASE_BLOCKS 未设置');
+  if (blocksPerYear === 0 || phaseBlocks === BigInt(0)) {
+    console.error('配置错误: NEXT_PUBLIC_BLOCK_TIME_MS 或 NEXT_PUBLIC_PHASE_BLOCKS 未设置');
     return '0%';
   }
 
-  // 本轮治理激励
-  const rewardForPhase = rewardAvailable ? (rewardAvailable * 99n * 99n) / 2000000n : BigInt(0);
   // 所有质押资产总和
-  const totalStaked = (tokenAmountForSl * 2n || BigInt(0)) + (stAmount || BigInt(0));
+  const totalStaked = (tokenAmountForSl * BigInt(2) || BigInt(0)) + (stAmount || BigInt(0));
   // 避免除以零
   if (totalStaked === BigInt(0)) {
     return '0%';
@@ -45,21 +43,21 @@ export const calculateAPY = (
 };
 
 /**
- * 计算行动奖励的年化收益率(APY)
+ * 计算行动激励的年化收益率(APY)
  * @param expectedReward 当轮行动激励
  * @param joinedAmount 参与行动代币
  * @returns 格式化后的APY百分比字符串
  */
 export const calculateActionAPY = (expectedReward?: bigint, joinedAmount?: bigint): string => {
   // 如果没有数据，返回0%
-  if (!expectedReward || !joinedAmount || joinedAmount === 0n) return '∞';
+  if (!expectedReward || !joinedAmount || joinedAmount === BigInt(0)) return '∞';
 
   // 年区块数 = 365天 * 86400秒/天 / 每个区块的秒数
-  const blocksPerYear = (365 * 86400 * 100) / Number(process.env.NEXT_PUBLIC_BLOCK_TIME || 0);
+  const blocksPerYear = (365 * 86400 * 1000) / Number(process.env.NEXT_PUBLIC_BLOCK_TIME_MS || 0);
   // 一个阶段的区块数
   const phaseBlocks = safeToBigInt(process.env.NEXT_PUBLIC_PHASE_BLOCKS || '0');
 
-  if (blocksPerYear === 0 || phaseBlocks === 0n) {
+  if (blocksPerYear === 0 || phaseBlocks === BigInt(0)) {
     console.error('配置错误: BLOCK_TIME 或 PHASE_BLOCKS 未设置或为0');
     return '0%';
   }
@@ -79,7 +77,7 @@ export const calculateActionAPY = (expectedReward?: bigint, joinedAmount?: bigin
 export const formatPhaseText = (phases: number, onlyBlockTime = false): string => {
   // 从环境变量获取配置
   const PHASE_BLOCKS = Number(process.env.NEXT_PUBLIC_PHASE_BLOCKS) || 0;
-  const BLOCK_TIME = Number(process.env.NEXT_PUBLIC_BLOCK_TIME) || 0; // 单位：百分之一秒
+  const BLOCK_TIME = Number(process.env.NEXT_PUBLIC_BLOCK_TIME_MS) || 0; // 单位：百分之一秒
 
   // 计算总区块数
   const totalBlocks = phases * PHASE_BLOCKS;
@@ -112,68 +110,68 @@ export const formatPhaseText = (phases: number, onlyBlockTime = false): string =
 };
 
 /**
- * 计算行动激励的预期奖励
- * @param rewardAvailable 可用奖励总量
+ * 计算行动激励的预期激励
+ * @param rewardAvailable 可用激励总量
  * @param displayRound 显示的轮次（从1开始）
- * @returns 计算得出的预期奖励数量
+ * @returns 计算得出的预期激励数量
  */
 export const calculateExpectedActionReward = (rewardAvailable: bigint | undefined, displayRound: bigint): bigint => {
   if (!rewardAvailable) {
     return BigInt(0);
   }
 
-  // 计算剩余奖励比例
+  // 计算剩余激励比例
   const rewardLeftRatio =
-    1000n -
+    BigInt(1000) -
     safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '5') -
     safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '5');
 
   let expectedReward = BigInt(0);
 
-  if (displayRound <= 1n) {
+  if (displayRound <= BigInt(1)) {
     // 第1轮：rewardAvailable * 0.01 / 2 (or 5 / 1000)
     expectedReward =
-      (rewardAvailable * safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '0')) / 1000n;
+      (rewardAvailable * safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '0')) / BigInt(1000);
   } else {
     // >=第2轮：rewardAvailable * 0.99 * 0.01 / 2 (or 99 * 5 / 1000000)
     expectedReward =
       (rewardAvailable *
         rewardLeftRatio *
         safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '0')) /
-      1000000n;
+      BigInt(1000000);
   }
 
   return expectedReward;
 };
 
 /**
- * 计算治理激励的预期奖励
- * @param rewardAvailable 可用奖励总量
+ * 计算治理激励的预期激励
+ * @param rewardAvailable 可用激励总量
  * @param displayRound 显示的轮次（从1开始）
- * @returns 计算得出的预期奖励数量
+ * @returns 计算得出的预期激励数量
  */
 export const calculateExpectedGovReward = (rewardAvailable: bigint | undefined, displayRound: bigint): bigint => {
   if (!rewardAvailable) {
     return BigInt(0);
   }
 
-  // 计算剩余奖励比例
+  // 计算剩余激励比例
   const rewardLeftRatio =
-    1000n -
+    BigInt(1000) -
     safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '5') -
     safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_ACTION_PER_THOUSAND || '5');
 
   let expectedReward = BigInt(0);
 
-  if (displayRound === 1n) {
+  if (displayRound === BigInt(1)) {
     // 第1轮：rewardAvailable * 0.01 / 2 (or 5 / 1000)
     expectedReward =
-      (rewardAvailable * safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) / 1000n;
-  } else if (displayRound === 2n) {
+      (rewardAvailable * safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) / BigInt(1000);
+  } else if (displayRound === BigInt(2)) {
     // 第2轮：rewardAvailable * 0.99 * 0.01 / 2 (or 99 * 5 / 1000000)
     expectedReward =
       (rewardAvailable * rewardLeftRatio * safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) /
-      1000000n;
+      BigInt(1000000);
   } else {
     // >=第3轮：rewardAvailable * 0.99 * 0.99 * 0.01 / 2 (or 99 * 99 * 5 / 1000000000)
     expectedReward =
@@ -181,7 +179,7 @@ export const calculateExpectedGovReward = (rewardAvailable: bigint | undefined, 
         rewardLeftRatio *
         rewardLeftRatio *
         safeToBigInt(process.env.NEXT_PUBLIC_ROUND_REWARD_GOV_PER_THOUSAND || '0')) /
-      1000000000n;
+      BigInt(1000000000);
   }
 
   return expectedReward;

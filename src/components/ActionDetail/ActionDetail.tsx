@@ -1,7 +1,5 @@
 'use client';
 import React, { useContext, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
 // my hooks
 import { useActionInfo, useSubmitInfo } from '@/src/hooks/contracts/useLOVE20Submit';
@@ -54,7 +52,7 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
     submitInfo,
     isPending: isPendingSubmitInfo,
     error: errorSubmitInfo,
-  } = useSubmitInfo(token?.address as `0x${string}`, showSubmitter ? round : 0n, actionId);
+  } = useSubmitInfo(token?.address as `0x${string}`, showSubmitter ? round : BigInt(0), actionId);
 
   // 找到当前动作的提交者
   const submitter = submitInfo?.submitter || 'N/A';
@@ -76,16 +74,6 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
 
   return (
     <>
-      <div className="mx-auto p-4 pb-2 border-t border-greyscale-100">
-        <div className="flex justify-between items-center mb-2">
-          <LeftTitle title="行动详情" />
-          {showVerifyHistory && (
-            <Button variant="link" className="text-secondary border-secondary" asChild>
-              <Link href={`/my/actrewards/?id=${actionId}&symbol=${token?.symbol}`}>查看铸造激励 &gt;&gt;</Link>
-            </Button>
-          )}
-        </div>
-      </div>
       <div className="mx-auto p-4 pb-2 ">
         <div className="flex flex-col">
           <span className="text-sm text-greyscale-500">No.{actionInfo?.head.id.toString()}</span>
@@ -111,23 +99,24 @@ const ActionDetail: React.FC<ActivityDetailProps> = ({
           </div>
 
           <div className="mb-4">
-            <h3 className="text-sm font-bold">最大抽取验证地址数</h3>
+            <h3 className="text-sm font-bold">最大激励地址数</h3>
             <p className="text-greyscale-500">{actionInfo?.body.maxRandomAccounts.toString() || '-'}</p>
           </div>
 
           <div className="mb-4">
-            <h3 className="text-sm font-bold">验证规则</h3>
+            <h3 className="text-sm font-bold mb-2">验证规则</h3>
             <p className="text-greyscale-500 whitespace-pre-wrap">
               <LinkIfUrl text={actionInfo?.body.verificationRule} />
             </p>
           </div>
           <div className="mb-4">
-            <h3 className="text-sm font-bold">报名参加行动时，行动者要提供的信息</h3>
+            <h3 className="text-sm font-bold mb-2">报名参加行动时，行动者要提供的信息</h3>
             {actionInfo?.body.verificationKeys && actionInfo?.body.verificationKeys.length > 0 ? (
               <ul className="list-disc pl-5">
                 {actionInfo.body.verificationKeys.map((key: string, index: number) => (
                   <li key={index} className="text-greyscale-500">
-                    {key} : {actionInfo.body.verificationInfoGuides[index]}
+                    <div>{key} :</div>
+                    <div>{actionInfo.body.verificationInfoGuides[index]}</div>
                   </li>
                 ))}
               </ul>

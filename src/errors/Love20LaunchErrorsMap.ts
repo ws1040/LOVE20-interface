@@ -11,7 +11,7 @@ export const LOVE20LaunchErrorsMap: Record<string, string> = {
   LaunchNotEnded: '公平发射尚未结束',
   ClaimDelayNotPassed: '当前还不能领取，请下一区块再来领取',
   NoContribution: '没有申购记录',
-  NotEnoughWaitingBlocks: '等待区块数不足',
+  NotEnoughWaitingBlocks: '等待区块数不足，请耐心等待',
   TokensAlreadyClaimed: '代币已经领取',
   LaunchAlreadyExists: '公平发射已存在',
   ParentTokenNotSet: '父代币未设置',

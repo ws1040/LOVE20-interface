@@ -13,6 +13,6 @@ export const LOVE20StakeErrorsMap: Record<string, string> = {
   PromisedWaitingPhasesMustBeGreaterOrEqualThanBefore: '承诺等待的阶段数必须大于或等于之前的阶段数',
   NoStakedLiquidity: '没有质押获取治理票，不能质押token获取加速激励',
   AlreadyUnstaked: '已解除质押，无需再次解除',
-  NotEnoughWaitingBlocks: '等待区块数量不足',
+  NotEnoughWaitingBlocks: '等待区块数量不足，请耐心等待',
   RoundHasNotStartedYet: '轮次尚未开始',
 };

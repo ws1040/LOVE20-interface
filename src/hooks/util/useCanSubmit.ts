@@ -22,7 +22,7 @@ export const useCanSubmit = () => {
 
   // 计算治理票百分比
   const percentage = useMemo(() => {
-    if (!validGovVotes || !govData?.govVotes || govData.govVotes === 0n) return 0;
+    if (!validGovVotes || !govData?.govVotes || govData.govVotes === BigInt(0)) return 0;
     return Number(validGovVotes) / Number(govData.govVotes);
   }, [validGovVotes, govData?.govVotes]);
 

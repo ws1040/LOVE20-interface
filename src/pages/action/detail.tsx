@@ -11,7 +11,6 @@ import Header from '@/src/components/Header';
 import ActionDetail from '@/src/components/ActionDetail/ActionDetail';
 import ActionPanelForSubmit from '@/src/components/ActionDetail/ActionPanelForSubmit';
 import ActionPanelForVoting from '@/src/components/ActionDetail/ActionPanelForVoting';
-import ActionPanelForJoin from '@/src/components/ActionDetail/ActionPanelForJoin';
 
 const ActionPage = () => {
   const router = useRouter();
@@ -41,13 +40,6 @@ const ActionPage = () => {
         )}
         {typeParam === 'vote' && (
           <ActionPanelForVoting actionId={BigInt(idParam || 0)} onRoundChange={handleRoundChange} />
-        )}
-        {(typeParam === 'join' || typeParam === undefined) && (
-          <ActionPanelForJoin
-            actionId={BigInt(idParam || 0)}
-            onRoundChange={handleRoundChange}
-            actionInfo={actionInfo}
-          />
         )}
         <ActionDetail
           actionId={BigInt(idParam || 0)}

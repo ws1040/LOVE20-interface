@@ -4,6 +4,7 @@ import { useWaitForTransactionReceipt } from 'wagmi';
 import { simulateContract, writeContract } from '@wagmi/core';
 import { config } from '@/src/wagmi';
 import { isTukeWallet, sendTransactionForTuke, waitForTukeTransaction } from './tukeWalletUtils';
+import { checkWalletNetworkStatus } from '@/src/lib/web3';
 
 /**
  * 统一交易发送函数
@@ -25,9 +26,8 @@ export const sendUniversalTransaction = async (
     return await sendTransactionForTuke(abi, address, functionName, args, value, options);
   } else {
     // 标准钱包模式：simulate + write
-    console.log('使用标准钱包模式发送交易');
-
     if (!options?.skipSimulation) {
+      console.log('步骤1: (标准模式)执行模拟调用 验证交易...');
       await simulateContract(config, {
         address,
         abi,
@@ -37,6 +37,7 @@ export const sendUniversalTransaction = async (
       });
     }
 
+    console.log('步骤2: (标准模式)执行真实交易...');
     return await writeContract(config, {
       address,
       abi,
@@ -84,6 +85,15 @@ export function useUniversalTransaction(
     setIsConfirming(false);
 
     try {
+      // 交易前网络检查
+      const networkStatus = await checkWalletNetworkStatus();
+      if (!networkStatus.isValid) {
+        const errorMsg = `网络不匹配！请切换到 ${process.env.NEXT_PUBLIC_CHAIN_NAME} 网络`;
+        const networkError = new Error(errorMsg);
+        setError(networkError);
+        throw networkError;
+      }
+
       console.log(`发送交易: ${functionName}`, { args, value });
       const txHash = await sendUniversalTransaction(abi, address, functionName, args, value, options);
       setIsPending(false);
@@ -101,11 +111,13 @@ export function useUniversalTransaction(
           setIsManuallyConfirmed(true);
         } catch (confirmErr) {
           console.error('TUKE交易确认失败:', confirmErr);
+          setError(confirmErr as Error);
+          setIsManuallyConfirmed(false);
+          throw confirmErr;
         } finally {
           setIsConfirming(false);
         }
       }
-      // 非TUKE钱包的确认由useWaitForTransactionReceipt自动处理
 
       return txHash;
     } catch (err: any) {
@@ -126,16 +138,10 @@ export function useUniversalTransaction(
   const combinedError = error ?? finalConfirmError;
 
   useEffect(() => {
-    if (hash) {
-      console.log('交易哈希:', hash);
-    }
     if (combinedError) {
-      console.error('交易错误:', combinedError);
+      console.error('交易回执错误:', combinedError);
     }
-    if (finalIsConfirmed) {
-      console.log('交易最终确认成功');
-    }
-  }, [hash, combinedError, finalIsConfirmed]);
+  }, [combinedError]);
 
   return {
     execute,

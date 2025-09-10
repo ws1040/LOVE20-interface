@@ -1,6 +1,7 @@
 // src/utils/errorUtils.ts
 
 import { ContractErrorsMaps, getErrorNameFromSelector } from '@/src/errors';
+import * as Sentry from '@sentry/nextjs';
 import { ErrorInfo } from '@/src/contexts/ErrorContext';
 import { useError } from '@/src/contexts/ErrorContext';
 import { useCallback } from 'react';
@@ -119,7 +120,7 @@ function _parseTimeoutError(error: string): string {
 
   for (const pattern of timeoutPatterns) {
     if (pattern.test(error)) {
-      return '网络请求超时，这在移动端比较常见。请检查网络连接后重试，或稍后再试。';
+      return '网络请求超时，请检查网络连接后重试，或稍后再试。';
     }
   }
   return '';
@@ -203,10 +204,26 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
 
   let selector = '';
 
+  // 优先匹配各类 "custom error 0xXXXXXXXX"（例如 anvil 或 viem 提示中的 reason: custom error ...）
+  const customErrorMatch = rawMessage.match(/custom error 0x([a-fA-F0-9]{8})/i);
+  if (customErrorMatch) {
+    selector = '0x' + customErrorMatch[1];
+  }
+
+  // 匹配 "Execution reverted with reason: custom error 0xXXXXXXXX" 格式
+  if (!selector) {
+    const executionRevertMatch = rawMessage.match(/Execution reverted with reason:\s*custom error 0x([a-fA-F0-9]{8})/i);
+    if (executionRevertMatch) {
+      selector = '0x' + executionRevertMatch[1];
+    }
+  }
+
   // 匹配 Viem 格式：Data:   0xd6e1a062 (4 bytes)
-  const viemMatch = rawMessage.match(/Data:\s*0x([a-fA-F0-9]{8})\s*\(4 bytes\)/i);
-  if (viemMatch) {
-    selector = '0x' + viemMatch[1];
+  if (!selector) {
+    const viemMatch = rawMessage.match(/Data:\s*0x([a-fA-F0-9]{8})\s*\(4 bytes\)/i);
+    if (viemMatch) {
+      selector = '0x' + viemMatch[1];
+    }
   }
 
   // 匹配 JSON-RPC 格式：data: "0xa748da06" 或 data: 0xa748da06
@@ -223,14 +240,6 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
     const standaloneMatch = rawMessage.match(/(?:^|[^a-fA-F0-9])0x([a-fA-F0-9]{8})(?:[^a-fA-F0-9]|$)/);
     if (standaloneMatch) {
       selector = '0x' + standaloneMatch[1];
-    }
-  }
-
-  // 匹配 anvil 测试链的错误格式：custom error 0x50cd778e
-  if (!selector) {
-    const anvilMatch = rawMessage.match(/custom error 0x([a-fA-F0-9]{8})/i);
-    if (anvilMatch) {
-      selector = '0x' + anvilMatch[1];
     }
   }
 
@@ -272,6 +281,17 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
   }
 
   // 2.解析传统格式的错误信息
+  // 首先检查 UniswapV2Router 特定格式：UniswapV2Router: ERROR_NAME
+  const uniswapMatch = rawMessage.match(/UniswapV2Router:\s*([A-Z_]+)/);
+  if (uniswapMatch && uniswapMatch[1]) {
+    const uniswapErrorName = uniswapMatch[1];
+    // 直接使用 UniswapV2Router 错误映射
+    const uniswapErrorMap = ContractErrorsMaps.uniswapV2Router;
+    if (uniswapErrorMap && uniswapErrorMap[uniswapErrorName]) {
+      return { name: '交易错误', message: uniswapErrorMap[uniswapErrorName] };
+    }
+  }
+
   const matched = rawMessage.match(/(?:([A-Za-z0-9_]+)\()|(?:ERC20:\s*(.+))/);
   let errorName = '';
   if (matched && (matched[1] != undefined || matched[2] != undefined)) {
@@ -300,7 +320,7 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
   // 未知错误
   return {
     name: '交易错误',
-    message: '交易失败，请稍后刷新重试 ' + rawMessage,
+    message: rawMessage ? rawMessage : '交易失败，请稍后刷新重试',
   };
 }
 
@@ -379,7 +399,35 @@ export const useHandleContractError = () => {
 
       console.error('Final Error Message:', finalError);
 
+      // 将错误设置到全局错误上下文，供 UI 提示
       setError(finalError);
+
+      // 在非用户主动取消交易的情况下，上报到 Sentry
+      try {
+        const isUserCancel = finalError?.message?.includes('用户取消') || finalError?.name === '交易提示';
+        // 仅在生产环境上报，避免本地开发噪音
+        const shouldReport = !isUserCancel;
+        if (shouldReport) {
+          Sentry.captureException(error ?? new Error(finalError?.message || 'Unknown contract error'), {
+            level: 'error',
+            tags: {
+              contractContext: context,
+              source: 'handleContractError',
+            },
+            extra: {
+              finalError,
+              rawErrorMessage: error?.message,
+              rawErrorReason: error?.reason,
+              rawErrorDetails: error?.details,
+              rawErrorShortMessage: error?.shortMessage,
+              stringified: errorStringified,
+            },
+          });
+        }
+      } catch (sentryError) {
+        // 避免上报过程本身影响用户操作流
+        console.warn('Sentry capture skipped or failed:', sentryError);
+      }
     },
     [setError],
   );

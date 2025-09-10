@@ -60,9 +60,18 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
         // @ts-ignore
         <CopyToClipboard text={address} onCopy={handleCopy}>
           <button
-            className="flex items-center justify-center p-1 rounded hover:bg-gray-200 focus:outline-none"
+            className="flex items-center justify-center p-1 rounded focus:outline-none active:bg-gray-200 md:hover:bg-gray-200"
             onClick={handleClick}
             aria-label="复制地址"
+            style={{
+              WebkitTapHighlightColor: 'transparent',
+              WebkitAppearance: 'none',
+              appearance: 'none',
+              background: 'transparent',
+              backgroundColor: 'transparent',
+              border: 'none',
+              outline: 'none',
+            }}
           >
             {copied ? (
               <Check className={`h-4 w-4 ${colorClassName ?? 'text-greyscale-500'}`} />

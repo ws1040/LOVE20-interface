@@ -112,22 +112,25 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton = false, backUrl 
     }
   };
 
+  // 兼容旧版浏览器的标题处理
+  const pageTitle = token && token.symbol ? token.symbol : 'LOVE20';
+  const metaName = token && token.symbol ? `${title} - ${token.symbol}` : title;
+
   return (
     <>
       <Head>
-        <title>{`${token?.symbol ?? 'LOVE20'}`}</title>
-        <meta name={`${title} - ${token?.symbol}`} content="A Web3 DApp for LOVE20 token management" />
+        <title>{pageTitle}</title>
+        <meta name={metaName} content="A Web3 DApp for LOVE20 token management" />
       </Head>
 
       <header className="flex justify-between items-center py-2 px-4">
-        <div className="flex items-center gap-3">
-          <SidebarTrigger className="-ml-1" />
+        <div className="flex items-center">
           {(showBackButton || backUrl !== '') && (
             <Button
               variant="outline"
               size="sm"
               onClick={handleGoBack}
-              className="flex items-center gap-2 px-3 py-2 text-gray-700 border-gray-300 hover:bg-gray-50 hover:text-gray-900"
+              className="flex items-center space-x-2 px-3 py-1 text-gray-500 border-gray-200 hover:bg-gray-50 hover:text-gray-900"
               title="返回上一页"
             >
               <span className="text-sm font-medium">&lt;&nbsp;返回</span>

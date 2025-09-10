@@ -1,4 +1,8 @@
 'use client';
+/**
+ * 列表：显示正在投票中的行动
+ */
+
 import { useRouter } from 'next/router';
 import { ChevronRight, UserPen } from 'lucide-react';
 import { useAccount } from 'wagmi';
@@ -40,7 +44,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
   );
 
   // 计算投票总数： 累计
-  const totalVotes = votingActions.reduce((acc, votingAction) => acc + votingAction.votesNum, 0n);
+  const totalVotes = votingActions.reduce((acc, votingAction) => acc + votingAction.votesNum, BigInt(0));
 
   // 错误处理
   const { handleContractError } = useHandleContractError();
@@ -73,7 +77,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
               <Link href={`/vote/actions4submit?symbol=${token?.symbol}`}>推举其他行动</Link>
             </Button>
             <Button variant="outline" size="sm" className="text-secondary border-secondary" asChild>
-              <Link href={`/gov?symbol=${token?.symbol}`}>返回治理首页</Link>
+              <Link href={`/gov?symbol=${token?.symbol}`}>返回治理</Link>
             </Button>
           </div>
         )}
@@ -116,7 +120,7 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
                         <span>
                           <span className="text-greyscale-400 mr-1">占比</span>
                           <span className="text-secondary">
-                            {totalVotes === 0n
+                            {totalVotes === BigInt(0)
                               ? '-'
                               : formatPercentage((Number(votingAction.votesNum) * 100) / Number(totalVotes))}
                           </span>
@@ -130,7 +134,12 @@ const VotingActionList: React.FC<VotingActionListProps> = ({ currentRound }) => 
             })}
           </>
         ) : (
-          <div className="text-sm text-greyscale-500 text-center mt-8">还没推举行动，请先推举</div>
+          <div className="text-center mt-8">
+            <div className="text-base text-greyscale-500 mb-4">还没有推举行动，请先推举！</div>
+            <Button asChild>
+              <Link href={`/vote/actions4submit?symbol=${token?.symbol}`}>去推举行动</Link>
+            </Button>
+          </div>
         )}
       </div>
     </div>

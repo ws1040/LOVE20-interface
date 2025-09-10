@@ -48,7 +48,7 @@ export default function TokenFairLaunch() {
 
   return (
     <>
-      <Header title="公平发射" />
+      <Header title="公平发射" showBackButton={launchInfo?.hasEnded || false} />
       <main className="flex-grow">
         <TokenTab />
         {isLaunchInfoPending || !launchInfo ? (
