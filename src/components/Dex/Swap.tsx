@@ -716,7 +716,6 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
       await approve(approvalTarget, fromAmount);
     } catch (error: any) {
       console.error(error);
-      toast.error(error?.message || '授权失败');
     }
   });
 
@@ -851,8 +850,8 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
         toast.error('输出金额不足，请调整滑点设置或减少交换金额');
       } else if (error.message?.includes('INSUFFICIENT_LIQUIDITY')) {
         toast.error('流动性不足，请尝试较小的交换金额');
-      } else {
-        toast.error(error?.message || '兑换失败');
+        // } else {
+        //   toast.error(error?.message || '兑换失败');
       }
     }
   });

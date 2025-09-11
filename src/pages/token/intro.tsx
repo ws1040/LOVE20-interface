@@ -113,7 +113,7 @@ const TokenIntroPage = () => {
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeHighlight]}
-                className="text-lg text-gray-800"
+                className="text-lg text-gray-800 font-mono"
               >
                 {renderedMd}
               </ReactMarkdown>

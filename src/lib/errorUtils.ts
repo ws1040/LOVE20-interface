@@ -7,23 +7,33 @@ import { useError } from '@/src/contexts/ErrorContext';
 import { useCallback } from 'react';
 
 /**
- * 从 MetaMask 错误信息中解析核心的错误原因
+ * 从钱包错误信息中解析用户取消交易的核心错误原因
+ * 支持 MetaMask、TrustWallet 等多种钱包格式
  *
  * @param error 错误信息
- * @returns 解析出的核心错误信息
+ * @returns 解析出的核心错误信息，如果是用户取消则返回提示文本，否则返回空字符串
  */
-function _parseMetaMaskError(error: string): string {
+function _parseUserCancelError(error: string): string {
   /***
-   * 新版本错误格式示例：
+   * MetaMask 错误格式示例：
      TransactionExecutionError: User rejected the request.
      Details: MetaMask Tx Signature: User denied transaction signature.
    * 
-   * 旧版本错误格式示例：
-     error TransactionExecutionError: User rejected the request.
-      Details: MetaMask Tx Signature: User denied transaction signature.
+   * TrustWallet 错误格式示例：
+     Error: cancel
+   * 
+   * 其他钱包可能的格式：
+     User denied transaction signature
+     User rejected the request
    */
 
-  // 检查新版本格式：直接包含 "User rejected the request"
+  // 检查 TrustWallet 格式：Error: cancel 或简单的 "cancel"
+  const trustWalletMatch = error.match(/^(Error:\s*)?cancel$/i);
+  if (trustWalletMatch) {
+    return '用户取消了交易';
+  }
+
+  // 检查 MetaMask 新版本格式：直接包含 "User rejected the request"
   const userRejectedMatch = error.match(/User rejected the request/);
   if (userRejectedMatch) {
     return '用户取消了交易';
@@ -127,6 +137,52 @@ function _parseTimeoutError(error: string): string {
 }
 
 /**
+ * 检查是否为 Gas 费不足错误
+ */
+function _parseGasError(error: string): string {
+  const gasErrorPatterns = [
+    // Gas 估算失败
+    /cannot estimate gas/i,
+    /transaction may fail or may require manual gas limit/i,
+
+    // 资金不足相关
+    /insufficient funds for intrinsic transaction cost/i,
+    /insufficient funds for gas/i,
+    /insufficient funds/i,
+
+    // Gas 不足
+    /out of gas/i,
+    /gas required exceeds allowance/i,
+    /gas limit exceeded/i,
+    /exceeds block gas limit/i,
+    /base fee exceeds gas limit/i,
+
+    // MetaMask 特定错误
+    /insufficient ether for transfer/i,
+    /insufficient balance/i,
+
+    // 其他 Web3 提供商的错误格式
+    /code=INSUFFICIENT_FUNDS/i,
+    /INSUFFICIENT_FUNDS/i,
+    /not enough funds/i,
+    /balance too low/i,
+    /gas estimation failed/i,
+    /execution reverted.*gas/i,
+
+    // viem 特定错误格式
+    /The total cost \(gas \* gas fee \+ value\) of executing this transaction exceeds the balance/i,
+  ];
+
+  for (const pattern of gasErrorPatterns) {
+    if (pattern.test(error)) {
+      const tokenSymbol = process.env.NEXT_PUBLIC_NATIVE_TOKEN_SYMBOL || 'ETH';
+      return `Gas费不足，请确认是否有足够的 ${tokenSymbol}`;
+    }
+  }
+  return '';
+}
+
+/**
  * 解析 TransactionExecutionError 格式的错误
  * 新版本viem会产生这种格式的错误
  */
@@ -167,12 +223,18 @@ function _parseTransactionExecutionError(error: string): string {
  *
  * @param error  错误信息
  * @param contractKey 用来区分合约的 key，必须在 ContractErrorsMaps 中存在
- * @returns 可读错误文案，若无法匹配则返回 "未知错误"
+ * @returns 可读错误文案，若无法匹配则返回 "未知错误"；如果是用户取消交易则返回 null
  */
-export function getReadableRevertErrMsg(error: string, contractKey: string): ErrorInfo {
+export function getReadableRevertErrMsg(error: string, contractKey: string): ErrorInfo | null {
   const rawMessage: string = error ?? '';
 
-  // 0.优先检查网络超时错误
+  // 0.优先检查 Gas 费不足错误
+  const gasError = _parseGasError(rawMessage);
+  if (gasError) {
+    return { name: 'Gas费不足', message: gasError };
+  }
+
+  // 0.1.检查网络超时错误
   const timeoutError = _parseTimeoutError(rawMessage);
   if (timeoutError) {
     return { name: '网络超时', message: timeoutError };
@@ -181,18 +243,19 @@ export function getReadableRevertErrMsg(error: string, contractKey: string): Err
   // 0.5.检查TransactionExecutionError格式 (新增)
   const transactionError = _parseTransactionExecutionError(rawMessage);
   if (transactionError) {
-    // 如果是用户拒绝，返回特定提示
+    // 如果是用户拒绝，返回null表示这不是错误
     if (transactionError.includes('User rejected') || transactionError.includes('User denied')) {
-      return { name: '交易提示', message: '用户取消了交易' };
+      return null;
     }
     // 其他TransactionExecutionError，返回原始错误信息
     return { name: '交易错误', message: transactionError };
   }
 
   // 0.6.检查用户取消错误
-  const metaMaskError = _parseMetaMaskError(rawMessage);
-  if (metaMaskError) {
-    return { name: '交易提示', message: metaMaskError };
+  const userCancelError = _parseUserCancelError(rawMessage);
+  if (userCancelError) {
+    // 用户取消交易不是错误，返回null
+    return null;
   }
 
   // 1.优先检查是否是十六进制错误选择器格式，使用更精确的匹配模式
@@ -371,12 +434,24 @@ export const useHandleContractError = () => {
         errorStringified, // 序列化后的完整错误
       ];
 
-      // 优先检查是否为用户取消交易的错误
+      // 优先检查是否为 Gas 费不足错误
       for (const source of sources) {
         if (source && typeof source === 'string') {
-          const metaMaskError = _parseMetaMaskError(source);
-          if (metaMaskError) {
-            setError({ name: '交易提示', message: metaMaskError });
+          const gasError = _parseGasError(source);
+          if (gasError) {
+            setError({ name: 'Gas费不足', message: gasError });
+            return;
+          }
+        }
+      }
+
+      // 再检查是否为用户取消交易的错误
+      for (const source of sources) {
+        if (source && typeof source === 'string') {
+          const userCancelError = _parseUserCancelError(source);
+          if (userCancelError) {
+            // 用户取消交易是正常行为，不视为错误，直接返回不设置错误状态
+            console.log('用户取消了交易：', userCancelError);
             return;
           }
         }
@@ -386,6 +461,11 @@ export const useHandleContractError = () => {
       for (const source of sources) {
         if (source && typeof source === 'string') {
           const parsedError = getReadableRevertErrMsg(source, context);
+          // 如果返回null，说明是用户取消交易，直接返回
+          if (parsedError === null) {
+            console.log('用户取消了交易，不作为错误处理');
+            return;
+          }
           if (parsedError.message !== '交易失败，请稍后刷新重试') {
             errorMessage = parsedError.message;
             break;
@@ -396,6 +476,12 @@ export const useHandleContractError = () => {
       const finalError = errorMessage
         ? { name: '交易错误', message: errorMessage }
         : getReadableRevertErrMsg(error?.message || errorStringified, context);
+
+      // 如果最终错误是null（用户取消交易），直接返回
+      if (finalError === null) {
+        console.log('用户取消了交易，不作为错误处理');
+        return;
+      }
 
       console.error('Final Error Message:', finalError);
 
@@ -450,6 +536,20 @@ export const useHandleContractError = () => {
 
 // // 导出用于测试的函数（仅开发环境）
 // if (process.env.NODE_ENV === 'development') {
+//   // 测试 Gas 费不足错误格式
+//   console.log('🔧 测试 Gas 费错误解析:');
+//   testErrorParsing('cannot estimate gas; transaction may fail or may require manual gas limit', 'test');
+//   testErrorParsing('insufficient funds for intrinsic transaction cost', 'test');
+//   testErrorParsing(
+//     'Error: insufficient funds for gas * price + value (error={"reason":"insufficient funds for gas * price + value","code":"INSUFFICIENT_FUNDS","error":{"reason":"insufficient funds for gas * price + value","code":"INSUFFICIENT_FUNDS","method":"sendTransaction","transaction":{"from":"0x9d2340F8C971488606dcCafdb51aDddFEa7522c8"}}}, method="sendTransaction")',
+//     'test',
+//   );
+//   testErrorParsing('out of gas', 'test');
+//   testErrorParsing(
+//     'The total cost (gas * gas fee + value) of executing this transaction exceeds the balance of the account.',
+//     'test',
+//   );
+
 //   // 测试 anvil 错误格式
 //   testErrorParsing('Error: reverted with: custom error 0x50cd778e', 'stake');
 //   testErrorParsing('custom error 0x50cd778e', 'stake');
