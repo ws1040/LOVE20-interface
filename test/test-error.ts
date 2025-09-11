@@ -42,7 +42,38 @@ function testErrorHandling() {
   contractKeys.forEach((key) => {
     console.log(`\n--- 使用合约上下文 '${key}' ---`);
     const result = getReadableRevertErrMsg(mockError.message, key);
-    console.log(`结果: ${JSON.stringify(result, null, 2)}`);
+    if (result === null) {
+      console.log(`结果: 用户取消交易，不作为错误处理`);
+    } else {
+      console.log(`结果: ${JSON.stringify(result, null, 2)}`);
+    }
+  });
+
+  // 4. 测试用户取消交易的情况
+  console.log('\n4. 测试用户取消交易的情况:');
+
+  const userCancelCases = [
+    // MetaMask 格式
+    'TransactionExecutionError: User rejected the request.',
+    'User denied transaction signature',
+    'User rejected the request',
+    'Error: User denied transaction signature',
+    // TrustWallet 格式
+    'Error: cancel',
+    'cancel',
+    // 其他可能的格式
+    'User denied',
+    'User rejected',
+  ];
+
+  userCancelCases.forEach((userCancelError) => {
+    console.log(`\n测试用例: "${userCancelError}"`);
+    const result = getReadableRevertErrMsg(userCancelError, 'test');
+    if (result === null) {
+      console.log('✅ 正确识别为用户取消，不作为错误处理');
+    } else {
+      console.log('❌ 未正确识别为用户取消:', JSON.stringify(result, null, 2));
+    }
   });
 }
 
