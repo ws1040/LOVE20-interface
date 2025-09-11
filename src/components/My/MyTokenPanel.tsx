@@ -66,7 +66,7 @@ const MyTokenPanel: React.FC<{ token: Token | null | undefined }> = ({ token }) 
       <div className="flex justify-between items-center">
         <LeftTitle title="我的代币" />
         <Button variant="link" className="text-secondary border-secondary" asChild>
-          <Link href={`/dex/swap?symbol=${token.symbol}`}>兑换代币</Link>
+          <Link href={`/token/transfer?symbol=${token.symbol}`}>转账</Link>
         </Button>
       </div>
       <div className="stats bg-gray-100 w-full grid grid-cols-2 divide-x-0">

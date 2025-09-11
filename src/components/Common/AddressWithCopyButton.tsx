@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Copy, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -26,9 +26,16 @@ const AddressWithCopyButton: React.FC<AddressWithCopyButtonProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
+  // 当地址变化时重置复制状态
+  useEffect(() => {
+    setCopied(false);
+  }, [address]);
+
   const handleCopy = (text: string, result: boolean) => {
     if (result) {
       setCopied(true);
+      // 2秒后自动重置状态
+      setTimeout(() => setCopied(false), 2000);
     } else {
       toast.error('复制失败');
     }
