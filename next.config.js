@@ -51,6 +51,7 @@ const nextConfig = {
       '/acting': { page: '/acting' },
       '/token': { page: '/token' },
       '/token/intro': { page: '/token/intro' },
+      '/token/transfer': { page: '/token/transfer' },
       '/acting/join': { page: '/acting/join' },
       '/action/detail': { page: '/action/detail' },
       '/action/new': { page: '/action/new' },

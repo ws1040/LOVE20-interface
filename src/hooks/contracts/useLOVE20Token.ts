@@ -251,3 +251,41 @@ export function useBurnForParentToken(token: `0x${string}`) {
     isTukeMode,
   };
 }
+
+/**
+ * useTransfer Hook - for ERC20 token transfers
+ */
+export function useTransfer(token: `0x${string}`) {
+  const { execute, isPending, isConfirming, isConfirmed, error, hash, isTukeMode } = useUniversalTransaction(
+    LOVE20TokenAbi,
+    token,
+    'transfer',
+  );
+
+  const transfer = async (to: `0x${string}`, amount: bigint) => {
+    console.log('提交transfer交易:', { token, to, amount, isTukeMode });
+    return await execute([to, amount]);
+  };
+
+  // 错误日志记录
+  useEffect(() => {
+    if (hash) {
+      console.log('transfer tx hash:', hash);
+    }
+    if (error) {
+      console.log('提交transfer交易错误:');
+      logWeb3Error(error);
+      logError(error);
+    }
+  }, [hash, error]);
+
+  return {
+    transfer,
+    isPending,
+    isConfirming,
+    writeError: error,
+    isConfirmed,
+    hash,
+    isTukeMode,
+  };
+}

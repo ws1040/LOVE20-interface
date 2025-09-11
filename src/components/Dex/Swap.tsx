@@ -729,7 +729,7 @@ const SwapPanel = ({ showCurrentToken = true }: SwapPanelProps) => {
   // 处理交换
   const handleSwap = form.handleSubmit(async () => {
     if (!canSwap) {
-      toast.error('当前代币尚未开始质押，无法进行兑换');
+      toast.error('流动池为空，无法兑换，请稍后重试');
       return;
     }
 
