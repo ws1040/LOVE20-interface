@@ -7,6 +7,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAccount, useBalance } from 'wagmi';
 import { useForm } from 'react-hook-form';
 import { isAddress } from 'viem';
+
+// 地址转换工具
+import { normalizeAddressInput, validateAddressInput, formatAddressForDisplay } from '@/src/lib/addressUtils';
 import { useQueryClient } from '@tanstack/react-query';
 
 // UI components
@@ -159,7 +162,13 @@ const getTransferFormSchema = (balance: bigint) =>
     to: z
       .string()
       .nonempty('请输入目标地址')
-      .refine((val) => isAddress(val), { message: '请输入有效的以太坊地址' }),
+      .refine(
+        (val) => {
+          const error = validateAddressInput(val);
+          return error === null;
+        },
+        { message: '请输入有效的地址格式（支持 0x、TH 格式）' },
+      ),
     amount: z
       .string()
       .nonempty('请输入转账数量')
@@ -198,6 +207,8 @@ const TransferPanel = () => {
   const [selectedToken, setSelectedToken] = useState<TokenConfig | undefined>();
   const [isUserManuallySelected, setIsUserManuallySelected] = useState(false);
   const [lastProcessedTxHash, setLastProcessedTxHash] = useState<string | null>(null);
+  const [addressConversionInfo, setAddressConversionInfo] = useState<string>('');
+  const [convertedAddress, setConvertedAddress] = useState<`0x${string}` | null>(null);
 
   // 初始化选择代币逻辑：优先选择当前代币，其次选择第一个可用代币
   useEffect(() => {
@@ -264,6 +275,37 @@ const TransferPanel = () => {
       form.setValue('tokenAddress', selectedToken.address);
     }
   }, [selectedToken, form]);
+
+  // 监听地址输入变化，提供转换提示
+  const watchedToAddress = form.watch('to');
+  useEffect(() => {
+    if (!watchedToAddress || watchedToAddress.trim() === '') {
+      setAddressConversionInfo('');
+      setConvertedAddress(null);
+      return;
+    }
+
+    const trimmed = watchedToAddress.trim();
+    const normalized = normalizeAddressInput(trimmed);
+
+    if (!normalized) {
+      setAddressConversionInfo('');
+      setConvertedAddress(null);
+      return;
+    }
+
+    // 如果输入的不是0x格式，显示转换后的地址
+    if (!trimmed.startsWith('0x')) {
+      setAddressConversionInfo('将转换为:');
+      setConvertedAddress(normalized as `0x${string}`);
+    } else if (trimmed.toLowerCase() !== normalized) {
+      setAddressConversionInfo('地址已标准化');
+      setConvertedAddress(normalized as `0x${string}`);
+    } else {
+      setAddressConversionInfo('');
+      setConvertedAddress(null);
+    }
+  }, [watchedToAddress]);
 
   // 监听数量输入
   const watchAmount = form.watch('amount');
@@ -342,10 +384,17 @@ const TransferPanel = () => {
 
   // 处理转账
   const handleTransfer = form.handleSubmit(async (data) => {
-    if (!selectedToken || !account || !isAddress(data.to)) return;
+    if (!selectedToken || !account) return;
+
+    // 标准化地址输入，支持TH、0x等格式
+    const normalizedAddress = normalizeAddressInput(data.to);
+    if (!normalizedAddress) {
+      toast.error('地址格式无效，请检查输入');
+      return;
+    }
 
     try {
-      const toAddress = data.to as `0x${string}`;
+      const toAddress = normalizedAddress as `0x${string}`;
 
       if (selectedToken.isNative) {
         // 原生代币转账
@@ -410,12 +459,25 @@ const TransferPanel = () => {
                   <FormLabel className="text-sm font-medium text-gray-700">目标地址</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="请输入目标钱包地址"
+                      placeholder="请输入目标钱包地址（支持 0x、TH 格式）"
                       {...field}
                       disabled={isDisabled}
                       className="font-mono text-sm"
                     />
                   </FormControl>
+                  {addressConversionInfo && (
+                    <div className="text-xs text-blue-600 mt-1 flex items-center gap-1">
+                      <span>{addressConversionInfo}</span>
+                      {convertedAddress && (
+                        <AddressWithCopyButton
+                          address={convertedAddress}
+                          showCopyButton={true}
+                          showAddress={true}
+                          colorClassName="text-blue-600"
+                        />
+                      )}
+                    </div>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
